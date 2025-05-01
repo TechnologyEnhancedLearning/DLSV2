@@ -404,9 +404,10 @@
             {
                 return StatusCode(403);
             }
-            var selectedFrameworks = competencyAssessmentService.GetLinkedFrameworkIds(competencyAssessmentId);
+            var primaryFrameworkId = competencyAssessmentService.GetPrimaryLinkedFrameworkId(competencyAssessmentId);
+            var additionalFrameworks = competencyAssessmentService.GetLinkedFrameworkIds(competencyAssessmentId);
             var competencyAssessmentTaskStatus = competencyAssessmentService.GetCompetencyAssessmentTaskStatus(competencyAssessmentId, null);
-            var model = new SelectFrameworkSourcesViewModel(competencyAssessmentBase, frameworks, selectedFrameworks, competencyAssessmentTaskStatus.FrameworkLinksTaskStatus, actionName);
+            var model = new SelectFrameworkSourcesViewModel(competencyAssessmentBase, frameworks, additionalFrameworks, primaryFrameworkId, competencyAssessmentTaskStatus.FrameworkLinksTaskStatus, actionName);
             return View(model);
         }
         [HttpPost]
@@ -417,7 +418,7 @@
             var competencyAssessmentId = model.CompetencyAssessmentId;
             if (!ModelState.IsValid)
             {
-                
+
                 var frameworks = frameworkService.GetAllFrameworks(adminId);
                 var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
                 if (competencyAssessmentBase == null)
@@ -429,11 +430,12 @@
                 {
                     return StatusCode(403);
                 }
-                var selectedFrameworks = competencyAssessmentService.GetLinkedFrameworkIds(competencyAssessmentId);
-                var viewModel = new SelectFrameworkSourcesViewModel(competencyAssessmentBase, frameworks, selectedFrameworks, model.TaskStatus, model.ActionName);
+                var primaryFrameworkId = competencyAssessmentService.GetPrimaryLinkedFrameworkId(competencyAssessmentId);
+                var additionalFrameworks = competencyAssessmentService.GetLinkedFrameworkIds(competencyAssessmentId);
+                var viewModel = new SelectFrameworkSourcesViewModel(competencyAssessmentBase, frameworks, additionalFrameworks, primaryFrameworkId, model.TaskStatus, model.ActionName);
                 return View("SelectFrameworkSources", viewModel);
             }
-            if(actionName == "AddFramework")
+            if (actionName == "AddFramework")
             {
                 competencyAssessmentService.InsertSelfAssessmentFramework(adminId, competencyAssessmentId, model.FrameworkId);
                 return RedirectToAction("SelectFrameworkSources", new { competencyAssessmentId, actionName = "Summary" });
@@ -443,6 +445,25 @@
                 competencyAssessmentService.UpdateFrameworkLinksTaskStatus(model.CompetencyAssessmentId, model.TaskStatus ?? false);
                 return RedirectToAction("ManageCompetencyAssessment", new { competencyAssessmentId = model.CompetencyAssessmentId });
             }
+        }
+        [Route("/CompetencyAssessments/{competencyAssessmentId}/Frameworks/{frameworkId}/Remove")]
+        public IActionResult RemoveFramework(int frameworkId, int competencyAssessmentId)
+        {
+            var frameworkCompetencyCount = competencyAssessmentService.GetCompetencyCountByFrameworkId(competencyAssessmentId, frameworkId);
+            if (frameworkCompetencyCount > 0)
+            {
+                var adminId = GetAdminID();
+                var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
+                var framework = frameworkService.GetFrameworkDetailByFrameworkId(frameworkId, adminId);
+                var model = new ConfirmRemoveFrameworkSourceViewModel(competencyAssessmentBase, framework, frameworkCompetencyCount);
+                return View("ConfirmRemoveFrameworkSource", model);
+            }
+            else
+            {
+                var adminId = GetAdminID();
+                competencyAssessmentService.RemoveSelfAssessmentFramework(competencyAssessmentId, frameworkId, adminId);
+            }
+            return RedirectToAction("SelectFrameworkSources", new { competencyAssessmentId, actionName = "Summary" });
         }
     }
 }

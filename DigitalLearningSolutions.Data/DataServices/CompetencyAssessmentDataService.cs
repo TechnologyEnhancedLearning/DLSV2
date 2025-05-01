@@ -30,6 +30,10 @@
 
         int[] GetLinkedFrameworkIds (int assessmentId);
 
+        int? GetPrimaryLinkedFrameworkId(int assessmentId);
+
+        int GetCompetencyCountByFrameworkId(int assessmentId, int frameworkId);
+
         //UPDATE DATA
         bool UpdateCompetencyAssessmentName(int competencyAssessmentId, int adminId, string competencyAssessmentName);
 
@@ -47,6 +51,8 @@
         bool UpdateVocabularyTaskStatus(int assessmentId, bool taskStatus);
         bool UpdateRoleProfileLinksTaskStatus(int assessmentId, bool taskStatus);
         bool UpdateFrameworkLinksTaskStatus(int assessmentId, bool taskStatus);
+        bool RemoveSelfAssessmentFramework(int assessmentId, int frameworkId, int adminId);
+
         //INSERT DATA
         int InsertCompetencyAssessment(int adminId, int centreId, string competencyAssessmentName);
         bool InsertSelfAssessmentFramework(int adminId, int selfAssessmentId, int frameworkId);
@@ -342,7 +348,7 @@
             {
                 numberOfAffectedRows = connection.Execute(
                 @"UPDATE SelfAssessmentFrameworks
-                    SET @selfAssessmentId, @frameworkId, @adminId
+                    SET RemovedDate = NULL, RemovedByAdminId = NULL, AmendedByAdminId = @adminId
                     WHERE SelfAssessmentId = @selfAssessmentId AND FrameworkId = @frameworkId"
             ,
                 new { adminId, selfAssessmentId, frameworkId }
@@ -482,10 +488,39 @@
             return [.. connection.Query<int>(
               @"SELECT FrameworkId
                     FROM   SelfAssessmentFrameworks
-                    WHERE (SelfAssessmentId = @assessmentId) AND (RemovedDate IS NULL)
-                    ORDER BY CAST(IsPrimary AS Int) DESC, ID",
+                    WHERE (SelfAssessmentId = @assessmentId) AND (RemovedDate IS NULL) AND (IsPrimary = 0)
+                    ORDER BY ID",
               new { assessmentId }
           )];
+        }
+
+        public bool RemoveSelfAssessmentFramework(int assessmentId, int frameworkId, int adminId)
+        {
+            var numberOfAffectedRows = connection.Execute(
+                @"UPDATE SelfAssessmentFrameworks SET RemovedDate = @removedDate, RemovedByAdminId = @adminId
+                    WHERE SelfAssessmentId = @assessmentId AND FrameworkId = @frameworkId",
+                new { removedDate = DateTime.Now, assessmentId, frameworkId, adminId }
+            );
+            if (numberOfAffectedRows < 1)
+            {
+                logger.LogWarning(
+                    "Not updating SelfAssessmentFrameworks as db update failed. " +
+                    $"assessmentId: {assessmentId}, frameworkId: {frameworkId}, adminId: {adminId}"
+                );
+                return false;
+            }
+            return true;
+        }
+
+        public int? GetPrimaryLinkedFrameworkId(int assessmentId)
+        {
+            return connection.QuerySingleOrDefault<int?>(
+              @"SELECT TOP(1) FrameworkId
+                    FROM   SelfAssessmentFrameworks
+                    WHERE (SelfAssessmentId = @assessmentId) AND (RemovedDate IS NULL) AND (IsPrimary = 1)
+                    ORDER BY ID DESC",
+              new { assessmentId }
+          );
         }
 
         public bool UpdateFrameworkLinksTaskStatus(int assessmentId, bool taskStatus)
@@ -504,6 +539,18 @@
                 return false;
             }
             return true;
+        }
+
+        public int GetCompetencyCountByFrameworkId(int assessmentId, int frameworkId)
+        {
+            return connection.ExecuteScalar<int>(
+              @"SELECT COUNT(sas.CompetencyID) AS Competencies
+                   FROM   SelfAssessmentStructure AS sas INNER JOIN
+                             FrameworkCompetencies AS fc ON sas.CompetencyID = fc.CompetencyID INNER JOIN
+                             SelfAssessmentFrameworks AS saf ON fc.FrameworkID = saf.FrameworkId AND sas.SelfAssessmentID = saf.SelfAssessmentId
+                    WHERE (saf.SelfAssessmentId = @assessmentId) AND (saf.FrameworkId = @frameworkId)",
+              new { assessmentId, frameworkId }
+          );
         }
     }
 }

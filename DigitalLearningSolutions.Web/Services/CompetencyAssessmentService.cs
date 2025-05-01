@@ -23,6 +23,10 @@ namespace DigitalLearningSolutions.Web.Services
         IEnumerable<NRPRoles> GetNRPRoles(int? nRPSubGroupID);
 
         CompetencyAssessmentTaskStatus GetCompetencyAssessmentTaskStatus(int assessmentId, int? frameworkId);
+        int[] GetLinkedFrameworkIds(int assessmentId);
+        int? GetPrimaryLinkedFrameworkId(int assessmentId);
+
+        bool RemoveSelfAssessmentFramework(int assessmentId, int frameworkId, int adminId);
 
         //UPDATE DATA
         bool UpdateCompetencyAssessmentName(int competencyAssessmentId, int adminId, string competencyAssessmentName);
@@ -39,8 +43,7 @@ namespace DigitalLearningSolutions.Web.Services
         //INSERT DATA
         int InsertCompetencyAssessment(int adminId, int centreId, string competencyAssessmentName, int? frameworkId);
         bool InsertSelfAssessmentFramework(int adminId, int assessmentId, int frameworkId);
-        int[] GetLinkedFrameworkIds(int assessmentId);
-        
+        int GetCompetencyCountByFrameworkId(int competencyAssessmentId, int frameworkId);
     }
     public class CompetencyAssessmentService : ICompetencyAssessmentService
     {
@@ -167,6 +170,21 @@ namespace DigitalLearningSolutions.Web.Services
         public bool UpdateFrameworkLinksTaskStatus(int assessmentId, bool taskStatus)
         {
             return competencyAssessmentDataService.UpdateFrameworkLinksTaskStatus(assessmentId, taskStatus);
+        }
+
+        public int? GetPrimaryLinkedFrameworkId(int assessmentId)
+        {
+            return competencyAssessmentDataService.GetPrimaryLinkedFrameworkId(assessmentId);
+        }
+
+        public bool RemoveSelfAssessmentFramework(int assessmentId, int frameworkId, int adminId)
+        {
+            return competencyAssessmentDataService.RemoveSelfAssessmentFramework(assessmentId, frameworkId, adminId);
+        }
+
+        public int GetCompetencyCountByFrameworkId(int competencyAssessmentId, int frameworkId)
+        {
+            return competencyAssessmentDataService.GetCompetencyCountByFrameworkId(competencyAssessmentId, frameworkId);
         }
     }
 }

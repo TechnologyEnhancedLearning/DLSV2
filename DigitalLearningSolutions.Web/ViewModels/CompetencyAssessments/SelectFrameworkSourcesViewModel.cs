@@ -8,18 +8,20 @@ namespace DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
     public class SelectFrameworkSourcesViewModel : SelectFrameworkSourcesFormData
     {
         public SelectFrameworkSourcesViewModel() { }
-        public SelectFrameworkSourcesViewModel(CompetencyAssessmentBase competencyAssessmentBase, IEnumerable<BrandedFramework> frameworks, int[] selectedFrameworksIds, bool? taskStatus, string actionName)
+        public SelectFrameworkSourcesViewModel(CompetencyAssessmentBase competencyAssessmentBase, IEnumerable<BrandedFramework> frameworks, int[] additionalFrameworksIds, int? primaryFramework, bool? taskStatus, string actionName)
         {
             ID = competencyAssessmentBase.ID;
             CompetencyAssessmentName = competencyAssessmentBase.CompetencyAssessmentName;
             UserRole = competencyAssessmentBase.UserRole;
             TaskStatus = taskStatus;
+            PrimaryFramework = frameworks.FirstOrDefault(f => f.ID == primaryFramework);
             Frameworks = frameworks.OrderBy(f => f.FrameworkName);
-            SelectedFrameworks = [.. selectedFrameworksIds.Select(id => frameworks.First(f => f.ID == id))];
+            AdditionalFrameworks = [.. additionalFrameworksIds.Select(id => frameworks.First(f => f.ID == id))];
             ActionName = actionName;
         }
         public IEnumerable<BrandedFramework> Frameworks { get; set; }
-        public IEnumerable<BrandedFramework> SelectedFrameworks { get; set; }
+        public IEnumerable<BrandedFramework> AdditionalFrameworks { get; set; }
+        public BrandedFramework? PrimaryFramework { get; set; }
         public IEnumerable<NRPRoles> Roles { get; set; }
         public int ID { get; set; }
         public string CompetencyAssessmentName { get; set; }
