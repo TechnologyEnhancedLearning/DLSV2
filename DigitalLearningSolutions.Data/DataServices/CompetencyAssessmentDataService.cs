@@ -52,11 +52,17 @@
         bool UpdateRoleProfileLinksTaskStatus(int assessmentId, bool taskStatus);
         bool UpdateFrameworkLinksTaskStatus(int assessmentId, bool taskStatus);
         bool RemoveSelfAssessmentFramework(int assessmentId, int frameworkId, int adminId);
+        bool UpdateSelectCompetenciesTaskStatus(int assessmentId, bool taskStatus, bool? previousStatus);
+        bool UpdateOptionalCompetenciesTaskStatus(int assessmentId, bool taskStatus, bool? previousStatus);
+        bool UpdateRoleRequirementsTaskStatus(int assessmentId, bool taskStatus, bool? previousStatus);
 
         //INSERT DATA
         int InsertCompetencyAssessment(int adminId, int centreId, string competencyAssessmentName);
         bool InsertSelfAssessmentFramework(int adminId, int selfAssessmentId, int frameworkId);
+
         //DELETE DATA
+        bool RemoveFrameworkCompetenciesFromAssessment(int competencyAssessmentId, int frameworkId);
+        
     }
 
     public class CompetencyAssessmentDataService : ICompetencyAssessmentDataService
@@ -551,6 +557,79 @@
                     WHERE (saf.SelfAssessmentId = @assessmentId) AND (saf.FrameworkId = @frameworkId)",
               new { assessmentId, frameworkId }
           );
+        }
+
+        public bool RemoveFrameworkCompetenciesFromAssessment(int competencyAssessmentId, int frameworkId)
+        {
+            var numberOfAffectedRows = connection.Execute(
+               @"DELETE FROM SelfAssessmentStructure
+                    FROM   SelfAssessmentStructure INNER JOIN
+                                 FrameworkCompetencies AS fc ON SelfAssessmentStructure.CompetencyID = fc.CompetencyID INNER JOIN
+                                 SelfAssessmentFrameworks AS saf ON fc.FrameworkID = saf.FrameworkId AND SelfAssessmentStructure.SelfAssessmentID = saf.SelfAssessmentId
+                    WHERE (saf.SelfAssessmentId = @competencyAssessmentId) AND (saf.FrameworkId = @frameworkId)",
+               new { competencyAssessmentId, frameworkId }
+           );
+            if (numberOfAffectedRows < 1)
+            {
+                logger.LogWarning(
+                    "Not removing competencies linked to source framework as db update failed. " +
+                    $"assessmentId: {competencyAssessmentId}, taskStatus: {frameworkId}"
+                );
+                return false;
+            }
+            return true;
+        }
+
+        public bool UpdateSelectCompetenciesTaskStatus(int assessmentId, bool taskStatus, bool? previousStatus)
+        {
+            var numberOfAffectedRows = connection.Execute(
+               @"UPDATE SelfAssessmentTaskStatus SET SelectCompetenciesTaskStatus = @taskStatus
+                    WHERE SelfAssessmentId = @assessmentId AND (@previousStatus IS NULL OR SelectCompetenciesTaskStatus = @previousStatus)",
+               new { assessmentId, taskStatus, previousStatus }
+           );
+            if (numberOfAffectedRows < 1)
+            {
+                logger.LogWarning(
+                    "Not updating SelectCompetenciesTaskStatus as db update failed. " +
+                    $"assessmentId: {assessmentId}, taskStatus: {taskStatus}"
+                );
+                return false;
+            }
+            return true;
+        }
+        public bool UpdateOptionalCompetenciesTaskStatus(int assessmentId, bool taskStatus, bool? previousStatus)
+        {
+            var numberOfAffectedRows = connection.Execute(
+               @"UPDATE SelfAssessmentTaskStatus SET OptionalCompetenciesTaskStatus = @taskStatus
+                    WHERE SelfAssessmentId = @assessmentId AND (@previousStatus IS NULL OR OptionalCompetenciesTaskStatus = @previousStatus)",
+               new { assessmentId, taskStatus, previousStatus }
+           );
+            if (numberOfAffectedRows < 1)
+            {
+                logger.LogWarning(
+                    "Not updating OptionalCompetenciesTaskStatus as db update failed. " +
+                    $"assessmentId: {assessmentId}, taskStatus: {taskStatus}"
+                );
+                return false;
+            }
+            return true;
+        }
+        public bool UpdateRoleRequirementsTaskStatus(int assessmentId, bool taskStatus, bool? previousStatus)
+        {
+            var numberOfAffectedRows = connection.Execute(
+               @"UPDATE SelfAssessmentTaskStatus SET RoleRequirementsTaskStatus = @taskStatus
+                    WHERE SelfAssessmentId = @assessmentId AND (@previousStatus IS NULL OR RoleRequirementsTaskStatus = @previousStatus)",
+               new { assessmentId, taskStatus, previousStatus }
+           );
+            if (numberOfAffectedRows < 1)
+            {
+                logger.LogWarning(
+                    "Not updating RoleRequirementsTaskStatus as db update failed. " +
+                    $"assessmentId: {assessmentId}, taskStatus: {taskStatus}"
+                );
+                return false;
+            }
+            return true;
         }
     }
 }

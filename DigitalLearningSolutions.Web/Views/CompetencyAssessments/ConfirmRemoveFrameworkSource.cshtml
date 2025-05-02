@@ -1,4 +1,5 @@
-﻿@using DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
+﻿@using DigitalLearningSolutions.Web.Helpers
+@using DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
 @model ConfirmRemoveFrameworkSourceViewModel;
 @{
     var errorHasOccurred = !ViewData.ModelState.IsValid;
@@ -8,40 +9,43 @@
     <div class="nhsuk-grid-column-full">
         @if (errorHasOccurred)
         {
-            <vc:error-summary order-of-property-names="@(new[] { nameof(Model.Confirm), nameof(Model.DeleteEnrolments) })" />
+            <vc:error-summary order-of-property-names="@(new[] { nameof(Model.Confirm) })" />
         }
 
-        <h1 class="nhsuk-heading-xl">Delete delegate group</h1>
+        <h1 class="nhsuk-heading-xl">Remove framework source from @Model.AssessmentName</h1>
     </div>
 </div>
 
-<vc:field-name-value-display display-name="Group name" field-value="@Model.FrameworkName" />
+<vc:field-name-value-display display-name="Framework" field-value="@Model.FrameworkName" />
 
 <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-full">
-        <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="ConfirmDeleteGroup">
-            <input type="hidden" asp-for="GroupLabel" />
-            <input type="hidden" asp-for="DelegateCount" />
-            <input type="hidden" asp-for="CourseCount" />
-            <input type="hidden" asp-for="ReturnPageQuery" />
-
+        <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="RemoveFramework">
+            <input type="hidden" asp-for="CompetencyAssessmentId" />
+            <input type="hidden" asp-for="FrameworkId" />
+            <input type="hidden" asp-for="FrameworkName" />
+            <input type="hidden" asp-for="AssessmentName" />
+            <input type="hidden" asp-for="CompetencyCount" />
+            <input type="hidden" asp-for="Vocabulary" />
             <p>
-                This group has @Model.DelegateCount delegate@(DisplayStringHelper.GetPluralitySuffix(Model.DelegateCount))
-                and @Model.CourseCount course@(DisplayStringHelper.GetPluralitySuffix(Model.CourseCount)). Deleting this
-                group will permanently remove all the delegates and courses from this group.
+                This competency assessment has @Model.CompetencyCount @DisplayStringHelper.PluraliseStringIfRequired(@Model.Vocabulary.ToLower(), Model.CompetencyCount)
+                associated with it from the framework @Model.FrameworkName. Removing this
+                framework source will remove the @DisplayStringHelper.PluraliseStringIfRequired(@Model.Vocabulary.ToLower(), Model.CompetencyCount) from the assessment.
             </p>
 
             <vc:single-checkbox asp-for="@nameof(Model.Confirm)"
-                                label="I am sure that I wish to delete this group and remove all delegates and courses from it."
+                                label="I am sure that I wish to remove this framework source and remove the @DisplayStringHelper.PluraliseStringIfRequired(@Model.Vocabulary.ToLower(), Model.CompetencyCount) from the assessment."
                                 hint-text="" />
 
-            <vc:single-checkbox asp-for="@nameof(Model.DeleteEnrolments)"
-                                label="Remove all related enrolments where course has been started but is not yet complete"
-                                hint-text="Optionally all enrolments on courses that have been started but are incomplete and are associated with the group membership can also be removed." />
-
-            <button class="nhsuk-button delete-button" type="submit">Delete group</button>
+            <button class="nhsuk-button delete-button" type="submit">Remove framework source</button>
         </form>
-
-        <vc:cancel-link-with-return-page-query asp-controller="DelegateGroups" asp-action="Index" return-page-query="@Model.ReturnPageQuery" />
+        <div class="nhsuk-back-link">
+            <a class="nhsuk-back-link__link" asp-action="SelectFrameworkSources" asp-route-actionName="Summary" asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">
+                <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
+                </svg>
+                Cancel
+            </a>
+        </div>
     </div>
 </div>

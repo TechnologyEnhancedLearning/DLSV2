@@ -71,6 +71,21 @@
         {
             return number == 1 ? string.Empty : "s";
         }
+        public static string PluraliseStringIfRequired(string input, int number)
+        {
+            if (number == 1)
+            {
+                return input;
+            }
+            else if (input.EndsWith("y"))
+            {
+                return input.Substring(0, input.Length - 1) + "ies";
+            }
+            else
+            {
+                return input + "s";
+            }
+        }
 
         public static string? ReplaceNonAlphaNumericSpaceChars(string? input, string replacement)
         {

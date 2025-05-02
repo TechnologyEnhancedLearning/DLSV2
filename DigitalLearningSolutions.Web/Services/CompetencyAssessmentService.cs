@@ -1,6 +1,7 @@
 ﻿using DigitalLearningSolutions.Data.DataServices;
 using DigitalLearningSolutions.Data.Models.Common;
 using DigitalLearningSolutions.Data.Models.CompetencyAssessments;
+using DocumentFormat.OpenXml.EMMA;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -39,11 +40,18 @@ namespace DigitalLearningSolutions.Web.Services
         bool UpdateVocabularyTaskStatus(int assessmentId, bool taskStatus);
         bool UpdateRoleProfileLinksTaskStatus(int assessmentId, bool taskStatus);
         bool UpdateFrameworkLinksTaskStatus(int assessmentId, bool taskStatus);
+        bool UpdateSelectCompetenciesTaskStatus(int competencyAssessmentId, bool taskStatus, bool? previousStatus);
+        bool UpdateOptionalCompetenciesTaskStatus(int assessmentId, bool taskStatus, bool? previousStatus);
+        bool UpdateRoleRequirementsTaskStatus(int assessmentId, bool taskStatus, bool? previousStatus);
 
         //INSERT DATA
         int InsertCompetencyAssessment(int adminId, int centreId, string competencyAssessmentName, int? frameworkId);
         bool InsertSelfAssessmentFramework(int adminId, int assessmentId, int frameworkId);
         int GetCompetencyCountByFrameworkId(int competencyAssessmentId, int frameworkId);
+
+        //DELETE DATA
+        bool RemoveFrameworkCompetenciesFromAssessment(int competencyAssessmentId, int frameworkId);
+        
     }
     public class CompetencyAssessmentService : ICompetencyAssessmentService
     {
@@ -185,6 +193,29 @@ namespace DigitalLearningSolutions.Web.Services
         public int GetCompetencyCountByFrameworkId(int competencyAssessmentId, int frameworkId)
         {
             return competencyAssessmentDataService.GetCompetencyCountByFrameworkId(competencyAssessmentId, frameworkId);
+        }
+
+        public bool RemoveFrameworkCompetenciesFromAssessment(int competencyAssessmentId, int frameworkId)
+        {
+            UpdateSelectCompetenciesTaskStatus(competencyAssessmentId, false, true);
+            UpdateOptionalCompetenciesTaskStatus(competencyAssessmentId, false, true);
+            UpdateRoleRequirementsTaskStatus(competencyAssessmentId, false, true);
+            return competencyAssessmentDataService.RemoveFrameworkCompetenciesFromAssessment(competencyAssessmentId, frameworkId);
+        }
+
+        public bool UpdateSelectCompetenciesTaskStatus(int assessmentId, bool taskStatus, bool? previousStatus)
+        {
+            return competencyAssessmentDataService.UpdateSelectCompetenciesTaskStatus(assessmentId, taskStatus, previousStatus);
+        }
+
+        public bool UpdateOptionalCompetenciesTaskStatus(int assessmentId, bool taskStatus, bool? previousStatus)
+        {
+            return competencyAssessmentDataService.UpdateOptionalCompetenciesTaskStatus(assessmentId, taskStatus, previousStatus);
+        }
+
+        public bool UpdateRoleRequirementsTaskStatus(int assessmentId, bool taskStatus, bool? previousStatus)
+        {
+            return competencyAssessmentDataService.UpdateRoleRequirementsTaskStatus(assessmentId, taskStatus, previousStatus);
         }
     }
 }

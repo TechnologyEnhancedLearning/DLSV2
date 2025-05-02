@@ -15,6 +15,9 @@
     using DigitalLearningSolutions.Data.Models.Centres;
     using DigitalLearningSolutions.Data.Models.Frameworks;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using DigitalLearningSolutions.Data.Models.Courses;
+    using DigitalLearningSolutions.Web.Services;
+    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.GroupCourses;
 
     public partial class CompetencyAssessmentsController
     {
@@ -464,6 +467,19 @@
                 competencyAssessmentService.RemoveSelfAssessmentFramework(competencyAssessmentId, frameworkId, adminId);
             }
             return RedirectToAction("SelectFrameworkSources", new { competencyAssessmentId, actionName = "Summary" });
+        }
+        [HttpPost]
+        [Route("/CompetencyAssessments/{competencyAssessmentId}/Frameworks/{frameworkId}/Remove")]
+        public IActionResult RemoveFramework(ConfirmRemoveFrameworkSourceViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View("ConfirmRemoveFrameworkSource", model);
+            }
+            var adminId = GetAdminID();
+            competencyAssessmentService.RemoveFrameworkCompetenciesFromAssessment(model.CompetencyAssessmentId, model.FrameworkId);
+            competencyAssessmentService.RemoveSelfAssessmentFramework(model.CompetencyAssessmentId, model.FrameworkId, adminId);
+            return RedirectToAction("SelectFrameworkSources", new { model.CompetencyAssessmentId, actionName = "Summary" });
         }
     }
 }
