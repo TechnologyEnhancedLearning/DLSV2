@@ -15,7 +15,14 @@ namespace DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
             UserRole = competencyAssessmentBase.UserRole;
             TaskStatus = taskStatus;
             PrimaryFramework = frameworks.FirstOrDefault(f => f.ID == primaryFramework);
-            Frameworks = frameworks.OrderBy(f => f.FrameworkName);
+            var excludedIds = new HashSet<int>(additionalFrameworksIds);
+            if (primaryFramework.HasValue)
+            {
+                excludedIds.Add(primaryFramework.Value);
+            }
+            Frameworks = [.. frameworks
+                .Where(f => !excludedIds.Contains(f.ID))
+                .OrderBy(f => f.FrameworkName)];
             AdditionalFrameworks = [.. additionalFrameworksIds.Select(id => frameworks.First(f => f.ID == id))];
             ActionName = actionName;
         }
