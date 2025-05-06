@@ -25,8 +25,8 @@
 
 <h1>Select framework sources for @Model.CompetencyAssessmentName</h1>
 <dl class="nhsuk-summary-list">
-@if (Model.PrimaryFramework != null)
-{
+    @if (Model.PrimaryFramework != null)
+    {
         <div class="nhsuk-summary-list__row">
             <dt class="nhsuk-summary-list__key">
                 Primary framework
@@ -40,27 +40,26 @@
                 </a>
             </dd>
         </div>
-
-        @if (Model.AdditionalFrameworks.Count() > 0)
+    }
+    @if (Model.AdditionalFrameworks.Count() > 0)
+    {
+        for (int i = 0; i < Model.AdditionalFrameworks.Count(); i++)
         {
-            for (int i = 0; i < Model.AdditionalFrameworks.Count(); i++)
-            {
-                <div class="nhsuk-summary-list__row">
-                    <dt class="nhsuk-summary-list__key">
-                        Additional framework @i
-                    </dt>
-                    <dd class="nhsuk-summary-list__value">
-                        @Model.AdditionalFrameworks.ElementAt(i).FrameworkName
-                    </dd>
-                    <dd class="nhsuk-summary-list__actions">
-                        <a asp-action="RemoveFramework" asp-route-frameworkId="@Model.AdditionalFrameworks.ElementAt(i).ID" asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">
-                            Remove<span class="nhsuk-u-visually-hidden"> @Model.AdditionalFrameworks.ElementAt(i).FrameworkName</span>
-                        </a>
-                    </dd>
-                </div>
-            }
+            <div class="nhsuk-summary-list__row">
+                <dt class="nhsuk-summary-list__key">
+                    Additional framework @i
+                </dt>
+                <dd class="nhsuk-summary-list__value">
+                    @Model.AdditionalFrameworks.ElementAt(i).FrameworkName
+                </dd>
+                <dd class="nhsuk-summary-list__actions">
+                    <a asp-action="RemoveFramework" asp-route-frameworkId="@Model.AdditionalFrameworks.ElementAt(i).ID" asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">
+                        Remove<span class="nhsuk-u-visually-hidden"> @Model.AdditionalFrameworks.ElementAt(i).FrameworkName</span>
+                    </a>
+                </dd>
+            </div>
         }
-}
+    }
 </dl>
 @if (Model.ActionName == "AddFramework")
 {
