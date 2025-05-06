@@ -50,7 +50,7 @@
         bool UpdateBrandingTaskStatus(int assessmentId, bool taskStatus);
         bool UpdateVocabularyTaskStatus(int assessmentId, bool taskStatus);
         bool UpdateRoleProfileLinksTaskStatus(int assessmentId, bool taskStatus);
-        bool UpdateFrameworkLinksTaskStatus(int assessmentId, bool taskStatus);
+        bool UpdateFrameworkLinksTaskStatus(int assessmentId, bool taskStatus, bool? previousStatus);
         bool RemoveSelfAssessmentFramework(int assessmentId, int frameworkId, int adminId);
         bool UpdateSelectCompetenciesTaskStatus(int assessmentId, bool taskStatus, bool? previousStatus);
         bool UpdateOptionalCompetenciesTaskStatus(int assessmentId, bool taskStatus, bool? previousStatus);
@@ -529,12 +529,12 @@
           );
         }
 
-        public bool UpdateFrameworkLinksTaskStatus(int assessmentId, bool taskStatus)
+        public bool UpdateFrameworkLinksTaskStatus(int assessmentId, bool taskStatus, bool? previousStatus)
         {
             var numberOfAffectedRows = connection.Execute(
                @"UPDATE SelfAssessmentTaskStatus SET FrameworkLinksTaskStatus = @taskStatus
-                    WHERE SelfAssessmentId = @assessmentId",
-               new { assessmentId, taskStatus }
+                    WHERE SelfAssessmentId = @assessmentId  AND (@previousStatus IS NULL OR FrameworkLinksTaskStatus = @previousStatus)",
+               new { assessmentId, taskStatus, previousStatus }
            );
             if (numberOfAffectedRows < 1)
             {

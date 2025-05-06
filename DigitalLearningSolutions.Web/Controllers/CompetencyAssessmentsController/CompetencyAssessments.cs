@@ -445,7 +445,7 @@
             }
             else
             {
-                competencyAssessmentService.UpdateFrameworkLinksTaskStatus(model.CompetencyAssessmentId, model.TaskStatus ?? false);
+                competencyAssessmentService.UpdateFrameworkLinksTaskStatus(model.CompetencyAssessmentId, model.TaskStatus ?? false, null);
                 return RedirectToAction("ManageCompetencyAssessment", new { competencyAssessmentId = model.CompetencyAssessmentId });
             }
         }

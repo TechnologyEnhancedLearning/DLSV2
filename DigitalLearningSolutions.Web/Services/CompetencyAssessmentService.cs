@@ -39,7 +39,7 @@ namespace DigitalLearningSolutions.Web.Services
         bool UpdateCompetencyAssessmentVocabulary(int assessmentId, int adminId, string vocabulary);
         bool UpdateVocabularyTaskStatus(int assessmentId, bool taskStatus);
         bool UpdateRoleProfileLinksTaskStatus(int assessmentId, bool taskStatus);
-        bool UpdateFrameworkLinksTaskStatus(int assessmentId, bool taskStatus);
+        bool UpdateFrameworkLinksTaskStatus(int assessmentId, bool taskStatus, bool? previousStatus);
         bool UpdateSelectCompetenciesTaskStatus(int competencyAssessmentId, bool taskStatus, bool? previousStatus);
         bool UpdateOptionalCompetenciesTaskStatus(int assessmentId, bool taskStatus, bool? previousStatus);
         bool UpdateRoleRequirementsTaskStatus(int assessmentId, bool taskStatus, bool? previousStatus);
@@ -175,9 +175,9 @@ namespace DigitalLearningSolutions.Web.Services
             return competencyAssessmentDataService.InsertSelfAssessmentFramework(adminId, assessmentId, frameworkId);
         }
 
-        public bool UpdateFrameworkLinksTaskStatus(int assessmentId, bool taskStatus)
+        public bool UpdateFrameworkLinksTaskStatus(int assessmentId, bool taskStatus, bool? previousStatus)
         {
-            return competencyAssessmentDataService.UpdateFrameworkLinksTaskStatus(assessmentId, taskStatus);
+            return competencyAssessmentDataService.UpdateFrameworkLinksTaskStatus(assessmentId, taskStatus, previousStatus);
         }
 
         public int? GetPrimaryLinkedFrameworkId(int assessmentId)
@@ -187,6 +187,7 @@ namespace DigitalLearningSolutions.Web.Services
 
         public bool RemoveSelfAssessmentFramework(int assessmentId, int frameworkId, int adminId)
         {
+            UpdateFrameworkLinksTaskStatus(assessmentId, false, true);
             return competencyAssessmentDataService.RemoveSelfAssessmentFramework(assessmentId, frameworkId, adminId);
         }
 
