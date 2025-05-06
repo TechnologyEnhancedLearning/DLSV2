@@ -92,13 +92,15 @@
                  sa.Archived,
                  sa.LastEdit,
                 STUFF((
-                        SELECT 
-                            ', ' + f.FrameworkName
-                        FROM 
-                            Frameworks f
-                       WHERE 
-                            f.ID = saf.FrameworkId
-                        FOR XML PATH(''), TYPE).value('.', 'NVARCHAR(MAX)'), 1, 2, '') AS LinkedFrameworks,
+                    SELECT 
+                        ', ' + f.FrameworkName
+                    FROM 
+                        SelfAssessmentFrameworks saf2
+                        INNER JOIN Frameworks f ON f.ID = saf2.FrameworkId
+                    WHERE 
+                        saf2.SelfAssessmentId = sa.ID
+                    FOR XML PATH(''), TYPE).value('.', 'NVARCHAR(MAX)'), 1, 2, ''
+                ) AS LinkedFrameworks,
                  (SELECT ProfessionalGroup
                  FROM    NRPProfessionalGroups
                  WHERE (ID = sa.NRPProfessionalGroupID)) AS NRPProfessionalGroup,
@@ -115,8 +117,7 @@
 
         private const string SelfAssessmentTables =
             @" LEFT OUTER JOIN
-             SelfAssessmentReviews AS sar ON sac.ID = sar.SelfAssessmentCollaboratorID AND sar.Archived IS NULL AND sar.ReviewComplete IS NULL
-                LEFT OUTER JOIN SelfAssessmentFrameworks AS saf ON sa.ID = saf.SelfAssessmentId";
+             SelfAssessmentReviews AS sar ON sac.ID = sar.SelfAssessmentCollaboratorID AND sar.Archived IS NULL AND sar.ReviewComplete IS NULL";
 
         private readonly IDbConnection connection;
         private readonly ILogger<CompetencyAssessmentDataService> logger;
