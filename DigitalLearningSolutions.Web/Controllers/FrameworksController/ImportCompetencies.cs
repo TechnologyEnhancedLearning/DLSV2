@@ -246,6 +246,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         [Route("/Framework/{frameworkId}/{tabname}/Import/Summary")]
         public IActionResult ImportSummary()
         {
+            if (!TempData.Any()) return  RedirectToAction("StatusCode", "LearningSolutions", new { code = 410 });
             var data = GetBulkUploadData();
             var model = new ImportSummaryViewModel(data);
             return View("Developer/Import/ImportSummary", model);
