@@ -2437,6 +2437,50 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[ReorderFrameworkCompetency]    Script Date: 24/04/2025 09:23:17 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 04/01/2021
+        ///-- Description:	Reorders the FrameworkCompetencies in a given FrameworkCompetencyGroup - moving the given competency up or down.
+        ///-- =============================================
+        ///ALTER   PROCEDURE [dbo].[ReorderFrameworkCompetency]
+        ///	 [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_5447_Alter_ReorderFrameworkCompetency_Down {
+            get {
+                return ResourceManager.GetString("TD_5447_Alter_ReorderFrameworkCompetency_Down", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[ReorderFrameworkCompetency]    Script Date: 24/04/2025 09:23:17 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 04/01/2021
+        ///-- Description:	Reorders the FrameworkCompetencies in a given FrameworkCompetencyGroup - moving the given competency up or down.
+        ///-- =============================================
+        ///ALTER   PROCEDURE [dbo].[ReorderFrameworkCompetency]
+        ///	 [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_5447_Alter_ReorderFrameworkCompetency_Up {
+            get {
+                return ResourceManager.GetString("TD_5447_Alter_ReorderFrameworkCompetency_Up", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[SendExpiredTBCReminders]    Script Date: 16/04/2025 10:50:12 ******/
         ///SET ANSI_NULLS ON
         ///GO

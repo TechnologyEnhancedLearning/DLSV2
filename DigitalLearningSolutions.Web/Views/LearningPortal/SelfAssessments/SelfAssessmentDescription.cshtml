@@ -31,12 +31,12 @@
 }
 @if (Model.LinearNavigation)
 {
-    <a role="button" class="nhsuk-button @(Model.UserBookmark != null || bookmarkIsRelevant ? "nhsuk-button--secondary" : "") trigger-loader" asp-action="AddOptionalCompetencies" asp-route-selfAssessmentId="@Model.Id" asp-route-vocabulary="@Model.VocabPlural">View @Model.VocabPlural</a>
+    <a role="button" class="nhsuk-button  trigger-loader" asp-action="AddOptionalCompetencies" asp-route-selfAssessmentId="@Model.Id" asp-route-vocabulary="@Model.VocabPlural">View @Model.VocabPlural</a>
     @if (Model.UserBookmark != null)
     {
         if (bookmarkIsRelevant)
         {
-            <a class="nhsuk-button trigger-loader" role="button" href="@Configuration["AppRootPath"]@Model.UserBookmark">
+            <a class="nhsuk-button nhsuk-button--secondary trigger-loader" role="button" href="@Configuration["AppRootPath"]@Model.UserBookmark">
                 Continue where I left off
             </a>
         }
