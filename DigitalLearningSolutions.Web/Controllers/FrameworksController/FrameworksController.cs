@@ -10,6 +10,8 @@
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
     using GDS.MultiPageFormData;
+    using DigitalLearningSolutions.Data.Utilities;
+    using Microsoft.AspNetCore.Hosting;
 
     [Authorize(Policy = CustomPolicies.UserFrameworksAdminOnly)]
     [SetDlsSubApplication(nameof(DlsSubApplication.Frameworks))]
@@ -25,7 +27,8 @@
         private readonly ILearningHubApiClient learningHubApiClient;
         private readonly ISearchSortFilterPaginateService searchSortFilterPaginateService;
         private readonly IMultiPageFormService multiPageFormService;
-
+        private readonly IClockUtility clockUtility;
+        private readonly IWebHostEnvironment webHostEnvironment;
         public FrameworksController(
             IFrameworkService frameworkService,
             ICommonService commonService,
@@ -35,7 +38,9 @@
             ICompetencyLearningResourcesService competencyLearningResourcesService,
             ILearningHubApiClient learningHubApiClient,
             ISearchSortFilterPaginateService searchSortFilterPaginateService,
-            IMultiPageFormService multiPageFormService
+            IMultiPageFormService multiPageFormService,
+            IClockUtility clockUtility,
+            IWebHostEnvironment webHostEnvironment
         )
         {
             this.frameworkService = frameworkService;
@@ -47,6 +52,8 @@
             this.learningHubApiClient = learningHubApiClient;
             this.searchSortFilterPaginateService = searchSortFilterPaginateService;
             this.multiPageFormService = multiPageFormService;
+            this.clockUtility = clockUtility;
+            this.webHostEnvironment = webHostEnvironment;
         }
 
         private int? GetCentreId()

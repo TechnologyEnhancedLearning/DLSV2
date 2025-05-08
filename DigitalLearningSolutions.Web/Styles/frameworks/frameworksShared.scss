@@ -1,4 +1,4 @@
-﻿@use "nhsuk-frontend/packages/core/all" as *;
+﻿@use "nhse-tel-frontend/packages/core/all" as *;
 @use "../shared/headingButtons" as *;
 @use "../shared/searchableElements/searchableElements" as *;
 $nhs-dark-grey: #425563;
@@ -250,4 +250,38 @@ h1.truncate-overflow::after {
 }
 .float-right{
     float:right;
+}
+@media print {
+
+  address, p, .nhsuk-body-m, ol, ul, td, .nhsuk-tag {
+    font-size: 12px !important;
+  }
+
+  h1 {
+    font-size: 20px !important;
+    break-after: avoid;
+  }
+
+  h2 {
+    font-size: 18px !important;
+    break-after: avoid;
+  }
+
+  h3, table {
+    break-after: avoid;
+    break-before: auto;
+  }
+
+  h3 {
+    font-size: 16px !important;
+  }
+
+  h4, th {
+    font-size: 14px !important;
+  }
+
+  tr {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
 }

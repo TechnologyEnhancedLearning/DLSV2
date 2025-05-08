@@ -1,0 +1,80 @@
+﻿@using DigitalLearningSolutions.Web.Extensions
+@using DigitalLearningSolutions.Web.ViewModels.Frameworks.Import
+
+@model ApplyCompetencyOrderingViewModel
+
+@{
+    ViewData["Application"] = "Framework Service";
+    ViewData["HeaderPathName"] = "Framework Service";
+    var errorHasOccurred = !ViewData.ModelState.IsValid;
+    ViewData["Title"] = errorHasOccurred ? "Error: Add Assessment Questions" : "Add Assessment Questions";
+    var cancelLinkData = Html.GetRouteValues();
+}
+<link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
+@section NavMenuItems {
+    <partial name="Shared/_NavMenuItems" />
+}
+@section NavBreadcrumbs {
+    <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+        <div class="nhsuk-width-container">
+            <ol class="nhsuk-breadcrumb__list">
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFrameworks" asp-route-tabname="Mine">Frameworks</a></li>
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFramework" asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]" asp-route-tabname="Structure">Framework Structure</a></li>
+                <li class="nhsuk-breadcrumb__item">Bulk upload</li>
+            </ol>
+            <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ViewFramework" asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]" asp-route-tabname="Structure">Back to framework structure</a></p>
+        </div>
+    </nav>
+}
+<div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full">
+        <div class="nhsuk-u-reading-width">
+            <form class="nhsuk-u-margin-bottom-3" method="post" enctype="multipart/form-data">
+                <fieldset class="nhsuk-fieldset">
+                    <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
+                        <h1 class="nhsuk-fieldset__heading">
+                            Apply @Model.FrameworkVocabularySingular.ToLower() sequence changes?
+                        </h1>
+                    </legend>
+                    <div class="nhsuk-inset-text">
+                        <span class="nhsuk-u-visually-hidden">Information: </span>
+                        <p>We strongly recommend including all framework @Model.FrameworkVocabularyPlural.ToLower() in your uploaded sheet if reordering @Model.FrameworkVocabularyPlural.ToLower() to ensure that the correct sequence is applied.</p>
+                        <p>Note that if you split @Model.FrameworkVocabularySingular.ToLower() groups in your uploaded sheet, they will not be split in your framework but the order of groups may be affected.</p>
+                    </div>
+                    <div class="nhsuk-hint nhsuk-u-margin-bottom-2">
+                        Your uploaded file includes changes to the order of existing @Model.FrameworkVocabularyPlural.ToLower(). Choose whether to store the changes to @Model.FrameworkVocabularySingular.ToLower() order during update.
+                    </div>
+                    <div class="nhsuk-hint">
+                        Select an option
+                    </div>
+                    <div class="nhsuk-form-group">
+                        <div class="nhsuk-radios">
+                            <div class="nhsuk-radios__item">
+                                <input class="nhsuk-radios__input" id="option-1" asp-for="@Model.ReorderCompetenciesOption" type="radio" value="1" aria-describedby="option-1-hint">
+                                <label class="nhsuk-label nhsuk-radios__label" for="option-1">
+                                    Ignore changes to @Model.FrameworkVocabularySingular.ToLower() order
+                                </label>
+                                <div class="nhsuk-hint nhsuk-radios__hint" id="option-1-hint">
+                                    @Model.FrameworkVocabularyPlural will be updated if they have changed but there sequence/order in the framework will not change.
+                                </div>
+                            </div>
+                            <div class="nhsuk-radios__item">
+                                <input class="nhsuk-radios__input" id="option-2" asp-for="@Model.ReorderCompetenciesOption" type="radio" value="2" aria-describedby="option-2-hint">
+                                <label class="nhsuk-label nhsuk-radios__label" for="option-2">
+                                    Apply changes to @Model.FrameworkVocabularySingular.ToLower() order
+                                </label>
+                                <div class="nhsuk-hint nhsuk-radios__hint" id="option-2-hint">
+                                    The order of @Model.FrameworkVocabularyPlural.ToLower() in the framework will be changed to reflect the order in the sheet during processing.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </fieldset>
+                <a asp-controller="Frameworks" asp-action="ImportCompleted" asp-all-route-data="@cancelLinkData" role="button" class="nhsuk-button nhsuk-button--secondary">Back</a>
+                <button class="nhsuk-button" type="submit">Next</button>
+            </form>
+            <vc:cancel-link asp-controller="Frameworks" asp-action="CancelImport" asp-all-route-data="@cancelLinkData" link-text="Cancel" />
+        </div>
+    </div>
+</div>

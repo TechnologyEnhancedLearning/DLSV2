@@ -8,6 +8,7 @@
     using DigitalLearningSolutions.Data.Models.Common;
     using DigitalLearningSolutions.Data.Models.Email;
     using DigitalLearningSolutions.Data.Models.Frameworks;
+    using DigitalLearningSolutions.Data.Models.Frameworks.Import;
     using DigitalLearningSolutions.Data.Models.SelfAssessments;
     using Microsoft.Extensions.Logging;
     using AssessmentQuestion = DigitalLearningSolutions.Data.Models.Frameworks.AssessmentQuestion;
@@ -61,6 +62,7 @@
         int GetMaxFrameworkCompetencyID();
 
         int GetMaxFrameworkCompetencyGroupID();
+        int GetFrameworkCompetencyGroupId(int frameworkId, int competencyGroupId);
 
         //  Assessment questions:
         IEnumerable<AssessmentQuestion> GetAllCompetencyQuestions(int adminId);
@@ -98,6 +100,8 @@
         );
 
         Competency? GetFrameworkCompetencyForPreview(int frameworkCompetencyId);
+        IEnumerable<BulkCompetency> GetBulkCompetenciesForFramework(int frameworkId);
+        List<int> GetFrameworkCompetencyOrder(int frameworkId, List<int> frameworkCompetencyIds);
 
         //  Comments:
         IEnumerable<CommentReplies> GetCommentsForFrameworkId(int frameworkId, int adminId);
@@ -120,18 +124,19 @@
         //INSERT DATA
         BrandedFramework CreateFramework(DetailFramework detailFramework, int adminId);
 
-        int InsertCompetencyGroup(string groupName, string? groupDescription, int adminId);
+        int InsertCompetencyGroup(string groupName, string? groupDescription, int adminId, int? frameworkId);
 
         int InsertFrameworkCompetencyGroup(int groupId, int frameworkID, int adminId);
 
         IEnumerable<FrameworkCompetency> GetAllCompetenciesForAdminId(string name, int adminId);
 
-        int InsertCompetency(string name, string? description, int adminId);
+        int InsertCompetency(string name, string? description, int adminId, bool alwaysShowDescription = false);
 
-        int InsertFrameworkCompetency(int competencyId, int? frameworkCompetencyGroupID, int adminId, int frameworkId);
+        int InsertFrameworkCompetency(int competencyId, int? frameworkCompetencyGroupID, int adminId, int frameworkId, bool addDefaultQuestions = true);
 
         int AddCollaboratorToFramework(int frameworkId, string userEmail, bool canModify, int? centreID);
-        void AddCustomFlagToFramework(int frameworkId, string flagName, string flagGroup, string flagTagClass);
+
+        int AddCustomFlagToFramework(int frameworkId, string flagName, string flagGroup, string flagTagClass);
         void UpdateFrameworkCustomFlag(int frameworkId, int id, string flagName, string flagGroup, string flagTagClass);
 
         void AddFrameworkDefaultQuestion(int frameworkId, int assessmentQuestionId, int adminId, bool addToExisting);
@@ -194,7 +199,7 @@
 
         void UpdateFrameworkConfig(int frameworkId, int adminId, string? frameworkConfig);
 
-        void UpdateFrameworkCompetencyGroup(
+        bool UpdateFrameworkCompetencyGroup(
             int frameworkCompetencyGroupId,
             int competencyGroupId,
             string name,
@@ -202,8 +207,8 @@
             int adminId
         );
 
-        void UpdateFrameworkCompetency(int frameworkCompetencyId, string name, string? description, int adminId);
-        void UpdateCompetencyFlags(int frameworkId, int competencyId, int[] selectedFlagIds);
+        void UpdateFrameworkCompetency(int frameworkCompetencyId, string name, string? description, int adminId, bool? alwaysShowDescription);
+        int UpdateCompetencyFlags(int frameworkId, int competencyId, int[] selectedFlagIds);
 
         void MoveFrameworkCompetencyGroup(int frameworkCompetencyGroupId, bool singleStep, string direction);
 
@@ -261,6 +266,7 @@
         void DeleteCompetencyAssessmentQuestion(int frameworkCompetencyId, int assessmentQuestionId, int adminId);
 
         void DeleteCompetencyLearningResource(int competencyLearningResourceId, int adminId);
+        void UpdateFrameworkCompetencyFrameworkCompetencyGroup(int? competencyGroupId, int frameworkCompetencyGroupId, int adminId);
     }
 
     public class FrameworkDataService : IFrameworkDataService
@@ -472,7 +478,7 @@
                 return new BrandedFramework();
             }
 
-            var existingFrameworks = (int)connection.ExecuteScalar(
+            var existingFrameworks = connection.QuerySingle<int>(
                 @"SELECT COUNT(*) FROM Frameworks WHERE FrameworkName = @frameworkName",
                 new { frameworkName }
             );
@@ -545,7 +551,7 @@
             return GetBrandedFrameworkByFrameworkId(frameworkId, adminId);
         }
 
-        public int InsertCompetencyGroup(string groupName, string? groupDescription, int adminId)
+        public int InsertCompetencyGroup(string groupName, string? groupDescription, int adminId, int? frameworkId)
         {
             if ((groupName.Length == 0) | (adminId < 1))
             {
@@ -555,33 +561,29 @@
                 return -2;
             }
             groupDescription = (groupDescription?.Trim() == "" ? null : groupDescription);
-            var existingId = (int)connection.ExecuteScalar(
-                @"SELECT COALESCE ((SELECT TOP(1)ID FROM CompetencyGroups WHERE [Name] = @groupName AND (@groupDescription IS NULL OR Description = @groupDescription)), 0) AS CompetencyGroupID",
-                new { groupName, groupDescription }
+            var existingId = connection.QuerySingle<int>(
+                @"SELECT COALESCE
+                 ((SELECT TOP (1) ID
+                  FROM    CompetencyGroups
+                  WHERE (Name = @groupName) AND EXISTS
+                                   (SELECT 1 AS Expr1
+                                   FROM    FrameworkCompetencyGroups
+                                   WHERE (CompetencyGroupID = CompetencyGroups.ID) AND (FrameworkID = @frameworkId) OR
+                                                (CompetencyGroupID = CompetencyGroups.ID) AND (@frameworkId IS NULL))), 0) AS CompetencyGroupID",
+                new { groupName, groupDescription, frameworkId }
             );
             if (existingId > 0)
             {
                 return existingId;
             }
 
-            var numberOfAffectedRows = connection.Execute(
+            existingId = connection.QuerySingle<int>(
                 @"INSERT INTO CompetencyGroups ([Name], [Description], UpdatedByAdminID)
+                    OUTPUT INSERTED.Id
                     VALUES (@groupName, @groupDescription, @adminId)",
                 new { groupName, groupDescription, adminId }
             );
-            if (numberOfAffectedRows < 1)
-            {
-                logger.LogWarning(
-                    "Not inserting competency group as db insert failed. " +
-                    $"Group name: {groupName}, admin id: {adminId}"
-                );
-                return -1;
-            }
 
-            existingId = (int)connection.ExecuteScalar(
-                @"SELECT COALESCE ((SELECT TOP(1)ID FROM CompetencyGroups WHERE [Name] = @groupName AND (@groupDescription IS NULL OR Description = @groupDescription)), 0) AS CompetencyGroupID",
-                new { groupName, groupDescription }
-            );
             return existingId;
         }
 
@@ -595,7 +597,7 @@
                 return -2;
             }
 
-            var existingId = (int)connection.ExecuteScalar(
+            var existingId = connection.QuerySingle<int>(
                 @"SELECT COALESCE ((SELECT ID FROM FrameworkCompetencyGroups WHERE CompetencyGroupID = @groupID AND FrameworkID = @frameworkID), 0) AS FrameworkCompetencyGroupID",
                 new { groupId, frameworkId }
             );
@@ -604,31 +606,20 @@
                 return existingId;
             }
 
-            var numberOfAffectedRows = connection.Execute(
+            existingId = connection.QuerySingle<int>(
                 @"INSERT INTO FrameworkCompetencyGroups (CompetencyGroupID, UpdatedByAdminID, Ordering, FrameworkID)
+                    OUTPUT INSERTED.Id
                     VALUES (@groupId, @adminId, COALESCE
                              ((SELECT        MAX(Ordering)
                                  FROM            [FrameworkCompetencyGroups]
                                  WHERE        ([FrameworkID] = @frameworkId)), 0)+1, @frameworkId)",
                 new { groupId, adminId, frameworkId }
             );
-            if (numberOfAffectedRows < 1)
-            {
-                logger.LogWarning(
-                    "Not inserting framework competency group as db insert failed. " +
-                    $"Group id: {groupId}, admin id: {adminId}, frameworkId: {frameworkId}"
-                );
-                return -1;
-            }
 
-            existingId = (int)connection.ExecuteScalar(
-                @"SELECT COALESCE ((SELECT ID FROM FrameworkCompetencyGroups WHERE CompetencyGroupID = @groupID AND FrameworkID = @frameworkID), 0) AS FrameworkCompetencyGroupID",
-                new { groupId, frameworkId }
-            );
             return existingId;
         }
 
-        public int InsertCompetency(string name, string? description, int adminId)
+        public int InsertCompetency(string name, string? description, int adminId, bool alwaysShowDescription = false)
         {
             if ((name.Length == 0) | (adminId < 1))
             {
@@ -640,10 +631,10 @@
             description = (description?.Trim() == "" ? null : description);
 
             var existingId = connection.QuerySingle<int>(
-                @"INSERT INTO Competencies ([Name], [Description], UpdatedByAdminID)
+                @"INSERT INTO Competencies ([Name], [Description], UpdatedByAdminID, AlwaysShowDescription)
                     OUTPUT INSERTED.Id
-                    VALUES (@name, @description, @adminId)",
-                new { name, description, adminId }
+                    VALUES (@name, @description, @adminId, @alwaysShowDescription)",
+                new { name, description, adminId, alwaysShowDescription }
             );
 
             return existingId;
@@ -653,7 +644,8 @@
             int competencyId,
             int? frameworkCompetencyGroupID,
             int adminId,
-            int frameworkId
+            int frameworkId,
+            bool addDefaultQuestions = true
         )
         {
             if ((competencyId < 1) | (adminId < 1) | (frameworkId < 1))
@@ -667,14 +659,14 @@
             var existingId = 0;
             if (frameworkCompetencyGroupID == null)
             {
-                existingId = (int)connection.ExecuteScalar(
+                existingId = connection.QuerySingle<int>(
                     @"SELECT COALESCE ((SELECT ID FROM FrameworkCompetencies WHERE [CompetencyID] = @competencyId AND FrameworkCompetencyGroupID IS NULL), 0) AS FrameworkCompetencyID",
                     new { competencyId, frameworkCompetencyGroupID }
                 );
             }
             else
             {
-                existingId = (int)connection.ExecuteScalar(
+                existingId = connection.QuerySingle<int>(
                     @"SELECT COALESCE ((SELECT ID FROM FrameworkCompetencies WHERE [CompetencyID] = @competencyId AND FrameworkCompetencyGroupID = @frameworkCompetencyGroupID), 0) AS FrameworkCompetencyID",
                     new { competencyId, frameworkCompetencyGroupID }
                 );
@@ -703,20 +695,22 @@
 
             if (frameworkCompetencyGroupID == null)
             {
-                existingId = (int)connection.ExecuteScalar(
+                existingId = connection.QuerySingle<int>(
                     @"SELECT COALESCE ((SELECT ID FROM FrameworkCompetencies WHERE [CompetencyID] = @competencyId AND FrameworkCompetencyGroupID IS NULL), 0) AS FrameworkCompetencyID",
                     new { competencyId, frameworkCompetencyGroupID }
                 );
             }
             else
             {
-                existingId = (int)connection.ExecuteScalar(
+                existingId = connection.QuerySingle<int>(
                     @"SELECT COALESCE ((SELECT ID FROM FrameworkCompetencies WHERE [CompetencyID] = @competencyId AND FrameworkCompetencyGroupID = @frameworkCompetencyGroupID), 0) AS FrameworkCompetencyID",
                     new { competencyId, frameworkCompetencyGroupID }
                 );
             }
-
-            AddDefaultQuestionsToCompetency(competencyId, frameworkId);
+            if(addDefaultQuestions)
+            {
+                AddDefaultQuestionsToCompetency(competencyId, frameworkId);
+            }
             return existingId;
         }
 
@@ -761,7 +755,7 @@
                 return -3;
             }
 
-            var existingId = (int)connection.ExecuteScalar(
+            var existingId = connection.QuerySingle<int>(
                 @"SELECT COALESCE
                  ((SELECT ID
                   FROM    FrameworkCollaborators
@@ -811,7 +805,7 @@
                 );
             }
 
-            existingId = (int)connection.ExecuteScalar(
+            existingId = connection.QuerySingle<int>(
                 @"SELECT COALESCE
                  ((SELECT ID
                   FROM    FrameworkCollaborators
@@ -903,7 +897,7 @@ GROUP BY fc.ID, c.ID, c.Name, c.Description, fc.Ordering
                 return false;
             }
 
-            var existingFrameworks = (int)connection.ExecuteScalar(
+            var existingFrameworks = connection.QuerySingle<int>(
                 @"SELECT COUNT(*) FROM Frameworks WHERE FrameworkName = @frameworkName AND ID <> @frameworkId",
                 new { frameworkName, frameworkId }
             );
@@ -975,7 +969,7 @@ GROUP BY fc.ID, c.ID, c.Name, c.Description, fc.Ordering
         public FrameworkCompetency? GetFrameworkCompetencyById(int Id)
         {
             return connection.QueryFirstOrDefault<FrameworkCompetency>(
-                @"SELECT fc.ID, c.ID AS CompetencyID, c.Name, c.Description, fc.Ordering
+                @"SELECT fc.ID, c.ID AS CompetencyID, c.Name, c.Description, fc.Ordering, c.AlwaysShowDescription
                     FROM FrameworkCompetencies AS fc
                         INNER JOIN Competencies AS c ON fc.CompetencyID = c.ID
                     WHERE fc.ID = @Id",
@@ -983,7 +977,7 @@ GROUP BY fc.ID, c.ID, c.Name, c.Description, fc.Ordering
             );
         }
 
-        public void UpdateFrameworkCompetencyGroup(
+        public bool UpdateFrameworkCompetencyGroup(
             int frameworkCompetencyGroupId,
             int competencyGroupId,
             string name,
@@ -996,10 +990,10 @@ GROUP BY fc.ID, c.ID, c.Name, c.Description, fc.Ordering
                 logger.LogWarning(
                     $"Not updating framework competency group as it failed server side validation. AdminId: {adminId}, frameworkCompetencyGroupId: {frameworkCompetencyGroupId}, competencyGroupId: {competencyGroupId}, name: {name}"
                 );
-                return;
+                return false;
             }
 
-            var usedElsewhere = (int)connection.ExecuteScalar(
+            var usedElsewhere = connection.QuerySingle<int>(
                 @"SELECT COUNT(*) FROM FrameworkCompetencyGroups
                     WHERE CompetencyGroupId = @competencyGroupId
                     AND ID <> @frameworkCompetencyGroupId",
@@ -1007,7 +1001,7 @@ GROUP BY fc.ID, c.ID, c.Name, c.Description, fc.Ordering
             );
             if (usedElsewhere > 0)
             {
-                var newCompetencyGroupId = InsertCompetencyGroup(name, description, adminId);
+                var newCompetencyGroupId = InsertCompetencyGroup(name, description, adminId, null);
                 if (newCompetencyGroupId > 0)
                 {
                     var numberOfAffectedRows = connection.Execute(
@@ -1015,6 +1009,7 @@ GROUP BY fc.ID, c.ID, c.Name, c.Description, fc.Ordering
                             SET CompetencyGroupID = @newCompetencyGroupId, UpdatedByAdminID = @adminId
                             WHERE ID = @frameworkCompetencyGroupId",
                         new { newCompetencyGroupId, adminId, frameworkCompetencyGroupId }
+
                     );
                     if (numberOfAffectedRows < 1)
                     {
@@ -1022,27 +1017,37 @@ GROUP BY fc.ID, c.ID, c.Name, c.Description, fc.Ordering
                             "Not updating competency group id as db update failed. " +
                             $"newCompetencyGroupId: {newCompetencyGroupId}, admin id: {adminId}, frameworkCompetencyGroupId: {frameworkCompetencyGroupId}"
                         );
+                        return false;
                     }
+                    else
+                    {
+                        return true;
+                    }
+                }
+                else
+                {
+                    return false;
                 }
             }
             else
             {
                 var numberOfAffectedRows = connection.Execute(
                     @"UPDATE CompetencyGroups SET Name = @name, UpdatedByAdminID = @adminId, Description = @description
-                    WHERE ID = @competencyGroupId",
+                    WHERE ID = @competencyGroupId AND (Name <> @name OR Description <> @description)",
                     new { name, adminId, competencyGroupId, description }
                 );
                 if (numberOfAffectedRows < 1)
                 {
-                    logger.LogWarning(
-                        "Not updating competency group name as db update failed. " +
-                        $"Name: {name}, admin id: {adminId}, competencyGroupId: {competencyGroupId}"
-                    );
+                    return false;
+                }
+                else
+                {
+                    return true;
                 }
             }
         }
 
-        public void UpdateFrameworkCompetency(int frameworkCompetencyId, string name, string? description, int adminId)
+        public void UpdateFrameworkCompetency(int frameworkCompetencyId, string name, string? description, int adminId, bool? alwaysShowDescription)
         {
             if ((frameworkCompetencyId < 1) | (adminId < 1) | (name.Length < 3))
             {
@@ -1054,10 +1059,10 @@ GROUP BY fc.ID, c.ID, c.Name, c.Description, fc.Ordering
 
             //DO WE NEED SOMETHING IN HERE TO CHECK WHETHER IT IS USED ELSEWHERE AND WARN THE USER?
             var numberOfAffectedRows = connection.Execute(
-                @"UPDATE Competencies SET Name = @name, Description = @description, UpdatedByAdminID = @adminId
+                @"UPDATE Competencies SET Name = @name, Description = @description, UpdatedByAdminID = @adminId, AlwaysShowDescription = CASE WHEN @alwaysShowDescription IS NULL THEN AlwaysShowDescription ELSE @alwaysShowDescription END
                     FROM   Competencies INNER JOIN FrameworkCompetencies AS fc ON Competencies.ID = fc.CompetencyID
                     WHERE (fc.Id = @frameworkCompetencyId)",
-                new { name, description, adminId, frameworkCompetencyId }
+                new { name, description, adminId, frameworkCompetencyId, alwaysShowDescription }
             );
             if (numberOfAffectedRows < 1)
             {
@@ -1068,13 +1073,14 @@ GROUP BY fc.ID, c.ID, c.Name, c.Description, fc.Ordering
             }
         }
 
-        public void UpdateCompetencyFlags(int frameworkId, int competencyId, int[] selectedFlagIds)
+        public int UpdateCompetencyFlags(int frameworkId, int competencyId, int[] selectedFlagIds)
         {
+            int totalRowsAffected = 0;
             string? commaSeparatedSelectedFlagIds = null;
             if (selectedFlagIds?.Length > 0)
             {
                 commaSeparatedSelectedFlagIds = String.Join(',', selectedFlagIds);
-                connection.Execute(
+                totalRowsAffected += connection.Execute(
                     @$"INSERT INTO CompetencyFlags(CompetencyID, FlagID, Selected)
 						SELECT @competencyId, f.ID, 1
 						FROM Flags f
@@ -1084,18 +1090,20 @@ GROUP BY fc.ID, c.ID, c.Name, c.Description, fc.Ordering
 						)",
                     new { competencyId, selectedFlagIds });
             }
-            connection.Execute(
+            totalRowsAffected += connection.Execute(
                 @$"UPDATE CompetencyFlags
                     SET Selected = (CASE WHEN FlagID IN ({commaSeparatedSelectedFlagIds ?? "null"}) THEN 1 ELSE 0 END)
-                    WHERE CompetencyID = @competencyId",
+                    WHERE CompetencyID = @competencyId AND Selected <> (CASE WHEN FlagID IN ({commaSeparatedSelectedFlagIds ?? "null"}) THEN 1 ELSE 0 END)",
                 new { competencyId, frameworkId });
+            return totalRowsAffected;
         }
 
-        public void AddCustomFlagToFramework(int frameworkId, string flagName, string flagGroup, string flagTagClass)
+        public int AddCustomFlagToFramework(int frameworkId, string flagName, string flagGroup, string flagTagClass)
         {
-            connection.Execute(
-                @$"INSERT INTO Flags(FrameworkID, FlagName, FlagGroup, FlagTagClass)
-                    VALUES(@frameworkId, @flagName, @flagGroup, @flagTagClass)",
+            return connection.QuerySingle<int>(
+                @"INSERT INTO Flags(FrameworkID, FlagName, FlagGroup, FlagTagClass)
+                    OUTPUT INSERTED.ID
+                    VALUES(@frameworkId, @flagName, @flagGroup, @flagTagClass);",
                 new { frameworkId, flagName, flagGroup, flagTagClass });
         }
 
@@ -1108,7 +1116,7 @@ GROUP BY fc.ID, c.ID, c.Name, c.Description, fc.Ordering
                 new { frameworkId, id, flagName, flagGroup, flagTagClass });
         }
 
-        public void MoveFrameworkCompetencyGroup(int frameworkCompetencyGroupId, bool singleStep, string direction)
+        public void MoveFrameworkCompetencyGroup(int frameworkCompetencyGroupId, bool singleStep, string direction) // Valid directions are 'UP' and 'DOWN'
         {
             connection.Execute(
                 "ReorderFrameworkCompetencyGroup",
@@ -1117,7 +1125,7 @@ GROUP BY fc.ID, c.ID, c.Name, c.Description, fc.Ordering
             );
         }
 
-        public void MoveFrameworkCompetency(int frameworkCompetencyId, bool singleStep, string direction)
+        public void MoveFrameworkCompetency(int frameworkCompetencyId, bool singleStep, string direction) // Valid directions are 'UP' and 'DOWN'
         {
             connection.Execute(
                 "ReorderFrameworkCompetency",
@@ -1166,14 +1174,14 @@ GROUP BY fc.ID, c.ID, c.Name, c.Description, fc.Ordering
             }
 
             //Check if used elsewhere and delete competency group if not:
-            var usedElsewhere = (int)connection.ExecuteScalar(
+            var usedElsewhere = connection.QuerySingle<int>(
                 @"SELECT COUNT(*) FROM FrameworkCompetencyGroups
                     WHERE CompetencyGroupId = @competencyGroupId",
                 new { competencyGroupId }
             );
             if (usedElsewhere == 0)
             {
-                usedElsewhere = (int)connection.ExecuteScalar(
+                usedElsewhere = connection.QuerySingle<int>(
                     @"SELECT COUNT(*) FROM SelfAssessmentStructure
                     WHERE CompetencyGroupId = @competencyGroupId",
                     new { competencyGroupId }
@@ -1204,7 +1212,7 @@ GROUP BY fc.ID, c.ID, c.Name, c.Description, fc.Ordering
 
         public void DeleteFrameworkCompetency(int frameworkCompetencyId, int adminId)
         {
-            var competencyId = (int)connection.ExecuteScalar(
+            var competencyId = connection.QuerySingle<int>(
                 @"SELECT CompetencyID FROM FrameworkCompetencies WHERE ID = @frameworkCompetencyId",
                 new { frameworkCompetencyId }
             );
@@ -1235,14 +1243,14 @@ GROUP BY fc.ID, c.ID, c.Name, c.Description, fc.Ordering
             }
 
             //Check if used elsewhere and delete competency group if not:
-            var usedElsewhere = (int)connection.ExecuteScalar(
+            var usedElsewhere = connection.QuerySingle<int>(
                 @"SELECT COUNT(*) FROM FrameworkCompetencies
                     WHERE CompetencyID = @competencyId",
                 new { competencyId }
             );
             if (usedElsewhere == 0)
             {
-                usedElsewhere = (int)connection.ExecuteScalar(
+                usedElsewhere = connection.QuerySingle<int>(
                     @"SELECT COUNT(*) FROM SelfAssessmentStructure
                     WHERE CompetencyID = @competencyId",
                     new { competencyId }
@@ -1511,7 +1519,13 @@ WHERE (FrameworkID = @frameworkId)",
                                  FROM            [CompetencyAssessmentQuestions]
                                  WHERE        ([CompetencyId] = fc.CompetencyID)), 0)+1
                         FROM FrameworkCompetencies AS fc
-                        WHERE Id = @frameworkCompetencyId",
+                        WHERE Id = @frameworkCompetencyId
+                        AND NOT EXISTS (
+                            SELECT 1
+                            FROM CompetencyAssessmentQuestions AS caq
+                            WHERE caq.CompetencyId = fc.CompetencyID
+                            AND caq.AssessmentQuestionID = @assessmentQuestionId
+                        );",
                 new { frameworkCompetencyId, assessmentQuestionId }
             );
             if (numberOfAffectedRows < 1)
@@ -2097,7 +2111,7 @@ WHERE (ID = @commentId)",
                         AU1.Email AS OwnerEmail,
                         FW.FrameworkName
                     FROM FrameworkReviews AS FR
-                    INNER JOIN FrameworkCollaborators AS FC ON FR.FrameworkCollaboratorID = FC.ID  AND FWC.IsDeleted = 0
+                    INNER JOIN FrameworkCollaborators AS FC ON FR.FrameworkCollaboratorID = FC.ID  AND FC.IsDeleted = 0
                     INNER JOIN AdminUsers AS AU ON FC.AdminID = AU.AdminID
                     INNER JOIN Frameworks AS FW ON FR.FrameworkID = FW.ID
                     INNER JOIN AdminUsers AS AU1 ON FW.OwnerAdminID = AU1.AdminID
@@ -2395,6 +2409,74 @@ WHERE (RP.CreatedByAdminID = @adminId) OR
                     WHERE (FrameworkId = @frameworkId) AND (NOT EXISTS  (SELECT * FROM CompetencyAssessmentQuestions WHERE AssessmentQuestionID = FrameworkDefaultQuestions.AssessmentQuestionID AND CompetencyID = @competencyId))",
                 new { competencyId, frameworkId }
             );
+        }
+
+        public IEnumerable<BulkCompetency> GetBulkCompetenciesForFramework(int frameworkId)
+        {
+            if (frameworkId < 1)
+            {
+                return connection.Query<BulkCompetency>(
+                @"SELECT NULL AS ID, '' AS CompetencyGroup, '' AS GroupDescription, '' AS Competency, '' AS CompetencyDescription, 0 AS AlwaysShowDescription, '' AS FlagsCsv"
+            );
+            }
+            else
+            {
+                return connection.Query<BulkCompetency>(
+                @"SELECT fc.ID, ISNULL(cg.Name, '') AS CompetencyGroup, cg.Description AS GroupDescription, c.Name AS Competency, c.Description AS CompetencyDescription, c.AlwaysShowDescription, STUFF((
+                        SELECT ', ' + f.FlagName
+                        FROM Flags AS f
+                        INNER JOIN CompetencyFlags AS cf ON f.ID = cf.FlagID
+                        WHERE cf.CompetencyID = c.ID
+                        FOR XML PATH(''), TYPE).value('.', 'NVARCHAR(MAX)'), 1, 2, '') AS FlagsCsv
+                    FROM 
+                         Competencies AS c INNER JOIN
+                         FrameworkCompetencies AS fc ON c.ID = fc.CompetencyID LEFT JOIN
+                         FrameworkCompetencyGroups AS fcg ON fc.FrameworkCompetencyGroupID = fcg.ID LEFT JOIN
+                         CompetencyGroups AS cg ON fcg.CompetencyGroupID = cg.ID
+                    WHERE (fc.FrameworkID = @frameworkId)
+                    GROUP BY fc.ID, c.ID, cg.Name, cg.Description, c.Name, c.Description, c.AlwaysShowDescription, fcg.Ordering, fc.Ordering
+                    ORDER BY COALESCE(fcg.Ordering,99999), fc.Ordering, fc.ID",
+                                new { frameworkId }
+                            );
+            }
+
+        }
+        public List<int> GetFrameworkCompetencyOrder(int frameworkId, List<int> frameworkCompetencyIds)
+        {
+            return connection.Query<int>(
+                @"SELECT fc.ID
+                    FROM   FrameworkCompetencies AS fc LEFT JOIN
+                                 FrameworkCompetencyGroups AS fcg ON fc.FrameworkCompetencyGroupID = fcg.ID
+                    WHERE (fc.FrameworkID = @frameworkId) AND (fc.ID IN @frameworkCompetencyIds)
+                    ORDER BY COALESCE(fcg.Ordering,99999), fc.Ordering, fc.ID",
+                                new { frameworkId, frameworkCompetencyIds }
+                            ).ToList();
+        }
+
+        public int GetFrameworkCompetencyGroupId(int frameworkId, int competencyGroupId)
+        {
+            return connection.Query<int>(
+                @"SELECT MAX(ID) FROM FrameworkCompetencyGroups 
+                 WHERE FrameworkID = @frameworkId AND CompetencyGroupID = @competencyGroupId",
+                                new { frameworkId, competencyGroupId }
+                                ).Single();
+        }
+
+        public void UpdateFrameworkCompetencyFrameworkCompetencyGroup(int? competencyGroupId, int frameworkCompetencyGroupId, int adminId)
+        {
+            var numberOfAffectedRows = connection.Execute(
+                @"UPDATE FrameworkCompetencies
+                    SET FrameworkCompetencyGroupId = @frameworkCompetencyGroupId, UpdatedByAdminID = @adminId
+                    WHERE ID = @competencyGroupId AND FrameworkCompetencyGroupId <> @frameworkCompetencyGroupId",
+                new { frameworkCompetencyGroupId, competencyGroupId, adminId }
+            );
+            if (numberOfAffectedRows < 1)
+            {
+                logger.LogWarning(
+                    "Not updating framework competencies framework competency group id as db update failed. " +
+                    $"frameworkCompetencyGroupId: {frameworkCompetencyGroupId}, competencyGroupId: {competencyGroupId}."
+                );
+            }
         }
     }
 }

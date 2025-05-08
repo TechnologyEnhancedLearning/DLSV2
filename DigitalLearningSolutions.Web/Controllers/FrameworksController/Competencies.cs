@@ -71,7 +71,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
              (competencyGroupBase.Description), adminId);
                 return new RedirectResult(Url.Action("ViewFramework", new { tabname = "Structure", frameworkId }) + "#fcgroup-" + frameworkCompetencyGroupId.ToString());
             }
-            var newCompetencyGroupId = frameworkService.InsertCompetencyGroup(competencyGroupBase.Name, SanitizerHelper.SanitizeHtmlData(competencyGroupBase.Description), adminId);
+            var newCompetencyGroupId = frameworkService.InsertCompetencyGroup(competencyGroupBase.Name, SanitizerHelper.SanitizeHtmlData(competencyGroupBase.Description), adminId, frameworkId);
             if (newCompetencyGroupId > 0)
             {
                 var newFrameworkCompetencyGroupId = frameworkService.InsertFrameworkCompetencyGroup(newCompetencyGroupId, frameworkId, adminId);
@@ -148,7 +148,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                 ModelState.AddModelError(nameof(FrameworkCompetency.Name), "Please enter a valid competency statement (between 3 and 500 characters)");
                 var competencyFlags = frameworkService.GetCompetencyFlagsByFrameworkId(frameworkId, frameworkCompetency?.CompetencyID).ToList();
                 if (competencyFlags != null)
-                    competencyFlags.ForEach(f => f.Selected = selectedFlagIds.Contains(f.FlagId));
+                    competencyFlags.ForEach(f => f.Selected = selectedFlagIds != null ? selectedFlagIds.Contains(f.FlagId) : false);
                 if (detailFramework == null)
                     return StatusCode((int)HttpStatusCode.NotFound);
                 var model = new FrameworkCompetencyViewModel()

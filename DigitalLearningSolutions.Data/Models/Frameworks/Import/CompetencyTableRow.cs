@@ -1,52 +1,68 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.Frameworks.Import
 {
     using ClosedXML.Excel;
-    using System;
-    using System.Collections.Generic;
-    using System.Text;
+
     public enum RowStatus
     {
         NotYetProcessed,
         Skipped,
-        CompetencyGroupInserted,
         CompetencyGroupAndCompetencyInserted,
-        CompetencyInserted
+        CompetencyInserted,
+        CompetencyUpdated,
+        CompetencyGroupInserted,
+        CompetencyGroupUpdated,
+        CompetencyGroupAndCompetencyUpdated,
+        InvalidAlwaysShowDescription,
+        InvalidId
     }
-    public class CompetencyTableRow
+    public class CompetencyTableRow : BulkCompetency
     {
         public CompetencyTableRow(IXLTable table, IXLRangeRow row)
         {
             string? FindFieldValue(string name)
             {
-                var colNumber = table.FindColumn(col => col.FirstCell().Value.ToString()?.ToLower() == name).ColumnNumber();
+                var colNumber = table.FindColumn(col => col.FirstCell().Value.ToString()?.ToLower() == name.ToLower()).ColumnNumber();
                 return row.Cell(colNumber).GetValue<string?>();
             }
 
             RowNumber = row.RowNumber();
-            CompetencyGroupName = FindFieldValue("competency group");
-            CompetencyName = FindFieldValue("competency name");
-            CompetencyDescription = FindFieldValue("competency description");
+            ID = row.Cell(1).GetValue<int?>();
+            CompetencyGroup = row.Cell(2).GetValue<string?>();
+            GroupDescription = row.Cell(3).GetValue<string?>();
+            Competency = row.Cell(4).GetValue<string?>();
+            CompetencyDescription = row.Cell(5).GetValue<string?>();
+            AlwaysShowDescriptionRaw = FindFieldValue("AlwaysShowDescription");
+            AlwaysShowDescription = bool.TryParse(AlwaysShowDescriptionRaw, out var hasPrn) ? hasPrn : (bool?)null;
+            FlagsCsv = FindFieldValue("FlagsCSV");
             RowStatus = RowStatus.NotYetProcessed;
         }
         public int RowNumber { get; set; }
-        public string? CompetencyGroupName { get; set; }
-        public string? CompetencyName { get; set; }
-        public string? CompetencyDescription { get; set; }
+        public int CompetencyOrderNumber { get; set; }
+        public string? AlwaysShowDescriptionRaw { get; set; }
         public ImportCompetenciesResult.ErrorReason? Error { get; set; }
         public RowStatus RowStatus { get; set; }
+        public bool Reordered { get; set; } = false;
         public bool Validate()
         {
-            if (string.IsNullOrEmpty(CompetencyName))
+            if (string.IsNullOrEmpty(Competency))
             {
                 Error = ImportCompetenciesResult.ErrorReason.MissingCompetencyName;
             }
-            else if (CompetencyGroupName?.Length > 255)
+            else if (CompetencyGroup?.Length > 255)
             {
                 Error = ImportCompetenciesResult.ErrorReason.TooLongCompetencyGroupName;
             }
-            else if (CompetencyName.Length > 500)
+            else if (Competency.Length > 500)
             {
                 Error = ImportCompetenciesResult.ErrorReason.TooLongCompetencyName;
+            }
+            else if (!string.IsNullOrWhiteSpace(AlwaysShowDescriptionRaw) && !bool.TryParse(AlwaysShowDescriptionRaw, out _))
+            {
+                Error = ImportCompetenciesResult.ErrorReason.InvalidAlwaysShowDescription;
+            }
+            else if (RowStatus == RowStatus.InvalidId)
+            {
+                Error = ImportCompetenciesResult.ErrorReason.InvalidId;
             }
 
             return !Error.HasValue;

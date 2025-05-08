@@ -87,7 +87,10 @@
         public IActionResult TableauCompetencyDashboard()
         {
             var userEmail = User.GetUserPrimaryEmail();
-            var jwt = tableauConnectionHelper.GetTableauJwt(userEmail);
+            var adminId = User.GetAdminId();
+            var jwt = tableauConnectionHelper.GetTableauJwt();
+            ViewBag.Email = userEmail;
+            ViewBag.AdminId = adminId;
             ViewBag.SiteName = tableauSiteName;
             ViewBag.TableauServerUrl = tableauUrl;
             ViewBag.WorkbookName = workbookName;

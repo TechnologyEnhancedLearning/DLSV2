@@ -67,11 +67,11 @@
         <PackageReference Include="FluentMigrator.Runner.SqlServer" Version="6.2.0" />
         <PackageReference Include="FuzzySharp" Version="2.0.2" />
         <PackageReference Include="GDS.MultiPageFormData" Version="1.0.6" />
-        <PackageReference Include="HtmlAgilityPack" Version="1.11.54" />
+        <PackageReference Include="HtmlAgilityPack" Version="1.11.74" />
         <PackageReference Include="HtmlSanitizer" Version="8.0.795" />
-        <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="6.0.29" />
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="8.0.13" />
         <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="6.0.24" />
-        <PackageReference Include="Microsoft.Data.SqlClient" Version="5.2.2" />
+        <PackageReference Include="Microsoft.Data.SqlClient" Version="6.0.1" />
         <PackageReference Include="Microsoft.FeatureManagement" Version="3.1.0" />
         <PackageReference Include="Microsoft.FeatureManagement.AspNetCore" Version="2.5.1" />
         <PackageReference Include="Microsoft.TypeScript.MSBuild" Version="5.4.2">
@@ -80,14 +80,232 @@
         </PackageReference>
         <PackageReference Include="Microsoft.VisualStudio.Web.BrowserLink" Version="2.2.0" />
         <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.16" />
-        <PackageReference Include="NHSUKViewComponents.Web" Version="1.0.24" />
-        <PackageReference Include="NodaTime" Version="3.1.11" />
+        <PackageReference Include="NHSUKViewComponents.Web" Version="1.0.29" />
+        <PackageReference Include="NodaTime" Version="3.2.1" />
         <PackageReference Include="Npm" Version="3.5.2" />
         <PackageReference Include="Serilog.AspNetCore" Version="7.0.0" />
-        <PackageReference Include="Serilog.Sinks.MSSqlServer" Version="6.3.0" />
+        <PackageReference Include="Serilog.Sinks.MSSqlServer" Version="8.1.0" />
     </ItemGroup>
 
     <ItemGroup>
+        <None Include="node_modules\nhsuk-frontend\dist\nhsuk-9.1.0.min.js" />
+        <None Include="node_modules\nhsuk-frontend\dist\nhsuk.js" />
+        <None Include="node_modules\nhsuk-frontend\dist\nhsuk.min.js" />
+        <None Include="node_modules\nhsuk-frontend\LICENSE" />
+        <None Include="node_modules\nhsuk-frontend\packages\assets\favicons\favicon.svg" />
+        <None Include="node_modules\nhsuk-frontend\packages\assets\icons\icon-arrow-left.svg" />
+        <None Include="node_modules\nhsuk-frontend\packages\assets\icons\icon-arrow-right-circle.svg" />
+        <None Include="node_modules\nhsuk-frontend\packages\assets\icons\icon-arrow-right.svg" />
+        <None Include="node_modules\nhsuk-frontend\packages\assets\icons\icon-chevron-left.svg" />
+        <None Include="node_modules\nhsuk-frontend\packages\assets\icons\icon-chevron-right.svg" />
+        <None Include="node_modules\nhsuk-frontend\packages\assets\icons\icon-close.svg" />
+        <None Include="node_modules\nhsuk-frontend\packages\assets\icons\icon-cross.svg" />
+        <None Include="node_modules\nhsuk-frontend\packages\assets\icons\icon-emdash-small.svg" />
+        <None Include="node_modules\nhsuk-frontend\packages\assets\icons\icon-emdash.svg" />
+        <None Include="node_modules\nhsuk-frontend\packages\assets\icons\icon-minus.svg" />
+        <None Include="node_modules\nhsuk-frontend\packages\assets\icons\icon-plus.svg" />
+        <None Include="node_modules\nhsuk-frontend\packages\assets\icons\icon-search.svg" />
+        <None Include="node_modules\nhsuk-frontend\packages\assets\icons\icon-tick.svg" />
+        <None Include="node_modules\nhsuk-frontend\packages\assets\logos\logo-nhs.svg" />
+        <None Include="node_modules\nhsuk-frontend\packages\common.js" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\action-link\macro.njk" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\action-link\README.md" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\action-link\template.njk" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\action-link\_action-link.scss" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\back-link\macro.njk" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\back-link\README.md" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\back-link\template.njk" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\back-link\_back-link.scss" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\breadcrumb\macro.njk" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\breadcrumb\README.md" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\breadcrumb\template.njk" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\breadcrumb\_breadcrumb.scss" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\button\button.js" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\button\macro.njk" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\button\README.md" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\button\template.njk" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\button\_button.scss" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\card\card.scss" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\card\macro.njk" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\card\README.md" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\card\template.njk" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\character-count\character-count.js" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\character-count\character-count.test.js" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\character-count\macro.njk" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\character-count\README.md" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\character-count\template.njk" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\character-count\_character-count.scss" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\checkboxes\checkboxes.js" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\checkboxes\macro.njk" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\checkboxes\README.md" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\checkboxes\template.njk" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\checkboxes\_checkboxes.scss" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\contents-list\macro.njk" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\contents-list\README.md" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\contents-list\template.njk" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\contents-list\_contents-list.scss" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\date-input\macro.njk" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\date-input\README.md" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\date-input\template.njk" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\date-input\_date-input.scss" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\details\details.js" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\details\macro.njk" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\details\README.md" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\details\template.njk" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\details\_details.scss" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\do-dont-list\macro.njk" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\do-dont-list\README.md" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\do-dont-list\template.njk" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\do-dont-list\_do-dont-list.scss" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\error-message\macro.njk" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\error-message\README.md" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\error-message\template.njk" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\error-message\_error-message.scss" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\error-summary\error-summary.js" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\error-summary\macro.njk" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\error-summary\README.md" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\error-summary\template.njk" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\error-summary\_error-summary.scss" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\fieldset\macro.njk" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\fieldset\README.md" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\fieldset\template.njk" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\fieldset\_fieldset.scss" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\footer\macro.njk" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\footer\README.md" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\footer\template.njk" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\footer\_footer.scss" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\header\header.js" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\header\macro.njk" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\header\README.md" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\header\template.njk" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\header\_header-organisation.scss" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\header\_header-service.scss" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\header\_header-transactional.scss" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\header\_header-white.scss" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\header\_header.scss" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\hero\macro.njk" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\hero\README.md" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\hero\template.njk" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\hero\_hero.scss" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\hint\macro.njk" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\hint\README.md" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\hint\template.njk" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\hint\_hint.scss" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\images\macro.njk" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\images\README.md" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\images\template.njk" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\images\_images.scss" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\input\macro.njk" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\input\README.md" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\input\template.njk" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\input\_input.scss" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\inset-text\macro.njk" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\inset-text\README.md" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\inset-text\template.njk" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\inset-text\_inset-text.scss" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\label\macro.njk" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\label\README.md" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\label\template.njk" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\label\_label.scss" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\pagination\macro.njk" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\pagination\README.md" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\pagination\template.njk" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\pagination\_pagination.scss" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\radios\macro.njk" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\radios\radios.js" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\radios\README.md" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\radios\template.njk" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\radios\_radios.scss" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\select\macro.njk" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\select\README.md" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\select\template.njk" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\select\_select.scss" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\skip-link\macro.njk" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\skip-link\README.md" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\skip-link\skip-link.js" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\skip-link\template.njk" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\skip-link\_skip-link.scss" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\summary-list\macro.njk" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\summary-list\README.md" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\summary-list\template.njk" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\summary-list\_summary-list.scss" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\tables\macro.njk" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\tables\README.md" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\tables\template.njk" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\tables\_tables.scss" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\tabs\macro.njk" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\tabs\README.md" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\tabs\tabs.js" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\tabs\template.njk" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\tabs\_tabs.scss" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\tag\macro.njk" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\tag\README.md" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\tag\template.njk" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\tag\_tag.scss" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\task-list\macro.njk" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\task-list\README.md" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\task-list\template.njk" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\task-list\_task-list.scss" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\textarea\macro.njk" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\textarea\README.md" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\textarea\template.njk" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\textarea\_textarea.scss" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\warning-callout\macro.njk" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\warning-callout\README.md" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\warning-callout\template.njk" />
+        <None Include="node_modules\nhsuk-frontend\packages\components\warning-callout\_warning-callout.scss" />
+        <None Include="node_modules\nhsuk-frontend\packages\core\all.scss" />
+        <None Include="node_modules\nhsuk-frontend\packages\core\elements\_forms.scss" />
+        <None Include="node_modules\nhsuk-frontend\packages\core\elements\_links.scss" />
+        <None Include="node_modules\nhsuk-frontend\packages\core\elements\_page.scss" />
+        <None Include="node_modules\nhsuk-frontend\packages\core\elements\_table.scss" />
+        <None Include="node_modules\nhsuk-frontend\packages\core\generic\_box-sizing.scss" />
+        <None Include="node_modules\nhsuk-frontend\packages\core\generic\_font-face.scss" />
+        <None Include="node_modules\nhsuk-frontend\packages\core\objects\_form-group.scss" />
+        <None Include="node_modules\nhsuk-frontend\packages\core\objects\_grid.scss" />
+        <None Include="node_modules\nhsuk-frontend\packages\core\objects\_main-wrapper.scss" />
+        <None Include="node_modules\nhsuk-frontend\packages\core\objects\_width-container.scss" />
+        <None Include="node_modules\nhsuk-frontend\packages\core\README.md" />
+        <None Include="node_modules\nhsuk-frontend\packages\core\settings\_all.scss" />
+        <None Include="node_modules\nhsuk-frontend\packages\core\settings\_breakpoints.scss" />
+        <None Include="node_modules\nhsuk-frontend\packages\core\settings\_colours.scss" />
+        <None Include="node_modules\nhsuk-frontend\packages\core\settings\_globals.scss" />
+        <None Include="node_modules\nhsuk-frontend\packages\core\settings\_spacing.scss" />
+        <None Include="node_modules\nhsuk-frontend\packages\core\settings\_typography.scss" />
+        <None Include="node_modules\nhsuk-frontend\packages\core\styles\_icons.scss" />
+        <None Include="node_modules\nhsuk-frontend\packages\core\styles\_lists.scss" />
+        <None Include="node_modules\nhsuk-frontend\packages\core\styles\_section-break.scss" />
+        <None Include="node_modules\nhsuk-frontend\packages\core\styles\_typography.scss" />
+        <None Include="node_modules\nhsuk-frontend\packages\core\tools\_all.scss" />
+        <None Include="node_modules\nhsuk-frontend\packages\core\tools\_exports.scss" />
+        <None Include="node_modules\nhsuk-frontend\packages\core\tools\_focused.scss" />
+        <None Include="node_modules\nhsuk-frontend\packages\core\tools\_functions.scss" />
+        <None Include="node_modules\nhsuk-frontend\packages\core\tools\_grid.scss" />
+        <None Include="node_modules\nhsuk-frontend\packages\core\tools\_ifff.scss" />
+        <None Include="node_modules\nhsuk-frontend\packages\core\tools\_links.scss" />
+        <None Include="node_modules\nhsuk-frontend\packages\core\tools\_mixins.scss" />
+        <None Include="node_modules\nhsuk-frontend\packages\core\tools\_sass-mq.scss" />
+        <None Include="node_modules\nhsuk-frontend\packages\core\tools\_shape-arrow.scss" />
+        <None Include="node_modules\nhsuk-frontend\packages\core\tools\_spacing.scss" />
+        <None Include="node_modules\nhsuk-frontend\packages\core\tools\_typography.scss" />
+        <None Include="node_modules\nhsuk-frontend\packages\core\utilities\_clearfix.scss" />
+        <None Include="node_modules\nhsuk-frontend\packages\core\utilities\_display.scss" />
+        <None Include="node_modules\nhsuk-frontend\packages\core\utilities\_float.scss" />
+        <None Include="node_modules\nhsuk-frontend\packages\core\utilities\_grid-widths.scss" />
+        <None Include="node_modules\nhsuk-frontend\packages\core\utilities\_link-nowrap.scss" />
+        <None Include="node_modules\nhsuk-frontend\packages\core\utilities\_list-border.scss" />
+        <None Include="node_modules\nhsuk-frontend\packages\core\utilities\_reading-width.scss" />
+        <None Include="node_modules\nhsuk-frontend\packages\core\utilities\_spacing.scss" />
+        <None Include="node_modules\nhsuk-frontend\packages\core\utilities\_text-align.scss" />
+        <None Include="node_modules\nhsuk-frontend\packages\core\utilities\_typography.scss" />
+        <None Include="node_modules\nhsuk-frontend\packages\core\utilities\_visually-hidden.scss" />
+        <None Include="node_modules\nhsuk-frontend\packages\core\utilities\_widths.scss" />
+        <None Include="node_modules\nhsuk-frontend\packages\core\vendor\sass-mq.scss" />
+        <None Include="node_modules\nhsuk-frontend\packages\macros\attributes.njk" />
+        <None Include="node_modules\nhsuk-frontend\packages\nhsuk.js" />
+        <None Include="node_modules\nhsuk-frontend\packages\nhsuk.scss" />
+        <None Include="node_modules\nhsuk-frontend\packages\polyfills.js" />
+        <None Include="node_modules\nhsuk-frontend\README.md" />
         <None Include="wwwroot\favicon.ico" />
         <None Include="wwwroot\images\itSkillsPathwayLogo.png" />
         <None Include="wwwroot\images\nhsDigitalLogo.png" />
@@ -149,6 +367,24 @@
 
     <ItemGroup>
         <_ContentIncludedByDefault Remove="Views\Shared\Components\VerifyEmailWarningIfAppropriate\Default.cshtml" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Include="node_modules\nhsuk-frontend\dist\nhsuk-9.1.0.min.css" />
+      <Content Include="node_modules\nhsuk-frontend\dist\nhsuk.css" />
+      <Content Include="node_modules\nhsuk-frontend\package.json" />
+      <Content Include="node_modules\nhsuk-frontend\packages\assets\favicons\apple-touch-icon-180x180.png" />
+      <Content Include="node_modules\nhsuk-frontend\packages\assets\favicons\apple-touch-icon.png" />
+      <Content Include="node_modules\nhsuk-frontend\packages\assets\favicons\favicon-192x192.png" />
+      <Content Include="node_modules\nhsuk-frontend\packages\assets\favicons\favicon.ico" />
+      <Content Include="node_modules\nhsuk-frontend\packages\assets\favicons\favicon.png" />
+      <Content Include="node_modules\nhsuk-frontend\packages\assets\favicons\largetile-310x310.png" />
+      <Content Include="node_modules\nhsuk-frontend\packages\assets\favicons\mediumtile-144x144.png" />
+      <Content Include="node_modules\nhsuk-frontend\packages\assets\favicons\mediumtile-150x150.png" />
+      <Content Include="node_modules\nhsuk-frontend\packages\assets\favicons\smalltile-70x70.png" />
+      <Content Include="node_modules\nhsuk-frontend\packages\assets\favicons\widetile-310x150.png" />
+      <Content Include="node_modules\nhsuk-frontend\packages\assets\logos\nhs-logo.png" />
+      <Content Include="node_modules\nhsuk-frontend\packages\assets\logos\open-graph.png" />
     </ItemGroup>
 
     <ItemGroup>
