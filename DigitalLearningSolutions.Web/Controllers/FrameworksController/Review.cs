@@ -63,6 +63,7 @@
         {
             var adminId = GetAdminId();
             var framework = frameworkService.GetBaseFrameworkByFrameworkId(frameworkId, adminId);
+            if (framework.FrameworkReviewID == 0 || framework.FrameworkReviewID == null) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 410 });
             if (framework == null) return StatusCode(404);
             if (framework.UserRole < 1) return StatusCode(403);
             var frameworkName = framework.FrameworkName;
