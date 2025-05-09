@@ -47,7 +47,7 @@
                     {
                         <text>
                         <li>
-                                Some existing @Model.FrameworkVocabularySingular.ToLower() @(Model.CompetenciesToReorderCount == 1 ? "record" : "records") have changed sequence in your uploaded sheet. You can choose whether to fix them in the new order next.
+                            Some existing @Model.FrameworkVocabularySingular.ToLower() @(Model.CompetenciesToReorderCount == 1 ? "record" : "records") have changed sequence in your uploaded sheet. You can choose whether to fix them in the new order next.
                         </li></text>
                     }
                     <li>No errors</li>
@@ -55,7 +55,11 @@
             </ul>
             @if (Model.ErrorCount == 0)
             {
-                <a asp-controller="Frameworks" role="button" asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]" asp-route-tabname="Structure" asp-action="ApplyCompetencyOrdering" class="nhsuk-button">Continue</a>
+                <a asp-controller="Frameworks" role="button" asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]"
+                   asp-route-tabname="Structure" asp-action="ApplyCompetencyOrdering" class="nhsuk-button">
+                    Continue
+                    <span class="nhsuk-u-visually-hidden">to apply sequence changes</span>
+                </a>
             }
             else
             {
