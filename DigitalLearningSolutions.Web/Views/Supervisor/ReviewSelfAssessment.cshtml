@@ -174,7 +174,7 @@
                                 </div>
                                 <div class="nhsuk-grid-column-full">
 
-                                    @if (competency.Description != null && !competency.AlwaysShowDescription)
+                                    @if (!string.IsNullOrWhiteSpace(competency.Description) && !competency.AlwaysShowDescription)
                                     {
                                         <details class="nhsuk-details">
                                             <summary class="nhsuk-details__summary">
@@ -194,7 +194,7 @@
                                         <h2 class="nhsuk-u-margin-bottom-0 nhsuk-u-font-size-24">
                                             @competency.Name
                                         </h2>
-                                        @if (competency.Description != null)
+                                        @if (!string.IsNullOrWhiteSpace(competency.Description))
                                         {
                                             <p class="nhsuk-body-l">
                                                 @(Html.Raw(competency.Description))
