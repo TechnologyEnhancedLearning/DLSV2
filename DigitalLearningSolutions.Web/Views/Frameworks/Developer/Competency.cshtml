@@ -1,106 +1,106 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.Frameworks;
 @model FrameworkCompetencyViewModel;
 @{
-  ViewData["Title"] = !string.IsNullOrWhiteSpace(Model.VocabSingular()) ? Model.VocabSingular(): "Competency";
-  ViewData["Application"] = "Framework Service";
-  ViewData["HeaderPathName"] = "Framework Service";
+    ViewData["Title"] = !string.IsNullOrWhiteSpace(Model.VocabSingular()) ? Model.VocabSingular() : "Competency";
+    ViewData["Application"] = "Framework Service";
+    ViewData["HeaderPathName"] = "Framework Service";
 }
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
 <link rel="stylesheet" href="@Url.Content("~/css/jodit.css")" asp-append-version="true">
 @section NavMenuItems {
-  <partial name="Shared/_NavMenuItems" />
+    <partial name="Shared/_NavMenuItems" />
 }
-  @section NavBreadcrumbs {
-  <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
-    <div class="nhsuk-width-container">
-      <ol class="nhsuk-breadcrumb__list">
-        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFrameworks" asp-route-tabname="Mine">Frameworks</a></li>
-        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFramework" asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroupId" asp-fragment="fc-@Model.FrameworkCompetency.Id" asp-route-frameworkId="@Model.DetailFramework.ID" asp-route-tabname="Structure">Framework Structure</a></li>
-        <li class="nhsuk-breadcrumb__item">@Model.VocabSingular()</li>
-      </ol>
+@section NavBreadcrumbs {
+    <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+        <div class="nhsuk-width-container">
+            <ol class="nhsuk-breadcrumb__list">
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFrameworks" asp-route-tabname="Mine">Frameworks</a></li>
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFramework" asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroupId" asp-fragment="fc-@Model.FrameworkCompetency.Id" asp-route-frameworkId="@Model.DetailFramework.ID" asp-route-tabname="Structure">Framework Structure</a></li>
+                <li class="nhsuk-breadcrumb__item">@Model.VocabSingular()</li>
+            </ol>
             <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ViewFramework" asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroupId" asp-fragment="fc-@Model.FrameworkCompetency.Id" asp-route-frameworkId="@Model.DetailFramework.ID" asp-route-tabname="Structure">Back to framework structure</a></p>
-    </div>
-  </nav>
+        </div>
+    </nav>
 }
-  <div class="nhsuk-grid-row">
+<div class="nhsuk-grid-row">
 
     <div class="nhsuk-grid-column-full">
-      @if (Model.FrameworkCompetency.Id > 0)
-    {
-      <h1>
-        Edit @Model.VocabSingular().ToLower()
-      </h1>
-    }
-    else
-    {
-      <h1>
-        Add new @Model.VocabSingular().ToLower()
-      </h1>
-    }
-    @if (Model.DetailFramework.PublishStatusID == 3)
-    {
-      <partial name="Shared/_PublishedWarning" />
-    }
-    <form method="post">
-      @if (!ViewData.ModelState.IsValid)
-      {
-        <partial name="_ErrorSummary" />
-      }
-      <nhs-form-group nhs-validation-for="FrameworkCompetency.Name">
-        <label class="nhsuk-label" id="competency-name-label" for="competency-name">
-          @Model.VocabSingular() statement
-        </label>
-        <span nhs-validation-for="FrameworkCompetency.Name"></span>
-        <input class="nhsuk-input" asp-for="FrameworkCompetency.Name" id="Name" name="Name" type="text" error-class-toggle="nhsuk-input--error" aria-describedby="competency-name-label">
-      </nhs-form-group>
-      <div class="nhsuk-form-group">
-        <vc:text-area asp-for="FrameworkCompetency.Description"
-                      label="@Model.VocabSingular() description"
-                      populate-with-current-value="true"
-                      rows="5"
-                      spell-check="false"
-                      hint-text=""
-                      css-class="html-editor"
-                      character-count="null"
-                      populate-with-current-value="true" />
-      </div>
-      @if (Model.CompetencyFlags?.Count() > 0)
-      {
-        <div class="nhsuk-form-group">
-          <label class="nhsuk-label nhsuk-u-margin-bottom-2" id="competency-description-label" for="competency-description">
-            @Model.VocabSingular() tags
-          </label>
-          @foreach (var flag in Model.CompetencyFlags)
-          {
-            <div class="nhsuk-checkboxes__item">
-              <input class="nhsuk-checkboxes__input" name="selectedFlagIds" type="checkbox" value="@flag.FlagId" @(flag.Selected ? "checked" : string.Empty) />
-              <label class="nhsuk-label nhsuk-checkboxes__label">
-                @flag.FlagName
-              </label>
+        @if (Model.FrameworkCompetency.Id > 0)
+        {
+            <h1>
+                Edit @Model.VocabSingular().ToLower()
+            </h1>
+        }
+        else
+        {
+            <h1>
+                Add new @Model.VocabSingular().ToLower()
+            </h1>
+        }
+        @if (Model.DetailFramework.PublishStatusID == 3)
+        {
+            <partial name="Shared/_PublishedWarning" />
+        }
+        <form method="post">
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <partial name="_ErrorSummary" />
+            }
+            <nhs-form-group nhs-validation-for="FrameworkCompetency.Name">
+                <label class="nhsuk-label" id="competency-name-label" for="name">
+                    @Model.VocabSingular() statement
+                </label>
+                <span nhs-validation-for="FrameworkCompetency.Name"></span>
+                <input class="nhsuk-input" asp-for="FrameworkCompetency.Name" id="Name" name="Name" type="text" error-class-toggle="nhsuk-input--error" aria-describedby="competency-name-label">
+            </nhs-form-group>
+            <div class="nhsuk-form-group">
+                <vc:text-area asp-for="FrameworkCompetency.Description"
+                              label="@Model.VocabSingular() description"
+                              populate-with-current-value="true"
+                              rows="5"
+                              spell-check="false"
+                              hint-text=""
+                              css-class="html-editor"
+                              character-count="null"
+                              populate-with-current-value="true" />
             </div>
-          }
-        </div>
-      }
+            @if (Model.CompetencyFlags?.Count() > 0)
+            {
+                <div class="nhsuk-form-group">
+                    <label class="nhsuk-label nhsuk-u-margin-bottom-2" id="competency-description-label" for="competency-description">
+                        @Model.VocabSingular() tags
+                    </label>
+                    @foreach (var flag in Model.CompetencyFlags)
+                    {
+                        <div class="nhsuk-checkboxes__item">
+                            <input class="nhsuk-checkboxes__input" name="selectedFlagIds" type="checkbox" value="@flag.FlagId" @(flag.Selected ? "checked" : string.Empty) />
+                            <label class="nhsuk-label nhsuk-checkboxes__label">
+                                @flag.FlagName
+                            </label>
+                        </div>
+                    }
+                </div>
+            }
 
-      <input name="Id" type="hidden" asp-for="FrameworkCompetency.Id" />
-      <input name="CompetencyID" type="hidden" asp-for="FrameworkCompetency.CompetencyID" />
-      <input name="Ordering" type="hidden" asp-for="FrameworkCompetency.Ordering" />
+            <input name="Id" type="hidden" asp-for="FrameworkCompetency.Id" />
+            <input name="CompetencyID" type="hidden" asp-for="FrameworkCompetency.CompetencyID" />
+            <input name="Ordering" type="hidden" asp-for="FrameworkCompetency.Ordering" />
 
-      <button class="nhsuk-button" type="submit">
-        Save
-      </button>
-      <div class="nhsuk-back-link">
-        <a class="nhsuk-back-link__link" asp-action="ViewFramework" asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroupId" asp-fragment="fc-@Model.FrameworkCompetency.Id" asp-route-frameworkId="@Model.DetailFramework.ID" asp-route-tabname="Structure">
-          <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-            <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
-          </svg>
-          Cancel
-        </a>
-      </div>
-    </form>
-  </div>
+            <button class="nhsuk-button" type="submit">
+                Save
+            </button>
+            <div class="nhsuk-back-link">
+                <a class="nhsuk-back-link__link" asp-action="ViewFramework" asp-route-frameworkCompetencyGroupId="@Model.FrameworkCompetencyGroupId" asp-fragment="fc-@Model.FrameworkCompetency.Id" asp-route-frameworkId="@Model.DetailFramework.ID" asp-route-tabname="Structure">
+                    <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                        <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
+                    </svg>
+                    Cancel
+                </a>
+            </div>
+        </form>
+    </div>
 </div>
 @section scripts {
-  <script src="@Url.Content("~/js/frameworks/htmleditor.js")" asp-append-version="true"></script>
+    <script src="@Url.Content("~/js/frameworks/htmleditor.js")" asp-append-version="true"></script>
 }
 
