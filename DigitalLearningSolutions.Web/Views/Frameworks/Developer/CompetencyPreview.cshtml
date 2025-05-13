@@ -87,9 +87,11 @@
     </span>
   </div>
 </div>
+<div class=" nhsuk-u-padding-top-6">
 <a class="nhsuk-button" role="button" asp-action="ViewFramework" asp-route-frameworkCompetencyGroupId="@ViewContext.RouteData.Values["frameworkCompetencyGroupId"]" asp-fragment="fc-@(ViewContext.RouteData.Values["frameworkCompetencyId"])" asp-route-frameworkId="@(ViewContext.RouteData.Values["frameworkId"])" asp-route-tabname="Structure">
   Done
 </a>
+</div>
 @section scripts {
   <script src="@Url.Content("~/js/learningPortal/selfAssessment.js")" asp-append-version="true"></script>
 }
