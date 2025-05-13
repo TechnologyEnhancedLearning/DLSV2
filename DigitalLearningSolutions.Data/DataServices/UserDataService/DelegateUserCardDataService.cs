@@ -352,6 +352,8 @@
 
             if (sortBy == "SearchableName")
                 orderBy = " ORDER BY LTRIM(LastName) " + sortDirection + ", LTRIM(FirstName) ";
+            else if(sortBy == "LastAccessed")
+                orderBy = " ORDER BY LastAccessed " + sortDirection;
             else
                 orderBy = " ORDER BY DateRegistered " + sortDirection;
 
