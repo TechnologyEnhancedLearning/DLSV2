@@ -583,9 +583,9 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             if (ModelState.IsValid)
             {
                 var flags = frameworkService.GetCustomFlagsByFrameworkId(frameworkId, null)
-                    .Where(fn => fn.FlagName == model.FlagName).ToList();
+                    .Where(fn => fn.FlagName.ToLower() == model.FlagName.ToLower()).ToList();
 
-                bool nameExists = flags.Any(x => x.FlagName == model.FlagName);
+                bool nameExists = flags.Any(x => x.FlagName.ToLower() == model.FlagName.ToLower());
                 bool idExists = flags.Any(x => x.FlagId == flagId);
 
                 if (actionname == "Edit")
