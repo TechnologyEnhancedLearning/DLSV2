@@ -251,7 +251,7 @@
             ("Name", nameof(DelegateUserCard.SearchableName));
 
         public static readonly (string DisplayText, string PropertyName) LastAccessed =
-           ("Last Accessed Date", nameof(DelegateUserCard.LastAccessed));
+           ("Last accessed date", nameof(DelegateUserCard.LastAccessed));
 
         public static readonly (string DisplayText, string PropertyName) RegistrationDate =
             ("Registration Date", nameof(DelegateUserCard.DateRegistered));
