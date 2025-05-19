@@ -291,7 +291,7 @@
 				        JOIN AdminAccounts aa1 ON fc.AdminID = aa1.ID
 				        WHERE fc.FrameworkID = fw.ID
 				        AND fc.CanModify = 1 AND fc.IsDeleted = 0
-				        AND aa1.UserID = (SELECT aa2.UserID FROM AdminAccounts aa2 WHERE aa2.ID = 12842)) > 0 THEN 2
+				        AND aa1.UserID = (SELECT aa2.UserID FROM AdminAccounts aa2 WHERE aa2.ID = @adminId)) > 0 THEN 2
                 WHEN fwc.CanModify = 0 THEN 1 ELSE 0 END AS UserRole,
             fwr.ID AS FrameworkReviewID";
 
