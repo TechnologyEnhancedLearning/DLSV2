@@ -5,6 +5,8 @@
     using DigitalLearningSolutions.Data.Models.User;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
+    using System;
+    using DateHelper = Helpers.DateHelper;
 
     public class SearchableAdminViewModel : BaseFilterableViewModel
     {
@@ -23,6 +25,10 @@
             EmailAddress = admin.EmailForCentreNotifications;
             IsLocked = admin.UserAccount.FailedLoginCount >= AuthHelper.FailedLoginThreshold;
             IsActive = admin.AdminAccount.Active;
+            if (admin.LastAccessed.HasValue)
+            {
+                LastAccessed = admin.LastAccessed.Value.ToString(DateHelper.StandardDateFormat);
+            }
             CanShowDeactivateAdminButton =
                 UserPermissionsHelper.LoggedInAdminCanDeactivateUser(admin.AdminAccount, loggedInAdminAccount);
 
@@ -45,6 +51,8 @@
         public bool IsLocked { get; set; }
 
         public bool IsActive { get; set; }
+
+        public string? LastAccessed { get; set; }
 
         public ReturnPageQuery ReturnPageQuery { get; set; }
     }

@@ -3,91 +3,92 @@
 
 @model DashboardViewModel;
 @{
-  ViewData["Title"] = "Dashboard";
-  ViewData["Application"] = "Framework Service";
-  ViewData["HeaderPathName"] = "Framework Service";
+    ViewData["Title"] = "Dashboard";
+    ViewData["Application"] = "Framework Service";
+    ViewData["HeaderPathName"] = "Framework Service";
 }
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
 @section NavMenuItems {
-  <partial name="Shared/_NavMenuItems" />
+    <partial name="Shared/_NavMenuItems" />
 }
-  @section NavBreadcrumbs {
-  <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
-    <div class="nhsuk-width-container">
-      <ol class="nhsuk-breadcrumb__list">
-        <li class="nhsuk-breadcrumb__item">Frameworks</li>
-      </ol>
-    </div>
-  </nav>
-}
-  <h1>Frameworks Dashboard</h1>
-  <p class="nhsuk-body-m">Welcome <span class="nhsuk-u-font-weight-bold">@Model.Username</span>. You are accessing as a <span class="nhsuk-u-font-weight-bold">@(Model.IsFrameworkDeveloper ? "Framework Developer" : Model.IsFrameworkContributor ? "Framework Contributor" : "Framework Viewer")</span><feature name="@(FeatureFlags.WorkforceManagerInterface)"> and a <span class="nhsuk-u-font-weight-bold">@(Model.IsWorkforceManager ? "Workforce Manager" : Model.IsWorkforceContributor ? "Competency Assessment Contributor" : "Competency Assessment Viewer")</span></feature>.</p>
-  <ul class="nhsuk-grid-row nhsuk-card-group">
-    <feature name="@(FeatureFlags.WorkforceManagerInterface)">
-      <li class="nhsuk-grid-column-one-half nhsuk-card-group__item">
-    </feature>
-    <feature name="@(FeatureFlags.WorkforceManagerInterface)" negate="true">
-      <li class="nhsuk-grid-column-full nhsuk-card-group__item">
-    </feature>
-    <div class="nhsuk-card">
-      <div class="nhsuk-card__content">
-        <p class="nhsuk-heading-m nhsuk-u-font-size-32 nhsuk-u-margin-bottom-3">
-          @Model.DashboardData.FrameworksCount Frameworks
-        </p>
-        <ul class="nhsuk-contents-list__list">
-          @if (Model.IsFrameworkContributor | Model.IsFrameworkDeveloper)
-        {
-          <li class="nhsuk-contents-list__item"><a asp-controller="Frameworks" class="nhsuk-contents-list__link nhsuk-link--no-visited-state" asp-action="ViewFrameworks" asp-route-tabname="Mine">Manage My Frameworks (@Model.DashboardData.MyFrameworksCount)</a></li>
-        }
-        <li class="nhsuk-contents-list__item"><a asp-controller="Frameworks" class="nhsuk-contents-list__link nhsuk-link--no-visited-state" asp-action="ViewFrameworks" asp-route-tabname="All">View All Frameworks</a></li>
-      </ul>
-    </div>
-  </div>
-  </li>
-  <feature name="@(FeatureFlags.WorkforceManagerInterface)">
-    <li class="nhsuk-grid-column-one-half nhsuk-card-group__item">
-      <div class="nhsuk-card">
-        <div class="nhsuk-card__content">
-          <p class="nhsuk-heading-m nhsuk-u-font-size-32 nhsuk-u-margin-bottom-3">
-            @Model.DashboardData.CompetencyAssessmentCount Competency Assessments
-          </p>
-          <ul class="nhsuk-contents-list__list">
-            @if (Model.IsWorkforceManager | Model.IsWorkforceContributor)
-            {
-              <li class="nhsuk-contents-list__item"><a asp-controller="CompetencyAssessments" class="nhsuk-contents-list__link nhsuk-link--no-visited-state" asp-action="ViewCompetencyAssessments" asp-route-tabname="Mine">Manage My Competency Assessments (@Model.DashboardData.MyCompetencyAssessmentCount)</a></li>
-            }
-            <li class="nhsuk-contents-list__item"><a asp-controller="CompetencyAssessments" class="nhsuk-contents-list__link nhsuk-link--no-visited-state" asp-action="ViewCompetencyAssessments" asp-route-tabname="All">View All Competency Assessments</a></li>
-          </ul>
+@section NavBreadcrumbs {
+    <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+        <div class="nhsuk-width-container">
+            <ol class="nhsuk-breadcrumb__list">
+                <li class="nhsuk-breadcrumb__item">Frameworks</li>
+            </ol>
         </div>
-      </div>
-    </li>
-  </feature>
-</ul>
+    </nav>
+}
+<h1>Frameworks Dashboard</h1>
+<p class="nhsuk-body-m">Welcome <span class="nhsuk-u-font-weight-bold">@Model.Username</span>. You are accessing as a <span class="nhsuk-u-font-weight-bold">@(Model.IsFrameworkDeveloper ? "Framework Developer" : Model.IsFrameworkContributor ? "Framework Contributor" : "Framework Viewer")</span><feature name="@(FeatureFlags.WorkforceManagerInterface)"> and a <span class="nhsuk-u-font-weight-bold">@(Model.IsWorkforceManager ? "Workforce Manager" : Model.IsWorkforceContributor ? "Role Profile Contributor" : "Role Profile Viewer")</span></feature>.</p>
 <h2>Your to do list</h2>
 @if (Model.DashboardToDoItems.Count() > 0)
 {
-  <ul class="nhsuk-contents-list__list">
-    @foreach (var toDoItem in Model.DashboardToDoItems)
-    {
-      <li class="nhsuk-contents-list__item">
-        @if (toDoItem.FrameworkID != null)
+    <ul class="nhsuk-contents-list__list">
+        @foreach (var toDoItem in Model.DashboardToDoItems)
         {
-          <a class="nhsuk-contents-list__link nhsuk-link--no-visited-state" asp-controller="Frameworks" asp-route-tabname="Structure" asp-route-frameworkId="@toDoItem.FrameworkID" asp-action="ViewFramework">
-            @(toDoItem.SignOffRequired ? "Approve " : "Review ") @toDoItem.ItemName for @toDoItem.RequestorName (requested @toDoItem.Requested.ToShortDateString())
-          </a>
-        }
-        else
-        {
-          <a class="nhsuk-contents-list__link nhsuk-link--no-visited-state" asp-controller="CompetencyAssessments" asp-route-competencyAssessmentId="@toDoItem.CompetencyAssessmentID" asp-action="ManageCompetencyAssessment">
-            @(toDoItem.SignOffRequired ? "Approve " : "Review ") @toDoItem.ItemName for @toDoItem.RequestorName (requested @toDoItem.Requested.ToShortDateString())
-          </a>
-        }
+            <li class="nhsuk-contents-list__item">
+                @if (toDoItem.FrameworkID != null)
+                {
+                    <a class="nhsuk-contents-list__link nhsuk-link--no-visited-state" asp-controller="Frameworks" asp-route-tabname="Structure" asp-route-frameworkId="@toDoItem.FrameworkID" asp-action="ViewFramework">
+                        @(toDoItem.SignOffRequired ? "Approve " : "Review ") @toDoItem.ItemName for @toDoItem.RequestorName (requested @toDoItem.Requested.ToShortDateString())
+                    </a>
+                }
+                else
+                {
+                    <a class="nhsuk-contents-list__link nhsuk-link--no-visited-state" asp-controller="RoleProfiles" asp-route-roleProfileId="@toDoItem.RoleProfileID" asp-action="ViewRoleProfile">
+                        @(toDoItem.SignOffRequired ? "Approve " : "Review ") @toDoItem.ItemName for @toDoItem.RequestorName (requested @toDoItem.Requested.ToShortDateString())
+                    </a>
+                }
 
-      </li>
-    }
-  </ul>
+            </li>
+        }
+    </ul>
 }
 else
 {
-  <p>There are no tasks requiring your attention.</p>
+    <p>There are no tasks requiring your attention.</p>
 }
+
+<ul class="nhsuk-grid-row nhsuk-card-group">
+    <feature name="@(FeatureFlags.WorkforceManagerInterface)">
+        <li class="nhsuk-grid-column-one-half nhsuk-card-group__item">
+    </feature>
+    <feature name="@(FeatureFlags.WorkforceManagerInterface)" negate="true">
+        <li class="nhsuk-grid-column-full nhsuk-card-group__item">
+    </feature>
+    <div class="nhsuk-card">
+        <div class="nhsuk-card__content">
+            <p class="nhsuk-heading-xl nhsuk-u-font-size-32 nhsuk-u-margin-bottom-3">
+                @Model.DashboardData.FrameworksCount Frameworks
+            </p>
+            <ul class="nhsuk-contents-list__list">
+                @if (Model.IsFrameworkContributor | Model.IsFrameworkDeveloper)
+                {
+                    <li class="nhsuk-contents-list__item"><a asp-controller="Frameworks" class="nhsuk-contents-list__link nhsuk-link--no-visited-state" asp-action="ViewFrameworks" asp-route-tabname="Mine">Manage My Frameworks (@Model.DashboardData.MyFrameworksCount)</a></li>
+                }
+                <li class="nhsuk-contents-list__item"><a asp-controller="Frameworks" class="nhsuk-contents-list__link nhsuk-link--no-visited-state" asp-action="ViewFrameworks" asp-route-tabname="All">View All Frameworks</a></li>
+            </ul>
+        </div>
+    </div>
+    </li>
+    <feature name="@(FeatureFlags.WorkforceManagerInterface)">
+        <li class="nhsuk-grid-column-one-half nhsuk-card-group__item">
+            <div class="nhsuk-card">
+                <div class="nhsuk-card__content">
+                    <p class="nhsuk-heading-xl nhsuk-u-font-size-32 nhsuk-u-margin-bottom-3">
+                        @Model.DashboardData.RoleProfileCount Role Profiles
+                    </p>
+                    <ul class="nhsuk-contents-list__list">
+                        @if (Model.IsWorkforceManager | Model.IsWorkforceContributor)
+                        {
+                            <li class="nhsuk-contents-list__item"><a asp-controller="RoleProfiles" class="nhsuk-contents-list__link nhsuk-link--no-visited-state" asp-action="ViewRoleProfiles" asp-route-tabname="Mine">Manage My Role Profiles (@Model.DashboardData.MyRoleProfileCount)</a></li>
+                        }
+                        <li class="nhsuk-contents-list__item"><a asp-controller="RoleProfiles" class="nhsuk-contents-list__link nhsuk-link--no-visited-state" asp-action="ViewRoleProfiles" asp-route-tabname="All">View All Role Profiles</a></li>
+                    </ul>
+                </div>
+            </div>
+        </li>
+    </feature>
+</ul>

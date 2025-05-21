@@ -84,7 +84,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
         }
 
         [HttpPost]
-        [Route("/{dlsSubApplication}/RequestSupport/setRequestType")]
+        [Route("/{dlsSubApplication}/RequestSupport/TypeofRequest")]
         public IActionResult setRequestType(DlsSubApplication dlsSubApplication, RequestTypeViewModel RequestTypemodel, int requestType)
         {
             var requestTypes = requestSupportTicketService.GetRequestTypes();
@@ -125,7 +125,7 @@ namespace DigitalLearningSolutions.Web.Controllers.Support
         }
 
         [HttpPost]
-        [Route("/{dlsSubApplication}/RequestSupport/SetRequestSummary")]
+        [Route("/{dlsSubApplication}/RequestSupport/RequestSummary")]
         public IActionResult SetRequestSummary(DlsSubApplication dlsSubApplication, RequestSummaryViewModel requestDetailsmodel)
         {
             var data = multiPageFormService.GetMultiPageFormData<RequestSupportTicketData>(

@@ -534,6 +534,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IRequestSupportTicketDataService, RequestSupportTicketDataService>();
             services.AddScoped<ICentreApplicationsDataService, CentreApplicationsDataService>();
             services.AddScoped<ICentreSelfAssessmentsDataService, CentreSelfAssessmentsDataService>();
+            services.AddScoped<ILoginDataService, LoginDataService>();
         }
 
         private static void RegisterHelpers(IServiceCollection services)

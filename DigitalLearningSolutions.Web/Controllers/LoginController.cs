@@ -82,6 +82,13 @@
 
             var loginResult = loginService.AttemptLogin(model.Username!.Trim(), model.Password!);
 
+            if (loginResult.LoginAttemptResult == LoginAttemptResult.LogIntoSingleCentre ||
+                loginResult.LoginAttemptResult == LoginAttemptResult.ChooseACentre)
+            {
+                loginService.UpdateLastAccessedForUsersTable(loginResult.UserEntity.UserAccount.Id);
+            }
+
+
             switch (loginResult.LoginAttemptResult)
             {
                 case LoginAttemptResult.InvalidCredentials:
@@ -219,11 +226,17 @@
                 IsPersistent = rememberMe,
                 IssuedUtc = clockUtility.UtcNow,
             };
+            var centreAccountSet = userEntity?.GetCentreAccountSet(centreIdToLogInto);
 
-            var adminAccount = userEntity!.GetCentreAccountSet(centreIdToLogInto)?.AdminAccount;
+            if (centreAccountSet?.DelegateAccount?.Id != null)
+            {
+                loginService.UpdateLastAccessedForDelegatesAccountsTable(centreAccountSet.DelegateAccount.Id);
+            }            
 
+            var adminAccount = centreAccountSet?.AdminAccount;
             if (adminAccount?.Active == true)
             {
+                loginService.UpdateLastAccessedForAdminAccountsTable(adminAccount.Id);
                 sessionService.StartAdminSession(adminAccount.Id);
             }
 

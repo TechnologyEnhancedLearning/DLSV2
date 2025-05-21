@@ -9,6 +9,7 @@
         public int UserId { get; set; }
         public string CandidateNumber { get; set; } = string.Empty;
         public DateTime? DateRegistered { get; set; }
+        public DateTime? LastAccessed { get; set; }
         public int JobGroupId { get; set; }
         public string? JobGroupName { get; set; }
         public string? Answer1 { get; set; }

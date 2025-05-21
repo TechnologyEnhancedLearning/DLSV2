@@ -247,9 +247,9 @@ namespace DigitalLearningSolutions.Web.Services
         void RemoveCustomFlag(int flagId);
         void RemoveCollaboratorFromFramework(int frameworkId, int id);
 
-        void DeleteFrameworkCompetencyGroup(int frameworkCompetencyGroupId, int competencyGroupId, int adminId);
+        void DeleteFrameworkCompetencyGroup(int frameworkCompetencyGroupId, int competencyGroupId, int frameworkId, int adminId);
 
-        void DeleteFrameworkCompetency(int frameworkCompetencyId, int adminId);
+        void DeleteFrameworkCompetency(int frameworkCompetencyId, int? frameworkCompetencyGroupId, int frameworkId, int adminId);
 
         void DeleteFrameworkDefaultQuestion(
             int frameworkId,
@@ -316,14 +316,14 @@ namespace DigitalLearningSolutions.Web.Services
             frameworkDataService.DeleteCompetencyLearningResource(competencyLearningResourceId, adminId);
         }
 
-        public void DeleteFrameworkCompetency(int frameworkCompetencyId, int adminId)
+        public void DeleteFrameworkCompetency(int frameworkCompetencyId, int? frameworkCompetencyGroupId, int frameworkId, int adminId)
         {
-            frameworkDataService.DeleteFrameworkCompetency(frameworkCompetencyId, adminId);
+            frameworkDataService.DeleteFrameworkCompetency(frameworkCompetencyId, frameworkCompetencyGroupId, frameworkId, adminId);
         }
 
-        public void DeleteFrameworkCompetencyGroup(int frameworkCompetencyGroupId, int competencyGroupId, int adminId)
+        public void DeleteFrameworkCompetencyGroup(int frameworkCompetencyGroupId, int competencyGroupId, int frameworkId, int adminId)
         {
-            frameworkDataService.DeleteFrameworkCompetencyGroup(frameworkCompetencyGroupId, competencyGroupId, adminId);
+            frameworkDataService.DeleteFrameworkCompetencyGroup(frameworkCompetencyGroupId, competencyGroupId, frameworkId, adminId);
         }
 
         public void DeleteFrameworkDefaultQuestion(int frameworkId, int assessmentQuestionId, int adminId, bool deleteFromExisting)
