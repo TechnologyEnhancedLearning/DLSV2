@@ -1,92 +1,92 @@
 ﻿@using DigitalLearningSolutions.Data.Models.Frameworks;
 @model CommentReplies;
 <div class="@(Model.UserIsCommenter ? "nhsuk-card comment comment-mine nhsuk-u-margin-bottom-2" : "nhsuk-card comment comment-other nhsuk-u-margin-bottom-3")">
-  <div class="nhsuk-card__content nhsuk-u-padding-4">
-    <div class="nhsuk-grid-row">
-      <div class="nhsuk-grid-column-full">
+    <div class="nhsuk-card__content nhsuk-u-padding-4">
         <div class="nhsuk-grid-row">
-          <div class="nhsuk-grid-column-full">
-            <h3 class="nhsuk-card__heading nhsuk-heading-xs heading-xxs" id="@Model.ID-header">
-              @Model.Commenter <span class="heading-light">@Model.AddedDate.ToString("dddd dd MMMM yyyy h:mm tt")</span>
-            </h3>
-            <p class="nhsuk-body-s">
-              @Html.Raw(Model.Comments)
-            </p>
-          </div>
-        </div>
-        <div class="grid-column-ninety">
-          @if (Model.Replies.Any())
-          {
-            if (@ViewContext.RouteData.Values["commentId"] == null)
-            {
-              <details class="nhsuk-details">
-                <summary class="nhsuk-details__summary">
-                  <span class="nhsuk-details__summary-text">
-                    @Model.Replies.Count() @(Model.Replies.Count() > 1 ? "Replies" : "Reply")
-                  </span>
-                </summary>
-                <div class="nhsuk-details__text">
-                  @foreach (var item in Model.Replies.Select((value, i) => new { i, value }))
-                  {
-                    <partial name="_ReplyCard.cshtml" model="item.value" view-data="@(new ViewDataDictionary(ViewData) { { "isLast", (item.i == Model.Replies.Count-1 ? true :false)} })" />
-                  }
+            <div class="nhsuk-grid-column-full">
+                <div class="nhsuk-grid-row">
+                    <div class="nhsuk-grid-column-full">
+                        <h3 class="nhsuk-card__heading nhsuk-heading-xs heading-xxs" id="@Model.ID-header">
+                            @Model.Commenter <span class="heading-light">@Model.AddedDate.ToString("dddd dd MMMM yyyy h:mm tt")</span>
+                        </h3>
+                        <p class="nhsuk-body-s">
+                            @Html.Raw(Model.Comments)
+                        </p>
+                    </div>
                 </div>
-              </details>
-            }
-            else
-            {
-              @foreach (var item in Model.Replies.Select((value, i) => new { i, value }))
-              {
-                <partial name="_ReplyCard.cshtml" model="item.value" view-data="@(new ViewDataDictionary(ViewData) { { "isLast", (item.i == Model.Replies.Count-1 ? true :false)} })" />
-              }
-            }
-          }
-        </div>
-        <div class="nhsuk-grid-column-full">
-          @if (@ViewContext.RouteData.Values["commentId"] == null)
-          {
+                <div class="grid-column-ninety">
+                    @if (Model.Replies.Any())
+                    {
+                        if (@ViewContext.RouteData.Values["commentId"] == null)
+                        {
+                            <details class="nhsuk-details">
+                                <summary class="nhsuk-details__summary">
+                                    <span class="nhsuk-details__summary-text">
+                                        @Model.Replies.Count() @(Model.Replies.Count() > 1 ? "Replies" : "Reply")
+                                    </span>
+                                </summary>
+                                <div class="nhsuk-details__text">
+                                    @foreach (var item in Model.Replies.Select((value, i) => new { i, value }))
+                                    {
+                                        <partial name="_ReplyCard.cshtml" model="item.value" view-data="@(new ViewDataDictionary(ViewData) { { "isLast", (item.i == Model.Replies.Count - 1 ? true : false) } })" />
+                                    }
+                                </div>
+                            </details>
+                        }
+                        else
+                        {
+                            @foreach (var item in Model.Replies.Select((value, i) => new { i, value }))
+                            {
+                                <partial name="_ReplyCard.cshtml" model="item.value" view-data="@(new ViewDataDictionary(ViewData) { { "isLast", (item.i == Model.Replies.Count - 1 ? true : false) } })" />
+                            }
+                        }
+                    }
+                </div>
+                <div class="nhsuk-grid-column-full">
+                    @if (@ViewContext.RouteData.Values["commentId"] == null)
+                    {
 
-            <a class="nhsuk-button button-small nhsuk-button--secondary nhsuk-u-margin-bottom-0 nhsuk-u-margin-top-0"
-             role="button"
-             aria-describedby="@Model.ID-header"
-             asp-action="ViewThread"
-             asp-controller="Frameworks"
-             asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]"
-             asp-route-commentId="@Model.ID">
-              Reply
-            </a>
-            @if (!Model.Replies.Any() && Model.UserIsCommenter)
-            {
-              <a class="nhsuk-button button-small delete-button nhsuk-u-margin-bottom-0 nhsuk-u-margin-top-0"
-             role="button"
-             aria-describedby="@Model.ID-header"
-             asp-action="ArchiveComment"
-             asp-controller="Frameworks"
-             asp-route-commentId="@Model.ID"
-             asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]">
-                Delete
-              </a>
-            }
-          }
-          else
-          {
-            <hr />
-            <form method="post">
-              <div class="nhsuk-form-group">
-                <label class="nhsuk-label" for="new-comment">
-                  Post a reply
-                </label>
-                <input type="hidden" value="@Model.Comments" name="parentComment" />
-                <textarea class="nhsuk-textarea" id="new-comment" name="Comment" rows="3"></textarea>
-              </div>
-              <button class="nhsuk-button" type="submit">
-                Post
-              </button>
-            </form>
-          }
+                        <a class="nhsuk-button button-small nhsuk-button--secondary nhsuk-u-margin-bottom-0 nhsuk-u-margin-top-0"
+                           role="button"
+                           aria-describedby="@Model.ID-header"
+                           asp-action="ViewThread"
+                           asp-controller="Frameworks"
+                           asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]"
+                           asp-route-commentId="@Model.ID">
+                            Reply
+                        </a>
+                        @if (!Model.Replies.Any() && Model.UserIsCommenter)
+                        {
+                            <a class="nhsuk-button button-small delete-button nhsuk-u-margin-bottom-0 nhsuk-u-margin-top-0"
+                               role="button"
+                               aria-describedby="@Model.ID-header"
+                               asp-action="ArchiveComment"
+                               asp-controller="Frameworks"
+                               asp-route-commentId="@Model.ID"
+                               asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]">
+                                Delete
+                            </a>
+                        }
+                    }
+                    else
+                    {
+                        <hr />
+                        <form method="post" autocomplete="off">
+                            <div class="nhsuk-form-group">
+                                <label class="nhsuk-label" for="new-comment">
+                                    Post a reply
+                                </label>
+                                <input type="hidden" value="@Model.Comments" name="parentComment" />
+                                <textarea class="nhsuk-textarea" id="new-comment" name="Comment" rows="3"></textarea>
+                            </div>
+                            <button class="nhsuk-button" type="submit">
+                                Post
+                            </button>
+                        </form>
+                    }
 
+                </div>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
 </div>
