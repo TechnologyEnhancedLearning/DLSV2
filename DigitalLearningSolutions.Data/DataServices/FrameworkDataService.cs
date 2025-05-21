@@ -1882,9 +1882,20 @@ WHERE (FrameworkID = @frameworkId)",
         public int GetAdminUserRoleForFrameworkId(int adminId, int frameworkId)
         {
             return connection.QuerySingle<int>(
-                @"SELECT CASE WHEN FW.OwnerAdminID = @adminId THEN 3 WHEN COALESCE (fwc.CanModify, 0) = 1 THEN 2 WHEN COALESCE (fwc.CanModify, 0) = 0 THEN 1 ELSE 0 END AS UserRole
-                    FROM   Frameworks AS FW LEFT OUTER JOIN
-                                 FrameworkCollaborators AS fwc ON fwc.FrameworkID = FW.ID AND fwc.AdminID = @adminId AND fwc.IsDeleted = 0
+                @"SELECT CASE 
+		                    WHEN (aa.UserID = (SELECT UserID FROM AdminAccounts WHERE ID = @adminId)) THEN 3
+		                    WHEN (fwc.CanModify = 1) OR
+			                    (SELECT COUNT(*) 
+				                    FROM FrameworkCollaborators fc
+				                    JOIN AdminAccounts aa1 ON fc.AdminID = aa1.ID
+				                    WHERE fc.FrameworkID = fw.ID
+				                    AND fc.CanModify = 1 AND fc.IsDeleted = 0
+				                    AND aa1.UserID = (SELECT aa2.UserID FROM AdminAccounts aa2 WHERE aa2.ID = @adminId)) > 0 THEN 2
+		                    WHEN fwc.CanModify = 0 THEN 1 ELSE 0
+		                    END AS UserRole
+                    FROM   Frameworks AS FW INNER JOIN
+                            AdminAccounts AS aa ON aa.ID = fw.OwnerAdminID LEFT OUTER JOIN
+                            FrameworkCollaborators AS fwc ON fwc.FrameworkID = FW.ID AND fwc.AdminID = @adminId AND fwc.IsDeleted = 0
                     WHERE (FW.ID = @frameworkId)",
                 new { adminId, frameworkId }
             );

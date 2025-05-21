@@ -65,6 +65,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             var adminId = GetAdminId();
             var userRole = frameworkService.GetAdminUserRoleForFrameworkId(adminId, frameworkId);
             if (userRole < 2) return StatusCode(403);
+            if (string.IsNullOrWhiteSpace(StringHelper.StripHtmlTags(competencyGroupBase?.Description))) { competencyGroupBase.Description = null; }
             if (competencyGroupBase.ID > 0)
             {
                 frameworkService.UpdateFrameworkCompetencyGroup(frameworkCompetencyGroupId, competencyGroupBase.CompetencyGroupID, competencyGroupBase.Name, SanitizerHelper.SanitizeHtmlData
@@ -141,7 +142,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             frameworkCompetency.Description?.Trim();
             var description = HttpUtility.HtmlDecode(HttpUtility.HtmlDecode(frameworkCompetency.Description));
             var detailFramework = frameworkService.GetDetailFrameworkByFrameworkId(frameworkId, GetAdminId());
-            if (string.IsNullOrWhiteSpace(description)) { frameworkCompetency.Description = null; }
+            if (string.IsNullOrWhiteSpace(StringHelper.StripHtmlTags(description))) { frameworkCompetency.Description = null; }
             if (!ModelState.IsValid)
             {
                 ModelState.Remove(nameof(FrameworkCompetency.Name));
