@@ -39,7 +39,7 @@
         private const string ProfessionalRegistrationNumber = "Professional Registration Number";
         private const string JobGroup = "Job group";
         private const string RegisteredDate = "Registered";
-        private const string LastAccessed = "Last Accessed";
+        private const string LastAccessed = "Last Accessed Date";
         private const string RegistrationComplete = "Registration complete";
         private const string Active = "Active";
         private const string Approved = "Approved";
