@@ -583,9 +583,9 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             if (ModelState.IsValid)
             {
                 var flags = frameworkService.GetCustomFlagsByFrameworkId(frameworkId, null)
-                    .Where(fn => fn.FlagName.ToLower() == model.FlagName.ToLower()).ToList();
+                    .Where(fn => fn.FlagName?.Trim().ToLower() == model.FlagName?.Trim().ToLower()).ToList();
 
-                bool nameExists = flags.Any(x => x.FlagName.ToLower() == model.FlagName.ToLower());
+                bool nameExists = flags.Any(x => x.FlagName?.Trim().ToLower() == model.FlagName?.Trim().ToLower());
                 bool idExists = flags.Any(x => x.FlagId == flagId);
 
                 if (actionname == "Edit")
@@ -596,7 +596,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                         return View("Developer/EditCustomFlag", model);
                     }
                     else
-                        frameworkService.UpdateFrameworkCustomFlag(frameworkId, model.Id, model.FlagName, model.FlagGroup, model.FlagTagClass);
+                        frameworkService.UpdateFrameworkCustomFlag(frameworkId, model.Id, model.FlagName?.Trim(), model.FlagGroup?.Trim(), model.FlagTagClass);
                 }
                 else
                 {
@@ -606,7 +606,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                         return View("Developer/EditCustomFlag", model);
                     }
                     else
-                        frameworkService.AddCustomFlagToFramework(frameworkId, model.FlagName, model.FlagGroup, model.FlagTagClass);
+                        frameworkService.AddCustomFlagToFramework(frameworkId, model.FlagName?.Trim(), model.FlagGroup?.Trim(), model.FlagTagClass);
                 }
 
                 return RedirectToAction("EditFrameworkFlags", "Frameworks", new { frameworkId });
