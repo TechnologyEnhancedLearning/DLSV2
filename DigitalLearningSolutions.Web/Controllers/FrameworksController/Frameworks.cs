@@ -588,7 +588,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                 bool nameExists = flags.Any(x => x.FlagName.ToLower() == model.FlagName.ToLower());
                 bool idExists = flags.Any(x => x.FlagId == flagId);
 
-                if (actionname == "Edit")
+                if (actionName == "Edit")
                 {
                     if (nameExists && !idExists)
                     {
