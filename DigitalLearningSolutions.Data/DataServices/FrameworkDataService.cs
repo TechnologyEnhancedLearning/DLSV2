@@ -292,8 +292,21 @@
 				        WHERE fc.FrameworkID = fw.ID
 				        AND fc.CanModify = 1 AND fc.IsDeleted = 0
 				        AND aa1.UserID = (SELECT aa2.UserID FROM AdminAccounts aa2 WHERE aa2.ID = @adminId)) > 0 THEN 2
-                WHEN fwc.CanModify = 0 THEN 1 ELSE 0 END AS UserRole,
-            fwr.ID AS FrameworkReviewID";
+                WHEN (fwc.CanModify = 0) OR
+                    (SELECT COUNT(*) 
+				        FROM FrameworkCollaborators fc
+				        JOIN AdminAccounts aa3 ON fc.AdminID = aa3.ID
+				        WHERE fc.FrameworkID = fw.ID
+				        AND fc.CanModify = 0 AND fc.IsDeleted = 0
+				        AND aa3.UserID = (SELECT aa4.UserID FROM AdminAccounts aa4 WHERE aa4.ID = @adminId)) > 0 THEN 1
+                ELSE 0
+            END AS UserRole,
+            (SELECT fwr.ID
+				FROM FrameworkCollaborators fc
+				INNER JOIN AdminAccounts aa3 ON fc.AdminID = aa3.ID
+				LEFT OUTER JOIN FrameworkReviews AS fwr ON fc.ID = fwr.FrameworkCollaboratorID AND fwr.Archived IS NULL AND fwr.ReviewComplete IS NULL
+				WHERE fc.FrameworkID = fw.ID AND fc.IsDeleted = 0
+				AND aa3.UserID = (SELECT aa4.UserID FROM AdminAccounts aa4 WHERE aa4.ID = @adminId)) AS FrameworkReviewID";
 
         private const string BrandedFrameworkFields =
             @",(SELECT BrandName
@@ -314,8 +327,7 @@
 
         private const string FrameworkTables =
             @"Frameworks AS FW INNER JOIN AdminAccounts AS aa ON aa.ID = fw.OwnerAdminID
-                LEFT OUTER JOIN FrameworkCollaborators AS fwc ON fwc.FrameworkID = FW.ID AND fwc.AdminID = @adminId AND COALESCE(IsDeleted, 0) = 0
-                LEFT OUTER JOIN FrameworkReviews AS fwr ON fwc.ID = fwr.FrameworkCollaboratorID AND fwr.Archived IS NULL AND fwr.ReviewComplete IS NULL";
+                LEFT OUTER JOIN FrameworkCollaborators AS fwc ON fwc.FrameworkID = FW.ID AND fwc.AdminID = @adminId AND COALESCE(IsDeleted, 0) = 0 ";
 
         private const string AssessmentQuestionFields =
             @"SELECT AQ.ID, AQ.Question, AQ.MinValue, AQ.MaxValue, AQ.AssessmentQuestionInputTypeID, AQI.InputTypeName, AQ.AddedByAdminId, CASE WHEN AQ.AddedByAdminId = @adminId THEN 1 ELSE 0 END AS UserIsOwner, AQ.CommentsPrompt, AQ.CommentsHint";
@@ -2119,10 +2131,13 @@ WHERE (ID = @commentId)",
         {
             return connection.Query<FrameworkReview>(
                 @"SELECT FR.ID, FR.FrameworkID, FR.FrameworkCollaboratorID, FC.UserEmail, CAST(CASE WHEN FC.AdminID IS NULL THEN 0 ELSE 1 END AS bit) AS IsRegistered, FR.ReviewRequested, FR.ReviewComplete, FR.SignedOff, FR.FrameworkCommentID, FC1.Comments AS Comment, FR.SignOffRequired
-                    FROM   FrameworkReviews AS FR INNER JOIN
-                         FrameworkCollaborators AS FC ON FR.FrameworkCollaboratorID = FC.ID LEFT OUTER JOIN
-                         FrameworkComments AS FC1 ON FR.FrameworkCommentID = FC1.ID
-                    WHERE FR.ID = @reviewId AND FR.FrameworkID = @frameworkId AND FC.AdminID = @adminId AND FR.Archived IS NULL AND IsDeleted = 0",
+                    FROM FrameworkReviews AS FR INNER JOIN
+                        FrameworkCollaborators AS FC ON FR.FrameworkCollaboratorID = FC.ID INNER JOIN 
+		                AdminAccounts AS aa ON aa.ID = FC.AdminID LEFT OUTER JOIN
+                        FrameworkComments AS FC1 ON FR.FrameworkCommentID = FC1.ID
+                    WHERE FR.ID = @reviewId AND FR.FrameworkID = @frameworkId AND
+                        aa.UserID = (SELECT aa1.UserID FROM AdminAccounts aa1 WHERE aa1.ID = @adminId) AND
+                        FR.Archived IS NULL AND IsDeleted = 0",
                 new { frameworkId, adminId, reviewId }
             ).FirstOrDefault();
         }
