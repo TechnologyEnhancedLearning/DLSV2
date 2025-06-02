@@ -261,7 +261,7 @@ namespace DigitalLearningSolutions.Web.Services
                     {
                         foreach (var frameworkFlag in frameworkFlags)
                         {
-                            if (frameworkFlag.FlagName == flag)
+                            if (frameworkFlag.FlagName?.Trim().ToLower() == flag?.Trim().ToLower())
                             {
                                 flagId = frameworkFlag.FlagId;
                                 break;
@@ -270,7 +270,7 @@ namespace DigitalLearningSolutions.Web.Services
                     }
                     if (flagId == 0)
                     {
-                        flagId = frameworkService.AddCustomFlagToFramework(frameworkId, flag, "Flag", "nhsuk-tag--white");
+                        flagId = frameworkService.AddCustomFlagToFramework(frameworkId, flag?.Trim(), "Flag", "nhsuk-tag--white");
                     }
                     flagIds.Add(flagId);
                 }
