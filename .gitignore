@@ -512,3 +512,6 @@ DigitalLearningSolutions.Web/Views/Shared/Components/SelectList/Default.cshtml
 DigitalLearningSolutions.Web/Views/Shared/Components/SingleCheckbox/Default.cshtml
 DigitalLearningSolutions.Web/Views/Shared/Components/TextArea/Default.cshtml
 DigitalLearningSolutions.Web/Views/Shared/Components/TextInput/Default.cshtml
+/DigitalLearningSolutions.Web/appsettings.Test.json
+/DigitalLearningSolutions.Web/web.config
+/DigitalLearningSolutions.Web/yarn.lock
