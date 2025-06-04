@@ -27,6 +27,8 @@ namespace DigitalLearningSolutions.Web.Services
         int[] GetLinkedFrameworkIds(int assessmentId);
         int? GetPrimaryLinkedFrameworkId(int assessmentId);
 
+        IEnumerable<Competency> GetCompetenciesForCompetencyAssessment(int competencyAssessmentId);
+
         bool RemoveSelfAssessmentFramework(int assessmentId, int frameworkId, int adminId);
 
         //UPDATE DATA
@@ -51,7 +53,6 @@ namespace DigitalLearningSolutions.Web.Services
 
         //DELETE DATA
         bool RemoveFrameworkCompetenciesFromAssessment(int competencyAssessmentId, int frameworkId);
-        
     }
     public class CompetencyAssessmentService : ICompetencyAssessmentService
     {
@@ -217,6 +218,11 @@ namespace DigitalLearningSolutions.Web.Services
         public bool UpdateRoleRequirementsTaskStatus(int assessmentId, bool taskStatus, bool? previousStatus)
         {
             return competencyAssessmentDataService.UpdateRoleRequirementsTaskStatus(assessmentId, taskStatus, previousStatus);
+        }
+
+        public IEnumerable<Competency> GetCompetenciesForCompetencyAssessment(int competencyAssessmentId)
+        {
+            return competencyAssessmentDataService.GetCompetenciesForCompetencyAssessment(competencyAssessmentId);
         }
     }
 }

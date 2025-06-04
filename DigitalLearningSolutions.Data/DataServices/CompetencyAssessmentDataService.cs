@@ -8,6 +8,7 @@
     using DigitalLearningSolutions.Data.Models.Common;
     using DigitalLearningSolutions.Data.Models.CompetencyAssessments;
     using DigitalLearningSolutions.Data.Models.Frameworks;
+    using DigitalLearningSolutions.Data.Models.Frameworks.Import;
     using DocumentFormat.OpenXml.Wordprocessing;
     using Microsoft.Extensions.Logging;
 
@@ -33,6 +34,8 @@
         int? GetPrimaryLinkedFrameworkId(int assessmentId);
 
         int GetCompetencyCountByFrameworkId(int assessmentId, int frameworkId);
+
+        IEnumerable<Competency> GetCompetenciesForCompetencyAssessment(int competencyAssessmentId);
 
         //UPDATE DATA
         bool UpdateCompetencyAssessmentName(int competencyAssessmentId, int adminId, string competencyAssessmentName);
@@ -631,6 +634,21 @@
                 return false;
             }
             return true;
+        }
+
+        public IEnumerable<Competency> GetCompetenciesForCompetencyAssessment(int competencyAssessmentId)
+        {
+            return connection.Query<Competency>(
+               @"SELECT sas.ID AS StructureId, sas.CompetencyID, f.FrameworkName, cg.Name AS GroupName, c.Name AS CompetencyName, c.Description AS CompetencyDescription, sas.Optional
+                    FROM   SelfAssessmentStructure AS sas INNER JOIN
+                                Competencies AS c ON sas.CompetencyID = c.ID INNER JOIN
+                                CompetencyGroups AS cg ON sas.CompetencyGroupID = cg.ID INNER JOIN
+                                FrameworkCompetencies ON c.ID = FrameworkCompetencies.CompetencyID INNER JOIN
+                                Frameworks AS f ON FrameworkCompetencies.FrameworkID = f.ID INNER JOIN
+                                SelfAssessmentFrameworks ON f.ID = SelfAssessmentFrameworks.FrameworkId AND sas.SelfAssessmentID = SelfAssessmentFrameworks.SelfAssessmentId
+                    WHERE (sas.SelfAssessmentID = @competencyAssessmentId)
+                    ORDER BY sas.Ordering", new { competencyAssessmentId }
+           );
         }
     }
 }

@@ -481,5 +481,23 @@
             competencyAssessmentService.RemoveSelfAssessmentFramework(model.CompetencyAssessmentId, model.FrameworkId, adminId);
             return RedirectToAction("SelectFrameworkSources", new { model.CompetencyAssessmentId, actionName = "Summary" });
         }
+        [Route("/CompetencyAssessments/{competencyAssessmentId}/Competencies")]
+        public IActionResult SelectCompetencies(int competencyAssessmentId)
+        {
+            var adminId = GetAdminID();
+            var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
+            if (competencyAssessmentBase == null)
+            {
+                logger.LogWarning($"Failed to load Competencies page for competencyAssessmentId: {competencyAssessmentId} adminId: {adminId}");
+                return StatusCode(500);
+            }
+            if (competencyAssessmentBase.UserRole < 2)
+            {
+                return StatusCode(403);
+            }
+            var competencies = competencyAssessmentService.GetCompetenciesForCompetencyAssessment(competencyAssessmentId);
+            var model = new SelectCompetenciesViewModel(competencyAssessmentBase, competencies);
+            return View(model);
+        }
     }
 }
