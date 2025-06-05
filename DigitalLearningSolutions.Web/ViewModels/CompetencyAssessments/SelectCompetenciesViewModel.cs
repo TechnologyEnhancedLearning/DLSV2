@@ -1,4 +1,5 @@
 ﻿using DigitalLearningSolutions.Data.Models.CompetencyAssessments;
+using DigitalLearningSolutions.Web.Helpers;
 using System.Collections.Generic;
 
 namespace DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
@@ -12,10 +13,14 @@ namespace DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
             CompetencyAssessmentName = competencyAssessmentBase.CompetencyAssessmentName;
             UserRole = competencyAssessmentBase.UserRole;
             Competencies = competencies;
+            VocabularySingular = FrameworkVocabularyHelper.VocabularySingular(competencyAssessmentBase.Vocabulary);
+            VocabularyPlural = FrameworkVocabularyHelper.VocabularyPlural(competencyAssessmentBase.Vocabulary);
         }
         public int ID { get; set; }
         public string CompetencyAssessmentName { get; set; }
         public int UserRole { get; set; }
+        public string VocabularySingular { get; set; }
+        public string VocabularyPlural { get; set; }
 
         public IEnumerable<Competency> Competencies;
     }
