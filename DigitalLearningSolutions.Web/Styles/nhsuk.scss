@@ -69,15 +69,6 @@ body:not(.js-enabled) {
   flex: 1;
 }
 
-/*  
-    Included as fixing issue caused by older grid implementation of NHS breadcrumbs and nav
-    TODO: Update header and breadcrumbs to reflect current nhsuk implementation
- */
-.nhsuk-breadcrumb .nhsuk-width-container {
-  padding-left: $nhsuk-gutter !important;
-  padding-right: $nhsuk-gutter !important;
-}
-
 .feedback-bar .nhsuk-width-container {
   margin-bottom: 0;
 }
