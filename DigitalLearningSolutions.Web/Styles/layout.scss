@@ -14,18 +14,8 @@ body {
 }
 
 #pagewrapper {
-  display: flex;
-  flex-direction: column;
   height: 100%;
   min-height: 100vh;
-}
-
-#maincontentwrapper {
-  flex: 1 0 auto;
-  align-self: center;
-  width: 100%;
-  padding-left: 32px;
-  padding-right: 32px;
 }
 
 footer {
@@ -41,8 +31,6 @@ footer {
     display: none;
   }
 }
-
-
 
 .visual-separator {
   height: 8px;
