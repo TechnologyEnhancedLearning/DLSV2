@@ -111,6 +111,7 @@
                 ce.CentreName,
                 ce.Active AS CentreActive,
                 da.DateRegistered,
+                da.LastAccessed,
                 da.CandidateNumber,
                 da.Answer1,
                 da.Answer2,
