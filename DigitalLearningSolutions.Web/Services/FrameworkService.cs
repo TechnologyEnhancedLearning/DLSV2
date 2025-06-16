@@ -603,12 +603,12 @@ namespace DigitalLearningSolutions.Web.Services
 
         public int InsertCompetency(string name, string? description, int adminId, bool alwaysShowDescription = false)
         {
-            return frameworkDataService.InsertCompetency(name, description, adminId, alwaysShowDescription);
+            return frameworkDataService.InsertCompetency(name.Trim(), description, adminId, alwaysShowDescription);
         }
 
         public int InsertCompetencyGroup(string groupName, string? groupDescription, int adminId, int? frameworkId)
         {
-            return frameworkDataService.InsertCompetencyGroup(groupName, groupDescription, adminId, frameworkId);
+            return frameworkDataService.InsertCompetencyGroup(groupName.Trim(), groupDescription, adminId, frameworkId);
         }
 
         public int InsertFrameworkCompetency(int competencyId, int? frameworkCompetencyGroupID, int adminId, int frameworkId, bool addDefaultQuestions = true)
@@ -683,12 +683,12 @@ namespace DigitalLearningSolutions.Web.Services
 
         public void UpdateFrameworkCompetency(int frameworkCompetencyId, string name, string? description, int adminId, bool? alwaysShowDescription)
         {
-            frameworkDataService.UpdateFrameworkCompetency(frameworkCompetencyId, name, description, adminId, alwaysShowDescription);
+            frameworkDataService.UpdateFrameworkCompetency(frameworkCompetencyId, name.Trim(), description, adminId, alwaysShowDescription);
         }
 
         public bool UpdateFrameworkCompetencyGroup(int frameworkCompetencyGroupId, int competencyGroupId, string name, string? description, int adminId)
         {
-            return frameworkDataService.UpdateFrameworkCompetencyGroup(frameworkCompetencyGroupId, competencyGroupId, name, description, adminId);
+            return frameworkDataService.UpdateFrameworkCompetencyGroup(frameworkCompetencyGroupId, competencyGroupId, name.Trim(), description, adminId);
         }
 
         public void UpdateFrameworkConfig(int frameworkId, int adminId, string? frameworkConfig)
