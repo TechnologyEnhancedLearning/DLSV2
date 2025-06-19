@@ -65,6 +65,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             var adminId = GetAdminId();
             var userRole = frameworkService.GetAdminUserRoleForFrameworkId(adminId, frameworkId);
             if (userRole < 2) return StatusCode(403);
+            if (string.IsNullOrWhiteSpace(StringHelper.StripHtmlTags(competencyGroupBase?.Description))) { competencyGroupBase.Description = null; }
             if (competencyGroupBase.ID > 0)
             {
                 frameworkService.UpdateFrameworkCompetencyGroup(frameworkCompetencyGroupId, competencyGroupBase.CompetencyGroupID, competencyGroupBase.Name, SanitizerHelper.SanitizeHtmlData
@@ -102,7 +103,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
 
             var adminId = GetAdminId();
 
-            frameworkService.DeleteFrameworkCompetencyGroup(frameworkCompetencyGroupId, competencyGroupId, adminId);
+            frameworkService.DeleteFrameworkCompetencyGroup(frameworkCompetencyGroupId, competencyGroupId, frameworkId, adminId);
 
             return new RedirectResult(Url.Action("ViewFramework", new { tabname = "Structure", frameworkId, frameworkCompetencyGroupId }));
         }
@@ -141,7 +142,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             frameworkCompetency.Description?.Trim();
             var description = HttpUtility.HtmlDecode(HttpUtility.HtmlDecode(frameworkCompetency.Description));
             var detailFramework = frameworkService.GetDetailFrameworkByFrameworkId(frameworkId, GetAdminId());
-            if (string.IsNullOrWhiteSpace(description)) { frameworkCompetency.Description = null; }
+            if (string.IsNullOrWhiteSpace(StringHelper.StripHtmlTags(description))) { frameworkCompetency.Description = null; }
             if (!ModelState.IsValid)
             {
                 ModelState.Remove(nameof(FrameworkCompetency.Name));
@@ -235,7 +236,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         {
             var userRole = frameworkService.GetAdminUserRoleForFrameworkId(GetAdminId(), frameworkId);
             if (userRole < 2) return StatusCode(403);
-            frameworkService.DeleteFrameworkCompetency(frameworkCompetencyId, GetAdminId());
+            frameworkService.DeleteFrameworkCompetency(frameworkCompetencyId, frameworkCompetencyGroupId, frameworkId, GetAdminId());
             return frameworkCompetencyGroupId != null ? new RedirectResult(Url.Action("ViewFramework", new { tabname = "Structure", frameworkId, frameworkCompetencyGroupId }) + "#fcgroup-" + frameworkCompetencyGroupId.ToString()) : new RedirectResult(Url.Action("ViewFramework", new { tabname = "Structure", frameworkId }) + "#fc-ungrouped");
         }
         [Route("/Frameworks/{frameworkId}/Competency/{frameworkCompetencyGroupId:int=0}/{frameworkCompetencyId}/Preview/")]

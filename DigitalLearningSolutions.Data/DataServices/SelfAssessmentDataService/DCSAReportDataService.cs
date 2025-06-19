@@ -25,9 +25,9 @@
         public IEnumerable<DCSADelegateCompletionStatus> GetDelegateCompletionStatusForCentre(int centreId)
         {
             return connection.Query<DCSADelegateCompletionStatus>(
-                @"SELECT DATEPART(month, ca.StartedDate) AS EnrolledMonth, DATEPART(yyyy, ca.StartedDate) AS EnrolledYear, u.FirstName, u.LastName, COALESCE (ucd.Email, u.PrimaryEmail) AS Email, da.Answer1 AS CentreField1, da.Answer2 AS CentreField2, da.Answer3 AS CentreField3, 
-                        CASE WHEN (ca.SubmittedDate IS NOT NULL) THEN 'Submitted' WHEN (ca.UserBookmark LIKE N'/LearningPortal/SelfAssessment/1/Review' AND ca.SubmittedDate IS NULL) THEN 'Reviewing' ELSE 'Incomplete' END AS Status
-                    FROM   CandidateAssessments AS ca INNER JOIN
+                @"SELECT DATEPART(month, ca.StartedDate) AS EnrolledMonth, DATEPART(yyyy, ca.StartedDate) AS EnrolledYear, u.FirstName, u.LastName, COALESCE (ucd.Email, u.PrimaryEmail) AS Email, da.Answer1 AS RegistrationAnswer1, da.Answer2 AS RegistrationAnswer2, da.Answer3 AS RegistrationAnswer3, 
+                    da.Answer4 AS RegistrationAnswer4, da.Answer5 AS RegistrationAnswer5, da.Answer6 AS RegistrationAnswer6, CASE WHEN (ca.SubmittedDate IS NOT NULL) THEN 'Submitted' WHEN (ca.UserBookmark LIKE N'/LearningPortal/SelfAssessment/1/Review' AND ca.SubmittedDate IS NULL) THEN 'Reviewing' ELSE 'Incomplete' END AS Status
+                    FROM  CandidateAssessments AS ca INNER JOIN
                         DelegateAccounts AS da ON ca.DelegateUserID = da.UserID INNER JOIN
                         Users AS u ON da.UserID = u.ID LEFT OUTER JOIN
                         UserCentreDetails AS ucd ON da.CentreID = ucd.CentreID AND u.ID = ucd.UserID
@@ -39,7 +39,8 @@
         public IEnumerable<DCSAOutcomeSummary> GetOutcomeSummaryForCentre(int centreId)
         {
             return connection.Query<DCSAOutcomeSummary>(
-                @"SELECT DATEPART(month, ca.StartedDate) AS EnrolledMonth, DATEPART(yyyy, ca.StartedDate) AS EnrolledYear, jg.JobGroupName AS JobGroup, da.Answer1 AS CentreField1, da.Answer2 AS CentreField2, da.Answer3 AS CentreField3, CASE WHEN (ca.SubmittedDate IS NOT NULL) 
+                @"SELECT DATEPART(month, ca.StartedDate) AS EnrolledMonth, DATEPART(yyyy, ca.StartedDate) AS EnrolledYear, jg.JobGroupName AS JobGroup, da.Answer1 AS RegistrationAnswer1, da.Answer2 AS RegistrationAnswer2, da.Answer3 AS RegistrationAnswer3,
+                    da.Answer4 AS RegistrationAnswer4, da.Answer5 AS RegistrationAnswer5, da.Answer6 AS RegistrationAnswer6, CASE WHEN (ca.SubmittedDate IS NOT NULL) 
                    THEN 'Submitted' WHEN (ca.UserBookmark LIKE N'/LearningPortal/SelfAssessment/1/Review' AND ca.SubmittedDate IS NULL) THEN 'Reviewing' ELSE 'Incomplete' END AS Status,
                      (SELECT COUNT(*) AS LearningLaunched
                      FROM    CandidateAssessmentLearningLogItems AS calli INNER JOIN

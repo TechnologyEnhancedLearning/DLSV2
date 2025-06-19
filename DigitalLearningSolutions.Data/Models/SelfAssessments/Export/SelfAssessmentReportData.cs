@@ -8,9 +8,12 @@
         public bool LearnerActive { get; set; }
         public string? PRN { get; set; }
         public string? JobGroup { get; set; }
-        public string? ProgrammeCourse { get; set; }
-        public string? Organisation { get; set; }
-        public string? DepartmentTeam { get; set; }
+        public string? RegistrationAnswer1 { get; set; }
+        public string? RegistrationAnswer2 { get; set; }
+        public string? RegistrationAnswer3 { get; set; }
+        public string? RegistrationAnswer4 { get; set; }
+        public string? RegistrationAnswer5 { get; set; }
+        public string? RegistrationAnswer6 { get; set; }
         public string? OtherCentres { get; set; }
         public string? DLSRole { get; set; }
         public DateTime? Registered { get; set; }
@@ -22,5 +25,17 @@
         public DateTime? SignOffRequested { get; set; }
         public bool SignOffAchieved { get; set; }
         public DateTime? ReviewedDate { get; set; }
+
+        // we need this for iteration across the registration answers from Delegate Accounts which match the custom fields of Centres.
+        public string?[] CentreRegistrationPrompts =>
+            new[]
+            {
+                RegistrationAnswer1,
+                RegistrationAnswer2,
+                RegistrationAnswer3,
+                RegistrationAnswer4,
+                RegistrationAnswer5,
+                RegistrationAnswer6,
+            };
     }
 }

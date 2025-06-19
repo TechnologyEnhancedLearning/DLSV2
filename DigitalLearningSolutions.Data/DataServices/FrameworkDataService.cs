@@ -252,9 +252,9 @@
         void RemoveCustomFlag(int flagId);
         void RemoveCollaboratorFromFramework(int frameworkId, int id);
 
-        void DeleteFrameworkCompetencyGroup(int frameworkCompetencyGroupId, int competencyGroupId, int adminId);
+        void DeleteFrameworkCompetencyGroup(int frameworkCompetencyGroupId, int competencyGroupId, int frameworkId, int adminId);
 
-        void DeleteFrameworkCompetency(int frameworkCompetencyId, int adminId);
+        void DeleteFrameworkCompetency(int frameworkCompetencyId, int? frameworkCompetencyGroupId, int frameworkId, int adminId);
 
         void DeleteFrameworkDefaultQuestion(
             int frameworkId,
@@ -277,14 +277,36 @@
             OwnerAdminID,
             (SELECT Forename + ' ' + Surname + (CASE WHEN Active = 1 THEN '' ELSE ' (Inactive)' END) AS Expr1 FROM AdminUsers WHERE (AdminID = FW.OwnerAdminID)) AS Owner,
             BrandID,
-            CategoryID,
+            FW.CategoryID,
             TopicID,
             CreatedDate,
             PublishStatusID,
             UpdatedByAdminID,
             (SELECT Forename + ' ' + Surname + (CASE WHEN Active = 1 THEN '' ELSE ' (Inactive)' END) AS Expr1 FROM AdminUsers AS AdminUsers_1 WHERE (AdminID = FW.UpdatedByAdminID)) AS UpdatedBy,
-            CASE WHEN FW.OwnerAdminID = @adminId THEN 3 WHEN fwc.CanModify = 1 THEN 2 WHEN fwc.CanModify = 0 THEN 1 ELSE 0 END AS UserRole,
-            fwr.ID AS FrameworkReviewID";
+            CASE
+                WHEN (aa.UserID = (SELECT UserID FROM AdminAccounts WHERE ID = @adminId)) THEN 3
+                WHEN (fwc.CanModify = 1) OR
+                    (SELECT COUNT(*) 
+				        FROM FrameworkCollaborators fc
+				        JOIN AdminAccounts aa1 ON fc.AdminID = aa1.ID
+				        WHERE fc.FrameworkID = fw.ID
+				        AND fc.CanModify = 1 AND fc.IsDeleted = 0
+				        AND aa1.UserID = (SELECT aa2.UserID FROM AdminAccounts aa2 WHERE aa2.ID = @adminId)) > 0 THEN 2
+                WHEN (fwc.CanModify = 0) OR
+                    (SELECT COUNT(*) 
+				        FROM FrameworkCollaborators fc
+				        JOIN AdminAccounts aa3 ON fc.AdminID = aa3.ID
+				        WHERE fc.FrameworkID = fw.ID
+				        AND fc.CanModify = 0 AND fc.IsDeleted = 0
+				        AND aa3.UserID = (SELECT aa4.UserID FROM AdminAccounts aa4 WHERE aa4.ID = @adminId)) > 0 THEN 1
+                ELSE 0
+            END AS UserRole,
+            (SELECT fwr.ID
+				FROM FrameworkCollaborators fc
+				INNER JOIN AdminAccounts aa3 ON fc.AdminID = aa3.ID
+				LEFT OUTER JOIN FrameworkReviews AS fwr ON fc.ID = fwr.FrameworkCollaboratorID AND fwr.Archived IS NULL AND fwr.ReviewComplete IS NULL
+				WHERE fc.FrameworkID = fw.ID AND fc.IsDeleted = 0
+				AND aa3.UserID = (SELECT aa4.UserID FROM AdminAccounts aa4 WHERE aa4.ID = @adminId)) AS FrameworkReviewID";
 
         private const string BrandedFrameworkFields =
             @",(SELECT BrandName
@@ -304,9 +326,8 @@
         private const string FlagFields = @"fl.ID AS FlagId, fl.FrameworkId, fl.FlagName, fl.FlagGroup, fl.FlagTagClass";
 
         private const string FrameworkTables =
-            @"Frameworks AS FW LEFT OUTER JOIN
-             FrameworkCollaborators AS fwc ON fwc.FrameworkID = FW.ID AND fwc.AdminID = @adminId AND COALESCE(IsDeleted, 0) = 0
-            LEFT OUTER JOIN FrameworkReviews AS fwr ON fwc.ID = fwr.FrameworkCollaboratorID AND fwr.Archived IS NULL AND fwr.ReviewComplete IS NULL";
+            @"Frameworks AS FW INNER JOIN AdminAccounts AS aa ON aa.ID = fw.OwnerAdminID
+                LEFT OUTER JOIN FrameworkCollaborators AS fwc ON fwc.FrameworkID = FW.ID AND fwc.AdminID = @adminId AND COALESCE(IsDeleted, 0) = 0 ";
 
         private const string AssessmentQuestionFields =
             @"SELECT AQ.ID, AQ.Question, AQ.MinValue, AQ.MaxValue, AQ.AssessmentQuestionInputTypeID, AQI.InputTypeName, AQ.AddedByAdminId, CASE WHEN AQ.AddedByAdminId = @adminId THEN 1 ELSE 0 END AS UserIsOwner, AQ.CommentsPrompt, AQ.CommentsHint";
@@ -680,9 +701,11 @@
             var numberOfAffectedRows = connection.Execute(
                 @"INSERT INTO FrameworkCompetencies ([CompetencyID], FrameworkCompetencyGroupID, UpdatedByAdminID, Ordering, FrameworkID)
                     VALUES (@competencyId, @frameworkCompetencyGroupID, @adminId, COALESCE
-                             ((SELECT        MAX(Ordering) AS OrderNum
-                                 FROM            [FrameworkCompetencies]
-                                 WHERE        ([FrameworkCompetencyGroupID] = @frameworkCompetencyGroupID)), 0)+1, @frameworkId)",
+                             ((SELECT MAX(Ordering) AS OrderNum
+                                 FROM [FrameworkCompetencies]
+                                 WHERE ((@frameworkCompetencyGroupID IS NULL AND FrameworkCompetencyGroupID IS NULL) OR
+                                         (@frameworkCompetencyGroupID IS NOT NULL AND FrameworkCompetencyGroupID = @frameworkCompetencyGroupID)) AND
+	                                       FrameworkID = @frameworkId ), 0)+1, @frameworkId)",
                 new { competencyId, frameworkCompetencyGroupID, adminId, frameworkId }
             );
             if (numberOfAffectedRows < 1)
@@ -707,7 +730,7 @@
                     new { competencyId, frameworkCompetencyGroupID }
                 );
             }
-            if(addDefaultQuestions)
+            if (addDefaultQuestions)
             {
                 AddDefaultQuestionsToCompetency(competencyId, frameworkId);
             }
@@ -1033,7 +1056,7 @@ GROUP BY fc.ID, c.ID, c.Name, c.Description, fc.Ordering
             {
                 var numberOfAffectedRows = connection.Execute(
                     @"UPDATE CompetencyGroups SET Name = @name, UpdatedByAdminID = @adminId, Description = @description
-                    WHERE ID = @competencyGroupId AND (Name <> @name OR Description <> @description)",
+                    WHERE ID = @competencyGroupId AND (Name <> @name OR ISNULL(Description, '') <> ISNULL(@description, ''))",
                     new { name, adminId, competencyGroupId, description }
                 );
                 if (numberOfAffectedRows < 1)
@@ -1134,7 +1157,7 @@ GROUP BY fc.ID, c.ID, c.Name, c.Description, fc.Ordering
             );
         }
 
-        public void DeleteFrameworkCompetencyGroup(int frameworkCompetencyGroupId, int competencyGroupId, int adminId)
+        public void DeleteFrameworkCompetencyGroup(int frameworkCompetencyGroupId, int competencyGroupId, int frameworkId, int adminId)
         {
             if ((frameworkCompetencyGroupId < 1) | (adminId < 1))
             {
@@ -1165,7 +1188,23 @@ GROUP BY fc.ID, c.ID, c.Name, c.Description, fc.Ordering
                 new { frameworkCompetencyGroupId }
             );
 
-            if (numberOfAffectedRows < 1)
+            if (numberOfAffectedRows > 0)
+            {
+                connection.Execute(
+                    @"WITH Ranked AS (
+                        SELECT ID, 
+                               ROW_NUMBER() OVER (PARTITION BY FrameworkID ORDER BY Ordering) AS NewOrder
+                        FROM FrameworkCompetencyGroups
+	                    Where FrameworkID = @frameworkID
+                    )
+                    UPDATE fcg
+                        SET fcg.Ordering = r.NewOrder
+                        FROM FrameworkCompetencyGroups fcg
+                        JOIN Ranked r ON fcg.ID = r.ID;",
+                    new { frameworkId }
+                );
+            }
+            else
             {
                 logger.LogWarning(
                     "Not deleting framework competency group as db update failed. " +
@@ -1210,7 +1249,7 @@ GROUP BY fc.ID, c.ID, c.Name, c.Description, fc.Ordering
             }
         }
 
-        public void DeleteFrameworkCompetency(int frameworkCompetencyId, int adminId)
+        public void DeleteFrameworkCompetency(int frameworkCompetencyId, int? frameworkCompetencyGroupId, int frameworkId, int adminId)
         {
             var competencyId = connection.QuerySingle<int>(
                 @"SELECT CompetencyID FROM FrameworkCompetencies WHERE ID = @frameworkCompetencyId",
@@ -1234,7 +1273,24 @@ GROUP BY fc.ID, c.ID, c.Name, c.Description, fc.Ordering
                 @"DELETE FROM FrameworkCompetencies WHERE ID = @frameworkCompetencyId",
                 new { frameworkCompetencyId }
             );
-            if (numberOfAffectedRows < 1)
+            if (numberOfAffectedRows > 0)
+            {
+                connection.Execute(
+                    @"WITH Ranked AS (
+                        SELECT ID, 
+                               ROW_NUMBER() OVER (PARTITION BY FrameworkID ORDER BY Ordering) AS NewOrder
+                        FROM FrameworkCompetencies
+	                    Where (FrameworkCompetencyGroupID = @frameworkCompetencyGroupID) OR (FrameworkCompetencyGroupID IS NULL AND @frameworkCompetencyGroupID IS NULL) AND
+	                    FrameworkID = @frameworkID
+                    )
+                    UPDATE fc
+                    SET fc.Ordering = r.NewOrder
+                    FROM FrameworkCompetencies fc
+                    JOIN Ranked r ON fc.ID = r.ID;",
+                    new { frameworkCompetencyGroupId, frameworkId }
+                );
+            }
+            else
             {
                 logger.LogWarning(
                     "Not deleting framework competency as db update failed. " +
@@ -1838,9 +1894,20 @@ WHERE (FrameworkID = @frameworkId)",
         public int GetAdminUserRoleForFrameworkId(int adminId, int frameworkId)
         {
             return connection.QuerySingle<int>(
-                @"SELECT CASE WHEN FW.OwnerAdminID = @adminId THEN 3 WHEN COALESCE (fwc.CanModify, 0) = 1 THEN 2 WHEN COALESCE (fwc.CanModify, 0) = 0 THEN 1 ELSE 0 END AS UserRole
-                    FROM   Frameworks AS FW LEFT OUTER JOIN
-                                 FrameworkCollaborators AS fwc ON fwc.FrameworkID = FW.ID AND fwc.AdminID = @adminId AND fwc.IsDeleted = 0
+                @"SELECT CASE 
+		                    WHEN (aa.UserID = (SELECT UserID FROM AdminAccounts WHERE ID = @adminId)) THEN 3
+		                    WHEN (fwc.CanModify = 1) OR
+			                    (SELECT COUNT(*) 
+				                    FROM FrameworkCollaborators fc
+				                    JOIN AdminAccounts aa1 ON fc.AdminID = aa1.ID
+				                    WHERE fc.FrameworkID = fw.ID
+				                    AND fc.CanModify = 1 AND fc.IsDeleted = 0
+				                    AND aa1.UserID = (SELECT aa2.UserID FROM AdminAccounts aa2 WHERE aa2.ID = @adminId)) > 0 THEN 2
+		                    WHEN fwc.CanModify = 0 THEN 1 ELSE 0
+		                    END AS UserRole
+                    FROM   Frameworks AS FW INNER JOIN
+                            AdminAccounts AS aa ON aa.ID = fw.OwnerAdminID LEFT OUTER JOIN
+                            FrameworkCollaborators AS fwc ON fwc.FrameworkID = FW.ID AND fwc.AdminID = @adminId AND fwc.IsDeleted = 0
                     WHERE (FW.ID = @frameworkId)",
                 new { adminId, frameworkId }
             );
@@ -2064,10 +2131,13 @@ WHERE (ID = @commentId)",
         {
             return connection.Query<FrameworkReview>(
                 @"SELECT FR.ID, FR.FrameworkID, FR.FrameworkCollaboratorID, FC.UserEmail, CAST(CASE WHEN FC.AdminID IS NULL THEN 0 ELSE 1 END AS bit) AS IsRegistered, FR.ReviewRequested, FR.ReviewComplete, FR.SignedOff, FR.FrameworkCommentID, FC1.Comments AS Comment, FR.SignOffRequired
-                    FROM   FrameworkReviews AS FR INNER JOIN
-                         FrameworkCollaborators AS FC ON FR.FrameworkCollaboratorID = FC.ID LEFT OUTER JOIN
-                         FrameworkComments AS FC1 ON FR.FrameworkCommentID = FC1.ID
-                    WHERE FR.ID = @reviewId AND FR.FrameworkID = @frameworkId AND FC.AdminID = @adminId AND FR.Archived IS NULL AND IsDeleted = 0",
+                    FROM FrameworkReviews AS FR INNER JOIN
+                        FrameworkCollaborators AS FC ON FR.FrameworkCollaboratorID = FC.ID INNER JOIN 
+		                AdminAccounts AS aa ON aa.ID = FC.AdminID LEFT OUTER JOIN
+                        FrameworkComments AS FC1 ON FR.FrameworkCommentID = FC1.ID
+                    WHERE FR.ID = @reviewId AND FR.FrameworkID = @frameworkId AND
+                        aa.UserID = (SELECT aa1.UserID FROM AdminAccounts aa1 WHERE aa1.ID = @adminId) AND
+                        FR.Archived IS NULL AND IsDeleted = 0",
                 new { frameworkId, adminId, reviewId }
             ).FirstOrDefault();
         }
