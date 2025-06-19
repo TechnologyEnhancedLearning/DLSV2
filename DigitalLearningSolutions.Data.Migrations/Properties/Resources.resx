@@ -469,13 +469,22 @@
   <data name="TD_4950_Alter_GetAssessmentResultsByDelegate_UP" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Scripts\TD_4950_Alter_GetAssessmentResultsByDelegate_UP.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
   </data>
-  <data name="TD-4950-dboGetOtherCentresForSelfAssessmentCreateOrAlter" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\TD-4950-dboGetOtherCentresForSelfAssessmentCreateOrAlter.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  <data name="TD_5412_Alter_SendExpiredTBCReminders_Down" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Scripts\TD-5412-Alter_SendExpiredTBCReminders_Down.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
   </data>
-  <data name="TD_4878_Alter_GetActivitiesForDelegateEnrolment_Down" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Scripts\TD-4878-Alter_GetActivitiesForDelegateEnrolment_Down.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
+  <data name="TD_5412_Alter_SendExpiredTBCReminders_Up" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Scripts\TD-5412-Alter_SendExpiredTBCReminders_Up.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
   </data>
-  <data name="TD_4878_Alter_GetActivitiesForDelegateEnrolment_Up" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Scripts\TD-4878-Alter_GetActivitiesForDelegateEnrolment_Up.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
+  <data name="TD_5514_Alter_SendExpiredTBCReminders_Down" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Scripts\TD-5514-Alter_SendExpiredTBCReminders_Down.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
+  </data>
+  <data name="TD_5514_Alter_SendExpiredTBCReminders_Up" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Scripts\TD-5514-Alter_SendExpiredTBCReminders_Up.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
+  </data>
+  <data name="TD_5447_Alter_ReorderFrameworkCompetency_Down" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Scripts\TD-5447-Alter_ReorderFrameworkCompetency_Down.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
+  </data>
+  <data name="TD_5447_Alter_ReorderFrameworkCompetency_Up" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Scripts\TD-5447-Alter_ReorderFrameworkCompetency_Up.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
   </data>
 </root>

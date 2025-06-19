@@ -547,6 +547,13 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                     WHERE cas.SupervisorDelegateId = @supervisorDelegateId AND cas.Removed IS NULL AND sarsv.Verified IS NULL", new { supervisorDelegateId }
             );
 
+            connection.Execute(
+                @"DELETE FROM casv FROM CandidateAssessmentSupervisorVerifications casv INNER JOIN
+			                CandidateAssessmentSupervisors cas ON casv.CandidateAssessmentSupervisorID = cas.ID
+                    WHERE cas.SupervisorDelegateId = @supervisorDelegateId
+			                AND casv.Verified IS NULL AND casv.SignedOff = 0", new { supervisorDelegateId }
+            );
+
             var numberOfAffectedRows = connection.Execute(
          @"UPDATE SupervisorDelegates SET Removed = getUTCDate()
             WHERE ID = @supervisorDelegateId AND Removed IS NULL AND (DelegateUserID = @delegateUserId OR SupervisorAdminID = @adminId)",

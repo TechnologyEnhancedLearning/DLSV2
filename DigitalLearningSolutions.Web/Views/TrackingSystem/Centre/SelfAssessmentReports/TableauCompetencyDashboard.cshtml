@@ -5,6 +5,8 @@
     var viewName = ViewBag.ViewName;
     var jwtToken = ViewBag.JwtToken;
     var siteName = ViewBag.SiteName;
+    var aid = ViewBag.AdminId;
+    var email = ViewBag.Email;
     var srcUrl = $"{tableauServerUrl}/t/{siteName}/views/{workbookName}/{viewName}";
     ViewData["Title"] = "Supervised self assessments dashboard";
 }
@@ -17,14 +19,18 @@
     </a>
 </div>
 <h1>@ViewData["Title"]</h1>
+<vc:inset-text css-class="" text="Use the full screen button below the Tableau dashboard (next to 'Share') for the best experience." />
 <feature name="@(FeatureFlags.TableauSelfAssessmentDashboards)">
     <tableau-viz id='tableau-viz'
                  src='@srcUrl' token='@jwtToken' toolbar='bottom'>
         If the dashboard doesn't appear after a few seconds, <a href="#">reload the page</a>
     </tableau-viz>
+    <input type="hidden" id="hf-email" value="@email" />
+    <input type="hidden" id="hf-adminid" value="@aid" />
     @section scripts {
         @* We are not using Yarn/npm for the Tableau JS becaue of errors during installation relating to a missing dependency *@
         <script type="module" src="@tableauServerUrl/javascripts/api/tableau.embedding.3.latest.min.js"></script>
+        <script src="@Url.Content("~/js/trackingSystem/tableaureports.js")" asp-append-version="true"></script>
     }
 </feature>
 <feature name="@(FeatureFlags.TableauSelfAssessmentDashboards)" negate="true">

@@ -22,6 +22,8 @@
     using NUnit.Framework;
     using GDS.MultiPageFormData;
     using GDS.MultiPageFormData.Enums;
+    using DigitalLearningSolutions.Data.Utilities;
+    using Microsoft.AspNetCore.Hosting;
 
     public class RedirectToErrorEmptySessionDataTests
     {
@@ -41,7 +43,9 @@
                         A.Fake<ICompetencyLearningResourcesService>(),
                         A.Fake<ILearningHubApiClient>(),
                         A.Fake<ISearchSortFilterPaginateService>(),
-                        A.Fake<IMultiPageFormService>()
+                        A.Fake<IMultiPageFormService>(),
+                        A.Fake<IClockUtility>(),
+                        A.Fake<IWebHostEnvironment>()
                     )
                     .WithDefaultContext().WithMockTempData();
 

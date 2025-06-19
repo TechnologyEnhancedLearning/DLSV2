@@ -14,6 +14,7 @@
         public int AssessmentQuestions { get; set; }
         public int CompetencyLearningResourcesCount { get; set; }
         public string? FrameworkName { get; set; }
+        public bool? AlwaysShowDescription { get; set; }
 
         public override string SearchableName
         {

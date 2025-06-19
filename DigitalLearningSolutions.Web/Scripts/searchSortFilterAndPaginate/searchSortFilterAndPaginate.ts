@@ -1,4 +1,4 @@
-import Details from 'nhsuk-frontend/packages/components/details/details';
+import Details from 'nhse-tel-frontend/packages/components/details/details';
 import _ from 'lodash';
 import {
   setUpFilter, filterSearchableElements, IAppliedFilterTag,

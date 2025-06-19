@@ -45,14 +45,28 @@
             <dd class="nhsuk-summary-list__value" data-name-for-sorting="complete-by-date">
                 @if (Model.Supervisors.Any())
                 {
-                    @foreach (var supervisor in Model.Supervisors.Take(3))
-                    {
-                        <p>@supervisor.SupervisorName, @supervisor.RoleName (@supervisor.CentreName)</p>
-                    }
-                    @if (Model.Supervisors.Count() > 3)
-                    {
-                        <p>+@(Model.Supervisors.Count() - 3) more</p>
-                    }
+                    <details class="nhsuk-details">
+                        <summary class="nhsuk-details__summary nhsuk-u-padding-0">
+                            @{
+                                var supervisors = string.Join(", ", new[] {
+                                    new { Role = "Educator/Manager", Count = Model.Supervisors.Count(x => x.RoleName == "Educator/Manager") },
+                                    new { Role = "Assessor", Count = Model.Supervisors.Count(x => x.RoleName == "Assessor") },
+                                    new { Role = "Supervisor", Count = Model.Supervisors.Count(x => x.RoleName == "Supervisor") }
+                                    }
+                                .Where(x => x.Count > 0)
+                                .Select(x => $"{x.Count} {x.Role}{(x.Count > 1 ? "s" : "")}"));
+                            }
+                            <span class="nhsuk-details__summary-text nhsuk-u-padding-left-4">@supervisors</span>
+                        </summary>
+                        <div class="nhsuk-details__text nhsuk-u-margin-top-2">
+                            <ul>
+                                @foreach (var supervisor in Model.Supervisors)
+                                {
+                                    <li>@supervisor.SupervisorName, @supervisor.RoleName (@supervisor.CentreName)</li>
+                                }
+                            </ul>
+                        </div>
+                    </details>
                 }
                 else
                 {

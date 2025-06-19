@@ -6,6 +6,7 @@
     using Microsoft.Extensions.Logging;
     using System.Collections.Generic;
     using System.Data;
+    using ClosedXML.Excel;
 
     public interface ISelfAssessmentReportDataService
     {
@@ -63,9 +64,12 @@
 						, da.Active AS LearnerActive
                     	, u.ProfessionalRegistrationNumber AS PRN
                         , jg.JobGroupName AS JobGroup
-                    	, CASE WHEN c.CustomField1PromptID = 10 THEN da.Answer1 WHEN c.CustomField2PromptID = 10 THEN da.Answer2 WHEN c.CustomField3PromptID = 10 THEN da.Answer3 WHEN c.CustomField4PromptID = 10 THEN da.Answer4 WHEN c.CustomField5PromptID = 10 THEN da.Answer5 WHEN c.CustomField6PromptID = 10 THEN da.Answer6 ELSE '' END AS 'ProgrammeCourse'
-                        , CASE WHEN c.CustomField1PromptID = 4 THEN da.Answer1 WHEN c.CustomField2PromptID = 4 THEN da.Answer2 WHEN c.CustomField3PromptID = 4 THEN da.Answer3 WHEN c.CustomField4PromptID = 4 THEN da.Answer4 WHEN c.CustomField5PromptID = 4 THEN da.Answer5 WHEN c.CustomField6PromptID = 4 THEN da.Answer6 ELSE '' END AS 'Organisation'
-                        , CASE WHEN c.CustomField1PromptID = 1 THEN da.Answer1 WHEN c.CustomField2PromptID = 1 THEN da.Answer2 WHEN c.CustomField3PromptID = 1 THEN da.Answer3 WHEN c.CustomField4PromptID = 1 THEN da.Answer4 WHEN c.CustomField5PromptID = 1 THEN da.Answer5 WHEN c.CustomField6PromptID = 1 THEN da.Answer6 ELSE '' END AS 'DepartmentTeam'
+                    	, da.Answer1 AS RegistrationAnswer1
+                    	, da.Answer2 AS RegistrationAnswer2
+                    	, da.Answer3 AS RegistrationAnswer3
+                    	, da.Answer4 AS RegistrationAnswer4
+                    	, da.Answer5 AS RegistrationAnswer5
+                    	, da.Answer6 AS RegistrationAnswer6
                         , dbo.GetOtherCentresForSelfAssessment(da.UserID, @SelfAssessmentID, c.CentreID) AS OtherCentres
                         , CASE
                             WHEN aa.ID IS NULL THEN 'Learner'
@@ -131,5 +135,5 @@
                 new { centreId, selfAssessmentId }
             );
         }
-    }
+    } 
 }
