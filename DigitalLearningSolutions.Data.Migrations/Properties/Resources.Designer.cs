@@ -2525,6 +2525,41 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to IF OBJECT_ID(&apos;dbo.IndexOptimize&apos;, &apos;P&apos;) IS NOT NULL DROP PROCEDURE dbo.IndexOptimize;
+        ///IF OBJECT_ID(&apos;dbo.CommandExecute&apos;, &apos;P&apos;) IS NOT NULL DROP PROCEDURE dbo.CommandExecute;
+        ///IF OBJECT_ID(&apos;dbo.CommandLog&apos;, &apos;U&apos;) IS NOT NULL DROP TABLE dbo.CommandLog;
+        ///.
+        /// </summary>
+        internal static string TD_5670_MaintenanceScripts_DOWN {
+            get {
+                return ResourceManager.GetString("TD-5670-MaintenanceScripts_DOWN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to -- ============================================
+        ///-- CommandLog table
+        ///-- ============================================
+        ///IF OBJECT_ID(&apos;dbo.CommandLog&apos;, &apos;U&apos;) IS NOT NULL DROP TABLE dbo.CommandLog;
+        ///CREATE TABLE dbo.CommandLog (
+        ///    ID INT IDENTITY PRIMARY KEY,
+        ///    DatabaseName SYSNAME NULL,
+        ///    SchemaName SYSNAME NULL,
+        ///    ObjectName SYSNAME NULL,
+        ///    ObjectType CHAR(2) NULL,
+        ///    IndexName SYSNAME NULL,
+        ///    IndexType TINYINT NULL,
+        ///    StatisticsName SYSNAME NULL,
+        ///    PartitionNumber INT NULL,
+        ///    Ext [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_5670_MaintenanceScripts_UP {
+            get {
+                return ResourceManager.GetString("TD_5670_MaintenanceScripts_UP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GetActiveAvailableCustomisationsForCentreFiltered_V6]    Script Date: 29/09/2022 19:11:04 ******/
         ///SET ANSI_NULLS ON
         ///GO
