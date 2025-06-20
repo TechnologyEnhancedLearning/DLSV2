@@ -1,6 +1,7 @@
 ﻿using DigitalLearningSolutions.Data.DataServices;
 using DigitalLearningSolutions.Data.Models.Common;
 using DigitalLearningSolutions.Data.Models.CompetencyAssessments;
+using DigitalLearningSolutions.Data.Models.Frameworks;
 using DocumentFormat.OpenXml.EMMA;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -28,6 +29,7 @@ namespace DigitalLearningSolutions.Web.Services
         int? GetPrimaryLinkedFrameworkId(int assessmentId);
 
         IEnumerable<Competency> GetCompetenciesForCompetencyAssessment(int competencyAssessmentId);
+        IEnumerable<BaseFramework> GetLinkedFrameworksForCompetencyAssessment(int competencyAssessmentId);
 
         bool RemoveSelfAssessmentFramework(int assessmentId, int frameworkId, int adminId);
 
@@ -223,6 +225,11 @@ namespace DigitalLearningSolutions.Web.Services
         public IEnumerable<Competency> GetCompetenciesForCompetencyAssessment(int competencyAssessmentId)
         {
             return competencyAssessmentDataService.GetCompetenciesForCompetencyAssessment(competencyAssessmentId);
+        }
+
+        public IEnumerable<BaseFramework> GetLinkedFrameworksForCompetencyAssessment(int competencyAssessmentId)
+        {
+            return competencyAssessmentDataService.GetLinkedFrameworksForCompetencyAssessment(competencyAssessmentId);
         }
     }
 }

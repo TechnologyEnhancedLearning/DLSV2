@@ -484,6 +484,12 @@
         [Route("/CompetencyAssessments/{competencyAssessmentId}/Competencies")]
         public IActionResult SelectCompetencies(int competencyAssessmentId)
         {
+            
+            var competencies = competencyAssessmentService.GetCompetenciesForCompetencyAssessment(competencyAssessmentId);
+            if(!competencies.Any())
+            {
+                return RedirectToAction("AddCompetenciesSelectFramework", new { competencyAssessmentId });
+            }
             var adminId = GetAdminID();
             var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
             if (competencyAssessmentBase == null)
@@ -495,9 +501,14 @@
             {
                 return StatusCode(403);
             }
-            var competencies = competencyAssessmentService.GetCompetenciesForCompetencyAssessment(competencyAssessmentId);
             var model = new SelectCompetenciesViewModel(competencyAssessmentBase, competencies);
             return View(model);
+        }
+        [Route("/CompetencyAssessments/{competencyAssessmentId}/Competencies/Add/SelectFramework")]
+        public IActionResult AddCompetenciesSelectFramework(int competencyAssessmentId)
+        {
+
+            return View();
         }
     }
 }
