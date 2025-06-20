@@ -655,7 +655,15 @@
         public IEnumerable<BaseFramework> GetLinkedFrameworksForCompetencyAssessment(int competencyAssessmentId)
         {
             return connection.Query<BaseFramework>(
-                @"SELECT f.ID, f.FrameworkName, f.OwnerAdminID, f.Owner, f.BrandID, f.CategoryID, f.TopicID, f.CreatedDate, f.PublishStatusID, f.UpdatedByAdminID, f.UpdatedBy, f.UserRole, f.FrameworkReviewID
+                @"SELECT f.ID,
+            FrameworkName,
+            f.OwnerAdminID,
+            f.BrandID,
+            f.CategoryID,
+            f.TopicID,
+            f.CreatedDate,
+            f.PublishStatusID,
+            f.UpdatedByAdminID
                     FROM   SelfAssessmentFrameworks saf INNER JOIN
                                 Frameworks AS f ON saf.FrameworkId = f.ID
                     WHERE (saf.SelfAssessmentId = @competencyAssessmentId) AND (saf.RemovedDate IS NULL)

@@ -1,7 +1,7 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
-@model SelectCompetenciesViewModel;
+@model AddCompetenciesSelectFrameworkViewModel;
 @{
-    ViewData["Title"] = "Select Competencies";
+    ViewData["Title"] = "Select Framework Source";
     ViewData["Application"] = "Framework Service";
 }
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
@@ -21,24 +21,28 @@
         </div>
     </nav>
 }
-<h1>Select @Model.VocabularyPlural.ToLower() to assess for @Model.CompetencyAssessmentName</h1>
-<table class="nhsuk-table">
-    <caption class="nhsuk-table__caption">@Model.VocabularyPlural</caption>
-    <thead class="nhsuk-table__head">
-        <tr>
-            <th scope="col" class="nhsuk-table__header">Framework</th>
-            <th scope="col" class="nhsuk-table__header">Group</th>
-            <th scope="col" class="nhsuk-table__header">Group</th>
-        </tr>
-    </thead>
-    <tbody class="nhsuk-table__body">
-        @foreach (var competency in Model.Competencies)
-        {
-            <tr class="nhsuk-table__row">
-                <td class="nhsuk-table__cell"></td>
-                <td class="nhsuk-table__cell"></td>
-            </tr>
-        }
-    </tbody>
-</table>
+<h1>Select Framework Source</h1>
+<form>
+    <div class="nhsuk-form-group">
 
+        <fieldset class="nhsuk-fieldset">
+            <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
+                <h2 class="nhsuk-fieldset__heading">
+                    Select the framework source you would like to use to add @Model.VocabularyPlural.ToLower() to this competency assessment.
+                </h2>
+            </legend>
+            <div class="nhsuk-radios">
+                @foreach (var framework in Model.LinkedFrameworks)
+                {
+                    <div class="nhsuk-radios__item">
+                        <input class="nhsuk-radios__input" asp-for="@Model.FrameworkId" type="radio" value="@framework.ID">
+                        <label class="nhsuk-label nhsuk-radios__label" for="example-hints-1">
+                            @framework.FrameworkName
+                        </label>
+                    </div>
+                }
+            </div>
+        </fieldset>
+    </div>
+        <button type="submit" class="nhsuk-button" asp-action="AddCompetenciesSelectCompetencies" asp-route-competencyAssessmentId="@Model.ID">Next</button>
+</form>
