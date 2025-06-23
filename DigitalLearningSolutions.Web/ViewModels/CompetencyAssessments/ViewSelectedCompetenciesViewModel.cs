@@ -4,10 +4,10 @@ using System.Collections.Generic;
 
 namespace DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
 {
-    public class SelectCompetenciesViewModel
+    public class ViewSelectedCompetenciesViewModel
     {
-        public SelectCompetenciesViewModel() { }
-        public SelectCompetenciesViewModel(CompetencyAssessmentBase competencyAssessmentBase, IEnumerable<Competency> competencies)
+        public ViewSelectedCompetenciesViewModel() { }
+        public ViewSelectedCompetenciesViewModel(CompetencyAssessmentBase competencyAssessmentBase, IEnumerable<Competency> competencies)
         {
             ID = competencyAssessmentBase.ID;
             CompetencyAssessmentName = competencyAssessmentBase.CompetencyAssessmentName;
