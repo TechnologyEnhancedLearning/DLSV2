@@ -301,7 +301,7 @@
 				        AND aa3.UserID = (SELECT aa4.UserID FROM AdminAccounts aa4 WHERE aa4.ID = @adminId)) > 0 THEN 1
                 ELSE 0
             END AS UserRole,
-            (SELECT fwr.ID
+            (SELECT TOP(1) fwr.ID
 				FROM FrameworkCollaborators fc
 				INNER JOIN AdminAccounts aa3 ON fc.AdminID = aa3.ID
 				LEFT OUTER JOIN FrameworkReviews AS fwr ON fc.ID = fwr.FrameworkCollaboratorID AND fwr.Archived IS NULL AND fwr.ReviewComplete IS NULL
