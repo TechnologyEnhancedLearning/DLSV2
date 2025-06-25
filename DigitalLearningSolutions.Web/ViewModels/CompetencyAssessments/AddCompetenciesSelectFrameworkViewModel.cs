@@ -5,7 +5,7 @@
     using DigitalLearningSolutions.Web.Helpers;
     using System.Collections.Generic;
 
-    public class AddCompetenciesSelectFrameworkViewModel
+    public class AddCompetenciesSelectFrameworkViewModel : AddCompetenciesSelectFrameworkFormData
     {
         public AddCompetenciesSelectFrameworkViewModel(
            CompetencyAssessmentBase competencyAssessmentBase,
@@ -19,12 +19,10 @@
             VocabularySingular = FrameworkVocabularyHelper.VocabularySingular(competencyAssessmentBase.Vocabulary);
             VocabularyPlural = FrameworkVocabularyHelper.VocabularyPlural(competencyAssessmentBase.Vocabulary);
         }
-        public int ID { get; set; }
         public string? CompetencyAssessmentName { get; set; }
         public int UserRole { get; set; }
         public string VocabularySingular { get; set; }
         public string VocabularyPlural { get; set; }
-        public int FrameworkId { get; set; }
         public IEnumerable<BaseFramework> LinkedFrameworks { get; set; }
     }
 }

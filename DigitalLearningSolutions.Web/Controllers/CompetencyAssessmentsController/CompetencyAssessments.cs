@@ -529,12 +529,11 @@
         }
         [HttpPost]
         [Route("/CompetencyAssessments/{competencyAssessmentId}/Competencies/Add/SelectFramework")]
-        public IActionResult AddCompetenciesSelectFramework(AddCompetenciesSelectFrameworkViewModel model)
+        public IActionResult AddCompetenciesSelectFramework(AddCompetenciesSelectFrameworkFormData model)
         {
             if (!ModelState.IsValid)
             {
                 var linkedFrameworks = competencyAssessmentService.GetLinkedFrameworksForCompetencyAssessment(model.ID);
-                model.LinkedFrameworks = linkedFrameworks;
                 return View("AddCompetenciesSelectFramework", model);
             }
             else

@@ -1,7 +1,7 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
-@model ViewSelectedCompetenciesViewModel;
+@model AddCompetenciesViewModel;
 @{
-    ViewData["Title"] = "Select Competencies";
+    ViewData["Title"] = "Add Competencies to Self Assessment";
     ViewData["Application"] = "Framework Service";
 }
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
@@ -15,30 +15,11 @@
             <ol class="nhsuk-breadcrumb__list">
                 <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewCompetencyAssessments" asp-route-tabname="Mine">Competency Assessments</a></li>
                 <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.ID">Manage Competency Assessment</a></li>
-                <li class="nhsuk-breadcrumb__item">Select @Model.VocabularyPlural.ToLower() to assess</li>
+                <li class="nhsuk-breadcrumb__item">Select framework sources</li>
             </ol>
             <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.ID">Back to manage competency assessment</a></p>
         </div>
     </nav>
 }
-<h1>Select @Model.VocabularyPlural.ToLower() to assess for @Model.CompetencyAssessmentName</h1>
-<table class="nhsuk-table">
-    <caption class="nhsuk-table__caption">@Model.VocabularyPlural</caption>
-    <thead class="nhsuk-table__head">
-        <tr>
-            <th scope="col" class="nhsuk-table__header">Framework</th>
-            <th scope="col" class="nhsuk-table__header">Group</th>
-            <th scope="col" class="nhsuk-table__header">Group</th>
-        </tr>
-    </thead>
-    <tbody class="nhsuk-table__body">
-        @foreach (var competency in Model.Competencies)
-        {
-            <tr class="nhsuk-table__row">
-                <td class="nhsuk-table__cell"></td>
-                <td class="nhsuk-table__cell"></td>
-            </tr>
-        }
-    </tbody>
-</table>
 
+<h1>Add @Model.VocabularyPlural.ToLower() to @Model.CompetencyAssessmentName</h1>

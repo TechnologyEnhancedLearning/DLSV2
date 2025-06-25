@@ -22,7 +22,7 @@
     </nav>
 }
 <h1>Select Framework Source</h1>
-<form>
+<form method="post">
     <div class="nhsuk-form-group">
 
         <fieldset class="nhsuk-fieldset">
@@ -44,5 +44,6 @@
             </div>
         </fieldset>
     </div>
-        <button type="submit" class="nhsuk-button" asp-action="AddCompetenciesSelectCompetencies" asp-route-competencyAssessmentId="@Model.ID">Next</button>
+    <input type="hidden" asp-for="@Model.ID" />
+    <button type="submit" class="nhsuk-button">Next</button>
 </form>
