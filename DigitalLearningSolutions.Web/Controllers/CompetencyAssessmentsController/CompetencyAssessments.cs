@@ -529,16 +529,21 @@
         }
         [HttpPost]
         [Route("/CompetencyAssessments/{competencyAssessmentId}/Competencies/Add/SelectFramework")]
-        public IActionResult AddCompetenciesSelectFramework(AddCompetenciesSelectFrameworkFormData model)
+        public IActionResult AddCompetenciesSelectFramework(AddCompetenciesSelectFrameworkFormData formdata)
         {
             if (!ModelState.IsValid)
             {
-                var linkedFrameworks = competencyAssessmentService.GetLinkedFrameworksForCompetencyAssessment(model.ID);
+                var competencyAssessmentId = formdata.ID;
+                var linkedFrameworks = competencyAssessmentService.GetLinkedFrameworksForCompetencyAssessment(competencyAssessmentId);
+                var adminId = GetAdminID();
+                var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
+                var model = new AddCompetenciesSelectFrameworkViewModel(competencyAssessmentBase, linkedFrameworks);
+                model.FrameworkId = formdata.FrameworkId;
                 return View("AddCompetenciesSelectFramework", model);
             }
             else
             {
-                return RedirectToAction("AddCompetencies", new { competencyAssessmentId = model.ID, frameworkId = model.FrameworkId });
+                return RedirectToAction("AddCompetencies", new { competencyAssessmentId = formdata.ID, frameworkId = formdata.FrameworkId });
             }
         }
         [Route("/CompetencyAssessments/{competencyAssessmentId}/Competencies/Add/{frameworkId}")]

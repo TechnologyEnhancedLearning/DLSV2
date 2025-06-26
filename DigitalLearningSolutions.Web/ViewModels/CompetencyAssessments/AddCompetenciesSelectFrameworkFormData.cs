@@ -3,8 +3,8 @@
     using System.ComponentModel.DataAnnotations;
     public class AddCompetenciesSelectFrameworkFormData
     {
-        [Required]
         public int ID { get; set; }
-        public int FrameworkId { get; set; }
+        [Required(ErrorMessage = "Select a linked framework")]
+        public int? FrameworkId { get; set; }
     }
 }

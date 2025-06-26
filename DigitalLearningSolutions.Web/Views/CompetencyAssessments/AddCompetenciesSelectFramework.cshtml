@@ -23,6 +23,10 @@
 }
 <h1>Select Framework Source</h1>
 <form method="post">
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <partial name="_ErrorSummary" />
+    }
     <div class="nhsuk-form-group">
 
         <fieldset class="nhsuk-fieldset">
@@ -43,6 +47,7 @@
                 }
             </div>
         </fieldset>
+        <span nhs-validation-for="FrameworkId"></span>
     </div>
     <input type="hidden" asp-for="@Model.ID" />
     <button type="submit" class="nhsuk-button">Next</button>
