@@ -191,9 +191,9 @@
                                     }
                                     else
                                     {
-                                        <h2 class="nhsuk-u-margin-bottom-0 nhsuk-u-font-size-24">
+                                        <p class="@(!string.IsNullOrWhiteSpace(competency.Description) ? "nhsuk-u-font-weight-bold" : "") nhsuk-u-margin-bottom-0">
                                             @competency.Name
-                                        </h2>
+                                        </p>
                                         @if (!string.IsNullOrWhiteSpace(competency.Description))
                                         {
                                             <p class="nhsuk-body-l">
