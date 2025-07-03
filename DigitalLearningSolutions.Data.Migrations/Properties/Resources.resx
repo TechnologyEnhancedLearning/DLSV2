@@ -487,4 +487,7 @@
   <data name="TD_5447_Alter_ReorderFrameworkCompetency_Up" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Scripts\TD-5447-Alter_ReorderFrameworkCompetency_Up.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
   </data>
+  <data name="TD-5759_CreateOrAlterSelfAssessmentReportSPandTVF_UP" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Scripts\TD-5759_CreateOrAlterSelfAssessmentReportSPandTVF_UP.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
 </root>
