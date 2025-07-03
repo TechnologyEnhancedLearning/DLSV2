@@ -6,7 +6,7 @@
     using System.Collections.Generic;
     public class AddCompetenciesViewModel
     {
-        public AddCompetenciesViewModel(CompetencyAssessmentBase competencyAssessmentBase, IEnumerable<FrameworkCompetencyGroup> groupedCompetencies, IEnumerable<FrameworkCompetency> ungroupedCompetencies, int frameworkId)
+        public AddCompetenciesViewModel(CompetencyAssessmentBase competencyAssessmentBase, IEnumerable<FrameworkCompetencyGroup> groupedCompetencies, IEnumerable<FrameworkCompetency> ungroupedCompetencies, int frameworkId, string? frameworkName)
         {
             ID = competencyAssessmentBase.ID;
             CompetencyAssessmentName = competencyAssessmentBase.CompetencyAssessmentName;
@@ -15,6 +15,8 @@
             VocabularyPlural = FrameworkVocabularyHelper.VocabularyPlural(competencyAssessmentBase.Vocabulary);
             GroupedCompetencies = groupedCompetencies;
             UngroupedCompetencies = ungroupedCompetencies;
+            FrameworkId = frameworkId;
+            FrameworkName = frameworkName;
         }
         public int ID { get; set; }
         public string CompetencyAssessmentName { get; set; }
@@ -23,6 +25,8 @@
         public string VocabularyPlural { get; set; }
         public IEnumerable<FrameworkCompetencyGroup> GroupedCompetencies { get; set; }
         public IEnumerable<FrameworkCompetency> UngroupedCompetencies { get; set; }
+        public List<int> SelectedCompetencyIds { get; set; }
         public int FrameworkId { get; set; }
+        public string? FrameworkName { get; set; }
     }
 }

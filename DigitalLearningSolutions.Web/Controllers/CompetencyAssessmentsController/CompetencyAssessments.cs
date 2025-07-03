@@ -560,9 +560,21 @@
             {
                 return StatusCode(403);
             }
+            var framework = frameworkService.GetBaseFrameworkByFrameworkId(frameworkId, adminId);
             var groupedCompetencies = frameworkService.GetFrameworkCompetencyGroups(frameworkId);
             var ungroupedCompetencies = frameworkService.GetFrameworkCompetenciesUngrouped(frameworkId);
-            var model = new AddCompetenciesViewModel(competencyAssessmentBase, groupedCompetencies, ungroupedCompetencies, frameworkId);
+            var competencyIds = ungroupedCompetencies.Select(c => c.CompetencyID).ToArray();
+            var competencyFlags = frameworkService.GetSelectedCompetencyFlagsByCompetecyIds(competencyIds);
+            foreach (var competency in ungroupedCompetencies)
+                competency.CompetencyFlags = competencyFlags.Where(f => f.CompetencyId == competency.CompetencyID);
+            foreach (var group in groupedCompetencies)
+            {
+                competencyIds = group.FrameworkCompetencies.Select(c => c.CompetencyID).ToArray();
+                competencyFlags = frameworkService.GetSelectedCompetencyFlagsByCompetecyIds(competencyIds);
+                foreach (var competency in group.FrameworkCompetencies)
+                    competency.CompetencyFlags = competencyFlags.Where(f => f.CompetencyId == competency.CompetencyID);
+            }
+            var model = new AddCompetenciesViewModel(competencyAssessmentBase, groupedCompetencies, ungroupedCompetencies, frameworkId, framework.FrameworkName);
             return View(model);
         }
     }

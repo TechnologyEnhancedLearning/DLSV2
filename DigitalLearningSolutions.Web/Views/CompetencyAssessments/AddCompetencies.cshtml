@@ -22,4 +22,82 @@
     </nav>
 }
 
-<h1>Add @Model.VocabularyPlural.ToLower() to @Model.CompetencyAssessmentName</h1>
+<h1>Add @Model.VocabularyPlural.ToLower() to assessment: @Model.CompetencyAssessmentName</h1>
+<form method="post">
+    <nhs-form-group nhs-validation-for="SelectedCompetencyIds">
+        <fieldset class="nhsuk-fieldset">
+            <legend class="nhsuk-fieldset__legend">
+                <h2>
+                    Select @Model.VocabularyPlural.ToLower() to include from @Model.FrameworkName
+                </h2>
+            </legend>
+
+            @if (Model.GroupedCompetencies.Count() > 0)
+            {
+                @foreach (var competencyGroup in Model.GroupedCompetencies)
+                {
+                    @if (competencyGroup.FrameworkCompetencies.Count() > 1)
+                    {
+
+                        <div class="nhsuk-u-margin-bottom-6">
+                            <h3>
+                                @competencyGroup.Name
+                            </h3>
+                            <div class="nhsuk-checkboxes">
+                                @foreach (var competency in competencyGroup.FrameworkCompetencies)
+                                {
+                                    <div class="nhsuk-checkboxes__item">
+                                        <input class="nhsuk-checkboxes__input" data-group="@competencyGroup.Name" id="competency-check-@competency.CompetencyID" name="IncludedSelfAssessmentStructureIds" checked="@(Model.SelectedCompetencyIds != null ? Model.SelectedCompetencyIds.Contains((int)competency.CompetencyID) : false)" type="checkbox" value="@competency.CompetencyID">
+                                        <label class="nhsuk-label nhsuk-checkboxes__label" for="competency-check-@competency.CompetencyID">
+                                            @foreach (var flag in competency.CompetencyFlags)
+                                            {
+                                                <span class="nhsuk-u-padding-right-2 @(ViewData["cssClass"]?.ToString())">
+                                                    <strong class="nhsuk-tag @flag.FlagTagClass">
+                                                        @flag.FlagName
+                                                    </strong>
+                                                </span>
+                                            }
+
+                                            @competency.Name
+                                        </label>
+                                    </div>
+
+                                }
+                            </div>
+                        </div>
+                    }
+
+                }
+            }
+
+            @if (Model.UngroupedCompetencies.Any())
+            {
+                <h3>
+                    Ungrouped @Model.VocabularyPlural.ToLower()
+                </h3>
+                @foreach (var competency in Model.UngroupedCompetencies)
+                {
+
+                    <div class="nhsuk-checkboxes__item">
+                        <input class="nhsuk-checkboxes__input" data-group="@competency.Name" id="competency-check-@competency.CompetencyID" name="IncludedSelfAssessmentStructureIds" checked="@(Model.SelectedCompetencyIds != null ? Model.SelectedCompetencyIds.Contains((int)competency.CompetencyID) : false)" type="checkbox" value="@competency.CompetencyID">
+                        <label class="nhsuk-label nhsuk-checkboxes__label" for="competency-check-@competency.CompetencyID">
+                            @foreach (var flag in competency.CompetencyFlags)
+                            {
+                                <span class="nhsuk-u-padding-right-2 @(ViewData["cssClass"]?.ToString())">
+                                    <strong class="nhsuk-tag @flag.FlagTagClass">
+                                        @flag.FlagName
+                                    </strong>
+                                </span>
+                            }
+
+                            @competency.Name
+                        </label>
+                    </div>
+
+                }
+            }
+
+        </fieldset>
+    </nhs-form-group>
+    <button class="nhsuk-button" type="submit">Submit</button>
+</form>

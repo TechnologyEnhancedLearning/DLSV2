@@ -21,21 +21,24 @@
         </div>
     </nav>
 }
-<h1>Select @Model.VocabularyPlural.ToLower() to assess for @Model.CompetencyAssessmentName</h1>
+<h1>@Model.VocabularyPlural to assess for @Model.CompetencyAssessmentName</h1>
 <table class="nhsuk-table">
     <caption class="nhsuk-table__caption">@Model.VocabularyPlural</caption>
     <thead class="nhsuk-table__head">
         <tr>
             <th scope="col" class="nhsuk-table__header">Framework</th>
             <th scope="col" class="nhsuk-table__header">Group</th>
-            <th scope="col" class="nhsuk-table__header">Group</th>
+            <th scope="col" class="nhsuk-table__header">Competency</th>
+            <th scope="col" class="nhsuk-table__header">Action</th>
         </tr>
     </thead>
     <tbody class="nhsuk-table__body">
         @foreach (var competency in Model.Competencies)
         {
             <tr class="nhsuk-table__row">
-                <td class="nhsuk-table__cell"></td>
+                <td class="nhsuk-table__cell">@competency.FrameworkName</td>
+                <td class="nhsuk-table__cell">@competency.GroupName</td>
+                <td class="nhsuk-table__cell">@competency.CompetencyName</td>
                 <td class="nhsuk-table__cell"></td>
             </tr>
         }

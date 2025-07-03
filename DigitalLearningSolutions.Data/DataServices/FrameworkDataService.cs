@@ -881,17 +881,20 @@
                 },
                 new { frameworkId }
             );
-            return result.GroupBy(frameworkCompetencyGroup => frameworkCompetencyGroup.CompetencyGroupID).Select(
-                group =>
-                {
-                    var groupedFrameworkCompetencyGroup = group.First();
-                    groupedFrameworkCompetencyGroup.FrameworkCompetencies = group.Where(frameworkCompetencyGroup => frameworkCompetencyGroup.FrameworkCompetencies.Count > 0)
-                    .Select(
-                        frameworkCompetencyGroup => frameworkCompetencyGroup.FrameworkCompetencies.Single()
-                    ).ToList();
-                    return groupedFrameworkCompetencyGroup;
-                }
-            );
+            return result
+    .GroupBy(fcg => fcg.CompetencyGroupID)
+    .Select(group =>
+    {
+        var groupedFrameworkCompetencyGroup = group.First();
+
+        // Flatten all FrameworkCompetencies from all instances in this group
+        groupedFrameworkCompetencyGroup.FrameworkCompetencies = group
+            .SelectMany(g => g.FrameworkCompetencies)
+            .Where(fc => fc != null)
+            .ToList();
+
+        return groupedFrameworkCompetencyGroup;
+    });
         }
 
         public IEnumerable<FrameworkCompetency> GetFrameworkCompetenciesUngrouped(int frameworkId)
