@@ -2525,6 +2525,30 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to CREATE OR ALTER PROCEDURE [dbo].[usp_GetSelfAssessmentReport]
+        ///    @SelfAssessmentID INT,
+        ///    @CentreID INT
+        ///AS
+        ///BEGIN
+        ///    SET NOCOUNT ON;
+        ///
+        ///    -- Step 1: Materialize the LatestAssessmentResults into a temp table
+        ///    IF OBJECT_ID(&apos;tempdb..#LatestAssessmentResults&apos;) IS NOT NULL
+        ///        DROP TABLE #LatestAssessmentResults;
+        ///
+        ///    SELECT
+        ///        s.DelegateUserID,
+        ///        CASE WHEN COALESCE(rr.LevelRAG, 0) = 3 THEN s.ID ELSE NULL END AS SelfAssessed,
+        ///        CASE 
+        ///            WHEN sv.Verified IS NOT N [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_5759_CreateOrAlterSelfAssessmentReportSPandTVF_Fix_UP {
+            get {
+                return ResourceManager.GetString("TD-5759_CreateOrAlterSelfAssessmentReportSPandTVF-Fix_UP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to CREATE OR ALTER FUNCTION dbo.GetOtherCentresForSelfAssessmentTVF
         ///(
         ///    @UserID INT,
