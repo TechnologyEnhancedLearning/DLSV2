@@ -640,7 +640,7 @@
         public IEnumerable<Competency> GetCompetenciesForCompetencyAssessment(int competencyAssessmentId)
         {
             return connection.Query<Competency>(
-               @"SELECT sas.ID AS StructureId, sas.CompetencyID, f.FrameworkName, cg.Name AS GroupName, c.Name AS CompetencyName, c.Description AS CompetencyDescription, sas.Optional
+               @"SELECT sas.ID AS StructureId, sas.CompetencyID, f.ID AS FrameworkId, f.FrameworkName, cg.ID AS GroupId, cg.Name AS GroupName, c.Name AS CompetencyName, c.Description AS CompetencyDescription, sas.Optional
                     FROM   SelfAssessmentStructure AS sas INNER JOIN
                                 Competencies AS c ON sas.CompetencyID = c.ID INNER JOIN
                                 CompetencyGroups AS cg ON sas.CompetencyGroupID = cg.ID INNER JOIN
