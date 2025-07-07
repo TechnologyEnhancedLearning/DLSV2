@@ -23,7 +23,7 @@
   "dependencies": {
     "@types/chartist": "^0.11.1",
     "chartist": "^0.11.4",
-    "core-js": "^3.43.0",
+    "core-js": "^3.44.0",
     "date-fns": "^2.30.0",
     "dompurify": "^2.5.8",
     "input-range-scss": "^1.5.3",
