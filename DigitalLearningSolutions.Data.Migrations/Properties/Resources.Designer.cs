@@ -2525,6 +2525,56 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to CREATE OR ALTER PROCEDURE [dbo].[usp_GetSelfAssessmentReport]
+        ///    @SelfAssessmentID INT,
+        ///    @CentreID INT
+        ///AS
+        ///BEGIN
+        ///    SET NOCOUNT ON;
+        ///
+        ///    -- Step 1: Materialize the LatestAssessmentResults into a temp table
+        ///    IF OBJECT_ID(&apos;tempdb..#LatestAssessmentResults&apos;) IS NOT NULL
+        ///        DROP TABLE #LatestAssessmentResults;
+        ///
+        ///    SELECT
+        ///        s.DelegateUserID,
+        ///        CASE WHEN COALESCE(rr.LevelRAG, 0) = 3 THEN s.ID ELSE NULL END AS SelfAssessed,
+        ///        CASE 
+        ///            WHEN sv.Verified IS NOT N [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_5759_CreateOrAlterSelfAssessmentReportSPandTVF_Fix_UP {
+            get {
+                return ResourceManager.GetString("TD-5759_CreateOrAlterSelfAssessmentReportSPandTVF-Fix_UP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to CREATE OR ALTER FUNCTION dbo.GetOtherCentresForSelfAssessmentTVF
+        ///(
+        ///    @UserID INT,
+        ///    @SelfAssessmentID INT,
+        ///    @ExcludeCentreID INT
+        ///)
+        ///RETURNS TABLE
+        ///AS
+        ///RETURN
+        ///(
+        ///    SELECT 
+        ///        STUFF((
+        ///            SELECT DISTINCT 
+        ///                &apos;, &apos; + c.CentreName
+        ///            FROM Users AS u
+        ///            INNER JOIN DelegateAccounts AS da ON u.ID = da.UserID
+        ///            INNER JOIN Centres AS c ON da.CentreID = c.CentreID
+        ///            INNER JOIN CentreSelfAssessments AS csa ON c.CentreID = csa.CentreID [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_5759_CreateOrAlterSelfAssessmentReportSPandTVF_UP {
+            get {
+                return ResourceManager.GetString("TD-5759_CreateOrAlterSelfAssessmentReportSPandTVF_UP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GetActiveAvailableCustomisationsForCentreFiltered_V6]    Script Date: 29/09/2022 19:11:04 ******/
         ///SET ANSI_NULLS ON
         ///GO
