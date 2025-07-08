@@ -275,10 +275,8 @@
         )
         {
             var progress = progressService.GetDetailedCourseProgress(progressId);
-            if (progress == null)
-            {
-                return StatusCode((int)HttpStatusCode.Gone);
-            }
+            if (!courseService.DelegateHasCurrentProgress(progressId) || progress == null)
+                return RedirectToAction("StatusCode", "LearningSolutions", new { code = 410 });
 
             var model = new RemoveFromCourseViewModel(
                 progress,
@@ -305,9 +303,7 @@
 
             var progress = progressService.GetDetailedCourseProgress(progressId);
             if (!courseService.DelegateHasCurrentProgress(progressId) || progress == null)
-            {
-                return new NotFoundResult();
-            }
+                return RedirectToAction("StatusCode", "LearningSolutions", new { code = 410 });
 
             courseService.RemoveDelegateFromCourse(
                 progress.DelegateId,

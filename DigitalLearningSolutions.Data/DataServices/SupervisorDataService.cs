@@ -696,7 +696,7 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
 		            AdminAccounts AS aa ON sd.SupervisorAdminID = aa.ID
                 WHERE (sd.SupervisorAdminID = @adminId) AND (cas.Removed IS NULL) AND (sasv.Verified IS NULL) AND (sd.Removed IS NULL)
                         AND (aa.CategoryID is null or sa.CategoryID = aa.CategoryID)
-				GROUP BY sa.ID, ca.ID, sd.ID, u.FirstName, u.LastName, sa.Name,cast(sasv.Requested as date)", new { adminId }
+				GROUP BY sa.ID, ca.ID, sd.ID, u.FirstName, u.LastName, sa.Name", new { adminId }
                 );
         }
 

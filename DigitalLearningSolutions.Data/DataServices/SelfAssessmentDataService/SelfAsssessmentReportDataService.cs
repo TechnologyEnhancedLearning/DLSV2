@@ -47,8 +47,9 @@
         {
             return connection.Query<SelfAssessmentReportData>("usp_GetSelfAssessmentReport",
                 new { selfAssessmentId, centreId },
-                commandType: CommandType.StoredProcedure
+                commandType: CommandType.StoredProcedure,
+                commandTimeout: 150
             );
         }
-    } 
+    }
 }
