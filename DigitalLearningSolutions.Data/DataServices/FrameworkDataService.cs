@@ -306,7 +306,8 @@
 				INNER JOIN AdminAccounts aa3 ON fc.AdminID = aa3.ID
 				LEFT OUTER JOIN FrameworkReviews AS fwr ON fc.ID = fwr.FrameworkCollaboratorID AND fwr.Archived IS NULL AND fwr.ReviewComplete IS NULL
 				WHERE fc.FrameworkID = fw.ID AND fc.IsDeleted = 0
-				AND aa3.UserID = (SELECT aa4.UserID FROM AdminAccounts aa4 WHERE aa4.ID = @adminId)) AS FrameworkReviewID";
+				AND aa3.UserID = (SELECT aa4.UserID FROM AdminAccounts aa4 WHERE aa4.ID = @adminId)
+                AND aa3.Active = 1 ORDER BY fwr.ID DESC) AS FrameworkReviewID";
 
         private const string BrandedFrameworkFields =
             @",(SELECT BrandName
