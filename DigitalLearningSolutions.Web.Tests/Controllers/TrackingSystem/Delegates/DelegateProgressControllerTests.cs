@@ -1,7 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.Delegates
 {
-    using System;
-    using System.Collections.Generic;
     using DigitalLearningSolutions.Data.Models;
     using DigitalLearningSolutions.Data.Models.Courses;
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
@@ -15,8 +13,11 @@
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.DelegateProgress;
     using FakeItEasy;
     using FluentAssertions.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Configuration;
     using NUnit.Framework;
+    using System;
+    using System.Collections.Generic;
 
     public class DelegateProgressControllerTests
     {
@@ -386,7 +387,11 @@
             );
 
             // Then
-            result.Should().BeNotFoundResult();
+            result.Should()
+               .BeRedirectToActionResult()
+               .WithActionName("StatusCode")
+               .WithControllerName("LearningSolutions")
+               .WithRouteValue("code", 410);
         }
 
         [Test]
