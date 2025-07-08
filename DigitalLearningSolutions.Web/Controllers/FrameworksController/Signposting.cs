@@ -107,6 +107,13 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         {
             var frameworkCompetency = frameworkService.GetFrameworkCompetencyById(model.FrameworkCompetencyId.Value);
             string plainTextDescription = DisplayStringHelper.RemoveMarkup(model.Description);
+            var competencyLearningResource = competencyLearningResourcesService.GetActiveCompetencyLearningResourcesByCompetencyIdAndReferenceId(frameworkCompetency.CompetencyID, model.ReferenceId);
+            if (competencyLearningResource.Any())
+            {
+                ModelState.Clear();
+                ModelState.AddModelError("LearningResourceExists", "This learning resource is already signposted to the selected competency.");
+                return View("Developer/AddCompetencyLearningResourceSummary", model);
+            }
             int competencyLearningResourceId = competencyLearningResourcesService.AddCompetencyLearningResource(model.ReferenceId, model.ResourceName, plainTextDescription, model.ResourceType, model.Link, model.SelectedCatalogue, model.Rating.Value, frameworkCompetency.CompetencyID, GetAdminId());
             return RedirectToAction("StartSignpostingParametersSession", "Frameworks", new { model.FrameworkId, model.FrameworkCompetencyId, model.FrameworkCompetencyGroupId, competencyLearningResourceId });
         }
