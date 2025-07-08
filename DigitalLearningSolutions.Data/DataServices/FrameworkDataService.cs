@@ -2066,7 +2066,7 @@ WHERE (ID = @commentId)",
         public IEnumerable<CollaboratorDetail> GetReviewersForFrameworkId(int frameworkId)
         {
             return connection.Query<CollaboratorDetail>(
-                @"SELECT
+                @"SELECT DISTINCT
                         fc.ID,
                         fc.FrameworkID,
                         fc.AdminID,
@@ -2077,8 +2077,11 @@ WHERE (ID = @commentId)",
                     FROM FrameworkCollaborators fc
                     INNER JOIN AdminUsers AS au ON fc.AdminID = au.AdminID
                     LEFT OUTER JOIN FrameworkReviews ON fc.ID = FrameworkReviews.FrameworkCollaboratorID
-                    WHERE (fc.FrameworkID = @FrameworkID) AND (FrameworkReviews.ID IS NULL) AND (fc.IsDeleted=0) OR
-                            (fc.FrameworkID = @FrameworkID) AND (FrameworkReviews.Archived IS NOT NULL) AND (fc.IsDeleted=0)",
+                    WHERE ((fc.FrameworkID = @FrameworkID) AND (FrameworkReviews.ID IS NULL) AND (fc.IsDeleted=0)) OR
+                            ((fc.FrameworkID = @FrameworkID) AND (FrameworkReviews.Archived IS NOT NULL) AND (fc.IsDeleted=0))
+                            AND
+                            (fc.ID Not in ( Select FrameworkCollaboratorID from FrameworkReviews where FrameworkID = @FrameworkID AND 
+							FrameworkReviews.Archived IS NULL AND FrameworkCollaboratorID = fc.ID))",
                 new { frameworkId }
             );
         }
