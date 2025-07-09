@@ -6,23 +6,17 @@
     using Microsoft.Extensions.Logging;
     using System.Collections.Generic;
     using System.Data;
-    using ClosedXML.Excel;
+    using DigitalLearningSolutions.Data.Factories;
 
     public interface ISelfAssessmentReportDataService
     {
         IEnumerable<SelfAssessmentSelect> GetSelfAssessmentsForReportList(int centreId, int? categoryId);
         IEnumerable<SelfAssessmentReportData> GetSelfAssessmentReportDataForCentre(int centreId, int selfAssessmentId);
     }
-    public partial class SelfAssessmentReportDataService : ISelfAssessmentReportDataService
+    public partial class SelfAssessmentReportDataService(IReadOnlyDbConnectionFactory factory, ILogger<SelfAssessmentReportDataService> logger) : ISelfAssessmentReportDataService
     {
-        private readonly IDbConnection connection;
-        private readonly ILogger<SelfAssessmentReportDataService> logger;
-
-        public SelfAssessmentReportDataService(IDbConnection connection, ILogger<SelfAssessmentReportDataService> logger)
-        {
-            this.connection = connection;
-            this.logger = logger;
-        }
+        private readonly IDbConnection connection = factory.CreateConnection();
+        private readonly ILogger<SelfAssessmentReportDataService> logger = logger;
 
         public IEnumerable<SelfAssessmentSelect> GetSelfAssessmentsForReportList(int centreId, int? categoryId)
         {
