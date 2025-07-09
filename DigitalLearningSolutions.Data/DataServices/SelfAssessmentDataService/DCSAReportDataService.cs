@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Data.DataServices.SelfAssessmentDataService
 {
     using Dapper;
+    using DigitalLearningSolutions.Data.Factories;
     using DigitalLearningSolutions.Data.Models.SelfAssessments.Export;
     using Microsoft.Extensions.Logging;
     using System.Collections.Generic;
@@ -11,16 +12,10 @@
         IEnumerable<DCSADelegateCompletionStatus> GetDelegateCompletionStatusForCentre(int centreId);
         IEnumerable<DCSAOutcomeSummary> GetOutcomeSummaryForCentre(int centreId);
     }
-    public partial class DCSAReportDataService : IDCSAReportDataService
+    public partial class DCSAReportDataService(IReadOnlyDbConnectionFactory factory, ILogger<SelfAssessmentDataService> logger) : IDCSAReportDataService
     {
-        private readonly IDbConnection connection;
-        private readonly ILogger<SelfAssessmentDataService> logger;
-
-        public DCSAReportDataService(IDbConnection connection, ILogger<SelfAssessmentDataService> logger)
-        {
-            this.connection = connection;
-            this.logger = logger;
-        }
+        private readonly IDbConnection connection = factory.CreateConnection();
+        private readonly ILogger<SelfAssessmentDataService> logger = logger;
 
         public IEnumerable<DCSADelegateCompletionStatus> GetDelegateCompletionStatusForCentre(int centreId)
         {
