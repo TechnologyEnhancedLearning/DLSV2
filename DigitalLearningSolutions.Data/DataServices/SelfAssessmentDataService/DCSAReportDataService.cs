@@ -43,7 +43,7 @@
                      WHERE (NOT (lli.LearningResourceReferenceID IS NULL)) AND (calli.CandidateAssessmentID = ca.ID)) +
                      (SELECT COUNT(*) AS FilteredLearning
                      FROM    FilteredLearningActivity AS fla
-                     WHERE (CandidateId = da.ID)) AS LearningCompleted,
+                     WHERE (CandidateId = da.ID)) AS LearningLaunched,
                          (SELECT COUNT(*) AS LearningLaunched
                      FROM    CandidateAssessmentLearningLogItems AS calli INNER JOIN
                                   LearningLogItems AS lli ON calli.LearningLogItemID = lli.LearningLogItemID
