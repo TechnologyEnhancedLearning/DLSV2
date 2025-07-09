@@ -1,13 +1,5 @@
 namespace DigitalLearningSolutions.Web
 {
-    using System.Collections.Generic;
-    using System.Data;
-    using System.IO;
-    using System.Linq;
-    using System.Security.Claims;
-    using System.Threading.Tasks;
-    using System.Transactions;
-    using System.Web;
     using AspNetCoreRateLimit;
     using DigitalLearningSolutions.Data.ApiClients;
     using DigitalLearningSolutions.Data.DataServices;
@@ -39,6 +31,7 @@ namespace DigitalLearningSolutions.Web
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.DataProtection;
     using Microsoft.AspNetCore.HttpOverrides;
+    using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Data.SqlClient;
     using Microsoft.Extensions.Configuration;
@@ -46,12 +39,19 @@ namespace DigitalLearningSolutions.Web
     using Microsoft.Extensions.Hosting;
     using Microsoft.FeatureManagement;
     using Microsoft.IdentityModel.Protocols.OpenIdConnect;
-    using Microsoft.AspNetCore.Identity;
+    using Serilog;
+    using System;
+    using System.Collections.Generic;
+    using System.Data;
+    using System.IO;
+    using System.Linq;
+    using System.Security.Claims;
+    using System.Threading.Tasks;
+    using System.Transactions;
+    using System.Web;
     using static DigitalLearningSolutions.Data.DataServices.ICentreApplicationsDataService;
     using static DigitalLearningSolutions.Web.Services.ICentreApplicationsService;
     using static DigitalLearningSolutions.Web.Services.ICentreSelfAssessmentsService;
-    using System;
-    using Serilog;
 
     public class Startup
     {
@@ -65,7 +65,6 @@ namespace DigitalLearningSolutions.Web
             this.config = config;
             this.env = env;
         }
-
         public void ConfigureServices(IServiceCollection services)
         {
             ConfigureIpRateLimiting(services);
@@ -194,6 +193,8 @@ namespace DigitalLearningSolutions.Web
 
             // Register database connection for Dapper.
             services.AddScoped<IDbConnection>(_ => new SqlConnection(defaultConnectionString));
+            // Register factory for read-only replica connections
+            services.AddScoped<IReadOnlyDbConnectionFactory, ReadOnlyDbConnectionFactory>();
             Dapper.SqlMapper.Settings.CommandTimeout = 60;
 
             MultiPageFormService.InitConnection(new SqlConnection(defaultConnectionString));
@@ -510,6 +511,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<IRoleProfileDataService, RoleProfileDataService>();
             services.AddScoped<ISectionContentDataService, SectionContentDataService>();
             services.AddScoped<ISelfAssessmentDataService, SelfAssessmentDataService>();
+            services.AddScoped<ISelfAssessmentReportDataService, SelfAssessmentReportDataService>();
             services.AddScoped<ISessionDataService, SessionDataService>();
             services.AddScoped<ISupervisorDataService, SupervisorDataService>();
             services.AddScoped<ISupervisorDelegateDataService, SupervisorDelegateDataService>();
@@ -525,7 +527,6 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<ICacheService, CacheService>();
             services.AddScoped<RedisCacheOptions, RedisCacheOptions>();
             services.AddScoped<IMultiPageFormService, MultiPageFormService>();
-            services.AddScoped<ISelfAssessmentReportDataService, SelfAssessmentReportDataService>();
             services.AddScoped<IUserFeedbackDataService, UserFeedbackDataService>();
             services.AddScoped<IPlatformReportsDataService, PlatformReportsDataService>();
             services.AddScoped<IContractTypesDataService, ContractTypesDataService>();
