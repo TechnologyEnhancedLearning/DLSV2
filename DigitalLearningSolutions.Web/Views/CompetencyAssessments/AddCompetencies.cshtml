@@ -22,14 +22,13 @@
     </nav>
 }
 
-<h1>Add @Model.VocabularyPlural.ToLower() to assessment: @Model.CompetencyAssessmentName</h1>
 <form method="post">
     <nhs-form-group nhs-validation-for="SelectedCompetencyIds">
         <fieldset class="nhsuk-fieldset">
             <legend class="nhsuk-fieldset__legend">
-                <h2>
+                <h1>
                     Select @Model.VocabularyPlural.ToLower() to include from @Model.FrameworkName
-                </h2>
+                </h1>
             </legend>
 
             @if (Model.GroupedCompetencies.Count() > 0)

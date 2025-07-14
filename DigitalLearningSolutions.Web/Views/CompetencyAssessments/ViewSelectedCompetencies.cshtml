@@ -22,7 +22,26 @@
     </nav>
 }
 <h1>@Model.VocabularyPlural to assess for @Model.CompetencyAssessmentName</h1>
-
+<h2>Linked frameworks</h2>
+<dl class="nhsuk-summary-list">
+  @foreach(var framework in Model.LinkedFrameworks)
+    {
+        <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+                Framework
+            </dt>
+            <dd class="nhsuk-summary-list__value">
+                @framework.FrameworkName (@framework.AssessmentFrameworkCompetencyCount @Model.VocabularyPlural.ToLower())
+            </dd>
+            <dd class="nhsuk-summary-list__actions">
+                <a asp-action="AddCompetencies" asp-route-competencyAssessmentId="@Model.ID" asp-route-frameworkId="@framework.ID">
+                    Manage<span class="nhsuk-u-visually-hidden"> @Model.VocabularyPlural.ToLower()</span>
+                </a>
+            </dd>
+        </div>
+    }
+</dl>
+<h2>@Model.VocabularyPlural</h2>
 @foreach (var group in Model.Competencies
                            .GroupBy(c => new { c.FrameworkId, c.FrameworkName, c.GroupId, c.GroupName }))
 {
@@ -53,14 +72,18 @@
                             @* <partial name="_CompetencyFlags" model="Model.CompetencyFlags" /> *@
                             @if (competency.CompetencyDescription != null)
                             {
-                                @competency.CompetencyName
+                                <p class="nhsuk-lede-text">
+                                    @competency.CompetencyName
+                                </p>
                                 <p class="nhsuk-body">
                                     @(Html.Raw(competency.CompetencyDescription))
                                 </p>
                             }
                             else
                             {
-                                @competency.CompetencyName
+                                <p class="nhsuk-lede-text">
+                                    @competency.CompetencyName
+                                </p>
                             }
 
                             <div class="nhsuk-grid-row">

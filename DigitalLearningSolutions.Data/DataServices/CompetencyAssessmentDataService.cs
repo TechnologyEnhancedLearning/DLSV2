@@ -36,7 +36,8 @@
         int GetCompetencyCountByFrameworkId(int assessmentId, int frameworkId);
 
         IEnumerable<Competency> GetCompetenciesForCompetencyAssessment(int competencyAssessmentId);
-        IEnumerable<BaseFramework> GetLinkedFrameworksForCompetencyAssessment(int competencyAssessmentId);
+        IEnumerable<LinkedFramework> GetLinkedFrameworksForCompetencyAssessment(int competencyAssessmentId);
+        int[] GetLinkedFrameworkCompetencyIds(int competencyAssessmentId, int frameworkId);
 
         //UPDATE DATA
         bool UpdateCompetencyAssessmentName(int competencyAssessmentId, int adminId, string competencyAssessmentName);
@@ -652,9 +653,9 @@
            );
         }
 
-        public IEnumerable<BaseFramework> GetLinkedFrameworksForCompetencyAssessment(int competencyAssessmentId)
+        public IEnumerable<LinkedFramework> GetLinkedFrameworksForCompetencyAssessment(int competencyAssessmentId)
         {
-            return connection.Query<BaseFramework>(
+            return connection.Query<LinkedFramework>(
                 @"SELECT f.ID,
             FrameworkName,
             f.OwnerAdminID,
@@ -669,6 +670,18 @@
                     WHERE (saf.SelfAssessmentId = @competencyAssessmentId) AND (saf.RemovedDate IS NULL)
                     ORDER BY f.FrameworkName", new { competencyAssessmentId }
             );
+        }
+
+        public int[] GetLinkedFrameworkCompetencyIds(int competencyAssessmentId, int frameworkId)
+        {
+            return [.. connection.Query<int>(
+              @"SELECT sas.CompetencyID
+                    FROM   SelfAssessmentStructure AS sas INNER JOIN
+                         FrameworkCompetencies AS fc ON sas.CompetencyID = fc.CompetencyID
+                    WHERE (sas.SelfAssessmentID = @competencyAssessmentId) AND (fc.FrameworkID = @frameworkId)
+                    ORDER BY fc.Ordering",
+              new { competencyAssessmentId,  frameworkId}
+          )];
         }
     }
 }

@@ -29,9 +29,11 @@ namespace DigitalLearningSolutions.Web.Services
         int? GetPrimaryLinkedFrameworkId(int assessmentId);
 
         IEnumerable<Competency> GetCompetenciesForCompetencyAssessment(int competencyAssessmentId);
-        IEnumerable<BaseFramework> GetLinkedFrameworksForCompetencyAssessment(int competencyAssessmentId);
+        IEnumerable<LinkedFramework> GetLinkedFrameworksForCompetencyAssessment(int competencyAssessmentId);
 
         bool RemoveSelfAssessmentFramework(int assessmentId, int frameworkId, int adminId);
+
+        int[] GetLinkedFrameworkCompetencyIds(int competencyAssessmentId, int frameworkId);
 
         //UPDATE DATA
         bool UpdateCompetencyAssessmentName(int competencyAssessmentId, int adminId, string competencyAssessmentName);
@@ -227,9 +229,14 @@ namespace DigitalLearningSolutions.Web.Services
             return competencyAssessmentDataService.GetCompetenciesForCompetencyAssessment(competencyAssessmentId);
         }
 
-        public IEnumerable<BaseFramework> GetLinkedFrameworksForCompetencyAssessment(int competencyAssessmentId)
+        public IEnumerable<LinkedFramework> GetLinkedFrameworksForCompetencyAssessment(int competencyAssessmentId)
         {
             return competencyAssessmentDataService.GetLinkedFrameworksForCompetencyAssessment(competencyAssessmentId);
+        }
+
+        public int[] GetLinkedFrameworkCompetencyIds(int competencyAssessmentId, int frameworkId)
+        {
+            return competencyAssessmentDataService.GetLinkedFrameworkCompetencyIds(competencyAssessmentId, frameworkId);
         }
     }
 }

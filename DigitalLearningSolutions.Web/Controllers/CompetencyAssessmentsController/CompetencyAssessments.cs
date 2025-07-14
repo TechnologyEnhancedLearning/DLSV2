@@ -10,14 +10,7 @@
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.Helpers;
     using System.Linq;
-    using AspNetCoreGeneratedDocument;
     using Microsoft.AspNetCore.Mvc.Rendering;
-    using DigitalLearningSolutions.Data.Models.Centres;
-    using DigitalLearningSolutions.Data.Models.Frameworks;
-    using Microsoft.CodeAnalysis.CSharp.Syntax;
-    using DigitalLearningSolutions.Data.Models.Courses;
-    using DigitalLearningSolutions.Web.Services;
-    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.GroupCourses;
 
     public partial class CompetencyAssessmentsController
     {
@@ -486,6 +479,7 @@
         {
 
             var competencies = competencyAssessmentService.GetCompetenciesForCompetencyAssessment(competencyAssessmentId);
+            var linkedFrameworks = competencyAssessmentService.GetLinkedFrameworksForCompetencyAssessment(competencyAssessmentId);
             if (!competencies.Any())
             {
                 return RedirectToAction("AddCompetenciesSelectFramework", new { competencyAssessmentId });
@@ -501,7 +495,7 @@
             {
                 return StatusCode(403);
             }
-            var model = new ViewSelectedCompetenciesViewModel(competencyAssessmentBase, competencies);
+            var model = new ViewSelectedCompetenciesViewModel(competencyAssessmentBase, competencies, linkedFrameworks);
             return View(model);
         }
         [Route("/CompetencyAssessments/{competencyAssessmentId}/Competencies/Add/SelectFramework")]
@@ -561,6 +555,7 @@
                 return StatusCode(403);
             }
             var framework = frameworkService.GetBaseFrameworkByFrameworkId(frameworkId, adminId);
+            var selectedFrameworkCompetencies = competencyAssessmentService.GetLinkedFrameworkCompetencyIds(competencyAssessmentId, frameworkId);
             var groupedCompetencies = frameworkService.GetFrameworkCompetencyGroups(frameworkId);
             var ungroupedCompetencies = frameworkService.GetFrameworkCompetenciesUngrouped(frameworkId);
             var competencyIds = ungroupedCompetencies.Select(c => c.CompetencyID).ToArray();
@@ -574,7 +569,7 @@
                 foreach (var competency in group.FrameworkCompetencies)
                     competency.CompetencyFlags = competencyFlags.Where(f => f.CompetencyId == competency.CompetencyID);
             }
-            var model = new AddCompetenciesViewModel(competencyAssessmentBase, groupedCompetencies, ungroupedCompetencies, frameworkId, framework.FrameworkName);
+            var model = new AddCompetenciesViewModel(competencyAssessmentBase, groupedCompetencies, ungroupedCompetencies, frameworkId, framework.FrameworkName, selectedFrameworkCompetencies);
             return View(model);
         }
     }
