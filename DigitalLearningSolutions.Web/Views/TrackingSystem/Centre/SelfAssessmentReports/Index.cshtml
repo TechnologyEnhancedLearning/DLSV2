@@ -28,7 +28,7 @@
         <h2>Excel learner activity reports</h2>
         <p class="nhsuk-lede-text">Download Excel competency self assessments activity reports for your centre.</p>
         <ul>
-          @if((Model.AdminCategoryId == null) || (Model.AdminCategoryId == Model.CategoryId))
+          @if((Model.DSATreportIsPublish)  && ((Model.AdminCategoryId == null) || (Model.AdminCategoryId == Model.CategoryId)))
           {
             <li>
                 <a asp-controller="SelfAssessmentReports" asp-action="DownloadDigitalCapabilityToExcel">Digital Skills Assessment Tool - Download report</a>

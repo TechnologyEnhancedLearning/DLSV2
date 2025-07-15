@@ -1,20 +1,20 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Centre.SelfAssessmentReports
 {
+    using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Data.Extensions;
     using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Data.Utilities;
+    using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.Helpers.ExternalApis;
+    using DigitalLearningSolutions.Web.Models.Enums;
+    using DigitalLearningSolutions.Web.Services;
+    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Reports;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.FeatureManagement.Mvc;
-    using DigitalLearningSolutions.Web.Attributes;
-    using DigitalLearningSolutions.Web.Models.Enums;
-    using DigitalLearningSolutions.Data.Enums;
-    using DigitalLearningSolutions.Data.Utilities;
-    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Reports;
-    using DigitalLearningSolutions.Web.Helpers.ExternalApis;
     using Microsoft.Extensions.Configuration;
-    using DigitalLearningSolutions.Data.Extensions;
-    using DigitalLearningSolutions.Web.Services;
-
+    using Microsoft.FeatureManagement.Mvc;
+    using System.Linq;
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
     [SetDlsSubApplication(nameof(DlsSubApplication.TrackingSystem))]
@@ -30,12 +30,14 @@
         private readonly string workbookName;
         private readonly string viewName;
         private readonly ISelfAssessmentService selfAssessmentService;
+        private readonly ICentreSelfAssessmentsService centreSelfAssessmentsService;
         public SelfAssessmentReportsController(
             ISelfAssessmentReportService selfAssessmentReportService,
             ITableauConnectionHelperService tableauConnectionHelper,
             IClockUtility clockUtility,
             IConfiguration config,
-            ISelfAssessmentService selfAssessmentService
+            ISelfAssessmentService selfAssessmentService,
+            ICentreSelfAssessmentsService centreSelfAssessmentsService
         )
         {
             this.selfAssessmentReportService = selfAssessmentReportService;
@@ -46,14 +48,16 @@
             workbookName = config.GetTableauWorkbookName();
             viewName = config.GetTableauViewName();
             this.selfAssessmentService = selfAssessmentService;
+            this.centreSelfAssessmentsService = centreSelfAssessmentsService;
         }
         public IActionResult Index()
         {
             var centreId = User.GetCentreId();
             var adminCategoryId = User.GetAdminCategoryId();
             var categoryId = this.selfAssessmentService.GetSelfAssessmentCategoryId(1);
-            var model = new SelfAssessmentReportsViewModel(selfAssessmentReportService.GetSelfAssessmentsForReportList((int)centreId, adminCategoryId), adminCategoryId, categoryId);
-            return View(model);
+            var selfAssessments = centreSelfAssessmentsService.GetCentreSelfAssessments(centreId.Value);
+            var dSATreportIsPublish = selfAssessments.Any(x => x.SelfAssessmentId == 1);
+            var model = new SelfAssessmentReportsViewModel(selfAssessmentReportService.GetSelfAssessmentsForReportList((int)centreId, adminCategoryId), adminCategoryId, categoryId, dSATreportIsPublish); return View(model);
         }
         [HttpGet]
         [Route("DownloadDcsa")]
