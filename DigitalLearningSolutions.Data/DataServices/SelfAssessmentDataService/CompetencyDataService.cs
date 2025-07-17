@@ -639,15 +639,7 @@
                 new { selfAssessmentId, delegateUserId, competencyId }
             );
         }
-
-        public void RemoveReviewCandidateAssessmentOptionalCompetencies(int id)
-        {
-           
-            connection.Execute(
-                     @"delete from SelfAssessmentResultSupervisorVerifications WHERE SelfAssessmentResultId = @id", new { id });
-
-        }
-
+        
         private static string PrintResult(
             int competencyId,
             int selfAssessmentId,

@@ -161,7 +161,6 @@
         int selfAssessmentId,
         int competencyId
     );
-        void RemoveReviewCandidateAssessmentOptionalCompetencies(int id);
     }
 
     public class SelfAssessmentService : ISelfAssessmentService
@@ -606,9 +605,6 @@
         {
             return selfAssessmentDataService.GetSelfAssessmentResultswithSupervisorVerificationsForDelegateSelfAssessmentCompetency(delegateUserId, selfAssessmentId, competencyId);
         }
-        public void RemoveReviewCandidateAssessmentOptionalCompetencies(int id)
-        {
-            selfAssessmentDataService.RemoveReviewCandidateAssessmentOptionalCompetencies(id);
-        }
+       
     }
 }
