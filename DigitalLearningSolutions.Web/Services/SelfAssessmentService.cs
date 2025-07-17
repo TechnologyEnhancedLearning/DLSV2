@@ -605,6 +605,5 @@
         {
             return selfAssessmentDataService.GetSelfAssessmentResultswithSupervisorVerificationsForDelegateSelfAssessmentCompetency(delegateUserId, selfAssessmentId, competencyId);
         }
-       
     }
 }
