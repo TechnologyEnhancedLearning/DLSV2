@@ -3,8 +3,12 @@
 <details id="fcgroup-@Model.FrameworkCompetencyGroup.ID" class="nhsuk-details nhsuk-expander  nhsuk-u-margin-bottom-3" @((int)ViewData["GroupCount"] == 1 ? "open" : (ViewContext.RouteData.Values.ContainsKey("frameworkCompetencyGroupId") ? (ViewContext.RouteData.Values["frameworkCompetencyGroupId"].Equals(Model.FrameworkCompetencyGroup.ID.ToString()) ? "open" : "") : ""))>
   <summary class="nhsuk-details__summary">
     <span class="nhsuk-details__summary-text">
-
-      @Model.FrameworkCompetencyGroup.Name (@Model.FrameworkCompetencyGroup.FrameworkCompetencies.Count() @ViewData["VocabPlural"].ToString().ToLower())
+      @Model.FrameworkCompetencyGroup.Name (@Model.FrameworkCompetencyGroup.FrameworkCompetencies.Count() @ViewData["VocabPlural"].ToString().ToLower())      
+    </span>
+    <br />
+    <br />
+    <span class="nhsuk-u-secondary-text-color nhsuk-body">
+      @Html.Raw(@Model.FrameworkCompetencyGroup.Description)
     </span>
     @if (Model.CanModify)
     {

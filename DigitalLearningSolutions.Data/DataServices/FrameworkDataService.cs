@@ -864,7 +864,7 @@
         public IEnumerable<FrameworkCompetencyGroup> GetFrameworkCompetencyGroups(int frameworkId)
         {
             var result = connection.Query<FrameworkCompetencyGroup, FrameworkCompetency, FrameworkCompetencyGroup>(
-                @"SELECT fcg.ID, fcg.CompetencyGroupID, cg.Name, fcg.Ordering, fc.ID, c.ID AS CompetencyID, c.Name, c.Description, fc.Ordering, COUNT(caq.AssessmentQuestionID) AS AssessmentQuestions
+                @"SELECT fcg.ID, fcg.CompetencyGroupID, cg.Name, cg.Description, fcg.Ordering, fc.ID, c.ID AS CompetencyID, c.Name, c.Description, fc.Ordering, COUNT(caq.AssessmentQuestionID) AS AssessmentQuestions
                     ,(SELECT COUNT(*) FROM CompetencyLearningResources clr WHERE clr.CompetencyID = c.ID AND clr.RemovedDate IS NULL) AS CompetencyLearningResourcesCount
                     FROM   FrameworkCompetencyGroups AS fcg INNER JOIN
                       CompetencyGroups AS cg ON fcg.CompetencyGroupID = cg.ID INNER JOIN
@@ -872,7 +872,7 @@
                        Competencies AS c ON fc.CompetencyID = c.ID LEFT OUTER JOIN
                       CompetencyAssessmentQuestions AS caq ON c.ID = caq.CompetencyID
                     WHERE (fcg.FrameworkID = @frameworkId)
-                    GROUP BY fcg.ID, fcg.CompetencyGroupID, cg.Name, fcg.Ordering, fc.ID, c.ID, c.Name, c.Description, fc.Ordering
+                    GROUP BY fcg.ID, fcg.CompetencyGroupID, cg.Name, cg.Description, fcg.Ordering, fc.ID, c.ID, c.Name, c.Description, fc.Ordering
                     ORDER BY fcg.Ordering, fc.Ordering",
                 (frameworkCompetencyGroup, frameworkCompetency) =>
                 {
