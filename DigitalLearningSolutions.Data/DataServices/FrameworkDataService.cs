@@ -80,13 +80,13 @@
 
         IEnumerable<GenericSelectList> GetAssessmentQuestions(int frameworkId, int adminId);
 
-        FrameworkDefaultQuestionUsage GetFrameworkDefaultQuestionUsage(int frameworkId, int assessmentQuestionId);
+        FrameworkDefaultQuestionUsage? GetFrameworkDefaultQuestionUsage(int frameworkId, int assessmentQuestionId);
 
         IEnumerable<GenericSelectList> GetAssessmentQuestionsForCompetency(int frameworkCompetencyId, int adminId);
 
-        AssessmentQuestionDetail GetAssessmentQuestionDetailById(int assessmentQuestionId, int adminId);
+        AssessmentQuestionDetail? GetAssessmentQuestionDetailById(int assessmentQuestionId, int adminId);
 
-        LevelDescriptor GetLevelDescriptorForAssessmentQuestionId(int assessmentQuestionId, int adminId, int level);
+        LevelDescriptor? GetLevelDescriptorForAssessmentQuestionId(int assessmentQuestionId, int adminId, int level);
 
         IEnumerable<CompetencyResourceAssessmentQuestionParameter>
             GetSignpostingResourceParametersByFrameworkAndCompetencyId(int frameworkId, int competencyId);
@@ -122,7 +122,7 @@
         FrameworkReviewOutcomeNotification? GetFrameworkReviewNotification(int reviewId);
 
         //INSERT DATA
-        BrandedFramework CreateFramework(DetailFramework detailFramework, int adminId);
+        BrandedFramework? CreateFramework(DetailFramework detailFramework, int adminId);
 
         int InsertCompetencyGroup(string groupName, string? groupDescription, int adminId, int? frameworkId);
 
@@ -367,7 +367,7 @@
             );
         }
 
-        public BaseFramework GetBaseFrameworkByFrameworkId(int frameworkId, int adminId)
+        public BaseFramework? GetBaseFrameworkByFrameworkId(int frameworkId, int adminId)
         {
             return connection.QueryFirstOrDefault<BaseFramework>(
                 $@"SELECT {BaseFrameworkFields}
@@ -377,7 +377,7 @@
             );
         }
 
-        public BrandedFramework GetBrandedFrameworkByFrameworkId(int frameworkId, int adminId)
+        public BrandedFramework? GetBrandedFrameworkByFrameworkId(int frameworkId, int adminId)
         {
             return connection.QueryFirstOrDefault<BrandedFramework>(
                 $@"SELECT {BaseFrameworkFields} {BrandedFrameworkFields}
@@ -484,7 +484,7 @@
             );
         }
 
-        public BrandedFramework CreateFramework(DetailFramework detailFramework, int adminId)
+        public BrandedFramework? CreateFramework(DetailFramework detailFramework, int adminId)
         {
             string frameworkName = detailFramework.FrameworkName;
             var description = detailFramework.Description;
@@ -532,7 +532,7 @@
                 return new BrandedFramework();
             }
 
-            return connection.QueryFirstOrDefault<BrandedFramework>(
+            return connection.QueryFirstOrDefault<BrandedFramework?>(
                 $@"SELECT {BaseFrameworkFields}
                       FROM {FrameworkTables}
                       WHERE FrameworkName = @frameworkName AND OwnerAdminID = @adminId",
@@ -867,7 +867,7 @@
                 @"SELECT fcg.ID, fcg.CompetencyGroupID, cg.Name, fcg.Ordering, fc.ID, c.ID AS CompetencyID, c.Name, c.Description, fc.Ordering, COUNT(caq.AssessmentQuestionID) AS AssessmentQuestions
                     ,(SELECT COUNT(*) FROM CompetencyLearningResources clr WHERE clr.CompetencyID = c.ID AND clr.RemovedDate IS NULL) AS CompetencyLearningResourcesCount
                     FROM   FrameworkCompetencyGroups AS fcg INNER JOIN
-                      CompetencyGroups AS cg ON fcg.CompetencyGroupID = cg.ID LEFT OUTER JOIN
+                      CompetencyGroups AS cg ON fcg.CompetencyGroupID = cg.ID INNER JOIN
                        FrameworkCompetencies AS fc ON fcg.ID = fc.FrameworkCompetencyGroupID LEFT OUTER JOIN
                        Competencies AS c ON fc.CompetencyID = c.ID LEFT OUTER JOIN
                       CompetencyAssessmentQuestions AS caq ON c.ID = caq.CompetencyID
@@ -1519,7 +1519,7 @@ GROUP BY fc.ID, c.ID, c.Name, c.Description, fc.Ordering
             );
         }
 
-        public FrameworkDefaultQuestionUsage GetFrameworkDefaultQuestionUsage(int frameworkId, int assessmentQuestionId)
+        public FrameworkDefaultQuestionUsage? GetFrameworkDefaultQuestionUsage(int frameworkId, int assessmentQuestionId)
         {
             return connection.QueryFirstOrDefault<FrameworkDefaultQuestionUsage>(
                 @"SELECT @assessmentQuestionId AS ID,
@@ -1620,7 +1620,7 @@ WHERE (FrameworkID = @frameworkId)",
             }
         }
 
-        public AssessmentQuestionDetail GetAssessmentQuestionDetailById(int assessmentQuestionId, int adminId)
+        public AssessmentQuestionDetail? GetAssessmentQuestionDetailById(int assessmentQuestionId, int adminId)
         {
             return connection.QueryFirstOrDefault<AssessmentQuestionDetail>(
                 $@"{AssessmentQuestionFields}{AssessmentQuestionDetailFields}
@@ -1630,7 +1630,7 @@ WHERE (FrameworkID = @frameworkId)",
             );
         }
 
-        public LevelDescriptor GetLevelDescriptorForAssessmentQuestionId(
+        public LevelDescriptor? GetLevelDescriptorForAssessmentQuestionId(
             int assessmentQuestionId,
             int adminId,
             int level
@@ -2501,7 +2501,7 @@ WHERE (RP.CreatedByAdminID = @adminId) OR
                         FOR XML PATH(''), TYPE).value('.', 'NVARCHAR(MAX)'), 1, 2, '') AS FlagsCsv
                     FROM 
                          Competencies AS c INNER JOIN
-                         FrameworkCompetencies AS fc ON c.ID = fc.CompetencyID LEFT JOIN
+                         FrameworkCompetencies AS fc ON c.ID = fc.CompetencyID INNER JOIN
                          FrameworkCompetencyGroups AS fcg ON fc.FrameworkCompetencyGroupID = fcg.ID LEFT JOIN
                          CompetencyGroups AS cg ON fcg.CompetencyGroupID = cg.ID
                     WHERE (fc.FrameworkID = @frameworkId)
