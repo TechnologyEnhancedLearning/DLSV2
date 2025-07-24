@@ -44,7 +44,9 @@
 
             var centreId = User.GetCentreIdKnownNotNull();
             var selfAssessments =
-                selfAssessmentService.GetSelfAssessmentsForCandidate(delegateUserId, centreId, 0);
+                selfAssessmentService.GetSelfAssessmentsForCandidate(delegateUserId, centreId, 0)
+                .Where(r => (r.RetirementDate != null && r.RetirementDate.Value.Date >= DateTime.UtcNow.Date)
+                                            || r.RetirementDate == null).ToList();
 
             var (learningResources, apiIsAccessible) =
                 await GetIncompleteActionPlanResourcesIfSignpostingEnabled(delegateUserId);
@@ -81,7 +83,9 @@
             var centreId = User.GetCentreIdKnownNotNull();
 
             var selfAssessment =
-                selfAssessmentService.GetSelfAssessmentsForCandidate(delegateUserId, centreId, 0);
+                selfAssessmentService.GetSelfAssessmentsForCandidate(delegateUserId, centreId, 0)
+                                        .Where(r => (r.RetirementDate != null && r.RetirementDate.Value.Date >= DateTime.UtcNow.Date)
+                                            || r.RetirementDate == null).ToList();
 
             var (learningResources, _) = await GetIncompleteActionPlanResourcesIfSignpostingEnabled(delegateUserId);
             var model = new AllCurrentItemsPageViewModel(currentCourses, selfAssessment, learningResources);
