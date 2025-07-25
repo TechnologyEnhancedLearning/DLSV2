@@ -478,8 +478,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///-- Create date: 15/10/2021
         ///-- Description:	Reorders the CompetencyAssessmentQuestions - moving the given competency question up or down.
         ///-- =============================================
-        ///CREATE OR ALTER   PROCEDURE [dbo].[ReorderCompetencyAssessmentQuestion]
-        /// [rest of string was truncated]&quot;;.
+        ///CREATE OR ALTER   PROCEDURE [dbo].[ReorderCompetencyAssessmentQuestion]        /// [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string DLSV2_379_ReorderCompetencyAssessmentQuestionsSP {
             get {
@@ -1505,8 +1504,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///	@EmailProfileName nvarchar(100),
         ///	@TestOnly bit
         ///AS
-        ///BEGIN
-        /// [rest of string was truncated]&quot;;.
+        ///BEGIN        /// [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string TD_3190_SendOneMonthSelfAssessmentTBCRemindersSP {
             get {
@@ -2527,16 +2525,77 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GetActivitiesForDelegateEnrolment]    Script Date: 24/07/2025 02:06:43 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 24/01/2023
+        ///-- Description:	Returns active available for delegate enrolment based on original GetActiveAvailableCustomisationsForCentreFiltered_V6 sproc but adjusted for user account refactor and filters properly for category.
+        ///-- ========= [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_5535_Alter_GetActivitiesForDelegateEnrolment_Down {
+            get {
+                return ResourceManager.GetString("TD_5535_Alter_GetActivitiesForDelegateEnrolment_Down", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GetActivitiesForDelegateEnrolment]    Script Date: 24/07/2025 02:06:43 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 24/01/2023
+        ///-- Description:	Returns active available for delegate enrolment based on original GetActiveAvailableCustomisationsForCentreFiltered_V6 sproc but adjusted for user account refactor and filters properly for category.
+        ///-- ========= [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_5535_Alter_GetActivitiesForDelegateEnrolment_Up {
+            get {
+                return ResourceManager.GetString("TD_5535_Alter_GetActivitiesForDelegateEnrolment_Up", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to IF OBJECT_ID(&apos;dbo.IndexOptimize&apos;, &apos;P&apos;) IS NOT NULL DROP PROCEDURE dbo.IndexOptimize;
         ///IF OBJECT_ID(&apos;dbo.CommandExecute&apos;, &apos;P&apos;) IS NOT NULL DROP PROCEDURE dbo.CommandExecute;
+        ///IF OBJECT_ID(&apos;dbo.sp_purge_commandlog&apos;, &apos;P&apos;) IS NOT NULL DROP PROCEDURE dbo.sp_purge_commandlog;
         ///IF OBJECT_ID(&apos;dbo.CommandLog&apos;, &apos;U&apos;) IS NOT NULL DROP TABLE dbo.CommandLog;
         ///.
         /// </summary>
         internal static string TD_5670_MaintenanceScripts_DOWN {
             get {
                 return ResourceManager.GetString("TD-5670-MaintenanceScripts_DOWN", resourceCulture);
-                }
+            }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to -- ============================================
+        ///-- Drop if exists (for clean redeploy)
+        ///-- ============================================
+        ///IF OBJECT_ID(&apos;dbo.IndexOptimize&apos;, &apos;P&apos;) IS NOT NULL DROP PROCEDURE dbo.IndexOptimize;
+        ///IF OBJECT_ID(&apos;dbo.DatabaseIntegrityCheck&apos;, &apos;P&apos;) IS NOT NULL DROP PROCEDURE dbo.DatabaseIntegrityCheck;
+        ///IF OBJECT_ID(&apos;dbo.CommandExecute&apos;, &apos;P&apos;) IS NOT NULL DROP PROCEDURE dbo.CommandExecute;
+        ///IF OBJECT_ID(&apos;dbo.CommandLog&apos;, &apos;U&apos;) IS NOT NULL DROP TABLE dbo.CommandLog;
+        ///GO
+        ///
+        ///-- =========== [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_5670_MaintenanceScripts_UP {
+            get {
+                return ResourceManager.GetString("TD_5670_MaintenanceScripts_UP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to CREATE OR ALTER PROCEDURE [dbo].[usp_GetSelfAssessmentReport]
         ///    @SelfAssessmentID INT,
         ///    @CentreID INT
@@ -2561,27 +2620,6 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to -- ============================================
-        ///-- CommandLog table
-        ///-- ============================================
-        ///IF OBJECT_ID(&apos;dbo.CommandLog&apos;, &apos;U&apos;) IS NOT NULL DROP TABLE dbo.CommandLog;
-        ///CREATE TABLE dbo.CommandLog (
-        ///    ID INT IDENTITY PRIMARY KEY,
-        ///    DatabaseName SYSNAME NULL,
-        ///    SchemaName SYSNAME NULL,
-        ///    ObjectName SYSNAME NULL,
-        ///    ObjectType CHAR(2) NULL,
-        ///    IndexName SYSNAME NULL,
-        ///    IndexType TINYINT NULL,
-        ///    StatisticsName SYSNAME NULL,
-        ///    PartitionNumber INT NULL,
-        ///    Ext [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string TD_5670_MaintenanceScripts_UP {
-            get {
-                return ResourceManager.GetString("TD_5670_MaintenanceScripts_UP", resourceCulture);
-                }
-        }
         ///   Looks up a localized string similar to CREATE OR ALTER FUNCTION dbo.GetOtherCentresForSelfAssessmentTVF
         ///(
         ///    @UserID INT,
