@@ -140,7 +140,7 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
                 {
                     var baseUrl = config.GetAppRootPath();
                     var supportEmail = this.configService.GetConfigValue("SupportEmail");
-                    baseUrl = baseUrl+"/RegisterAdmin?centreId={centreId}".Replace("{centreId}", item.Centre.CentreId.ToString());
+                    baseUrl = baseUrl + "/RegisterAdmin?centreId={centreId}".Replace("{centreId}", item.Centre.CentreId.ToString());
                     Email welcomeEmail = this.passwordResetService.GenerateEmailInviteForCentreManager(centreEntity.Centre.CentreName, centreEntity.Centre.AutoRegisterManagerEmail, baseUrl, supportEmail);
                     centreEntity.Centre.EmailInvite = "mailto:" + string.Join(",", welcomeEmail.To) + "?subject=" + welcomeEmail.Subject + "&body=" + welcomeEmail.Body.TextBody.Replace("&", "%26");
                 }
@@ -295,7 +295,7 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
                 model.CentreName.Trim(),
                 model.CentreTypeId,
                 model.RegionId,
-                model.CentreEmail,
+                model.RegistrationEmail,
                 model.IpPrefix?.Trim(),
                 model.ShowOnMap
             );
