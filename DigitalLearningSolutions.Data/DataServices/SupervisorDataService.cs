@@ -796,7 +796,8 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                              WHERE (DelegateUserID = @delegateUserId) AND (RemovedDate IS NULL)
                                 AND (CompletedDate IS NULL)))
                         AND ((rp.SupervisorSelfAssessmentReview = 1) OR (rp.SupervisorResultsReview = 1))
-                        AND (ISNULL(@categoryId, 0) = 0 OR rp.CategoryID = @categoryId)", new { delegateUserId, centreId, categoryId }
+                        AND (ISNULL(@categoryId, 0) = 0 OR rp.CategoryID = @categoryId) AND 
+						((CAST(rp.RetirementDate AS DATE) >= CAST(GETUTCDATE() AS DATE)) OR rp.RetirementDate IS NULL)", new { delegateUserId, centreId, categoryId }
                 );
         }
 
