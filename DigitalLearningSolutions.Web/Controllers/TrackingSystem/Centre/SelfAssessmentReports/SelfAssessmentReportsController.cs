@@ -1,19 +1,22 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Centre.SelfAssessmentReports
 {
+    using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Data.Extensions;
     using DigitalLearningSolutions.Data.Services;
+    using DigitalLearningSolutions.Data.Utilities;
+    using DigitalLearningSolutions.Web.Attributes;
     using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.Helpers.ExternalApis;
+    using DigitalLearningSolutions.Web.Models.Enums;
+    using DigitalLearningSolutions.Web.Services;
+    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Reports;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.FeatureManagement.Mvc;
-    using DigitalLearningSolutions.Web.Attributes;
-    using DigitalLearningSolutions.Web.Models.Enums;
-    using DigitalLearningSolutions.Data.Enums;
-    using DigitalLearningSolutions.Data.Utilities;
-    using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Reports;
-    using DigitalLearningSolutions.Web.Helpers.ExternalApis;
     using Microsoft.Extensions.Configuration;
-    using DigitalLearningSolutions.Data.Extensions;
-    using DigitalLearningSolutions.Web.Services;
+    using Microsoft.FeatureManagement;
+    using Microsoft.FeatureManagement.Mvc;
+    using System;
+    using System.Threading.Tasks;
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
@@ -30,12 +33,14 @@
         private readonly string workbookName;
         private readonly string viewName;
         private readonly ISelfAssessmentService selfAssessmentService;
+        private readonly IFeatureManager featureManager;
         public SelfAssessmentReportsController(
             ISelfAssessmentReportService selfAssessmentReportService,
             ITableauConnectionHelperService tableauConnectionHelper,
             IClockUtility clockUtility,
             IConfiguration config,
-            ISelfAssessmentService selfAssessmentService
+            ISelfAssessmentService selfAssessmentService,
+            IFeatureManager featureManager
         )
         {
             this.selfAssessmentReportService = selfAssessmentReportService;
@@ -46,13 +51,17 @@
             workbookName = config.GetTableauWorkbookName();
             viewName = config.GetTableauViewName();
             this.selfAssessmentService = selfAssessmentService;
+            this.featureManager = featureManager;
         }
-        public IActionResult Index()
+        public async Task<IActionResult> IndexAsync()
         {
             var centreId = User.GetCentreId();
             var adminCategoryId = User.GetAdminCategoryId();
             var categoryId = this.selfAssessmentService.GetSelfAssessmentCategoryId(1);
-            var model = new SelfAssessmentReportsViewModel(selfAssessmentReportService.GetSelfAssessmentsForReportList((int)centreId, adminCategoryId), adminCategoryId, categoryId);
+            var tableauFlag = await featureManager.IsEnabledAsync(FeatureFlags.TableauSelfAssessmentDashboards);
+            var tableauQueryOverride = string.Equals(Request.Query["tableaulink"], "true", StringComparison.OrdinalIgnoreCase);
+            var showTableauLink = tableauFlag || tableauQueryOverride;
+            var model = new SelfAssessmentReportsViewModel(selfAssessmentReportService.GetSelfAssessmentsForReportList((int)centreId, adminCategoryId), adminCategoryId, categoryId, showTableauLink);
             return View(model);
         }
         [HttpGet]
