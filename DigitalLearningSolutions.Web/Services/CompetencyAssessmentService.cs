@@ -1,10 +1,6 @@
 ﻿using DigitalLearningSolutions.Data.DataServices;
-using DigitalLearningSolutions.Data.Models.Common;
 using DigitalLearningSolutions.Data.Models.CompetencyAssessments;
-using DigitalLearningSolutions.Data.Models.Frameworks;
-using DocumentFormat.OpenXml.EMMA;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace DigitalLearningSolutions.Web.Services
 {

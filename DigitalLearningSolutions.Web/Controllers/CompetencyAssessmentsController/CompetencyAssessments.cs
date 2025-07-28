@@ -574,12 +574,13 @@
             return View(model);
         }
         [HttpPost]
-        public IActionResult AddComptencies (AddCompetenciesFormData model)
+        public IActionResult AddComptencies(AddCompetenciesFormData model)
         {
             if (!ModelState.IsValid)
             {
                 //reload model and view
             }
-
+            return View(model);
+        }
     }
 }
