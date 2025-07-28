@@ -19,22 +19,20 @@
                 <span class="nhsuk-u-visually-hidden"> - </span>
             </span>@ViewData["Title"]
         </h1>
-        <feature name="@(FeatureFlags.TableauSelfAssessmentDashboards)">
-            @if (Model.SelfAssessmentSelects.Any())
-            {
-                <vc:action-link asp-controller="SelfAssessmentReports" asp-action="TableauCompetencyDashboard" asp-all-route-data="@new Dictionary<string, string>();" link-text="View Tableau supervised self assessments dashboard" />
-            }
-        </feature>
+        @if (Model.ShowTableauLink && Model.SelfAssessmentSelects.Any())
+        {
+            <vc:action-link asp-controller="SelfAssessmentReports" asp-action="TableauCompetencyDashboard" asp-all-route-data="@new Dictionary<string, string>();" link-text="View Tableau supervised self assessments dashboard" />
+        }
         <h2>Excel learner activity reports</h2>
         <p class="nhsuk-lede-text">Download Excel competency self assessments activity reports for your centre.</p>
         <ul>
-          @if((Model.AdminCategoryId == null) || (Model.AdminCategoryId == Model.CategoryId))
-          {
-            <li>
-                <a asp-controller="SelfAssessmentReports" asp-action="DownloadDigitalCapabilityToExcel">Digital Skills Assessment Tool - Download report</a>
+            @if ((Model.AdminCategoryId == null) || (Model.AdminCategoryId == Model.CategoryId))
+            {
+                <li>
+                    <a asp-controller="SelfAssessmentReports" asp-action="DownloadDigitalCapabilityToExcel">Digital Skills Assessment Tool - Download report</a>
 
-            </li>
-          }
+                </li>
+            }
             @if (Model.SelfAssessmentSelects.Any())
             {
                 @foreach (var report in Model.SelfAssessmentSelects)
