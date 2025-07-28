@@ -4,6 +4,12 @@
 @model SelfAssessmentReportsViewModel
 @{
     ViewData["Title"] = "Self assessment reports";
+    var routeData = new Dictionary<string, string>();
+
+    if (string.Equals(Context.Request.Query["tableaulink"], "true", StringComparison.OrdinalIgnoreCase))
+    {
+        routeData["tableaulink"] = "true";
+    }
 }
 <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-one-quarter">
@@ -21,7 +27,8 @@
         </h1>
         @if (Model.ShowTableauLink && Model.SelfAssessmentSelects.Any())
         {
-            <vc:action-link asp-controller="SelfAssessmentReports" asp-action="TableauCompetencyDashboard" asp-all-route-data="@new Dictionary<string, string>();" link-text="View Tableau supervised self assessments dashboard" />
+            <vc:action-link asp-controller="SelfAssessmentReports"
+                            asp-all-route-data="routeData" asp-action="TableauCompetencyDashboard" link-text="View Tableau supervised self assessments dashboard" />
         }
         <h2>Excel learner activity reports</h2>
         <p class="nhsuk-lede-text">Download Excel competency self assessments activity reports for your centre.</p>
