@@ -29,7 +29,7 @@
 
         CompetencyAssessmentTaskStatus GetOrInsertAndReturnAssessmentTaskStatus(int assessmentId, bool frameworkBased);
 
-        int[] GetLinkedFrameworkIds (int assessmentId);
+        int[] GetLinkedFrameworkIds(int assessmentId);
 
         int? GetPrimaryLinkedFrameworkId(int assessmentId);
 
@@ -67,7 +67,7 @@
 
         //DELETE DATA
         bool RemoveFrameworkCompetenciesFromAssessment(int competencyAssessmentId, int frameworkId);
-        
+
     }
 
     public class CompetencyAssessmentDataService : ICompetencyAssessmentDataService
@@ -366,7 +366,7 @@
                 new { adminId, selfAssessmentId, frameworkId }
             );
             }
-                if (numberOfAffectedRows < 1)
+            if (numberOfAffectedRows < 1)
             {
                 logger.LogWarning(
                 "Not inserting SelfAssessmentFrameworks record as db insert failed. " +

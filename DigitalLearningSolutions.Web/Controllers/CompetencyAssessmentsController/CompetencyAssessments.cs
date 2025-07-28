@@ -11,6 +11,7 @@
     using DigitalLearningSolutions.Web.Helpers;
     using System.Linq;
     using Microsoft.AspNetCore.Mvc.Rendering;
+    using Serilog.Extensions.Hosting;
 
     public partial class CompetencyAssessmentsController
     {
@@ -572,5 +573,13 @@
             var model = new AddCompetenciesViewModel(competencyAssessmentBase, groupedCompetencies, ungroupedCompetencies, frameworkId, framework.FrameworkName, selectedFrameworkCompetencies);
             return View(model);
         }
+        [HttpPost]
+        public IActionResult AddComptencies (AddCompetenciesFormData model)
+        {
+            if (!ModelState.IsValid)
+            {
+                //reload model and view
+            }
+
     }
 }

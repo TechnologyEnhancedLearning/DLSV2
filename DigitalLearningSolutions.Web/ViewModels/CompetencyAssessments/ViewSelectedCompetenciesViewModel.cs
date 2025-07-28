@@ -35,7 +35,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
             LinkedFrameworks = linkedFrameworks;
         }
         public int ID { get; set; }
-        
+
         public string CompetencyAssessmentName { get; set; }
         public int UserRole { get; set; }
         public string VocabularySingular { get; set; }
