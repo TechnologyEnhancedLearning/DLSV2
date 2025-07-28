@@ -93,11 +93,14 @@
         }
         [HttpGet]
         [Route("TableauCompetencyDashboard")]
-        public IActionResult TableauCompetencyDashboard()
+        public async Task<IActionResult> TableauCompetencyDashboardAsync()
         {
             var userEmail = User.GetUserPrimaryEmail();
             var adminId = User.GetAdminId();
             var jwt = tableauConnectionHelper.GetTableauJwt();
+            var tableauFlag = await featureManager.IsEnabledAsync(FeatureFlags.TableauSelfAssessmentDashboards);
+            var tableauQueryOverride = string.Equals(Request.Query["tableaulink"], "true", StringComparison.OrdinalIgnoreCase);
+            var showTableauLink = tableauFlag || tableauQueryOverride;
             ViewBag.Email = userEmail;
             ViewBag.AdminId = adminId;
             ViewBag.SiteName = tableauSiteName;
@@ -105,7 +108,7 @@
             ViewBag.WorkbookName = workbookName;
             ViewBag.ViewName = viewName;
             ViewBag.JwtToken = jwt;
-
+            ViewBag.ShowTableauLink = showTableauLink;
             return View();
         }
     }
