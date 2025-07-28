@@ -22,7 +22,7 @@
 <vc:inset-text css-class="" text="Use the full screen button below the Tableau dashboard (next to 'Share') for the best experience." />
 @if (ViewBag.ShowTableauLink)
 {
-<tableau-viz id='tableau-viz'
+    <tableau-viz id='tableau-viz'
                  src='@srcUrl' token='@jwtToken' toolbar='bottom'>
         If the dashboard doesn't appear after a few seconds, <a href="#">reload the page</a>
     </tableau-viz>
