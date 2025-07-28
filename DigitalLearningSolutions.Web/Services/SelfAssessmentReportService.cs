@@ -21,7 +21,7 @@
     public class SelfAssessmentReportService : ISelfAssessmentReportService
     {
         private const string SelfAssessment = "SelfAssessment";
-        private const string Learner = "Leaner";
+        private const string Learner = "Learner";
         private const string LearnerActive = "LearnerActive";
         private const string PRN = "PRN";
         private const string JobGroup = "JobGroup";
@@ -36,6 +36,28 @@
         private const string SignOffRequested = "SignOffRequested";
         private const string SignOffAchieved = "SignOffAchieved";
         private const string ReviewedDate = "ReviewedDate";
+        private const string EnrolledMonth = "EnrolledMonth";
+        private const string EnrolledYear = "EnrolledYear";
+        private const string FirstName = "FirstName";
+        private const string LastName = "LastName";
+        private const string Email = "Email";
+        private const string Status = "Status";
+        private const string LearningLaunched = "LearningLaunched";
+        private const string LearningCompleted = "LearningCompleted";
+        private const string DataInformationAndContentConfidence = "DataInformationAndContentConfidence";
+        private const string DataInformationAndContentRelevance = "DataInformationAndContentRelevance";
+        private const string TeachinglearningAndSelfDevelopmentConfidence = "TeachinglearningAndSelfDevelopmentConfidence";
+        private const string TeachinglearningAndSelfDevelopmentRelevance = "TeachinglearningAndSelfDevelopmentRelevance";
+        private const string CommunicationCollaborationAndParticipationConfidence = "CommunicationCollaborationAndParticipationConfidence";
+        private const string CommunicationCollaborationAndParticipationRelevance = "CommunicationCollaborationAndParticipationRelevance";
+        private const string TechnicalProficiencyConfidence = "TechnicalProficiencyConfidence";
+        private const string TechnicalProficiencyRelevance = "TechnicalProficiencyRelevance";
+        private const string CreationInnovationAndResearchConfidence = "CreationInnovationAndResearchConfidence";
+        private const string CreationInnovationAndResearchRelevance = "CreationInnovationAndResearchRelevance";
+        private const string DigitalIdentityWellbeingSafetyAndSecurityConfidence = "DigitalIdentityWellbeingSafetyAndSecurityConfidence";
+        private const string DigitalIdentityWellbeingSafetyAndSecurityRelevance = "DigitalIdentityWellbeingSafetyAndSecurityRelevance";
+
+
 
         private readonly IDCSAReportDataService dcsaReportDataService;
         private readonly ISelfAssessmentReportDataService selfAssessmentReportDataService;
@@ -66,39 +88,46 @@
         public byte[] GetSelfAssessmentExcelExportForCentre(int centreId, int selfAssessmentId)
         {
             using var workbook = new XLWorkbook();
-            var selfAssessmentReportData = selfAssessmentReportDataService.GetSelfAssessmentReportDataForCentre(centreId, selfAssessmentId);            
-            PopulateSelfAssessmentSheetForCentre(workbook, centreId, selfAssessmentReportData);            
+            var selfAssessmentReportData = selfAssessmentReportDataService.GetSelfAssessmentReportDataForCentre(centreId, selfAssessmentId);
+            PopulateSelfAssessmentSheetForCentre(workbook, centreId, selfAssessmentReportData);
             using var stream = new MemoryStream();
             workbook.SaveAs(stream);
             return stream.ToArray();
         }
         public byte[] GetDigitalCapabilityExcelExportForCentre(int centreId)
         {
-            var delegateCompletionStatus = dcsaReportDataService.GetDelegateCompletionStatusForCentre(centreId);
+
+            using var workbook = new XLWorkbook();
+            GetDelegateCompletionStatusForCentre(workbook, centreId);
+            GetOutcomeSummaryForCentre(workbook, centreId);
+            using var stream = new MemoryStream();
+            workbook.SaveAs(stream);
+            return stream.ToArray();
+        }
+
+        private void GetOutcomeSummaryForCentre(XLWorkbook workbook, int centreId)
+        {
             var outcomeSummary = dcsaReportDataService.GetOutcomeSummaryForCentre(centreId);
-            var summary = delegateCompletionStatus.Select(
-                x => new
-                {
-                    x.EnrolledMonth,
-                    x.EnrolledYear,
-                    x.FirstName,
-                    x.LastName,
-                    Email = (Guid.TryParse(x.Email, out _) ? string.Empty : x.Email),
-                    x.CentreField1,
-                    x.CentreField2,
-                    x.CentreField3,
-                    x.Status
-                }
-                );
+
+            var sheet = workbook.Worksheets.Add("Assessment Outcome Summary");
+            // Set sheet to have outlining expand buttons at the top of the expanded section.
+            sheet.Outline.SummaryVLocation = XLOutlineSummaryVLocation.Top;
+            var customRegistrationPrompts =
+                registrationPromptsService.GetCentreRegistrationPromptsByCentreId(centreId);
+            var dataTable = new DataTable();
+
             var details = outcomeSummary.Select(
                 x => new
                 {
                     x.EnrolledMonth,
                     x.EnrolledYear,
                     x.JobGroup,
-                    x.CentreField1,
-                    x.CentreField2,
-                    x.CentreField3,
+                    x.RegistrationAnswer1,
+                    x.RegistrationAnswer2,
+                    x.RegistrationAnswer3,
+                    x.RegistrationAnswer4,
+                    x.RegistrationAnswer5,
+                    x.RegistrationAnswer6,
                     x.Status,
                     x.LearningLaunched,
                     x.LearningCompleted,
@@ -115,13 +144,167 @@
                     x.DigitalIdentityWellbeingSafetyAndSecurityConfidence,
                     x.DigitalIdentityWellbeingSafetyAndSecurityRelevance
                 }
+            );
+
+            // set the common header table for the excel sheet
+            SetUpCommonTableColumnsForOutcomeSummary(customRegistrationPrompts, dataTable);
+
+            // insert the header table into the sheet starting at the first position
+            var headerTable = sheet.Cell(1, 1).InsertTable(dataTable);
+
+            foreach (var report in outcomeSummary)
+            {
+                //iterate and add every record from the query to the datatable
+                AddOutcomeSummaryReportToSheet(sheet, dataTable, customRegistrationPrompts, report);
+            }
+
+            var insertedDataRange = sheet.Cell(GetNextEmptyRowNumber(sheet), 1).InsertData(dataTable.Rows);
+            if (dataTable.Rows.Count > 0)
+            {
+                sheet.Rows(insertedDataRange.FirstRow().RowNumber(), insertedDataRange.LastRow().RowNumber())
+                    .Group(true);
+            }
+
+            //format the sheet rows and content
+            sheet.Rows().Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+            headerTable.Theme = XLTableTheme.TableStyleLight9;
+
+            sheet.Columns().AdjustToContents();
+
+
+        }
+
+        private void AddOutcomeSummaryReportToSheet(IXLWorksheet sheet, DataTable dataTable, CentreRegistrationPrompts customRegistrationPrompts, DCSAOutcomeSummary report)
+        {
+            var row = dataTable.NewRow();
+            row[EnrolledMonth] = report.EnrolledMonth;
+            row[EnrolledYear] = report.EnrolledYear;
+            row[JobGroup] = report.JobGroup;
+
+            // map the individual registration fields with the centre registration custom prompts
+            foreach (var prompt in customRegistrationPrompts.CustomPrompts)
+            {
+                if (dataTable.Columns.Contains($"{prompt.PromptText} (Prompt {prompt.RegistrationField.Id})"))
+                {
+                    row[$"{prompt.PromptText} (Prompt {prompt.RegistrationField.Id})"] =
+                        report.CentreRegistrationPrompts[prompt.RegistrationField.Id - 1];
+                }
+                else
+                {
+                    row[prompt.PromptText] =
+                        report.CentreRegistrationPrompts[prompt.RegistrationField.Id - 1];
+                }
+            }
+            row[Status] = report.Status;
+            row[LearningLaunched] = report.LearningLaunched;
+            row[LearningCompleted] = report.LearningCompleted;
+            row[DataInformationAndContentConfidence] = report.DataInformationAndContentConfidence;
+            row[DataInformationAndContentRelevance] = report.DataInformationAndContentRelevance;
+            row[TeachinglearningAndSelfDevelopmentConfidence] = report.TeachinglearningAndSelfDevelopmentConfidence;
+            row[TeachinglearningAndSelfDevelopmentRelevance] = report.TeachinglearningAndSelfDevelopmentRelevance;
+            row[CommunicationCollaborationAndParticipationConfidence] = report.CommunicationCollaborationAndParticipationConfidence;
+            row[CommunicationCollaborationAndParticipationRelevance] = report.CommunicationCollaborationAndParticipationRelevance;
+            row[TechnicalProficiencyConfidence] = report.TechnicalProficiencyConfidence;
+            row[TechnicalProficiencyRelevance] = report.TechnicalProficiencyRelevance;
+            row[CreationInnovationAndResearchConfidence] = report.CreationInnovationAndResearchConfidence;
+            row[CreationInnovationAndResearchRelevance] = report.CreationInnovationAndResearchRelevance;
+            row[DigitalIdentityWellbeingSafetyAndSecurityConfidence] = report.DigitalIdentityWellbeingSafetyAndSecurityConfidence;
+            row[DigitalIdentityWellbeingSafetyAndSecurityRelevance] = report.DigitalIdentityWellbeingSafetyAndSecurityRelevance;
+            dataTable.Rows.Add(row);
+        }
+
+        private void SetUpCommonTableColumnsForOutcomeSummary(CentreRegistrationPrompts customRegistrationPrompts, DataTable dataTable)
+        {
+            dataTable.Columns.AddRange(
+                new[] {
+                    new DataColumn(EnrolledMonth), new DataColumn(EnrolledYear), new DataColumn(JobGroup)
+                }
+            );
+
+            foreach (var prompt in customRegistrationPrompts.CustomPrompts)
+            {
+                dataTable.Columns.Add(
+                    !dataTable.Columns.Contains(prompt.PromptText)
+                        ? prompt.PromptText
+                        : $"{prompt.PromptText} (Prompt {prompt.RegistrationField.Id})"
                 );
-            using var workbook = new XLWorkbook();
-            AddSheetToWorkbook(workbook, "Delegate Completion Status", summary);
-            AddSheetToWorkbook(workbook, "Assessment Outcome Summary", outcomeSummary);
-            using var stream = new MemoryStream();
-            workbook.SaveAs(stream);
-            return stream.ToArray();
+            }
+
+            dataTable.Columns.AddRange(
+                new[]
+                {
+                    new DataColumn(Status), new DataColumn(LearningLaunched),new DataColumn(LearningCompleted),new DataColumn(DataInformationAndContentConfidence),
+                    new DataColumn(DataInformationAndContentRelevance), new DataColumn(TeachinglearningAndSelfDevelopmentConfidence),
+                    new DataColumn(TeachinglearningAndSelfDevelopmentRelevance),new DataColumn(CommunicationCollaborationAndParticipationConfidence),
+                    new DataColumn(CommunicationCollaborationAndParticipationRelevance),
+                    new DataColumn(TechnicalProficiencyConfidence),
+                    new DataColumn(TechnicalProficiencyRelevance),
+                    new DataColumn(CreationInnovationAndResearchConfidence),
+                    new DataColumn(CreationInnovationAndResearchRelevance),
+                    new DataColumn(DigitalIdentityWellbeingSafetyAndSecurityConfidence),
+                    new DataColumn(DigitalIdentityWellbeingSafetyAndSecurityRelevance)
+                }
+            );
+        }
+
+        private void GetDelegateCompletionStatusForCentre(XLWorkbook workbook, int centreId)
+        {
+
+            var delegateCompletionStatus = dcsaReportDataService.GetDelegateCompletionStatusForCentre(centreId);
+
+            var sheet = workbook.Worksheets.Add("Delegate Completion Status");
+            // Set sheet to have outlining expand buttons at the top of the expanded section.
+            sheet.Outline.SummaryVLocation = XLOutlineSummaryVLocation.Top;
+            var customRegistrationPrompts =
+                registrationPromptsService.GetCentreRegistrationPromptsByCentreId(centreId);
+            var dataTable = new DataTable();
+
+            // did this to sequqence the element into a new form based on the order below
+            var summary = delegateCompletionStatus.Select(
+                x => new
+                {
+                    x.EnrolledMonth,
+                    x.EnrolledYear,
+                    x.FirstName,
+                    x.LastName,
+                    Email = (Guid.TryParse(x.Email, out _) ? string.Empty : x.Email),
+                    x.RegistrationAnswer1,
+                    x.RegistrationAnswer2,
+                    x.RegistrationAnswer3,
+                    x.RegistrationAnswer4,
+                    x.RegistrationAnswer5,
+                    x.RegistrationAnswer6,
+                    x.Status
+                }
+
+            );
+
+            // set the common header table for the excel sheet
+            SetUpCommonTableColumnsForDelegateCompletion(customRegistrationPrompts, dataTable);
+
+            // insert the header table into the sheet starting at the first position
+            var headerTable = sheet.Cell(1, 1).InsertTable(dataTable);
+
+            foreach (var report in delegateCompletionStatus)
+            {
+                //iterate and add every record from the query to the datatable
+                AddDelegateCompletionReportToSheet(sheet, dataTable, customRegistrationPrompts, report);
+            }
+
+            var insertedDataRange = sheet.Cell(GetNextEmptyRowNumber(sheet), 1).InsertData(dataTable.Rows);
+            if (dataTable.Rows.Count > 0)
+            {
+                sheet.Rows(insertedDataRange.FirstRow().RowNumber(), insertedDataRange.LastRow().RowNumber())
+                    .Group(true);
+            }
+
+            //format the sheet rows and content
+            sheet.Rows().Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+            headerTable.Theme = XLTableTheme.TableStyleLight9;
+
+            sheet.Columns().AdjustToContents();
+
+
         }
 
         private void PopulateSelfAssessmentSheetForCentre(IXLWorkbook workbook, int centreId, IEnumerable<SelfAssessmentReportData> selfAssessmentReportData)
@@ -215,9 +398,32 @@
             );
         }
 
+        private static void SetUpCommonTableColumnsForDelegateCompletion(CentreRegistrationPrompts centreRegistrationPrompts, DataTable dataTable)
+        {
+            dataTable.Columns.AddRange(
+                    new[] {new DataColumn(EnrolledMonth), new DataColumn(EnrolledYear), new DataColumn(FirstName), new DataColumn(LastName),
+                    new DataColumn(Email)}
+                );
+            foreach (var prompt in centreRegistrationPrompts.CustomPrompts)
+            {
+                dataTable.Columns.Add(
+                    !dataTable.Columns.Contains(prompt.PromptText)
+                        ? prompt.PromptText
+                        : $"{prompt.PromptText} (Prompt {prompt.RegistrationField.Id})"
+                );
+            }
+
+            dataTable.Columns.AddRange(
+                new[]
+                {
+                    new DataColumn(Status)
+                }
+            );
+        }
+
         private static void AddSelfAssessmentReportToSheet(IXLWorksheet sheet, DataTable dataTable, CentreRegistrationPrompts centreRegistrationPrompts,
             SelfAssessmentReportData report)
-        {   
+        {
             var row = dataTable.NewRow();
             row[SelfAssessment] = report.SelfAssessment;
             row[Learner] = report.Learner;
@@ -250,6 +456,34 @@
             row[SignOffRequested] = report.SignOffRequested?.ToString("dd/MM/yyyy");
             row[SignOffAchieved] = report.SignOffAchieved ? "Yes" : "No";
             row[ReviewedDate] = report.ReviewedDate?.ToString("dd/MM/yyyy");
+            dataTable.Rows.Add(row);
+        }
+
+        private static void AddDelegateCompletionReportToSheet(IXLWorksheet sheet, DataTable dataTable, CentreRegistrationPrompts centreRegistrationPrompts,
+            DCSADelegateCompletionStatus report)
+        {
+            var row = dataTable.NewRow();
+            row[EnrolledMonth] = report.EnrolledMonth;
+            row[EnrolledYear] = report.EnrolledYear;
+            row[FirstName] = report.FirstName;
+            row[LastName] = report.LastName;
+            row[Email] = report.Email;
+
+            // map the individual registration fields with the centre registration custom prompts
+            foreach (var prompt in centreRegistrationPrompts.CustomPrompts)
+            {
+                if (dataTable.Columns.Contains($"{prompt.PromptText} (Prompt {prompt.RegistrationField.Id})"))
+                {
+                    row[$"{prompt.PromptText} (Prompt {prompt.RegistrationField.Id})"] =
+                        report.CentreRegistrationPrompts[prompt.RegistrationField.Id - 1];
+                }
+                else
+                {
+                    row[prompt.PromptText] =
+                        report.CentreRegistrationPrompts[prompt.RegistrationField.Id - 1];
+                }
+            }
+            row[Status] = report.Status;
             dataTable.Rows.Add(row);
         }
 
