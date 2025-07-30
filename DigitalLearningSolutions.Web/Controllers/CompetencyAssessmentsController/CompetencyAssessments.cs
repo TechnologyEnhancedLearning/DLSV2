@@ -574,7 +574,8 @@
             return View(model);
         }
         [HttpPost]
-        public IActionResult AddComptencies(AddCompetenciesFormData model)
+        [Route("/CompetencyAssessments/{competencyAssessmentId}/Competencies/Add/{frameworkId}")]
+        public IActionResult AddComptencies(AddCompetenciesFormData model, int competencyAssessmentId, int frameworkId)
         {
             if (!ModelState.IsValid)
             {

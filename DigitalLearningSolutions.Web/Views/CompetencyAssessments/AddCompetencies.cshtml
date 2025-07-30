@@ -37,7 +37,6 @@
                 {
                     @if (competencyGroup.FrameworkCompetencies.Count() > 1)
                     {
-
                         <div class="nhsuk-u-margin-bottom-6">
                             <h3>
                                 @competencyGroup.Name
@@ -46,7 +45,7 @@
                                 @foreach (var competency in competencyGroup.FrameworkCompetencies)
                                 {
                                     <div class="nhsuk-checkboxes__item">
-                                        <input class="nhsuk-checkboxes__input" data-group="@competencyGroup.Name" id="competency-check-@competency.CompetencyID" name="IncludedSelfAssessmentStructureIds" checked="@(Model.SelectedCompetencyIds != null ? Model.SelectedCompetencyIds.Contains((int)competency.CompetencyID) : false)" type="checkbox" value="@competency.CompetencyID">
+                                        <input class="nhsuk-checkboxes__input" data-group="@competencyGroup.Name" id="competency-check-@competency.CompetencyID" name="SelectedCompetencyIds" checked="@(Model.SelectedCompetencyIds != null ? Model.SelectedCompetencyIds.Contains((int)competency.CompetencyID) : false)" type="checkbox" value="@competency.CompetencyID">
                                         <label class="nhsuk-label nhsuk-checkboxes__label" for="competency-check-@competency.CompetencyID">
                                             @foreach (var flag in competency.CompetencyFlags)
                                             {
@@ -56,16 +55,13 @@
                                                     </strong>
                                                 </span>
                                             }
-
                                             @competency.Name
                                         </label>
                                     </div>
-
                                 }
                             </div>
                         </div>
                     }
-
                 }
             }
 
