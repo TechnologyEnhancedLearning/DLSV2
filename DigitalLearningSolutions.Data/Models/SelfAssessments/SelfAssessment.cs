@@ -1,4 +1,5 @@
-﻿namespace DigitalLearningSolutions.Data.Models.SelfAssessments
+﻿using System;
+namespace DigitalLearningSolutions.Data.Models.SelfAssessments
 {
     public class SelfAssessment : CurrentLearningItem
     {
@@ -11,6 +12,7 @@
         public string? ManageOptionalCompetenciesPrompt { get; set; }
         public string? QuestionLabel { get; set; }
         public string? DescriptionLabel { get; set; }
+        public DateTime? RetirementDate { get; set; }
 
     }
 }
