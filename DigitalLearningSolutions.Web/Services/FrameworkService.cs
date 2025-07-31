@@ -46,9 +46,9 @@ namespace DigitalLearningSolutions.Web.Services
         CollaboratorNotification? GetCollaboratorNotification(int id, int invitedByAdminId);
 
         //  Competencies/groups:
-        IEnumerable<FrameworkCompetencyGroup> GetFrameworkCompetencyGroups(int frameworkId);
+        IEnumerable<FrameworkCompetencyGroup> GetFrameworkCompetencyGroups(int frameworkId, int? assessmentId);
 
-        IEnumerable<FrameworkCompetency> GetFrameworkCompetenciesUngrouped(int frameworkId);
+        IEnumerable<FrameworkCompetency> GetFrameworkCompetenciesUngrouped(int frameworkId, int? assessmentId);
 
         CompetencyGroupBase? GetCompetencyGroupBaseById(int Id);
 
@@ -481,9 +481,9 @@ namespace DigitalLearningSolutions.Web.Services
             return frameworkDataService.GetFrameworkByFrameworkName(frameworkName, adminId);
         }
 
-        public IEnumerable<FrameworkCompetency> GetFrameworkCompetenciesUngrouped(int frameworkId)
+        public IEnumerable<FrameworkCompetency> GetFrameworkCompetenciesUngrouped(int frameworkId, int? assessmentId)
         {
-            return frameworkDataService.GetFrameworkCompetenciesUngrouped(frameworkId);
+            return frameworkDataService.GetFrameworkCompetenciesUngrouped(frameworkId, assessmentId);
         }
 
         public FrameworkCompetency? GetFrameworkCompetencyById(int Id)
@@ -496,9 +496,9 @@ namespace DigitalLearningSolutions.Web.Services
             return frameworkDataService.GetFrameworkCompetencyForPreview(frameworkCompetencyId);
         }
 
-        public IEnumerable<FrameworkCompetencyGroup> GetFrameworkCompetencyGroups(int frameworkId)
+        public IEnumerable<FrameworkCompetencyGroup> GetFrameworkCompetencyGroups(int frameworkId, int? assessmentId)
         {
-            return frameworkDataService.GetFrameworkCompetencyGroups(frameworkId);
+            return frameworkDataService.GetFrameworkCompetencyGroups(frameworkId, assessmentId);
         }
 
         public string? GetFrameworkConfigForFrameworkId(int frameworkId)

@@ -37,7 +37,7 @@ namespace DigitalLearningSolutions.Web.Services
             var newCompetencyIds = competencyRows.Select(row => row.ID ?? 0).ToList();
             var existingIds = frameworkService.GetFrameworkCompetencyOrder(frameworkId, newCompetencyIds);
             var existingGroups = frameworkService
-                .GetFrameworkCompetencyGroups(frameworkId)
+                .GetFrameworkCompetencyGroups(frameworkId, null)
                 .Select(row => row.Name)
                 .Distinct()
                 .ToList();
@@ -150,7 +150,7 @@ namespace DigitalLearningSolutions.Web.Services
                 .ToList();
                 for (int i = 0; i < competencyGroupCount; i++)
                 {
-                    var existingGroups = frameworkService.GetFrameworkCompetencyGroups(frameworkId).Select(row => new { row.ID, row.Name })
+                    var existingGroups = frameworkService.GetFrameworkCompetencyGroups(frameworkId, null).Select(row => new { row.ID, row.Name })
                    .Distinct()
                    .ToList();
                     var placesToMove = Math.Abs(existingGroups.FindIndex(group => group.Name == distinctCompetencyGroups[i]) - i);

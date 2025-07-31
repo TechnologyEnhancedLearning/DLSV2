@@ -557,8 +557,8 @@
             }
             var framework = frameworkService.GetBaseFrameworkByFrameworkId(frameworkId, adminId);
             var selectedFrameworkCompetencies = competencyAssessmentService.GetLinkedFrameworkCompetencyIds(competencyAssessmentId, frameworkId);
-            var groupedCompetencies = frameworkService.GetFrameworkCompetencyGroups(frameworkId);
-            var ungroupedCompetencies = frameworkService.GetFrameworkCompetenciesUngrouped(frameworkId);
+            var groupedCompetencies = frameworkService.GetFrameworkCompetencyGroups(frameworkId, competencyAssessmentId);
+            var ungroupedCompetencies = frameworkService.GetFrameworkCompetenciesUngrouped(frameworkId, competencyAssessmentId);
             var competencyIds = ungroupedCompetencies.Select(c => c.CompetencyID).ToArray();
             var competencyFlags = frameworkService.GetSelectedCompetencyFlagsByCompetecyIds(competencyIds);
             foreach (var competency in ungroupedCompetencies)
@@ -579,6 +579,7 @@
         {
             if (!ModelState.IsValid)
             {
+
                 //reload model and view
             }
             return View(model);
