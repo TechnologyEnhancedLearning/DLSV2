@@ -4,7 +4,7 @@
 @model SelfAssessmentReportsViewModel
 @{
     ViewData["Title"] = "Self assessment reports";
-    var routeData = new Dictionary<string, string>();
+    var routeData = (new Dictionary<string, string>() { { "source", "TrackingSystem" } });
 
     if (string.Equals(Context.Request.Query["tableaulink"], "true", StringComparison.OrdinalIgnoreCase))
     {
