@@ -14,6 +14,7 @@
     {
         //Self Assessments
         string? GetSelfAssessmentNameById(int selfAssessmentId);
+        SelfAssessment? GetSelfAssessmentById(int selfAssessmentId);
         // Candidate Assessments
         IEnumerable<CurrentSelfAssessment> GetSelfAssessmentsForCandidate(int delegateUserId, int centreId, int? adminIdCategoryID);
         IEnumerable<CurrentSelfAssessment> GetSelfAssessmentsForCandidate(int delegateUserId, int centreId);
@@ -464,6 +465,11 @@
         public string? GetSelfAssessmentNameById(int selfAssessmentId)
         {
             return selfAssessmentDataService.GetSelfAssessmentNameById(selfAssessmentId);
+        }
+
+        public SelfAssessment? GetSelfAssessmentById(int selfAssessmentId)
+        {
+            return selfAssessmentDataService.GetSelfAssessmentById(selfAssessmentId);
         }
 
         public (SelfAssessmentDelegatesData, int?) GetSelfAssessmentDelegatesPerPage(string searchString, int offSet, int itemsPerPage, string sortBy, string sortDirection,

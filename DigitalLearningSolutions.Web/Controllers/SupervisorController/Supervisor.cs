@@ -780,6 +780,18 @@
                 };
                 return View("EnrolDelegateOnProfileAssessment", model);
             }
+            var retirementDate = selfAssessmentService.GetSelfAssessmentById(selfAssessmentID).RetirementDate;
+            if (retirementDate?.Date is DateTime date && date >= DateTime.Today &&
+                date <= DateTime.Today.AddDays(14))
+            {
+                var model = new RetiringSelfAssessmentViewModel()
+                {
+                    SelfAssessmentID = selfAssessmentID,
+                    SupervisorDelegateID = supervisorDelegateId,
+                    RetirementDate = retirementDate
+                };
+                return View("ConfirmRetiringSelfAssessment", model);
+            }
 
             sessionEnrolOnRoleProfile.SelfAssessmentID = selfAssessmentID;
             multiPageFormService.SetMultiPageFormData(
@@ -792,6 +804,34 @@
                 "Supervisor",
                 new { supervisorDelegateId = supervisorDelegateId }
             );
+        }
+
+        [HttpPost]
+        public IActionResult RetiringSelfAssessmentConfirmed(RetiringSelfAssessmentViewModel retiringSelfAssessment)
+        {
+            if (ModelState.IsValid && retiringSelfAssessment.ActionConfirmed)
+            {
+                var sessionEnrolOnRoleProfile = multiPageFormService.GetMultiPageFormData<SessionEnrolOnRoleProfile>(
+                    MultiPageFormDataFeature.EnrolDelegateOnProfileAssessment,
+                    TempData
+                    ).GetAwaiter().GetResult();
+
+                sessionEnrolOnRoleProfile.SelfAssessmentID = retiringSelfAssessment.SelfAssessmentID;
+                multiPageFormService.SetMultiPageFormData(
+                    sessionEnrolOnRoleProfile,
+                    MultiPageFormDataFeature.EnrolDelegateOnProfileAssessment,
+                    TempData
+                );
+                return RedirectToAction(
+                    "EnrolDelegateCompleteBy",
+                    "Supervisor",
+                    new { supervisorDelegateId = retiringSelfAssessment.SupervisorDelegateID }
+                );
+            }
+            else
+            {
+                return View("ConfirmRetiringSelfAssessment", retiringSelfAssessment);
+            }
         }
 
         [Route("/Supervisor/Staff/{supervisorDelegateId}/ProfileAssessment/Enrol/CompleteBy")]
