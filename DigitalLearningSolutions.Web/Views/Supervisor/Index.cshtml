@@ -6,6 +6,12 @@
     ViewData["Title"] = "Dashboard";
     ViewData["Application"] = "Supervisor";
     ViewData["HeaderPathName"] = "Supervisor";
+    var routeData = (new Dictionary<string, string>() { { "source", "Supervisor" } });
+
+    if (string.Equals(Context.Request.Query["tableaulink"], "true", StringComparison.OrdinalIgnoreCase))
+    {
+        routeData["tableaulink"] = "true";
+    }
 }
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
 @section NavMenuItems {
@@ -96,3 +102,10 @@ else
         </li>
     </feature>
 </ul>
+
+@if (Model.ShowTableauLink)
+{
+    <h2>Progress reports</h2>
+    <vc:action-link asp-controller="SelfAssessmentReports"
+                    asp-all-route-data="routeData" asp-action="TableauCompetencyDashboard" link-text="View supervised self assessments dashboard" />
+}

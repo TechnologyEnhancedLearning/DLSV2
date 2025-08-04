@@ -16,6 +16,7 @@
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
+    using Microsoft.FeatureManagement;
     using NUnit.Framework;
     using System.Collections.Generic;
     using System.Linq;
@@ -49,6 +50,7 @@
         private IPdfService pdfService = null!;
         private SupervisorController controller = null!;
         private ICourseCategoriesService courseCategoriesService = null!;
+        private IFeatureManager featureManager = null!;
 
         [SetUp]
         public void Setup()
@@ -73,6 +75,7 @@
             candidateAssessmentDownloadFileService = A.Fake<ICandidateAssessmentDownloadFileService>();
             pdfService = A.Fake<IPdfService>();
             courseCategoriesService = A.Fake<ICourseCategoriesService>();
+            featureManager = A.Fake<IFeatureManager>();
             A.CallTo(() => candidateAssessmentDownloadFileService.GetCandidateAssessmentDownloadFileForCentre(A<int>._, A<int>._, A<bool>._))
                 .Returns(new byte[] { });
 
@@ -108,7 +111,8 @@
                candidateAssessmentDownloadFileService,
                clockUtility,
                pdfService,
-               courseCategoriesService
+               courseCategoriesService,
+               featureManager
            );
             controller.ControllerContext = new ControllerContext
             { HttpContext = new DefaultHttpContext { User = user } };
@@ -140,7 +144,8 @@
                    candidateAssessmentDownloadFileService,
                    clockUtility,
                    pdfService,
-                   courseCategoriesService
+                   courseCategoriesService,
+                   featureManager
                );
             string expectedFileName = $"{((selfAssessmentName.Length > 30) ? selfAssessmentName.Substring(0, 30) : selfAssessmentName)} - {delegateName} - {clockUtility.UtcNow:yyyy-MM-dd}.xlsx";
 
