@@ -53,6 +53,7 @@
             this.selfAssessmentService = selfAssessmentService;
             this.featureManager = featureManager;
         }
+        [Route("/TrackingSystem/Centre/Reports/SelfAssessments")]
         public async Task<IActionResult> IndexAsync()
         {
             var centreId = User.GetCentreId();
@@ -65,7 +66,7 @@
             return View(model);
         }
         [HttpGet]
-        [Route("DownloadDcsa")]
+        [Route("/TrackingSystem/Centre/Reports/DownloadDcsa")]
         public IActionResult DownloadDigitalCapabilityToExcel()
         {
             var centreId = User.GetCentreIdKnownNotNull();
@@ -78,7 +79,7 @@
             );
         }
         [HttpGet]
-        [Route("DownloadReport")]
+        [Route("/TrackingSystem/Centre/Reports/DownloadReport")]
         public IActionResult DownloadSelfAssessmentReport(int selfAssessmentId)
         {
             var centreId = User.GetCentreId();
@@ -92,8 +93,8 @@
             );
         }
         [HttpGet]
-        [Route("TableauCompetencyDashboard")]
-        public async Task<IActionResult> TableauCompetencyDashboardAsync()
+        [Route("/{source}/Reports/TableauCompetencyDashboard")]
+        public async Task<IActionResult> TableauCompetencyDashboardAsync(string source = "TrackingSystem")
         {
             var userEmail = User.GetUserPrimaryEmail();
             var adminId = User.GetAdminId();
@@ -101,6 +102,7 @@
             var tableauFlag = await featureManager.IsEnabledAsync(FeatureFlags.TableauSelfAssessmentDashboards);
             var tableauQueryOverride = string.Equals(Request.Query["tableaulink"], "true", StringComparison.OrdinalIgnoreCase);
             var showTableauLink = tableauFlag || tableauQueryOverride;
+            ViewBag.Source = source;
             ViewBag.Email = userEmail;
             ViewBag.AdminId = adminId;
             ViewBag.SiteName = tableauSiteName;

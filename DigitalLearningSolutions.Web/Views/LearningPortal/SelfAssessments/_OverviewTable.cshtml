@@ -33,7 +33,7 @@
     {
         <tbody class="nhsuk-table__body row-outer" id="comp-@competency.RowNo">
             <tr class="nhsuk-table__row first-row">
-                <td rowspan="@competency.AssessmentQuestions.Count()" class="nhsuk-table__cell nhsuk-u-text-align-left">
+                <td rowspan="@competency.AssessmentQuestions.Count()" class="nhsuk-table__cell">
                     <span class="nhsuk-table-responsive__heading">@Model.First().Vocabulary </span>
                   <div class="nhsuk-grid-row">
                         <div class="nhsuk-grid-column-full">
@@ -52,7 +52,7 @@
                             @if (!string.IsNullOrWhiteSpace(competency.Description) && !competency.AlwaysShowDescription)
                             {
                                 <details class="nhsuk-details">
-                                    <summary class="nhsuk-details__summary nhsuk-u-padding-0">
+                                    <summary class="nhsuk-details__summary">
                                         <span class="nhsuk-u-margin-bottom-0">
                                             <span class="nhsuk-details__summary-text">@competency.Name</span>
                                         </span>
