@@ -868,13 +868,13 @@
                  WHERE (SelfAssessmentID = {assessmentId}))"
                 : string.Empty;
             var result = connection.Query<FrameworkCompetencyGroup, FrameworkCompetency, FrameworkCompetencyGroup>(
-                @$"SELECT fcg.ID, fcg.CompetencyGroupID, cg.Name, fcg.Ordering, fc.ID, c.ID AS CompetencyID, c.Name, c.Description, fc.Ordering, COUNT(caq.AssessmentQuestionID) AS AssessmentQuestions
+                @$"SELECT fcg.ID, fcg.CompetencyGroupID, cg.Name, fcg.Ordering, fc.ID, c.ID AS CompetencyID, c.Name, c.Description, fc.Ordering,
+    (SELECT COUNT(*) FROM CompetencyAssessmentQuestions caq WHERE caq.CompetencyID = c.ID) AS AssessmentQuestions
                     ,(SELECT COUNT(*) FROM CompetencyLearningResources clr WHERE clr.CompetencyID = c.ID AND clr.RemovedDate IS NULL) AS CompetencyLearningResourcesCount
                     FROM   FrameworkCompetencyGroups AS fcg INNER JOIN
                       CompetencyGroups AS cg ON fcg.CompetencyGroupID = cg.ID LEFT OUTER JOIN
                        FrameworkCompetencies AS fc ON fcg.ID = fc.FrameworkCompetencyGroupID LEFT OUTER JOIN
-                       Competencies AS c ON fc.CompetencyID = c.ID LEFT OUTER JOIN
-                      CompetencyAssessmentQuestions AS caq ON c.ID = caq.CompetencyID
+                       Competencies AS c ON fc.CompetencyID = c.ID
                     WHERE (fcg.FrameworkID = @frameworkId) {assessmentFilter}
                     GROUP BY fcg.ID, fcg.CompetencyGroupID, cg.Name, fcg.Ordering, fc.ID, c.ID, c.Name, c.Description, fc.Ordering
                     ORDER BY fcg.Ordering, fc.Ordering",
@@ -895,8 +895,8 @@
         // Flatten all FrameworkCompetencies from all instances in this group
         groupedFrameworkCompetencyGroup.FrameworkCompetencies = group
             .SelectMany(g => g.FrameworkCompetencies)
-            .Where(fc => fc != null)
-            .ToList();
+            .Where(fc => fc != null).
+            Distinct().ToList();
 
         return groupedFrameworkCompetencyGroup;
     });
@@ -910,11 +910,10 @@
                  WHERE (SelfAssessmentID = {assessmentId}))"
                 : string.Empty;
             return connection.Query<FrameworkCompetency>(
-                @$"SELECT fc.ID, c.ID AS CompetencyID, c.Name, c.Description, fc.Ordering, COUNT(caq.AssessmentQuestionID) AS AssessmentQuestions,(select COUNT(CompetencyId) from CompetencyLearningResources where CompetencyID=c.ID) AS CompetencyLearningResourcesCount
+                @$"SELECT fc.ID, c.ID AS CompetencyID, c.Name, c.Description, fc.Ordering,
+    (SELECT COUNT(*) FROM CompetencyAssessmentQuestions caq WHERE caq.CompetencyID = c.ID) AS AssessmentQuestions,(select COUNT(CompetencyId) from CompetencyLearningResources where CompetencyID=c.ID) AS CompetencyLearningResourcesCount
                     FROM FrameworkCompetencies AS fc
                         INNER JOIN Competencies AS c ON fc.CompetencyID = c.ID
-                        LEFT OUTER JOIN
-                      CompetencyAssessmentQuestions AS caq ON c.ID = caq.CompetencyID
                     WHERE fc.FrameworkID = @frameworkId
                         AND fc.FrameworkCompetencyGroupID IS NULL {assessmentFilter}
 GROUP BY fc.ID, c.ID, c.Name, c.Description, fc.Ordering

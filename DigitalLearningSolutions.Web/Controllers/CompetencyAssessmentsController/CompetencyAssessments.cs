@@ -582,7 +582,12 @@
 
                 //reload model and view
             }
-            return View(model);
+            if (model.SelectedCompetencyIds.Count() > 0)
+            {
+                competencyAssessmentService.InsertCompetenciesIntoAssessmentFromFramework(model.SelectedCompetencyIds, frameworkId, competencyAssessmentId);
+            }
+            competencyAssessmentService.UpdateSelectCompetenciesTaskStatus(competencyAssessmentId, false, null);
+            return RedirectToAction("ViewSelectedCompetencies", new { competencyAssessmentId });
         }
     }
 }

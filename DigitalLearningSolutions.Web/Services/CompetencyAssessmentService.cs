@@ -50,10 +50,11 @@ namespace DigitalLearningSolutions.Web.Services
         int InsertCompetencyAssessment(int adminId, int centreId, string competencyAssessmentName, int? frameworkId);
         bool InsertSelfAssessmentFramework(int adminId, int assessmentId, int frameworkId);
         int GetCompetencyCountByFrameworkId(int competencyAssessmentId, int frameworkId);
+        bool InsertCompetenciesIntoAssessmentFromFramework(int[] selectedCompetencyIds, int frameworkId, int competencyAssessmentId);
 
         //DELETE DATA
         bool RemoveFrameworkCompetenciesFromAssessment(int competencyAssessmentId, int frameworkId);
-    }
+        }
     public class CompetencyAssessmentService : ICompetencyAssessmentService
     {
         private readonly ICompetencyAssessmentDataService competencyAssessmentDataService;
@@ -233,6 +234,11 @@ namespace DigitalLearningSolutions.Web.Services
         public int[] GetLinkedFrameworkCompetencyIds(int competencyAssessmentId, int frameworkId)
         {
             return competencyAssessmentDataService.GetLinkedFrameworkCompetencyIds(competencyAssessmentId, frameworkId);
+        }
+
+        public bool InsertCompetenciesIntoAssessmentFromFramework(int[] selectedCompetencyIds, int frameworkId, int competencyAssessmentId)
+        {
+            return competencyAssessmentDataService.InsertCompetenciesIntoAssessmentFromFramework(selectedCompetencyIds, frameworkId, competencyAssessmentId);
         }
     }
 }

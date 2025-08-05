@@ -1,9 +1,5 @@
 ﻿namespace DigitalLearningSolutions.Data.DataServices
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Data;
-    using System.Linq;
     using Dapper;
     using DigitalLearningSolutions.Data.Models.Common;
     using DigitalLearningSolutions.Data.Models.CompetencyAssessments;
@@ -11,6 +7,11 @@
     using DigitalLearningSolutions.Data.Models.Frameworks.Import;
     using DocumentFormat.OpenXml.Wordprocessing;
     using Microsoft.Extensions.Logging;
+    using System;
+    using System.Collections.Generic;
+    using System.Data;
+    using System.Linq;
+    using System.Threading.Tasks;
 
     public interface ICompetencyAssessmentDataService
     {
@@ -64,11 +65,12 @@
         //INSERT DATA
         int InsertCompetencyAssessment(int adminId, int centreId, string competencyAssessmentName);
         bool InsertSelfAssessmentFramework(int adminId, int selfAssessmentId, int frameworkId);
+        bool InsertCompetenciesIntoAssessmentFromFramework(int[] selectedCompetencyIds, int frameworkId, int competencyAssessmentId);
 
         //DELETE DATA
         bool RemoveFrameworkCompetenciesFromAssessment(int competencyAssessmentId, int frameworkId);
-
-    }
+        bool RemoveCompetencyFromAssessment(int competencyAssessmentId, int competencyId);
+        }
 
     public class CompetencyAssessmentDataService : ICompetencyAssessmentDataService
     {
@@ -682,6 +684,53 @@
                     ORDER BY fc.Ordering",
               new { competencyAssessmentId,  frameworkId}
           )];
+        }
+
+        public bool InsertCompetenciesIntoAssessmentFromFramework(int[] selectedCompetencyIds, int frameworkId, int competencyAssessmentId)
+        {
+            var currentMaxOrdering = connection.ExecuteScalar<int>(
+                @"SELECT ISNULL(MAX(Ordering), 0) FROM SelfAssessmentStructure WHERE SelfAssessmentID = @competencyAssessmentId",
+                new { competencyAssessmentId }
+            );
+            var numberOfAffectedRows = connection.Execute(
+               @"INSERT INTO SelfAssessmentStructure (SelfAssessmentID, CompetencyID, Ordering, CompetencyGroupID)
+                    SELECT
+                        @competencyAssessmentId,
+                        FC.CompetencyID,
+                        ROW_NUMBER() OVER (ORDER BY FCG.Ordering, FC.Ordering) + @currentMaxOrdering,
+                        FCG.CompetencyGroupID
+                    FROM FrameworkCompetencies AS FC
+                    INNER JOIN FrameworkCompetencyGroups AS FCG ON FC.FrameworkCompetencyGroupID = FCG.ID
+                    WHERE FC.FrameworkID = @frameworkId
+                    AND FC.CompetencyID IN @selectedCompetencyIds AND FC.CompetencyID NOT IN (SELECT CompetencyID FROM SelfAssessmentStructure WHERE SelfAssessmentID = @competencyAssessmentId)",
+               new { selectedCompetencyIds, frameworkId, competencyAssessmentId, currentMaxOrdering }
+           );
+            if (numberOfAffectedRows < 1)
+            {
+                logger.LogWarning(
+                    "Not inserting competencies into assessment as db update failed. " +
+                    $"assessmentId: {competencyAssessmentId}, frameworkId: {frameworkId}, selectedCompetencyIds: {selectedCompetencyIds}"
+                );
+                return false;
+            }
+            return true;
+        }
+        public bool RemoveCompetencyFromAssessment(int competencyAssessmentId, int competencyId)
+        {
+            var numberOfAffectedRows = connection.Execute(
+                @"DELETE FROM SelfAssessmentStructure
+                    WHERE SelfAssessmentID = @competencyAssessmentId AND CompetencyID = @competencyId",
+                new { competencyAssessmentId, competencyId }
+            );
+            if (numberOfAffectedRows < 1)
+            {
+                logger.LogWarning(
+                    "Not removing competency from assessment as db update failed. " +
+                    $"assessmentId: {competencyAssessmentId}, competencyId: {competencyId}"
+                );
+                return false;
+            }
+            return true;
         }
     }
 }
