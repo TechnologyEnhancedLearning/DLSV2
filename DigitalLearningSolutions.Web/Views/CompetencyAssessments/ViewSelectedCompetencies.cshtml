@@ -67,7 +67,7 @@
             {
                 foreach (var competency in group)
                 {
-                    <div id="fc-@competency.CompetencyID" class="nhsuk-card nhsuk-u-margin-bottom-5 nhsuk-u-margin-left-3">
+                    <div id="competency-@competency.CompetencyID" class="nhsuk-card nhsuk-u-margin-bottom-5 nhsuk-u-margin-left-3">
                         <div class="nhsuk-card__content">
                             @* <partial name="_CompetencyFlags" model="Model.CompetencyFlags" /> *@
                             @if (competency.CompetencyDescription != null)
@@ -90,9 +90,9 @@
                                 <div class="nhsuk-grid-column-three-quarters">
                                     @if (Model.UserRole > 1)
                                     {
-                                        <a class="nhsuk-button nhsuk-button--secondary small-edit-button nhsuk-u-margin-right-1" role="button" asp-action="MoveCompetency" asp-route-competencyGroupId="@group.Key.GroupId" asp-route-step="true" asp-route-direction="UP" asp-route-selfAssessmentId="@(ViewContext.RouteData.Values["ID"])" asp-route-competencyId="@competency.CompetencyID">Move <span class="visually-hidden">@competency.CompetencyName</span>up </a>
-                                        <a class="nhsuk-button nhsuk-button--secondary small-edit-button nhsuk-u-margin-right-1" role="button" asp-action="MoveCompetency" asp-route-competencyGroupId="@group.Key.GroupId" asp-route-step="true" asp-route-direction="DOWN" asp-route-selfAssessmentId="@(ViewContext.RouteData.Values["ID"])" asp-route-competencyId="@competency.CompetencyID">Move <span class="visually-hidden">@competency.CompetencyName</span>down </a>
-                                        <a class="nhsuk-button nhsuk-button--secondary delete-button small-edit-button nhsuk-u-margin-right-1" role="button" asp-action="DeleteCompetency" asp-route-competencyGroupId="@group.Key.GroupId" asp-route-selfAssessmentId="@(ViewContext.RouteData.Values["ID"])" asp-route-competencyId="@competency.CompetencyID">Remove <span class="visually-hidden">@competency.CompetencyName</span></a>
+                                        <a class="nhsuk-button nhsuk-button--secondary small-edit-button nhsuk-u-margin-right-1" role="button" asp-action="MoveCompetency" asp-route-competencyGroupId="@group.Key.GroupId" asp-route-step="true" asp-route-direction="UP" asp-route-competencyAssessmentId="@(ViewContext.RouteData.Values["competencyAssessmentId"])" asp-route-competencyId="@competency.CompetencyID">Move <span class="visually-hidden">@competency.CompetencyName</span>up </a>
+                                        <a class="nhsuk-button nhsuk-button--secondary small-edit-button nhsuk-u-margin-right-1" role="button" asp-action="MoveCompetency" asp-route-competencyGroupId="@group.Key.GroupId" asp-route-step="true" asp-route-direction="DOWN" asp-route-competencyAssessmentId="@(ViewContext.RouteData.Values["competencyAssessmentId"])" asp-route-competencyId="@competency.CompetencyID">Move <span class="visually-hidden">@competency.CompetencyName</span>down </a>
+                                        <a class="nhsuk-button nhsuk-button--secondary delete-button small-edit-button nhsuk-u-margin-right-1" role="button" asp-action="DeleteCompetency" asp-route-competencyAssessmentId="@(ViewContext.RouteData.Values["competencyAssessmentId"])" asp-route-competencyId="@competency.CompetencyID">Remove <span class="visually-hidden">@competency.CompetencyName</span></a>
                                     }
                                 </div>
                             </div>

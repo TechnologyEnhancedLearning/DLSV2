@@ -579,14 +579,19 @@
         {
             if (!ModelState.IsValid)
             {
-
                 //reload model and view
             }
-            if (model.SelectedCompetencyIds.Count() > 0)
+            if (model.SelectedCompetencyIds != null)
             {
                 competencyAssessmentService.InsertCompetenciesIntoAssessmentFromFramework(model.SelectedCompetencyIds, frameworkId, competencyAssessmentId);
             }
             competencyAssessmentService.UpdateSelectCompetenciesTaskStatus(competencyAssessmentId, false, null);
+            return RedirectToAction("ViewSelectedCompetencies", new { competencyAssessmentId });
+        }
+        [Route("/CompetencyAssessments/{competencyAssessmentId}/Competencies/Delete/{competencyId}")]
+        public IActionResult DeleteCompetency(int competencyAssessmentId, int competencyId)
+        {
+            competencyAssessmentService.RemoveCompetencyFromAssessment(competencyAssessmentId, competencyId);
             return RedirectToAction("ViewSelectedCompetencies", new { competencyAssessmentId });
         }
     }

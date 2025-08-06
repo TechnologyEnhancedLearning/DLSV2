@@ -54,6 +54,7 @@ namespace DigitalLearningSolutions.Web.Services
 
         //DELETE DATA
         bool RemoveFrameworkCompetenciesFromAssessment(int competencyAssessmentId, int frameworkId);
+        bool RemoveCompetencyFromAssessment(int competencyAssessmentId, int competencyId);
         }
     public class CompetencyAssessmentService : ICompetencyAssessmentService
     {
@@ -239,6 +240,11 @@ namespace DigitalLearningSolutions.Web.Services
         public bool InsertCompetenciesIntoAssessmentFromFramework(int[] selectedCompetencyIds, int frameworkId, int competencyAssessmentId)
         {
             return competencyAssessmentDataService.InsertCompetenciesIntoAssessmentFromFramework(selectedCompetencyIds, frameworkId, competencyAssessmentId);
+        }
+
+        public bool RemoveCompetencyFromAssessment(int competencyAssessmentId, int competencyId)
+        {
+            return competencyAssessmentDataService.RemoveCompetencyFromAssessment(competencyAssessmentId, competencyId);
         }
     }
 }
