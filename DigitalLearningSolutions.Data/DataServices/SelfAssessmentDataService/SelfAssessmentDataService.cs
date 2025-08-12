@@ -16,6 +16,7 @@
     {
         //Self Assessments
         string? GetSelfAssessmentNameById(int selfAssessmentId);
+        SelfAssessment GetSelfAssessmentRetirementDateById(int selfAssessmentId);
 
         // CompetencyDataService
         IEnumerable<int> GetCompetencyIdsForSelfAssessment(int selfAssessmentId);
@@ -202,6 +203,18 @@
                 new { selfAssessmentId }
             );
             return name;
+        }
+
+        public SelfAssessment GetSelfAssessmentRetirementDateById(int selfAssessmentId)
+        {
+            var date = connection.QueryFirstOrDefault<SelfAssessment>(
+                @"SELECT Id,Name,[RetirementDate]
+                        FROM SelfAssessments
+                        WHERE ID = @selfAssessmentId"
+            ,
+                new { selfAssessmentId }
+            );
+            return date;
         }
 
         public (IEnumerable<SelfAssessmentDelegate>, int) GetSelfAssessmentDelegates(string searchString, int offSet, int itemsPerPage, string sortBy, string sortDirection,
