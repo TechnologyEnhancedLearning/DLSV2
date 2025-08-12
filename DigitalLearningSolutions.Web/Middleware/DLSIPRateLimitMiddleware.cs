@@ -16,7 +16,6 @@ namespace DigitalLearningSolutions.Web.Middleware
             RequestDelegate next,
             IProcessingStrategy processingStrategy,
             IOptions<IpRateLimitOptions> options,
-            IConfiguration configuration,
             IIpPolicyStore policyStore,
             IRateLimitConfiguration config,
             ILogger<IpRateLimitMiddleware> logger)
@@ -27,7 +26,6 @@ namespace DigitalLearningSolutions.Web.Middleware
                   config,
                   logger)
         {
-            _configuration = configuration;
         }
 
         public override Task ReturnQuotaExceededResponse(
