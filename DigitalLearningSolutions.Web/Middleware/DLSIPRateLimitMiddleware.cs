@@ -35,14 +35,9 @@ namespace DigitalLearningSolutions.Web.Middleware
             RateLimitRule rule,
             string retryAfter)
         {
-            if (_configuration["ASPNETCORE_ENVIRONMENT"] == "PRODUCTION")
-            {
-                httpContext.Response.Headers["Location"] = "/toomanyrequests";
-                httpContext.Response.StatusCode = 302;
-                
-            }
+            httpContext.Response.Headers["Location"] = "/toomanyrequests";
+            httpContext.Response.StatusCode = 302;
             return httpContext.Response.WriteAsync("");
-
         }
     }
 }
