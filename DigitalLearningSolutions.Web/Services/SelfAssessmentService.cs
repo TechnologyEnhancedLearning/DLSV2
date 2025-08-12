@@ -163,6 +163,7 @@
         int competencyId
     );
         void RemoveReviewCandidateAssessmentOptionalCompetencies(int id);
+        SelfAssessment GetSelfAssessmentRetirementDateById(int selfAssessmentId);
     }
 
     public class SelfAssessmentService : ISelfAssessmentService
@@ -615,6 +616,10 @@
         public void RemoveReviewCandidateAssessmentOptionalCompetencies(int id)
         {
             selfAssessmentDataService.RemoveReviewCandidateAssessmentOptionalCompetencies(id);
+        }
+      public SelfAssessment GetSelfAssessmentRetirementDateById(int selfAssessmentId)
+        {
+            return selfAssessmentDataService.GetSelfAssessmentRetirementDateById(selfAssessmentId);
         }
     }
 }
