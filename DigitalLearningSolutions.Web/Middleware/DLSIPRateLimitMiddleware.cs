@@ -1,6 +1,5 @@
 namespace DigitalLearningSolutions.Web.Middleware
 {
-    using System;
     using System.Threading.Tasks;
     using AspNetCoreRateLimit;
     using Microsoft.AspNetCore.Http;
