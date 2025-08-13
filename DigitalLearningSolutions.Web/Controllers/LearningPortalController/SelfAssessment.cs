@@ -1532,22 +1532,6 @@
                     );
                 }
             }
-            var optionalCompetency =
-            (selfAssessmentService.GetCandidateAssessmentOptionalCompetencies(selfAssessmentId, delegateUserId)).Where(x => !x.IncludedInSelfAssessment);
-            if (optionalCompetency.Any())
-            {
-                foreach (var optinal in optionalCompetency)
-                {
-                    var selfAssessmentResults = selfAssessmentService.GetSelfAssessmentResultswithSupervisorVerificationsForDelegateSelfAssessmentCompetency(delegateUserId, selfAssessmentId, optinal.Id);
-                    if (selfAssessmentResults.Any())
-                    {
-                        foreach (var item in selfAssessmentResults)
-                        {
-                            selfAssessmentService.RemoveReviewCandidateAssessmentOptionalCompetencies(item.Id);
-                        }
-                    }
-                }
-            }
             if (model.GroupOptionalCompetenciesChecked != null)
             {
                 var optionalCompetencies =
@@ -1564,6 +1548,23 @@
                     }
                 }
 
+            }
+
+            var optionalCompetency =
+            (selfAssessmentService.GetCandidateAssessmentOptionalCompetencies(selfAssessmentId, delegateUserId)).Where(x => !x.IncludedInSelfAssessment);
+            if (optionalCompetency.Any())
+            {
+                foreach (var optinal in optionalCompetency)
+                {
+                    var selfAssessmentResults = selfAssessmentService.GetSelfAssessmentResultswithSupervisorVerificationsForDelegateSelfAssessmentCompetency(delegateUserId, selfAssessmentId, optinal.Id);
+                    if (selfAssessmentResults.Any())
+                    {
+                        foreach (var item in selfAssessmentResults)
+                        {
+                            selfAssessmentService.RemoveReviewCandidateAssessmentOptionalCompetencies(item.Id);
+                        }
+                    }
+                }
             }
 
             var recentResults = selfAssessmentService.GetMostRecentResults(selfAssessmentId, User.GetCandidateIdKnownNotNull()).ToList();
