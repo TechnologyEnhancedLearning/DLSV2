@@ -13,6 +13,7 @@
         {
             Execute.Sql("DROP PROCEDURE IF EXISTS [dbo].[usp_MoveCompetencyGroupInSelfAssessment]");
             Execute.Sql("DROP PROCEDURE IF EXISTS [dbo].[usp_MoveCompetencyInSelfAssessment]");
+            Execute.Sql("DROP PROCEDURE IF EXISTS [dbo].[usp_RenumberSelfAssessmentStructure]");
         }
     }
 }
