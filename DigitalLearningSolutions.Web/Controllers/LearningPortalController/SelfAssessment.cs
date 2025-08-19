@@ -68,6 +68,17 @@
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
             }
 
+            if (!selfAssessment.SelfAssessmentProcessAgreed && selfAssessment.IsSupervised)
+            {
+                var processmodel = new SelfAssessmentProcessViewModel()
+                {
+                    SelfAssessmentID = selfAssessmentId,
+                    Vocabulary = selfAssessment.Vocabulary,
+                    VocabPlural = FrameworkVocabularyHelper.VocabularyPlural(selfAssessment.Vocabulary)
+                };
+                return View("SelfAssessments/AgreeSelfAssessmentProcess", processmodel);
+            }
+
             selfAssessmentService.IncrementLaunchCount(selfAssessmentId, delegateUserId);
             selfAssessmentService.UpdateLastAccessed(selfAssessmentId, delegateUserId);
             var supervisors = selfAssessmentService.GetAllSupervisorsForSelfAssessmentId(
@@ -75,15 +86,7 @@
                 delegateUserId
             ).ToList();
             var model = new SelfAssessmentDescriptionViewModel(selfAssessment, supervisors);
-            var isProcessAgreed = model.SelfAssessmentProcessAgreed;
-            if (!isProcessAgreed && selfAssessment.IsSupervised)
-            {
-                var processmodel = new SelfAssessmentProcessViewModel()
-                {
-                    SelfAssessmentID = selfAssessmentId
-                };
-                return View("SelfAssessments/AgreeSelfAssessmentProcess", processmodel);
-            }
+            
             return View("SelfAssessments/SelfAssessmentDescription", model);
         }
 

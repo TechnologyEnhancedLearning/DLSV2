@@ -18,16 +18,16 @@
         {
             <vc:error-summary order-of-property-names="@(new[] { nameof(Model.ActionConfirmed) })" />
         }
-        <h2>How are proficiencies and frameworks assessed?</h2>
+        <h2>How are @Model.VocabPlural?.ToLower() and frameworks assessed?</h2>
 
         <p>The process is learner-driven but you must be assessed by a supervisor before completing a self-assessment.</p>
 
-        <p>Once enrolled in a framework with at least 1 supervisor added, you can complete a digital self-assessment for any proficiency. However, before doing so, ensure that:</p>
+        <p>Once enrolled in a framework with at least 1 supervisor added, you can complete a digital self-assessment for any @Model.Vocabulary?.ToLower(). However, before doing so, ensure that:</p>
 
         <ol>
-            <li>Your supervisor can sign-off this proficiency based on their competence or department requirements.</li>
+            <li>Your supervisor can sign-off this @Model.Vocabulary?.ToLower() based on their competence or department requirements.</li>
             <li>You have been formally assessed, this could be through observation, discussion, or another agreed method with your supervisor.</li>
-            <li>You have reflected on the proficiency description and feel you meet the requirements.</li>
+            <li>You have reflected on the @Model.Vocabulary?.ToLower() description and feel you meet the requirements.</li>
             <li>If you don’t fully meet the requirements, you can still document your progress and next steps for future assessment.</li>
         </ol>
 
@@ -41,6 +41,8 @@
                 Continue
             </button>
             <input type="hidden" asp-for="SelfAssessmentID" />
+            <input type="hidden" asp-for="Vocabulary" />
+            <input type="hidden" asp-for="VocabPlural" />
         </form>
         <div class="nhsuk-back-link">
             <a class="nhsuk-back-link__link" asp-controller="LearningPortal"
