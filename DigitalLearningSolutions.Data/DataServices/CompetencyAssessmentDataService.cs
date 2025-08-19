@@ -1,17 +1,12 @@
 ﻿namespace DigitalLearningSolutions.Data.DataServices
 {
     using Dapper;
-    using DigitalLearningSolutions.Data.Models.Common;
     using DigitalLearningSolutions.Data.Models.CompetencyAssessments;
-    using DigitalLearningSolutions.Data.Models.Frameworks;
-    using DigitalLearningSolutions.Data.Models.Frameworks.Import;
-    using DocumentFormat.OpenXml.Wordprocessing;
     using Microsoft.Extensions.Logging;
     using System;
     using System.Collections.Generic;
     using System.Data;
     using System.Linq;
-    using System.Threading.Tasks;
 
     public interface ICompetencyAssessmentDataService
     {
@@ -61,6 +56,14 @@
         bool UpdateSelectCompetenciesTaskStatus(int assessmentId, bool taskStatus, bool? previousStatus);
         bool UpdateOptionalCompetenciesTaskStatus(int assessmentId, bool taskStatus, bool? previousStatus);
         bool UpdateRoleRequirementsTaskStatus(int assessmentId, bool taskStatus, bool? previousStatus);
+        void MoveCompetencyInSelfAssessment(int competencyAssessmentId,
+            int competencyId,
+            string direction
+        );
+        void MoveCompetencyGroupInSelfAssessment(int competencyAssessmentId,
+            int groupId,
+            string direction
+        );
 
         //INSERT DATA
         int InsertCompetencyAssessment(int adminId, int centreId, string competencyAssessmentName);
@@ -70,7 +73,7 @@
         //DELETE DATA
         bool RemoveFrameworkCompetenciesFromAssessment(int competencyAssessmentId, int frameworkId);
         bool RemoveCompetencyFromAssessment(int competencyAssessmentId, int competencyId);
-        }
+    }
 
     public class CompetencyAssessmentDataService : ICompetencyAssessmentDataService
     {
@@ -731,6 +734,25 @@
                 return false;
             }
             return true;
+        }
+
+        public void MoveCompetencyInSelfAssessment(int competencyAssessmentId, int competencyId, string direction)
+        {
+            connection.Execute(
+                "usp_MoveCompetencyInSelfAssessment",
+                    new { SelfAssessmentID = competencyAssessmentId, CompetencyID = competencyId, Direction = direction },
+                    commandType: CommandType.StoredProcedure
+                );
+            
+        }
+
+        public void MoveCompetencyGroupInSelfAssessment(int competencyAssessmentId, int groupId, string direction)
+        {
+            connection.Execute(
+                "usp_MoveCompetencyGroupInSelfAssessment",
+                    new { SelfAssessmentID = competencyAssessmentId, GroupID = groupId, Direction = direction },
+                    commandType: CommandType.StoredProcedure
+                );
         }
     }
 }

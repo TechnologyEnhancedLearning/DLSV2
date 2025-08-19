@@ -2238,25 +2238,23 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to CREATE OR ALTER PROCEDURE usp_MoveCompetencyGroupInSelfAssessment
-        ///    @SelfAssessmentID INT,
-        ///    @GroupID INT,
-        ///    @Direction NVARCHAR(10)
+        ///   Looks up a localized string similar to 
+        ///CREATE OR ALTER PROCEDURE usp_RenumberSelfAssessmentStructure
+        ///    @SelfAssessmentID INT
         ///AS
         ///BEGIN
         ///    SET NOCOUNT ON;
         ///
-        ///    DECLARE @CurrentMinOrder INT, @CurrentMaxOrder INT;
-        ///
-        ///    -- Get current group&apos;s ordering range
-        ///    SELECT 
-        ///        @CurrentMinOrder = MIN(Ordering),
-        ///        @CurrentMaxOrder = MAX(Ordering)
-        ///    FROM SelfAssessmentStructure
-        ///    WHERE SelfAssessmentID = @SelfAssessmentID
-        ///      AND CompetencyGroupID = @GroupID;
-        ///
-        ///    IF @Cu [rest of string was truncated]&quot;;.
+        ///    /*
+        ///        Step 1: Build an ordered list of groups
+        ///        - Each group is ranked by its current Min(Ordering)
+        ///        - Ungrouped competencies (NULL CompetencyGroupID) are treated as their own &quot;pseudo group&quot;
+        ///    */
+        ///    ;WITH GroupRanks AS (
+        ///        SELECT 
+        ///            CompetencyGroupID,
+        ///            ROW_NUMBER() OVER (ORDER BY MIN(Ordering)) AS GroupRank
+        ///        FROM Sel [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string TD_483_uspMoveCompetencyGroupInSelfAssessmentCreateOrAlter_UP {
             get {

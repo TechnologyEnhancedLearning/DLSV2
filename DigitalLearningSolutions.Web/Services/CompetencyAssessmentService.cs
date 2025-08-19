@@ -45,6 +45,14 @@ namespace DigitalLearningSolutions.Web.Services
         bool UpdateSelectCompetenciesTaskStatus(int competencyAssessmentId, bool taskStatus, bool? previousStatus);
         bool UpdateOptionalCompetenciesTaskStatus(int assessmentId, bool taskStatus, bool? previousStatus);
         bool UpdateRoleRequirementsTaskStatus(int assessmentId, bool taskStatus, bool? previousStatus);
+        void MoveCompetencyInSelfAssessment(int competencyAssessmentId,
+            int competencyId,
+            string direction
+        );
+        void MoveCompetencyGroupInSelfAssessment(int competencyAssessmentId,
+            int groupId,
+            string direction
+        );
 
         //INSERT DATA
         int InsertCompetencyAssessment(int adminId, int centreId, string competencyAssessmentName, int? frameworkId);
@@ -245,6 +253,16 @@ namespace DigitalLearningSolutions.Web.Services
         public bool RemoveCompetencyFromAssessment(int competencyAssessmentId, int competencyId)
         {
             return competencyAssessmentDataService.RemoveCompetencyFromAssessment(competencyAssessmentId, competencyId);
+        }
+
+        public void MoveCompetencyInSelfAssessment(int competencyAssessmentId, int competencyId, string direction)
+        {
+            competencyAssessmentDataService.MoveCompetencyInSelfAssessment(competencyAssessmentId, competencyId, direction);
+        }
+
+        public void MoveCompetencyGroupInSelfAssessment(int competencyAssessmentId, int groupId, string direction)
+        {
+            competencyAssessmentDataService.MoveCompetencyGroupInSelfAssessment(competencyAssessmentId, groupId, direction);
         }
     }
 }
