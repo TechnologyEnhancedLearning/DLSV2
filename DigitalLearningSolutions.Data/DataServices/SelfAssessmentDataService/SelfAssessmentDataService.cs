@@ -89,6 +89,7 @@
 
         void SetBookmark(int selfAssessmentId, int delegateUserId, string bookmark);
 
+        void MarkProgressAgreed(int selfAssessmentId, int delegateUserId);
         IEnumerable<CandidateAssessment> GetCandidateAssessments(int delegateUserId, int selfAssessmentId);
 
         // SelfAssessmentSupervisorDataService
