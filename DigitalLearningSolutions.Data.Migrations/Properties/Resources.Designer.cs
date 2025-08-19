@@ -2565,6 +2565,34 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///
+        ///
+        ///-- =============================================
+        ///-- Author:		Auldrin Possa
+        ///-- Create date: 04/08/2015
+        ///-- Description:	Uses DB mail to send notification to delegates on retiring self assessment.
+        ///-- =============================================
+        ///CREATE PROCEDURE [dbo].[SendRetiringSelfAssessmentNotification]
+        ///	@SelfAssessmentId int,
+        ///	@TestOnly bit
+        ///AS
+        ///BEGIN
+        ///	-- SET NOCOUNT ON added to prevent extra result sets from
+        ///	-- interfering with SELEC [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_5552_SendRetiringNotification {
+            get {
+                return ResourceManager.GetString("TD_5552_SendRetiringNotification", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to IF OBJECT_ID(&apos;dbo.IndexOptimize&apos;, &apos;P&apos;) IS NOT NULL DROP PROCEDURE dbo.IndexOptimize;
         ///IF OBJECT_ID(&apos;dbo.CommandExecute&apos;, &apos;P&apos;) IS NOT NULL DROP PROCEDURE dbo.CommandExecute;
         ///IF OBJECT_ID(&apos;dbo.sp_purge_commandlog&apos;, &apos;P&apos;) IS NOT NULL DROP PROCEDURE dbo.sp_purge_commandlog;
