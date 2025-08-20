@@ -498,7 +498,8 @@
             {
                 return StatusCode(403);
             }
-            var model = new ViewSelectedCompetenciesViewModel(competencyAssessmentBase, competencies, linkedFrameworks);
+            var competencyAssessmentTaskStatus = competencyAssessmentService.GetCompetencyAssessmentTaskStatus(competencyAssessmentId, null);
+            var model = new ViewSelectedCompetenciesViewModel(competencyAssessmentBase, competencies, linkedFrameworks, competencyAssessmentTaskStatus.SelectCompetenciesTaskStatus);
             return View(model);
         }
         [Route("/CompetencyAssessments/{competencyAssessmentId}/Competencies/Add/SelectFramework")]
@@ -627,6 +628,17 @@
             }
             competencyAssessmentService.MoveCompetencyGroupInSelfAssessment(competencyAssessmentId, groupId, direction);
             return new RedirectResult(Url.Action("ViewSelectedCompetencies", new { competencyAssessmentId }) + "#group-" + groupId.ToString());
+        }
+        [HttpPost]
+        [Route("/CompetencyAssessments/{competencyAssessmentId}/Competencies")]
+        public IActionResult ViewSelectedCompetencies(ViewSelectedCompetenciesFormData model)
+        {
+            if (model.TaskStatus == null)
+            {
+                model.TaskStatus = false;
+            }
+            competencyAssessmentService.UpdateSelectCompetenciesTaskStatus(model.ID, model.TaskStatus.Value, null);
+            return RedirectToAction("ManageCompetencyAssessment", new { competencyAssessmentId = model.ID });
         }
     }
 }

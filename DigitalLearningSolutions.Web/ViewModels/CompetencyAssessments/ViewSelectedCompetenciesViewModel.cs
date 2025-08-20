@@ -6,12 +6,13 @@ using System.Linq;
 namespace DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
 {
 
-    public class ViewSelectedCompetenciesViewModel
+    public class ViewSelectedCompetenciesViewModel : ViewSelectedCompetenciesFormData
     {
         public ViewSelectedCompetenciesViewModel() { }
-        public ViewSelectedCompetenciesViewModel(CompetencyAssessmentBase competencyAssessmentBase, IEnumerable<Competency> competencies, IEnumerable<LinkedFramework> linkedFrameworks)
+        public ViewSelectedCompetenciesViewModel(CompetencyAssessmentBase competencyAssessmentBase, IEnumerable<Competency> competencies, IEnumerable<LinkedFramework> linkedFrameworks, bool? taskStatus)
         {
             ID = competencyAssessmentBase.ID;
+            TaskStatus = taskStatus;
             CompetencyAssessmentName = competencyAssessmentBase.CompetencyAssessmentName;
             UserRole = competencyAssessmentBase.UserRole;
             Competencies = competencies;
@@ -34,7 +35,6 @@ namespace DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
             }
             LinkedFrameworks = linkedFrameworks;
         }
-        public int ID { get; set; }
 
         public string CompetencyAssessmentName { get; set; }
         public int UserRole { get; set; }
