@@ -3,6 +3,9 @@
 @{
     ViewData["Title"] = "Select Competencies";
     ViewData["Application"] = "Framework Service";
+    var groupCount = Model.Competencies
+        .GroupBy(c => new { c.FrameworkId, c.FrameworkName, c.GroupId, c.GroupName })
+        .Count();
 }
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
 @section NavMenuItems {
@@ -42,6 +45,9 @@
     }
 </dl>
 <h2>@Model.VocabularyPlural</h2>
+@{
+    int groupNum = 1;
+}
 @foreach (var group in Model.Competencies
                            .GroupBy(c => new { c.FrameworkId, c.FrameworkName, c.GroupId, c.GroupName }))
 {
@@ -55,8 +61,14 @@
             {
                 <div class="nhsuk-grid-row nhsuk-u-margin-top-3">
                     <div class="nhsuk-grid-column-full">
-                        <a class="nhsuk-button nhsuk-button--secondary small-edit-button nhsuk-u-margin-right-1" role="button" asp-action="MoveCompetencyGroupInSelfAssessment" asp-route-direction="up" asp-route-competencyAssessmentId="@(ViewContext.RouteData.Values["competencyAssessmentId"])" asp-route-groupId="@group.Key.GroupId">Move <span class="visually-hidden">@group.Key.GroupName</span>up </a>
-                        <a class="nhsuk-button nhsuk-button--secondary small-edit-button nhsuk-u-margin-right-1" role="button" asp-action="MoveCompetencyGroupInSelfAssessment" asp-route-direction="down" asp-route-competencyAssessmentId="@(ViewContext.RouteData.Values["competencyAssessmentId"])" asp-route-groupId="@group.Key.GroupId">Move <span class="visually-hidden">@group.Key.GroupName</span>down </a>
+                        @if (groupNum > 1)
+                        {
+                            <a class="nhsuk-button nhsuk-button--secondary small-edit-button nhsuk-u-margin-right-1" role="button" asp-action="MoveCompetencyGroupInSelfAssessment" asp-route-direction="up" asp-route-competencyAssessmentId="@(ViewContext.RouteData.Values["competencyAssessmentId"])" asp-route-groupId="@group.Key.GroupId">Move <span class="visually-hidden">@group.Key.GroupName</span>up </a>
+                        }
+                        @if (groupNum < groupCount)
+                        {
+                            <a class="nhsuk-button nhsuk-button--secondary small-edit-button nhsuk-u-margin-right-1" role="button" asp-action="MoveCompetencyGroupInSelfAssessment" asp-route-direction="down" asp-route-competencyAssessmentId="@(ViewContext.RouteData.Values["competencyAssessmentId"])" asp-route-groupId="@group.Key.GroupId">Move <span class="visually-hidden">@group.Key.GroupName</span>down </a>
+                        }
                         <a class="nhsuk-button nhsuk-button--secondary delete-button small-edit-button nhsuk-u-margin-right-1" role="button" asp-action="CompetencyGroupRemoveConfirm" asp-route-competencyAssessmentId="@(ViewContext.RouteData.Values["competencyAssessmentId"])" asp-route-groupId="@group.Key.GroupId" asp-route-competencyCount="@group.Count()">Remove <span class="visually-hidden">@group.Key.GroupName</span></a>
                     </div>
                 </div>
@@ -65,6 +77,7 @@
         <div class="nhsuk-details__text">
             @if (group.Any())
             {
+                int competencyNum = 1;
                 foreach (var competency in group)
                 {
                     <div id="competency-@competency.CompetencyID" class="nhsuk-card nhsuk-u-margin-bottom-5 nhsuk-u-margin-left-3">
@@ -90,14 +103,21 @@
                                 <div class="nhsuk-grid-column-three-quarters">
                                     @if (Model.UserRole > 1)
                                     {
-                                        <a class="nhsuk-button nhsuk-button--secondary small-edit-button nhsuk-u-margin-right-1" role="button" asp-action="MoveCompetencyInSelfAssessment" asp-route-direction="up" asp-route-competencyAssessmentId="@(ViewContext.RouteData.Values["competencyAssessmentId"])" asp-route-competencyId="@competency.CompetencyID">Move <span class="visually-hidden">@competency.CompetencyName</span>up </a>
-                                        <a class="nhsuk-button nhsuk-button--secondary small-edit-button nhsuk-u-margin-right-1" role="button" asp-action="MoveCompetencyInSelfAssessment" asp-route-direction="down" asp-route-competencyAssessmentId="@(ViewContext.RouteData.Values["competencyAssessmentId"])" asp-route-competencyId="@competency.CompetencyID">Move <span class="visually-hidden">@competency.CompetencyName</span>down </a>
+                                        if (competencyNum > 1)
+                                        {
+                                            <a class="nhsuk-button nhsuk-button--secondary small-edit-button nhsuk-u-margin-right-1" role="button" asp-action="MoveCompetencyInSelfAssessment" asp-route-direction="up" asp-route-competencyAssessmentId="@(ViewContext.RouteData.Values["competencyAssessmentId"])" asp-route-competencyId="@competency.CompetencyID">Move <span class="visually-hidden">@competency.CompetencyName</span>up </a>
+                                        }
+                                        if (competencyNum < group.Count())
+                                        {
+                                            <a class="nhsuk-button nhsuk-button--secondary small-edit-button nhsuk-u-margin-right-1" role="button" asp-action="MoveCompetencyInSelfAssessment" asp-route-direction="down" asp-route-competencyAssessmentId="@(ViewContext.RouteData.Values["competencyAssessmentId"])" asp-route-competencyId="@competency.CompetencyID">Move <span class="visually-hidden">@competency.CompetencyName</span>down </a>
+                                        }
                                         <a class="nhsuk-button nhsuk-button--secondary delete-button small-edit-button nhsuk-u-margin-right-1" role="button" asp-action="DeleteCompetency" asp-route-competencyAssessmentId="@(ViewContext.RouteData.Values["competencyAssessmentId"])" asp-route-competencyId="@competency.CompetencyID">Remove <span class="visually-hidden">@competency.CompetencyName</span></a>
                                     }
                                 </div>
                             </div>
                         </div>
                     </div>
+                    competencyNum++;
                 }
             }
             else
@@ -106,5 +126,6 @@
             }
         </div>
     </details>
+    groupNum++;
 }
 
