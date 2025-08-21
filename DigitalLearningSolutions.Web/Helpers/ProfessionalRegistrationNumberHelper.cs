@@ -44,11 +44,11 @@
                 return;
             }
 
-            if (prn.Length < 4 || prn.Length > 20)
+            if (prn.Length < 5 || prn.Length > 20)
             {
                 modelState.AddModelError(
                     "ProfessionalRegistrationNumber",
-                    "Professional registration number must be between 4 and 20 characters"
+                    "Professional registration number must be between 5 and 20 characters"
                 );
             }
 
