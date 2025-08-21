@@ -1,0 +1,57 @@
+﻿@using DigitalLearningSolutions.Web.Extensions
+@using DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments;
+@model SelfAssessmentProcessViewModel
+@{
+    var errorHasOccurred = !ViewData.ModelState.IsValid;
+    ViewData["Title"] = (errorHasOccurred ? "Error: " : "") + "Agree To Process";
+    ViewData["Application"] = "LearningPortal";
+    ViewData["HeaderPathName"] = "LearningPortal";
+}
+
+@section NavMenuItems {
+    <partial name="Shared/_NavMenuItems" />
+}
+
+<div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full word-break">
+        @if (errorHasOccurred)
+        {
+            <vc:error-summary order-of-property-names="@(new[] { nameof(Model.ActionConfirmed) })" />
+        }
+        <h2>How are @Model.VocabPlural?.ToLower() and frameworks assessed?</h2>
+
+        <p>The process is learner-driven but you must be assessed by a supervisor before completing a self-assessment.</p>
+
+        <p>Once enrolled in a framework with at least 1 supervisor added, you can complete a digital self-assessment for any @Model.Vocabulary?.ToLower(). However, before doing so, ensure that:</p>
+
+        <ol>
+            <li>Your supervisor can sign-off this @Model.Vocabulary?.ToLower() based on their competence or department requirements.</li>
+            <li>You have been formally assessed, this could be through observation, discussion, or another agreed method with your supervisor.</li>
+            <li>You have reflected on the @Model.Vocabulary?.ToLower() description and feel you meet the requirements.</li>
+            <li>If you don’t fully meet the requirements, you can still document your progress and next steps for future assessment.</li>
+        </ol>
+
+        <form method="post" asp-controller="LearningPortal" asp-action="ProcessAgreed">
+            <div class="nhsuk-checkboxes__item">
+                <vc:single-checkbox asp-for="@nameof(Model.ActionConfirmed)"
+                                    label=" I understand and agree to the self-assessment process described above."
+                                    hint-text="" />
+            </div>
+            <button type="submit" class="nhsuk-button nhsuk-u-margin-top-4">
+                Continue
+            </button>
+            <input type="hidden" asp-for="SelfAssessmentID" />
+            <input type="hidden" asp-for="Vocabulary" />
+            <input type="hidden" asp-for="VocabPlural" />
+        </form>
+        <div class="nhsuk-back-link">
+            <a class="nhsuk-back-link__link" asp-controller="LearningPortal"
+               asp-action="Current">
+                <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
+                </svg>
+                Cancel
+            </a>
+        </div>
+    </div>
+</div>

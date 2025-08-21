@@ -33,6 +33,7 @@
 
         void SetCompleteByDate(int selfAssessmentId, int delegateUserId, DateTime? completeByDate);
 
+        void MarkProgressAgreed(int selfAssessmentId, int delegateUserId);
         bool CanDelegateAccessSelfAssessment(int delegateUserId, int selfAssessmentId, int centreId);
 
         // Competencies
@@ -216,6 +217,11 @@
         public void SetCompleteByDate(int selfAssessmentId, int delegateUserId, DateTime? completeByDate)
         {
             selfAssessmentDataService.SetCompleteByDate(selfAssessmentId, delegateUserId, completeByDate);
+        }
+
+        public void MarkProgressAgreed(int selfAssessmentId, int delegateUserId)
+        {
+            selfAssessmentDataService.MarkProgressAgreed(selfAssessmentId, delegateUserId);
         }
 
         public IEnumerable<Competency> GetCandidateAssessmentResultsById(int candidateAssessmentId, int adminId, int? selfAssessmentResultId = null)
