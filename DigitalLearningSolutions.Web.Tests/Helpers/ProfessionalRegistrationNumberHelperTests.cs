@@ -70,7 +70,7 @@
         {
             // Given
             var state = new ModelStateDictionary();
-            const string validPrn = "abc-123";
+            const string validPrn = "AB123456";
 
             // When
             ProfessionalRegistrationNumberHelper.ValidateProfessionalRegistrationNumber(

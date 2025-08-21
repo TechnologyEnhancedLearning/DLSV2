@@ -1,7 +1,11 @@
 ﻿namespace DigitalLearningSolutions.Web.Helpers
 {
-    using System.Text.RegularExpressions;
+    using DocumentFormat.OpenXml.ExtendedProperties;
+    using DocumentFormat.OpenXml.Spreadsheet;
     using Microsoft.AspNetCore.Mvc.ModelBinding;
+    using Microsoft.CodeAnalysis;
+    using System.Diagnostics.Metrics;
+    using System.Text.RegularExpressions;
 
     public class ProfessionalRegistrationNumberHelper
     {
@@ -40,11 +44,11 @@
                 return;
             }
 
-            if (prn.Length < 5 || prn.Length > 20)
+            if (prn.Length < 4 || prn.Length > 20)
             {
                 modelState.AddModelError(
                     "ProfessionalRegistrationNumber",
-                    "Professional registration number must be between 5 and 20 characters"
+                    "Professional registration number must be between 4 and 20 characters"
                 );
             }
 
@@ -54,7 +58,9 @@
             {
                 modelState.AddModelError(
                     "ProfessionalRegistrationNumber",
-                    "Invalid professional registration number format - Only alphanumeric characters (a-z, A-Z and 0-9) and hyphens (-) allowed"
+                    "Invalid professional registration number format. Accepted formats are: 1–2 letters followed by 6 digits (e.g., AB123456)"+
+                    " 4–8 digits only "+"Optional ‘P’ followed by 5–6 digits ‘C’ or ‘P’ followed by 6 digits "+
+                    "Optional letter followed by 5–6 digits ‘L’ followed by 4–6 digits 2 digits, hyphen, then 4–5 alphanumeric characters"
                 );
             }
         }
