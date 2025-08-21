@@ -49,9 +49,6 @@ body:not(.js-enabled) {
 
 /* .nhsuk-header--transactional brought from live design-system, not in current implentation */
 .nhsuk-header--transactional {
-  .nhsuk-header__container {
-    justify-content: normal;
-  }
 
   .nhsuk-header__link {
     display: block;
@@ -137,7 +134,18 @@ input[type=file].nhsuk-input--error {
   text-align: center;
 }
 
+.nhsuk-header__logo {
+  display: flex;
+  justify-content: space-between;
+}
 
+@media (max-width: 600px) {
+  .nhsuk-header__transactional--logo {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+}
 
 /*
     styles/index.scss has the following nhsuk dependancies - FGC 2/6/25

@@ -18,6 +18,7 @@
         public readonly string VocabPlural;
         public readonly string? Vocabulary;
         public readonly bool NonReportable;
+        public bool SelfAssessmentProcessAgreed { get; set; }
 
         public SelfAssessmentDescriptionViewModel(
             CurrentSelfAssessment selfAssessment,
@@ -37,6 +38,7 @@
             Vocabulary = selfAssessment.Vocabulary;
             VocabPlural = FrameworkVocabularyHelper.VocabularyPlural(selfAssessment.Vocabulary);
             NonReportable = selfAssessment.NonReportable;
+            SelfAssessmentProcessAgreed = selfAssessment.SelfAssessmentProcessAgreed;
         }
 
         public List<SelfAssessmentSupervisor> Supervisors { get; set; }

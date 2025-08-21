@@ -68,6 +68,17 @@
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
             }
 
+            if (!selfAssessment.SelfAssessmentProcessAgreed && selfAssessment.IsSupervised)
+            {
+                var processmodel = new SelfAssessmentProcessViewModel()
+                {
+                    SelfAssessmentID = selfAssessmentId,
+                    Vocabulary = selfAssessment.Vocabulary,
+                    VocabPlural = FrameworkVocabularyHelper.VocabularyPlural(selfAssessment.Vocabulary)
+                };
+                return View("SelfAssessments/AgreeSelfAssessmentProcess", processmodel);
+            }
+
             selfAssessmentService.IncrementLaunchCount(selfAssessmentId, delegateUserId);
             selfAssessmentService.UpdateLastAccessed(selfAssessmentId, delegateUserId);
             var supervisors = selfAssessmentService.GetAllSupervisorsForSelfAssessmentId(
@@ -75,7 +86,35 @@
                 delegateUserId
             ).ToList();
             var model = new SelfAssessmentDescriptionViewModel(selfAssessment, supervisors);
+            
             return View("SelfAssessments/SelfAssessmentDescription", model);
+        }
+
+        [HttpPost]
+        public IActionResult ProcessAgreed(SelfAssessmentProcessViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View("SelfAssessments/AgreeSelfAssessmentProcess", model);
+            }
+            var delegateUserId = User.GetUserIdKnownNotNull();
+            int selfAssessmentId = model.SelfAssessmentID;
+            var selfAssessment = selfAssessmentService.GetSelfAssessmentForCandidateById(delegateUserId, selfAssessmentId);
+            if (selfAssessment == null)
+            {
+                logger.LogWarning(
+                    $"Attempt to display self assessment description for user {delegateUserId} with no self assessment"
+                );
+                return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
+            }
+            var supervisors = selfAssessmentService.GetAllSupervisorsForSelfAssessmentId(
+                selfAssessmentId,
+                delegateUserId
+            ).ToList();
+            var selfAssessmentDescriptionViewModel = new SelfAssessmentDescriptionViewModel(selfAssessment, supervisors);
+            selfAssessmentService.MarkProgressAgreed(selfAssessmentId, delegateUserId);
+            return View("SelfAssessments/SelfAssessmentDescription", selfAssessmentDescriptionViewModel);
+
         }
 
         [ServiceFilter(typeof(IsCentreAuthorizedSelfAssessment))]
