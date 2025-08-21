@@ -82,7 +82,7 @@
             }
 
             <div class="nhsuk-header__container">
-                <div class="nhsuk-header__logo nhsuk-header__transactional--logo">
+                <div class="nhsuk-header__transactional--logo nhsuk-header__logo">
                     <a class="nhsuk-header__link"
                        href="@(ViewData[LayoutViewDataKeys.HeaderPath] ?? Configuration["AppRootPath"] + "/Home")"
                        aria-label="NHS Digital Learning Solutions - @(ViewData[LayoutViewDataKeys.HeaderPathName] ?? "Landing Page")">
@@ -93,16 +93,16 @@
                             <image src="https://assets.nhs.uk/images/nhs-logo.png" width="40" height="16" xlink:href=""></image>
                         </svg>
                     </a>
-                </div>
-                <div class="nhsuk-header__transactional-service-name">
-                    <a class="nhsuk-header__transactional-service-name--link" href="@(ViewData[LayoutViewDataKeys.HeaderPath] ?? Configuration["AppRootPath"] + "/Home")">@(ViewData[LayoutViewDataKeys.HeaderPrefix] ?? "Digital Learning Solutions ")@(headerExtension)</a>
-                    @if (ViewData[LayoutViewDataKeys.Application] != null)
-                    {
-                        if (ViewData[LayoutViewDataKeys.Application].ToString() == "Framework Service" | ViewData[LayoutViewDataKeys.Application].ToString() == "Supervise")
+                    <div class="nhsuk-header__transactional-service-name">
+                        <a class="nhsuk-header__transactional-service-name--link" href="@(ViewData[LayoutViewDataKeys.HeaderPath] ?? Configuration["AppRootPath"] + "/Home")">@(ViewData[LayoutViewDataKeys.HeaderPrefix] ?? "Digital Learning Solutions ")@(headerExtension)</a>
+                        @if (ViewData[LayoutViewDataKeys.Application] != null)
                         {
-                            <sup class="header-beta header-beta--dark">Beta</sup>
+                            if (ViewData[LayoutViewDataKeys.Application].ToString() == "Framework Service" | ViewData[LayoutViewDataKeys.Application].ToString() == "Supervise")
+                            {
+                                <sup class="header-beta header-beta--dark">Beta</sup>
+                            }
                         }
-                    }
+                    </div>
                 </div>
                 <vc:logo customisation-id="@((int?)ViewData[LayoutViewDataKeys.CustomisationIdForHeaderLogo])" />
             </div>
