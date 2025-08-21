@@ -58,9 +58,11 @@
             {
                 modelState.AddModelError(
                     "ProfessionalRegistrationNumber",
-                    "Invalid professional registration number format. Accepted formats are: 1–2 letters followed by 6 digits (e.g., AB123456)"+
-                    " 4–8 digits only "+"Optional ‘P’ followed by 5–6 digits ‘C’ or ‘P’ followed by 6 digits "+
-                    "Optional letter followed by 5–6 digits ‘L’ followed by 4–6 digits 2 digits, hyphen, then 4–5 alphanumeric characters"
+                   "Invalid professional registration number format. " +
+        "Valid formats include: 7 digits (e.g., 1234567), 1–2 letters followed by 6 digits (e.g., AB123456), " +
+        "4–8 digits, an optional 'P' plus 5–6 digits, 'C' or 'P' plus 6 digits, " +
+        "an optional letter plus 5–6 digits, 'L' plus 4–6 digits, " +
+        "or 2 digits followed by a hyphen and 4–5 alphanumeric characters (e.g., 12-AB123)."
                 );
             }
         }
