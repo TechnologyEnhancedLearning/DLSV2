@@ -48,7 +48,7 @@
                 );
             }
 
-            const string pattern = @"^[a-z\d-]+$";
+           const string pattern = @"^(\d{7}|[A-Za-z]{1,2}\d{6}|\d{4,8}|P?\d{5,6}|[C|P]\d{6}|[A-Za-z]?\d{5,6}|L\d{4,6}|\d{2}-[A-Za-z\d]{4,5})$";
             var rg = new Regex(pattern, RegexOptions.IgnoreCase);
             if (!rg.Match(prn).Success)
             {
