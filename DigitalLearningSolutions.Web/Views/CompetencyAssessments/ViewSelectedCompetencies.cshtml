@@ -27,11 +27,14 @@
 <h1>@Model.VocabularyPlural to assess for @Model.CompetencyAssessmentName</h1>
 <h2>Linked frameworks</h2>
 <dl class="nhsuk-summary-list">
+    @{
+        var i = 0;
+    }
     @foreach (var framework in Model.LinkedFrameworks)
     {
         <div class="nhsuk-summary-list__row">
             <dt class="nhsuk-summary-list__key">
-                Framework
+                @(i == 0 ? "Primary framework" : $"Additional framework {i}")
             </dt>
             <dd class="nhsuk-summary-list__value">
                 @framework.FrameworkName (@framework.AssessmentFrameworkCompetencyCount @Model.VocabularyPlural.ToLower())
@@ -42,6 +45,7 @@
                 </a>
             </dd>
         </div>
+        i++;
     }
 </dl>
 <h2>@Model.VocabularyPlural</h2>
