@@ -24,5 +24,6 @@
         public int? DelegateUserId { get; set; }
         public string? DelegateName { get; set; }
         public string? EnrolledByFullName { get; set; }
+        public bool SelfAssessmentProcessAgreed { get; set; }
     }
 }

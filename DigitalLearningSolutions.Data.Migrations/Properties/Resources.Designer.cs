@@ -2577,6 +2577,77 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GetActivitiesForDelegateEnrolment]    Script Date: 24/07/2025 02:06:43 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 24/01/2023
+        ///-- Description:	Returns active available for delegate enrolment based on original GetActiveAvailableCustomisationsForCentreFiltered_V6 sproc but adjusted for user account refactor and filters properly for category.
+        ///-- ========= [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_5535_Alter_GetActivitiesForDelegateEnrolment_Down {
+            get {
+                return ResourceManager.GetString("TD_5535_Alter_GetActivitiesForDelegateEnrolment_Down", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GetActivitiesForDelegateEnrolment]    Script Date: 24/07/2025 02:06:43 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 24/01/2023
+        ///-- Description:	Returns active available for delegate enrolment based on original GetActiveAvailableCustomisationsForCentreFiltered_V6 sproc but adjusted for user account refactor and filters properly for category.
+        ///-- ========= [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_5535_Alter_GetActivitiesForDelegateEnrolment_Up {
+            get {
+                return ResourceManager.GetString("TD_5535_Alter_GetActivitiesForDelegateEnrolment_Up", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to IF OBJECT_ID(&apos;dbo.IndexOptimize&apos;, &apos;P&apos;) IS NOT NULL DROP PROCEDURE dbo.IndexOptimize;
+        ///IF OBJECT_ID(&apos;dbo.CommandExecute&apos;, &apos;P&apos;) IS NOT NULL DROP PROCEDURE dbo.CommandExecute;
+        ///IF OBJECT_ID(&apos;dbo.sp_purge_commandlog&apos;, &apos;P&apos;) IS NOT NULL DROP PROCEDURE dbo.sp_purge_commandlog;
+        ///IF OBJECT_ID(&apos;dbo.CommandLog&apos;, &apos;U&apos;) IS NOT NULL DROP TABLE dbo.CommandLog;
+        ///.
+        /// </summary>
+        internal static string TD_5670_MaintenanceScripts_DOWN {
+            get {
+                return ResourceManager.GetString("TD-5670-MaintenanceScripts_DOWN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to -- ============================================
+        ///-- Drop if exists (for clean redeploy)
+        ///-- ============================================
+        ///IF OBJECT_ID(&apos;dbo.IndexOptimize&apos;, &apos;P&apos;) IS NOT NULL DROP PROCEDURE dbo.IndexOptimize;
+        ///IF OBJECT_ID(&apos;dbo.DatabaseIntegrityCheck&apos;, &apos;P&apos;) IS NOT NULL DROP PROCEDURE dbo.DatabaseIntegrityCheck;
+        ///IF OBJECT_ID(&apos;dbo.CommandExecute&apos;, &apos;P&apos;) IS NOT NULL DROP PROCEDURE dbo.CommandExecute;
+        ///IF OBJECT_ID(&apos;dbo.CommandLog&apos;, &apos;U&apos;) IS NOT NULL DROP TABLE dbo.CommandLog;
+        ///GO
+        ///
+        ///-- =========== [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_5670_MaintenanceScripts_UP {
+            get {
+                return ResourceManager.GetString("TD_5670_MaintenanceScripts_UP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to CREATE OR ALTER PROCEDURE [dbo].[usp_GetSelfAssessmentReport]
         ///    @SelfAssessmentID INT,
         ///    @CentreID INT

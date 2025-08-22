@@ -1,55 +1,60 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.Frameworks;
 @model SubmitReviewViewModel;
 @{
-  ViewData["Title"] = Model.FrameworkName;
-  ViewData["Application"] = "Framework Service";
-  ViewData["HeaderPathName"] = "Framework Service";
+    ViewData["Title"] = Model.FrameworkName;
+    ViewData["Application"] = "Framework Service";
+    ViewData["HeaderPathName"] = "Framework Service";
+    var errorHasOccurred = !ViewData.ModelState.IsValid;
 }
 @section NavBreadcrumbs {
-  <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
-    <div class="nhsuk-width-container">
-      <ol class="nhsuk-breadcrumb__list">
-        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFrameworks" asp-route-tabname="Mine">Frameworks</a></li>
-        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFramework" asp-route-frameworkId="@Model.FrameworkId" asp-route-tabname="Structure">Framework Structure</a></li>
-        <li class="nhsuk-breadcrumb__item">Send for Review</li>
-      </ol>
-      <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ViewFramework" asp-route-frameworkId="@Model.FrameworkId" asp-route-tabname="Structure">Back to framework structure</a></p>
-    </div>
-  </nav>
+    <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+        <div class="nhsuk-width-container">
+            <ol class="nhsuk-breadcrumb__list">
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFrameworks" asp-route-tabname="Mine">Frameworks</a></li>
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFramework" asp-route-frameworkId="@Model.FrameworkId" asp-route-tabname="Structure">Framework Structure</a></li>
+                <li class="nhsuk-breadcrumb__item">Send for Review</li>
+            </ol>
+            <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ViewFramework" asp-route-frameworkId="@Model.FrameworkId" asp-route-tabname="Structure">Back to framework structure</a></p>
+        </div>
+    </nav>
 }
-  <h1>Submit review</h1>
-  @if (Model.FrameworkReview.SignOffRequired)
+<h1>Submit review</h1>
+@if (Model.FrameworkReview.SignOffRequired)
 {
-  <div class="nhsuk-warning-callout">
-    <h2 class="nhsuk-warning-callout__label">
-      <span role="text">
-        <span class="nhsuk-u-visually-hidden">Important: </span>
-        Approval required
-      </span>
-    </h2>
-    <p>Your approval is required before this framework can be published.</p>
-  </div>
+    <div class="nhsuk-warning-callout">
+        <h2 class="nhsuk-warning-callout__label">
+            <span role="text">
+                <span class="nhsuk-u-visually-hidden">Important: </span>
+                Approval required
+            </span>
+        </h2>
+        <p>Your approval is required before this framework can be published.</p>
+    </div>
 }
 <form method="post">
-  <div class="nhsuk-form-group">
-    <label class="nhsuk-label" for="new-comment">
-      Review comments
-    </label>
-    <input type="hidden" value="@Model.FrameworkReview.Comment" name="parentComment" />
-    <textarea class="nhsuk-textarea" id="new-comment" asp-for="FrameworkReview.Comment" name="Comment" rows="3"></textarea>
-  </div>
-  <div class="nhsuk-form-group">
-    <div class="nhsuk-checkboxes__item">
-      <input class="nhsuk-checkboxes__input" id="signOff" name="SignedOff" asp-for="FrameworkReview.SignedOff" type="checkbox" aria-describedby="sign-off-hint">
-      <label class="nhsuk-label nhsuk-checkboxes__label" for="signOff">
-        Approve for publishing?
-      </label>
-      <div class="nhsuk-hint nhsuk-checkboxes__hint" id="sign-off-hint">
-        I give my approval to publish this framework for use in its current state
-      </div>
+    @if (errorHasOccurred)
+    {
+        <vc:error-summary order-of-property-names="@(new[] { nameof(Model.FrameworkReview.Comment)})" />
+    }
+    <div class="nhsuk-form-group">
+        <label class="nhsuk-label" for="comment">
+            Review comments
+        </label>
+        <input type="hidden" value="@Model.FrameworkReview.Comment" name="parentComment" />
+        <textarea class="nhsuk-textarea" id="comment" asp-for="FrameworkReview.Comment" name="Comment" rows="3"></textarea>
     </div>
-  </div>
-  <button class="nhsuk-button" type="submit">
-    Submit
-  </button>
+    <div class="nhsuk-form-group">
+        <div class="nhsuk-checkboxes__item">
+            <input class="nhsuk-checkboxes__input" id="signOff" name="SignedOff" asp-for="FrameworkReview.SignedOff" type="checkbox" aria-describedby="sign-off-hint">
+            <label class="nhsuk-label nhsuk-checkboxes__label" for="signOff">
+                Approve for publishing?
+            </label>
+            <div class="nhsuk-hint nhsuk-checkboxes__hint" id="sign-off-hint">
+                I give my approval to publish this framework for use in its current state
+            </div>
+        </div>
+    </div>
+    <button class="nhsuk-button" type="submit">
+        Submit
+    </button>
 </form>
