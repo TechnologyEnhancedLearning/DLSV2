@@ -70,7 +70,7 @@
         {
             // Given
             var state = new ModelStateDictionary();
-            const string validPrn = "abc-123";
+            const string validPrn = "AB123456";
 
             // When
             ProfessionalRegistrationNumberHelper.ValidateProfessionalRegistrationNumber(
@@ -106,19 +106,34 @@
 
         [TestCase(null, "Enter a professional registration number")]
         [TestCase("", "Enter a professional registration number")]
-        [TestCase("123", "Professional registration number must be between 5 and 20 characters")]
-        [TestCase("0123456789-0123456789", "Professional registration number must be between 5 and 20 characters")]
+        [TestCase("1234", "Professional registration number must be between 5 and 20 characters")]
+        [TestCase("1234", "Professional registration number must be between 5 and 20 characters")]
         [TestCase(
             "01234_",
-            "Invalid professional registration number format - Only alphanumeric characters (a-z, A-Z and 0-9) and hyphens (-) allowed"
+         "Invalid professional registration number format. " +
+        "Valid formats include: 7 digits (e.g., 1234567), 1–2 letters followed by 6 digits (e.g., AB123456), " +
+        "4–8 digits, an optional 'P' plus 5–6 digits, 'C' or 'P' plus 6 digits, " +
+        "an optional letter plus 5–6 digits, 'L' plus 4–6 digits, " +
+        "or 2 digits followed by a hyphen and 4–5 alphanumeric characters (e.g., 12-AB123)."
+
         )]
         [TestCase(
             "01234 ",
-            "Invalid professional registration number format - Only alphanumeric characters (a-z, A-Z and 0-9) and hyphens (-) allowed"
+          "Invalid professional registration number format. " +
+        "Valid formats include: 7 digits (e.g., 1234567), 1–2 letters followed by 6 digits (e.g., AB123456), " +
+        "4–8 digits, an optional 'P' plus 5–6 digits, 'C' or 'P' plus 6 digits, " +
+        "an optional letter plus 5–6 digits, 'L' plus 4–6 digits, " +
+        "or 2 digits followed by a hyphen and 4–5 alphanumeric characters (e.g., 12-AB123)."
+
         )]
         [TestCase(
             "01234$",
-            "Invalid professional registration number format - Only alphanumeric characters (a-z, A-Z and 0-9) and hyphens (-) allowed"
+          "Invalid professional registration number format. " +
+        "Valid formats include: 7 digits (e.g., 1234567), 1–2 letters followed by 6 digits (e.g., AB123456), " +
+        "4–8 digits, an optional 'P' plus 5–6 digits, 'C' or 'P' plus 6 digits, " +
+        "an optional letter plus 5–6 digits, 'L' plus 4–6 digits, " +
+        "or 2 digits followed by a hyphen and 4–5 alphanumeric characters (e.g., 12-AB123)."
+
         )]
         public void ValidateProfessionalRegistrationNumber_sets_error_when_prn_is_invalid(
             string prn,

@@ -176,7 +176,7 @@
             const string answer4 = "answer4";
             const string answer5 = "answer5";
             const string answer6 = "answer6";
-            const string professionalRegistrationNumber = "PRN1234";
+            const string professionalRegistrationNumber = "PR123456";
             var model = new LearnerInformationViewModel
             {
                 JobGroup = jobGroupId,
