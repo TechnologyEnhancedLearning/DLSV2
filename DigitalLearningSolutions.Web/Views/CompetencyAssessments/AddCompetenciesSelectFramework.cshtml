@@ -39,8 +39,8 @@
                 @foreach (var framework in Model.LinkedFrameworks)
                 {
                     <div class="nhsuk-radios__item">
-                        <input class="nhsuk-radios__input" asp-for="@Model.FrameworkId" type="radio" value="@framework.ID">
-                        <label class="nhsuk-label nhsuk-radios__label" for="example-hints-1">
+                        <input class="nhsuk-radios__input" id="framework-radio-@Model.FrameworkId" asp-for="@Model.FrameworkId" type="radio" value="@framework.ID">
+                        <label class="nhsuk-label nhsuk-radios__label" for="framework-radio-@Model.FrameworkId">
                             @framework.FrameworkName
                         </label>
                     </div>
