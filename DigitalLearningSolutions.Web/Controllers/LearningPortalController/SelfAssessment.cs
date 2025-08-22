@@ -28,7 +28,7 @@
     using Microsoft.AspNetCore.Mvc.ViewEngines;
     using Microsoft.AspNetCore.Mvc.ViewFeatures;
     using System.IO;
-
+    [ServiceFilter(typeof(RequireProcessAgreementFilter))]
     public partial class LearningPortalController
     {
         private const string CookieName = "DLSSelfAssessmentService";
@@ -70,13 +70,7 @@
 
             if (!selfAssessment.SelfAssessmentProcessAgreed && selfAssessment.IsSupervised)
             {
-                var processmodel = new SelfAssessmentProcessViewModel()
-                {
-                    SelfAssessmentID = selfAssessmentId,
-                    Vocabulary = selfAssessment.Vocabulary,
-                    VocabPlural = FrameworkVocabularyHelper.VocabularyPlural(selfAssessment.Vocabulary)
-                };
-                return View("SelfAssessments/AgreeSelfAssessmentProcess", processmodel);
+                return RedirectToAction("AgreeSelfAssessmentProcess", new { selfAssessmentId });
             }
 
             selfAssessmentService.IncrementLaunchCount(selfAssessmentId, delegateUserId);
@@ -90,7 +84,30 @@
             return View("SelfAssessments/SelfAssessmentDescription", model);
         }
 
-        [HttpPost]
+        [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/AgreeProcess")]
+        public IActionResult AgreeSelfAssessmentProcess(int selfAssessmentId)
+        {
+            var delegateUserId = User.GetUserIdKnownNotNull();
+            var selfAssessment = selfAssessmentService.GetSelfAssessmentForCandidateById(delegateUserId, selfAssessmentId);
+
+            if (selfAssessment == null)
+            {
+                logger.LogWarning(
+                    $"Attempt to display self assessment process for user {delegateUserId} with no self assessment"
+                );
+                return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
+            }
+
+            var processmodel = new SelfAssessmentProcessViewModel()
+            {
+                SelfAssessmentID = selfAssessmentId,
+                Vocabulary = selfAssessment.Vocabulary,
+                VocabPlural = FrameworkVocabularyHelper.VocabularyPlural(selfAssessment.Vocabulary)
+            };
+            return View("SelfAssessments/AgreeSelfAssessmentProcess", processmodel);
+        }
+
+        [HttpPost("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/AgreeProcess")]
         public IActionResult ProcessAgreed(SelfAssessmentProcessViewModel model)
         {
             if (!ModelState.IsValid)
@@ -107,13 +124,9 @@
                 );
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
             }
-            var supervisors = selfAssessmentService.GetAllSupervisorsForSelfAssessmentId(
-                selfAssessmentId,
-                delegateUserId
-            ).ToList();
-            var selfAssessmentDescriptionViewModel = new SelfAssessmentDescriptionViewModel(selfAssessment, supervisors);
+            
             selfAssessmentService.MarkProgressAgreed(selfAssessmentId, delegateUserId);
-            return View("SelfAssessments/SelfAssessmentDescription", selfAssessmentDescriptionViewModel);
+            return RedirectToAction("SelfAssessment", new { selfAssessmentId });
 
         }
 
