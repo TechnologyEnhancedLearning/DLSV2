@@ -68,11 +68,6 @@
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
             }
 
-            if (!selfAssessment.SelfAssessmentProcessAgreed && selfAssessment.IsSupervised)
-            {
-                return RedirectToAction("AgreeSelfAssessmentProcess", new { selfAssessmentId });
-            }
-
             selfAssessmentService.IncrementLaunchCount(selfAssessmentId, delegateUserId);
             selfAssessmentService.UpdateLastAccessed(selfAssessmentId, delegateUserId);
             var supervisors = selfAssessmentService.GetAllSupervisorsForSelfAssessmentId(
