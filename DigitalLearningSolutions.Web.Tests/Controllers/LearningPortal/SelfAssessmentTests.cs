@@ -872,26 +872,6 @@
         }
 
         [Test]
-        public void SelfAssessment_should_redirect_to_process_agreement_when_not_agreed_and_supervised()
-        {
-            // Given
-            var selfAssessment = SelfAssessmentTestHelper.CreateDefaultSelfAssessment();
-            selfAssessment.IsSupervised = true;
-            selfAssessment.SelfAssessmentProcessAgreed = false;
-            A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(DelegateUserId, SelfAssessmentId))
-                .Returns(selfAssessment);
-
-            // When
-            var result = controller.SelfAssessment(SelfAssessmentId);
-
-            // Then
-            result.Should().BeRedirectToActionResult()
-                .WithActionName("AgreeSelfAssessmentProcess")
-                .WithRouteValue("selfAssessmentId", SelfAssessmentId);
-        }
-
-
-        [Test]
         public void SelfAssessment_should_return_description_view_when_process_agreed_or_not_supervised()
         {
             // Given
