@@ -872,7 +872,7 @@
         }
 
         [Test]
-        public void SelfAssessment_should_return_process_agreement_view_when_not_agreed_and_supervised()
+        public void SelfAssessment_should_redirect_to_process_agreement_when_not_agreed_and_supervised()
         {
             // Given
             var selfAssessment = SelfAssessmentTestHelper.CreateDefaultSelfAssessment();
@@ -880,18 +880,16 @@
             selfAssessment.SelfAssessmentProcessAgreed = false;
             A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(DelegateUserId, SelfAssessmentId))
                 .Returns(selfAssessment);
-            A.CallTo(() => selfAssessmentService.GetAllSupervisorsForSelfAssessmentId(SelfAssessmentId, DelegateUserId))
-                .Returns(new List<SelfAssessmentSupervisor>());
 
             // When
             var result = controller.SelfAssessment(SelfAssessmentId);
 
             // Then
-            result.Should().BeViewResult()
-                .WithViewName("SelfAssessments/AgreeSelfAssessmentProcess")
-                .Model.Should().BeOfType<SelfAssessmentProcessViewModel>()
-                .Which.SelfAssessmentID.Should().Be(SelfAssessmentId);
+            result.Should().BeRedirectToActionResult()
+                .WithActionName("AgreeSelfAssessmentProcess")
+                .WithRouteValue("selfAssessmentId", SelfAssessmentId);
         }
+
 
         [Test]
         public void SelfAssessment_should_return_description_view_when_process_agreed_or_not_supervised()
@@ -931,25 +929,25 @@
         }
 
         [Test]
-        public void ProcessAgreed_should_mark_progress_and_return_description_view()
+        public void ProcessAgreed_should_mark_progress_and_redirect_to_self_assessment()
         {
             // Given
             var selfAssessment = SelfAssessmentTestHelper.CreateDefaultSelfAssessment();
-            var supervisors = new List<SelfAssessmentSupervisor>();
             var model = new SelfAssessmentProcessViewModel { SelfAssessmentID = SelfAssessmentId };
             A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(DelegateUserId, SelfAssessmentId))
                 .Returns(selfAssessment);
-            A.CallTo(() => selfAssessmentService.GetAllSupervisorsForSelfAssessmentId(SelfAssessmentId, DelegateUserId))
-                .Returns(supervisors);
 
             // When
             var result = controller.ProcessAgreed(model);
 
             // Then
-            A.CallTo(() => selfAssessmentService.MarkProgressAgreed(SelfAssessmentId, DelegateUserId)).MustHaveHappened();
-            result.Should().BeViewResult()
-                .WithViewName("SelfAssessments/SelfAssessmentDescription")
-                .Model.Should().BeEquivalentTo(new SelfAssessmentDescriptionViewModel(selfAssessment, supervisors));
+            A.CallTo(() => selfAssessmentService.MarkProgressAgreed(SelfAssessmentId, DelegateUserId))
+                .MustHaveHappenedOnceExactly();
+
+            result.Should().BeRedirectToActionResult()
+                .WithActionName("SelfAssessment")
+                .WithRouteValue("selfAssessmentId", SelfAssessmentId);
         }
+
     }
 }
