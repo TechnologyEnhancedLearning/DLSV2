@@ -815,7 +815,7 @@
         {
             if (ModelState.IsValid && retiringSelfAssessment.ActionConfirmed)
             {
-                var sessionEnrolOnRoleProfile = multiPageFormService.GetMultiPageFormData<SessionEnrolOnRoleProfile>(
+                var sessionEnrolOnRoleProfile = multiPageFormService.GetMultiPageFormData<SessionEnrolOnCompetencyAssessment>(
                     MultiPageFormDataFeature.EnrolDelegateOnProfileAssessment,
                     TempData
                     ).GetAwaiter().GetResult();
