@@ -499,6 +499,12 @@
   <data name="TD-5759_CreateOrAlterSelfAssessmentReportSPandTVF-Fix_UP" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Scripts\TD-5759_CreateOrAlterSelfAssessmentReportSPandTVF-Fix_UP.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
+  <data name="TD-483-uspMoveCompetencyInSelfAssessmentCreateOrAlter_UP" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Scripts\TD-483-uspMoveCompetencyInSelfAssessmentCreateOrAlter_UP.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="TD-483-uspMoveCompetencyGroupInSelfAssessmentCreateOrAlter_UP" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Scripts\TD-483-uspMoveCompetencyGroupInSelfAssessmentCreateOrAlter_UP.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
   <data name="TD_5535_Alter_GetActivitiesForDelegateEnrolment_Down" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Scripts\TD-5535-Alter_GetActivitiesForDelegateEnrolment_Down.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
   </data>

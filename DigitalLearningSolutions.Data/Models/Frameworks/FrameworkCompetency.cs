@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.Frameworks
 {
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
+    using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     public class FrameworkCompetency : BaseSearchableItem
     {
@@ -15,6 +16,7 @@
         public int CompetencyLearningResourcesCount { get; set; }
         public string? FrameworkName { get; set; }
         public bool? AlwaysShowDescription { get; set; }
+        public IEnumerable<CompetencyFlag> CompetencyFlags { get; set; } = new List<CompetencyFlag>();
 
         public override string SearchableName
         {

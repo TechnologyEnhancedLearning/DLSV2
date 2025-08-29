@@ -1,0 +1,54 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
+@model AddCompetenciesSelectFrameworkViewModel;
+@{
+    ViewData["Title"] = "Select Framework Source";
+    ViewData["Application"] = "Framework Service";
+}
+<link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
+@section NavMenuItems {
+    <partial name="~/Views/Frameworks/Shared/_NavMenuItems.cshtml" />
+}
+
+@section NavBreadcrumbs {
+    <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+        <div class="nhsuk-width-container">
+            <ol class="nhsuk-breadcrumb__list">
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewCompetencyAssessments" asp-route-tabname="Mine">Competency Assessments</a></li>
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.ID">Manage Competency Assessment</a></li>
+                <li class="nhsuk-breadcrumb__item">Select @Model.VocabularyPlural.ToLower() to assess</li>
+            </ol>
+            <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.ID">Back to manage competency assessment</a></p>
+        </div>
+    </nav>
+}
+<h1>Select Framework Source</h1>
+<form method="post">
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <partial name="_ErrorSummary" />
+    }
+    <div class="nhsuk-form-group">
+
+        <fieldset class="nhsuk-fieldset">
+            <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
+                <h2 class="nhsuk-fieldset__heading">
+                    Select the framework source you would like to use to add @Model.VocabularyPlural.ToLower() to this competency assessment.
+                </h2>
+            </legend>
+            <div class="nhsuk-radios">
+                @foreach (var framework in Model.LinkedFrameworks)
+                {
+                    <div class="nhsuk-radios__item">
+                        <input class="nhsuk-radios__input" id="framework-radio-@framework.ID" asp-for="@Model.FrameworkId" type="radio" value="@framework.ID">
+                        <label class="nhsuk-label nhsuk-radios__label" for="framework-radio-@framework.ID">
+                            @framework.FrameworkName
+                        </label>
+                    </div>
+                }
+            </div>
+        </fieldset>
+        <span nhs-validation-for="FrameworkId"></span>
+    </div>
+    <input type="hidden" asp-for="@Model.ID" />
+    <button type="submit" class="nhsuk-button">Next</button>
+</form>

@@ -88,7 +88,7 @@
         <li class="nhsuk-task-list__item nhsuk-task-list__item--with-link">
             <div class="nhsuk-task-list__name-and-hint" aria-describedby="vocabulary-status">
                 <a class="nhsuk-link nhsuk-task-list__link" asp-action="EditVocabulary" asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">
-                    Select assessment vocabulary (@Model.Vocabulary)
+                    Select assessment vocabulary (@Model.VocabularySingular)
                 </a>
             </div>
             <div class="nhsuk-task-list__status" id="vocabulary-status">
@@ -120,7 +120,7 @@
             @if (Model.CompetencyAssessmentTaskStatus.FrameworkLinksTaskStatus == null)
             {
                 <div class="nhsuk-task-list__name-and-hint" aria-describedby="select-competencies-status">
-                    Select competencies to assess
+                    Select @Model.VocabularyPlural.ToLower() to assess
                 </div>
                 <div class="nhsuk-task-list__status nhsuk-task-list__status--cannot-start-yet" id="select-competencies-status">
                     Cannot start yet
@@ -129,8 +129,8 @@
             else
             {
                 <div class="nhsuk-task-list__name-and-hint" aria-describedby="select-competencies-status">
-                    <a class="nhsuk-link nhsuk-task-list__link" asp-action="SelectCompetencies" asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">
-                        Select competencies to assess
+                    <a class="nhsuk-link nhsuk-task-list__link" asp-action="ViewSelectedCompetencies" asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">
+                        Select @Model.VocabularyPlural.ToLower() to assess
                     </a>
                 </div>
                 <div class="nhsuk-task-list__status" id="select-competencies-status">
@@ -143,7 +143,7 @@
             @if (Model.CompetencyAssessmentTaskStatus.SelectCompetenciesTaskStatus == null)
             {
                 <div class="nhsuk-task-list__name-and-hint" aria-describedby="optional-competencies-status">
-                    Identify optional competencies
+                    Identify optional @Model.VocabularyPlural.ToLower()
                 </div>
                 <div class="nhsuk-task-list__status nhsuk-task-list__status--cannot-start-yet" id="optional-competencies-status">
                     Cannot start yet
@@ -153,7 +153,7 @@
             {
                 <div class="nhsuk-task-list__name-and-hint" aria-describedby="optional-competencies-status">
                     <a class="nhsuk-link nhsuk-task-list__link" asp-action="SelectOptionalCompetencies" asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">
-                        Identify optional competencies
+                        Identify optional @Model.VocabularyPlural.ToLower()
                     </a>
                 </div>
                 <div class="nhsuk-task-list__status" id="optional-competencies-status">
@@ -167,7 +167,7 @@
             @if (Model.CompetencyAssessmentTaskStatus.SelectCompetenciesTaskStatus == null)
             {
                 <div class="nhsuk-task-list__name-and-hint" aria-describedby="role-requirements-status">
-                    Set competency attainment requirements
+                    Set @Model.VocabularySingular.ToLower() attainment requirements
                 </div>
                 <div class="nhsuk-task-list__status nhsuk-task-list__status--cannot-start-yet" id="role-requirements-status">
                     Cannot start yet
@@ -177,7 +177,7 @@
             {
                 <div class="nhsuk-task-list__name-and-hint" aria-describedby="role-requirements-status">
                     <a class="nhsuk-link nhsuk-task-list__link" asp-action="SetRoleRequirements" asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">
-                        Set competency attainment requirements
+                        Set @Model.VocabularySingular.ToLower() attainment requirements
                     </a>
                 </div>
                 <div class="nhsuk-task-list__status" id="role-requirements-status">

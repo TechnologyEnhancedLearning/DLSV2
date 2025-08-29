@@ -51,9 +51,9 @@
         CollaboratorNotification? GetCollaboratorNotification(int id, int invitedByAdminId);
 
         //  Competencies/groups:
-        IEnumerable<FrameworkCompetencyGroup> GetFrameworkCompetencyGroups(int frameworkId);
+        IEnumerable<FrameworkCompetencyGroup> GetFrameworkCompetencyGroups(int frameworkId, int? assessmentId);
 
-        IEnumerable<FrameworkCompetency> GetFrameworkCompetenciesUngrouped(int frameworkId);
+        IEnumerable<FrameworkCompetency> GetFrameworkCompetenciesUngrouped(int frameworkId, int? assessmentId);
 
         CompetencyGroupBase? GetCompetencyGroupBaseById(int Id);
 
@@ -861,18 +861,23 @@
             );
         }
 
-        public IEnumerable<FrameworkCompetencyGroup> GetFrameworkCompetencyGroups(int frameworkId)
+        public IEnumerable<FrameworkCompetencyGroup> GetFrameworkCompetencyGroups(int frameworkId, int? assessmentId)
         {
+            var assessmentFilter = assessmentId.HasValue ?
+                @$"AND c.ID NOT IN (SELECT CompetencyID
+                  FROM   SelfAssessmentStructure
+                 WHERE (SelfAssessmentID = {assessmentId}))"
+                : string.Empty;
             var result = connection.Query<FrameworkCompetencyGroup, FrameworkCompetency, FrameworkCompetencyGroup>(
-                @"SELECT fcg.ID, fcg.CompetencyGroupID, cg.Name, cg.Description, fcg.Ordering, fc.ID, c.ID AS CompetencyID, c.Name, c.Description, fc.Ordering, COUNT(caq.AssessmentQuestionID) AS AssessmentQuestions
+                @$"SELECT fcg.ID, fcg.CompetencyGroupID, cg.Name, fcg.Ordering, fc.ID, c.ID AS CompetencyID, c.Name, c.Description, fc.Ordering,
+    (SELECT COUNT(*) FROM CompetencyAssessmentQuestions caq WHERE caq.CompetencyID = c.ID) AS AssessmentQuestions
                     ,(SELECT COUNT(*) FROM CompetencyLearningResources clr WHERE clr.CompetencyID = c.ID AND clr.RemovedDate IS NULL) AS CompetencyLearningResourcesCount
                     FROM   FrameworkCompetencyGroups AS fcg INNER JOIN
                       CompetencyGroups AS cg ON fcg.CompetencyGroupID = cg.ID INNER JOIN
                        FrameworkCompetencies AS fc ON fcg.ID = fc.FrameworkCompetencyGroupID LEFT OUTER JOIN
-                       Competencies AS c ON fc.CompetencyID = c.ID LEFT OUTER JOIN
-                      CompetencyAssessmentQuestions AS caq ON c.ID = caq.CompetencyID
-                    WHERE (fcg.FrameworkID = @frameworkId)
-                    GROUP BY fcg.ID, fcg.CompetencyGroupID, cg.Name, cg.Description, fcg.Ordering, fc.ID, c.ID, c.Name, c.Description, fc.Ordering
+                       Competencies AS c ON fc.CompetencyID = c.ID
+                    WHERE (fcg.FrameworkID = @frameworkId) {assessmentFilter}
+                    GROUP BY fcg.ID, fcg.CompetencyGroupID, cg.Name, fcg.Ordering, fc.ID, c.ID, c.Name, c.Description, fc.Ordering
                     ORDER BY fcg.Ordering, fc.Ordering",
                 (frameworkCompetencyGroup, frameworkCompetency) =>
                 {
@@ -882,29 +887,36 @@
                 },
                 new { frameworkId }
             );
-            return result.GroupBy(frameworkCompetencyGroup => frameworkCompetencyGroup.CompetencyGroupID).Select(
-                group =>
-                {
-                    var groupedFrameworkCompetencyGroup = group.First();
-                    groupedFrameworkCompetencyGroup.FrameworkCompetencies = group.Where(frameworkCompetencyGroup => frameworkCompetencyGroup.FrameworkCompetencies.Count > 0)
-                    .Select(
-                        frameworkCompetencyGroup => frameworkCompetencyGroup.FrameworkCompetencies.Single()
-                    ).ToList();
-                    return groupedFrameworkCompetencyGroup;
-                }
-            );
+            return result
+    .GroupBy(fcg => fcg.CompetencyGroupID)
+    .Select(group =>
+    {
+        var groupedFrameworkCompetencyGroup = group.First();
+
+        // Flatten all FrameworkCompetencies from all instances in this group
+        groupedFrameworkCompetencyGroup.FrameworkCompetencies = group
+            .SelectMany(g => g.FrameworkCompetencies)
+            .Where(fc => fc != null).
+            Distinct().ToList();
+
+        return groupedFrameworkCompetencyGroup;
+    });
         }
 
-        public IEnumerable<FrameworkCompetency> GetFrameworkCompetenciesUngrouped(int frameworkId)
+        public IEnumerable<FrameworkCompetency> GetFrameworkCompetenciesUngrouped(int frameworkId, int? assessmentId)
         {
+            var assessmentFilter = assessmentId.HasValue ?
+                @$"AND c.ID NOT IN (SELECT CompetencyID
+                  FROM   SelfAssessmentStructure
+                 WHERE (SelfAssessmentID = {assessmentId}))"
+                : string.Empty;
             return connection.Query<FrameworkCompetency>(
-                @"SELECT fc.ID, c.ID AS CompetencyID, c.Name, c.Description, fc.Ordering, COUNT(caq.AssessmentQuestionID) AS AssessmentQuestions,(select COUNT(CompetencyId) from CompetencyLearningResources where CompetencyID=c.ID) AS CompetencyLearningResourcesCount
+                @$"SELECT fc.ID, c.ID AS CompetencyID, c.Name, c.Description, fc.Ordering,
+    (SELECT COUNT(*) FROM CompetencyAssessmentQuestions caq WHERE caq.CompetencyID = c.ID) AS AssessmentQuestions,(select COUNT(CompetencyId) from CompetencyLearningResources where CompetencyID=c.ID) AS CompetencyLearningResourcesCount
                     FROM FrameworkCompetencies AS fc
                         INNER JOIN Competencies AS c ON fc.CompetencyID = c.ID
-                        LEFT OUTER JOIN
-                      CompetencyAssessmentQuestions AS caq ON c.ID = caq.CompetencyID
                     WHERE fc.FrameworkID = @frameworkId
-                        AND fc.FrameworkCompetencyGroupID IS NULL
+                        AND fc.FrameworkCompetencyGroupID IS NULL {assessmentFilter}
 GROUP BY fc.ID, c.ID, c.Name, c.Description, fc.Ordering
                     ORDER BY fc.Ordering",
                 new { frameworkId }
