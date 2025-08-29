@@ -63,7 +63,7 @@ namespace DigitalLearningSolutions.Web.Services
         //DELETE DATA
         bool RemoveFrameworkCompetenciesFromAssessment(int competencyAssessmentId, int frameworkId);
         bool RemoveCompetencyFromAssessment(int competencyAssessmentId, int competencyId);
-        }
+    }
     public class CompetencyAssessmentService : ICompetencyAssessmentService
     {
         private readonly ICompetencyAssessmentDataService competencyAssessmentDataService;
