@@ -505,4 +505,16 @@
   <data name="TD_5535_Alter_GetActivitiesForDelegateEnrolment_Up" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Scripts\TD-5535-Alter_GetActivitiesForDelegateEnrolment_Up.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
   </data>
+  <data name="TD_5638_Alter_GetAssessmentResultsByDelegate_DOWN" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Scripts\TD-5638-Alter_GetAssessmentResultsByDelegate_DOWN.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
+  </data>
+  <data name="TD_5638_Alter_GetAssessmentResultsByDelegate_Up" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Scripts\TD-5638-Alter_GetAssessmentResultsByDelegate_Up.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
+  </data>
+  <data name="TD_5638_Alter_GetCandidateAssessmentResultsById_DOWN" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Scripts\TD-5638-Alter_GetCandidateAssessmentResultsById_DOWN.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
+  </data>
+  <data name="TD_5638_Alter_GetCandidateAssessmentResultsById_Up" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Scripts\TD-5638-Alter_GetCandidateAssessmentResultsById_Up.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
+  </data>
 </root>

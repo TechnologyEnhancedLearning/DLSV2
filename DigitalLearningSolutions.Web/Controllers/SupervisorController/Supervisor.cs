@@ -384,14 +384,14 @@
                 IsSupervisorResultsReviewed = delegateSelfAssessment.IsSupervisorResultsReviewed,
                 SearchViewModel = searchModel,
                 CandidateAssessmentId = candidateAssessmentId,
-                ExportToExcelHide = delegateSelfAssessment.SupervisorRoleTitle?.Contains("Assessor") ?? false,
+                ExportToExcelHide = delegateSelfAssessment.SupervisorRoleTitle?.Contains("Nominated Supervisor") ?? false,
             };
 
             var flags = frameworkService.GetSelectedCompetencyFlagsByCompetecyIds(reviewedCompetencies.Select(c => c.Id).ToArray());
             foreach (var competency in competencies)
             {
                 competency.CompetencyFlags = flags.Where(f => f.CompetencyId == competency.Id);
-            };
+            }
 
             if (superviseDelegate.DelegateUserID != null)
             {
@@ -1093,7 +1093,11 @@
             {
 
                 var candidateAssessmentId = selfAssessmentService.GetCandidateAssessments(delegateUserId, selfAssessmentId).SingleOrDefault()?.Id;
-                var roleId = supervisorRoles.Where(x => x.SelfAssessmentID == selfAssessmentId).Select(x => x.ID).FirstOrDefault();
+                //var roleId = supervisorRoles.Where(x => x.SelfAssessmentID == selfAssessmentId).Select(x => x.ID).FirstOrDefault();
+                var roleId = supervisorRoles
+                        .Where(x => supervisorRoles.Any(y => y.SelfAssessmentID == selfAssessmentId) ? x.SelfAssessmentID == selfAssessmentId : x.SelfAssessmentID == null)
+                        .Select(x => x.ID)
+                        .FirstOrDefault();
                 if (candidateAssessmentId != null)
                 {
                     var candidateAssessmentSupervisor = supervisorService.GetCandidateAssessmentSupervisor((int)candidateAssessmentId, supervisorDelegateId, roleId);
