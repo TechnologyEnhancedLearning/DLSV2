@@ -62,11 +62,7 @@ ul > li > ul > li {
   padding-top: 0;
 }
 
-.nhsuk-button {
-  @include mq($until: tablet) {
-    margin-top: nhsuk-spacing(3);
-  }
-}
+
 
 input:invalid {
   border: $nhsuk-border-width-form-element-error solid $nhsuk-error-color;
@@ -78,13 +74,7 @@ input[type=file] {
   }
 }
 
-input[type=file].nhsuk-input--error {
-  height: 44px;
 
-  @include govuk-media-query($until: tablet) {
-    height: 40px;
-  }
-}
 
 h1#page-heading {
   margin-bottom: 16px;
@@ -98,9 +88,6 @@ h1#page-heading {
   display: flex;
 }
 
-.nhsuk-main-wrapper {
-  flex: 1;
-}
 
 .responsive-iframe-wrapper {
   height: 100%;
@@ -119,10 +106,6 @@ h1#page-heading {
 
 .responsive-iframe-wrapper-extra-padding {
   padding-bottom: $iframe-padding-bottom * 1.5;
-}
-
-.nhsuk-heading-xl.heading-margin-2 {
-  margin-bottom: nhsuk-spacing(2);
 }
 
 .responsive-iframe {
@@ -147,25 +130,6 @@ h1#page-heading {
   margin-bottom: 0;
 }
 
-.basic-summary-list__row:last-child .nhsuk-summary-list__key {
-  border: none;
-}
-
-.basic-summary-list__row:last-child .nhsuk-summary-list__value {
-  border: none;
-  margin-bottom: 0;
-}
-
-.nhsuk-summary-list__value {
-  @include govuk-media-query($until: tablet) {
-    word-break: break-word;
-    @include word-break-ie-fix;
-  }
-}
-
-.nhsuk-tag {
-    text-align: center;
-}
 
 .right-align-tag-column {
   padding: 0;
@@ -208,10 +172,6 @@ ul.no-bullets {
 }
 
 .details-list-with-button__row:last-child {
-  margin-bottom: 0;
-}
-
-.nhsuk-details__text > .nhsuk-button {
   margin-bottom: 0;
 }
 
@@ -333,10 +293,6 @@ ul.no-bullets {
       }
     }
   }
-}
-
-.nhsuk-error-message.error-message--margin-bottom-1 {
-  margin-bottom: nhsuk-spacing(1);
 }
 
 .display-none {

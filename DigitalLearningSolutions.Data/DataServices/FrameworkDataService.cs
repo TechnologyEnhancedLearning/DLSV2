@@ -301,12 +301,13 @@
 				        AND aa3.UserID = (SELECT aa4.UserID FROM AdminAccounts aa4 WHERE aa4.ID = @adminId)) > 0 THEN 1
                 ELSE 0
             END AS UserRole,
-            (SELECT fwr.ID
+            (SELECT TOP(1) fwr.ID
 				FROM FrameworkCollaborators fc
 				INNER JOIN AdminAccounts aa3 ON fc.AdminID = aa3.ID
 				LEFT OUTER JOIN FrameworkReviews AS fwr ON fc.ID = fwr.FrameworkCollaboratorID AND fwr.Archived IS NULL AND fwr.ReviewComplete IS NULL
 				WHERE fc.FrameworkID = fw.ID AND fc.IsDeleted = 0
-				AND aa3.UserID = (SELECT aa4.UserID FROM AdminAccounts aa4 WHERE aa4.ID = @adminId)) AS FrameworkReviewID";
+				AND aa3.UserID = (SELECT aa4.UserID FROM AdminAccounts aa4 WHERE aa4.ID = @adminId)
+                AND aa3.Active = 1 ORDER BY fwr.ID DESC) AS FrameworkReviewID";
 
         private const string BrandedFrameworkFields =
             @",(SELECT BrandName
@@ -863,7 +864,7 @@
         public IEnumerable<FrameworkCompetencyGroup> GetFrameworkCompetencyGroups(int frameworkId)
         {
             var result = connection.Query<FrameworkCompetencyGroup, FrameworkCompetency, FrameworkCompetencyGroup>(
-                @"SELECT fcg.ID, fcg.CompetencyGroupID, cg.Name, fcg.Ordering, fc.ID, c.ID AS CompetencyID, c.Name, c.Description, fc.Ordering, COUNT(caq.AssessmentQuestionID) AS AssessmentQuestions
+                @"SELECT fcg.ID, fcg.CompetencyGroupID, cg.Name, cg.Description, fcg.Ordering, fc.ID, c.ID AS CompetencyID, c.Name, c.Description, fc.Ordering, COUNT(caq.AssessmentQuestionID) AS AssessmentQuestions
                     ,(SELECT COUNT(*) FROM CompetencyLearningResources clr WHERE clr.CompetencyID = c.ID AND clr.RemovedDate IS NULL) AS CompetencyLearningResourcesCount
                     FROM   FrameworkCompetencyGroups AS fcg INNER JOIN
                       CompetencyGroups AS cg ON fcg.CompetencyGroupID = cg.ID LEFT OUTER JOIN
@@ -871,7 +872,7 @@
                        Competencies AS c ON fc.CompetencyID = c.ID LEFT OUTER JOIN
                       CompetencyAssessmentQuestions AS caq ON c.ID = caq.CompetencyID
                     WHERE (fcg.FrameworkID = @frameworkId)
-                    GROUP BY fcg.ID, fcg.CompetencyGroupID, cg.Name, fcg.Ordering, fc.ID, c.ID, c.Name, c.Description, fc.Ordering
+                    GROUP BY fcg.ID, fcg.CompetencyGroupID, cg.Name, cg.Description, fcg.Ordering, fc.ID, c.ID, c.Name, c.Description, fc.Ordering
                     ORDER BY fcg.Ordering, fc.Ordering",
                 (frameworkCompetencyGroup, frameworkCompetency) =>
                 {

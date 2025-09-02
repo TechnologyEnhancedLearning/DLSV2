@@ -177,12 +177,10 @@
                                     @if (!string.IsNullOrWhiteSpace(competency.Description) && !competency.AlwaysShowDescription)
                                     {
                                         <details class="nhsuk-details">
-                                            <summary class="nhsuk-details__summary">
-                                                <h2 class="nhsuk-u-font-size-24 nhsuk-u-margin-bottom-0">
+                                            <summary class="nhsuk-details__summary"> 
                                                     <span class="nhsuk-details__summary-text">
                                                         @competency.Name
                                                     </span>
-                                                </h2>
                                             </summary>
                                             <div class="nhsuk-details__text">
                                                 @(Html.Raw(@competency.Description))
@@ -191,9 +189,9 @@
                                     }
                                     else
                                     {
-                                        <h2 class="nhsuk-u-margin-bottom-0 nhsuk-u-font-size-24">
+                                        <p class="@(!string.IsNullOrWhiteSpace(competency.Description) ? "nhsuk-u-font-weight-bold" : "") nhsuk-u-margin-bottom-0">
                                             @competency.Name
-                                        </h2>
+                                        </p>
                                         @if (!string.IsNullOrWhiteSpace(competency.Description))
                                         {
                                             <p class="nhsuk-body-l">
