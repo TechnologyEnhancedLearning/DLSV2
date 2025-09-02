@@ -582,6 +582,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<VerifyUserHasVerifiedPrimaryEmail>();
             services.AddScoped<VerifyAdminAndDelegateUserCentre>();
             services.AddScoped<IsCentreAuthorizedSelfAssessment>();
+            services.AddScoped<RequireProcessAgreementFilter>();
             services.AddScoped<VerifyAdminUserCanAccessSelfAssessment>();
         }
 
