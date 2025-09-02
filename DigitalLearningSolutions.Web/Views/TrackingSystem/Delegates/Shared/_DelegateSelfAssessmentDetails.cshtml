@@ -49,8 +49,7 @@
                         <summary class="nhsuk-details__summary nhsuk-u-padding-0">
                             @{
                                 var supervisors = string.Join(", ", new[] {
-                                    new { Role = "Educator/Manager", Count = Model.Supervisors.Count(x => x.RoleName == "Educator/Manager") },
-                                    new { Role = "Assessor", Count = Model.Supervisors.Count(x => x.RoleName == "Assessor") },
+                                    new { Role = "Nominated Supervisor", Count = Model.Supervisors.Count(x => x.RoleName == "Nominated Supervisor") },
                                     new { Role = "Supervisor", Count = Model.Supervisors.Count(x => x.RoleName == "Supervisor") }
                                     }
                                 .Where(x => x.Count > 0)
