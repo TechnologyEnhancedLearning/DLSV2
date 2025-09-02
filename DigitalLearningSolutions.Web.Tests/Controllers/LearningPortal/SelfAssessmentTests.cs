@@ -870,5 +870,64 @@
 
             result.Should().BeViewResult().ModelAs<SelfAssessmentOverviewViewModel>().CompetencyGroups.ToList()[0].Count().Should().Be(1);
         }
+
+        [Test]
+        public void SelfAssessment_should_return_description_view_when_process_agreed_or_not_supervised()
+        {
+            // Given
+            var selfAssessment = SelfAssessmentTestHelper.CreateDefaultSelfAssessment();
+            selfAssessment.IsSupervised = false; // or set SelfAssessmentProcessAgreed = true
+            A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(DelegateUserId, SelfAssessmentId))
+                .Returns(selfAssessment);
+            A.CallTo(() => selfAssessmentService.GetAllSupervisorsForSelfAssessmentId(SelfAssessmentId, DelegateUserId))
+                .Returns(new List<SelfAssessmentSupervisor>());
+            var expectedModel = new SelfAssessmentDescriptionViewModel(selfAssessment, new List<SelfAssessmentSupervisor>());
+
+            // When
+            var result = controller.SelfAssessment(SelfAssessmentId);
+
+            // Then
+            result.Should().BeViewResult()
+                .WithViewName("SelfAssessments/SelfAssessmentDescription")
+                .Model.Should().BeEquivalentTo(expectedModel);
+        }
+
+        [Test]
+        public void ProcessAgreed_should_return_agree_view_when_modelstate_invalid()
+        {
+            // Given
+            var model = new SelfAssessmentProcessViewModel { SelfAssessmentID = SelfAssessmentId };
+            controller.ModelState.AddModelError("Test", "Error");
+
+            // When
+            var result = controller.ProcessAgreed(model);
+
+            // Then
+            result.Should().BeViewResult()
+                .WithViewName("SelfAssessments/AgreeSelfAssessmentProcess")
+                .Model.Should().Be(model);
+        }
+
+        [Test]
+        public void ProcessAgreed_should_mark_progress_and_redirect_to_self_assessment()
+        {
+            // Given
+            var selfAssessment = SelfAssessmentTestHelper.CreateDefaultSelfAssessment();
+            var model = new SelfAssessmentProcessViewModel { SelfAssessmentID = SelfAssessmentId };
+            A.CallTo(() => selfAssessmentService.GetSelfAssessmentForCandidateById(DelegateUserId, SelfAssessmentId))
+                .Returns(selfAssessment);
+
+            // When
+            var result = controller.ProcessAgreed(model);
+
+            // Then
+            A.CallTo(() => selfAssessmentService.MarkProgressAgreed(SelfAssessmentId, DelegateUserId))
+                .MustHaveHappenedOnceExactly();
+
+            result.Should().BeRedirectToActionResult()
+                .WithActionName("SelfAssessment")
+                .WithRouteValue("selfAssessmentId", SelfAssessmentId);
+        }
+
     }
 }

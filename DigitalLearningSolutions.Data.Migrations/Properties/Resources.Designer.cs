@@ -478,7 +478,8 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///-- Create date: 15/10/2021
         ///-- Description:	Reorders the CompetencyAssessmentQuestions - moving the given competency question up or down.
         ///-- =============================================
-        ///CREATE OR ALTER   PROCEDURE [dbo].[ReorderCompetencyAssessmentQuestion]        /// [rest of string was truncated]&quot;;.
+        ///CREATE OR ALTER   PROCEDURE [dbo].[ReorderCompetencyAssessmentQuestion]
+        /// [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string DLSV2_379_ReorderCompetencyAssessmentQuestionsSP {
             get {
@@ -1504,7 +1505,8 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///	@EmailProfileName nvarchar(100),
         ///	@TestOnly bit
         ///AS
-        ///BEGIN        /// [rest of string was truncated]&quot;;.
+        ///BEGIN
+        /// [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string TD_3190_SendOneMonthSelfAssessmentTBCRemindersSP {
             get {
@@ -2521,6 +2523,87 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         internal static string TD_5514_Alter_SendExpiredTBCReminders_Up {
             get {
                 return ResourceManager.GetString("TD_5514_Alter_SendExpiredTBCReminders_Up", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to IF OBJECT_ID(&apos;dbo.IndexOptimize&apos;, &apos;P&apos;) IS NOT NULL DROP PROCEDURE dbo.IndexOptimize;
+        ///IF OBJECT_ID(&apos;dbo.CommandExecute&apos;, &apos;P&apos;) IS NOT NULL DROP PROCEDURE dbo.CommandExecute;
+        ///IF OBJECT_ID(&apos;dbo.CommandLog&apos;, &apos;U&apos;) IS NOT NULL DROP TABLE dbo.CommandLog;
+        ///.
+        /// </summary>
+        internal static string TD_5670_MaintenanceScripts_DOWN {
+            get {
+                return ResourceManager.GetString("TD-5670-MaintenanceScripts_DOWN", resourceCulture);
+                }
+        }
+        ///   Looks up a localized string similar to CREATE OR ALTER PROCEDURE [dbo].[usp_GetSelfAssessmentReport]
+        ///    @SelfAssessmentID INT,
+        ///    @CentreID INT
+        ///AS
+        ///BEGIN
+        ///    SET NOCOUNT ON;
+        ///
+        ///    -- Step 1: Materialize the LatestAssessmentResults into a temp table
+        ///    IF OBJECT_ID(&apos;tempdb..#LatestAssessmentResults&apos;) IS NOT NULL
+        ///        DROP TABLE #LatestAssessmentResults;
+        ///
+        ///    SELECT
+        ///        s.DelegateUserID,
+        ///        CASE WHEN COALESCE(rr.LevelRAG, 0) = 3 THEN s.ID ELSE NULL END AS SelfAssessed,
+        ///        CASE 
+        ///            WHEN sv.Verified IS NOT N [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_5759_CreateOrAlterSelfAssessmentReportSPandTVF_Fix_UP {
+            get {
+                return ResourceManager.GetString("TD-5759_CreateOrAlterSelfAssessmentReportSPandTVF-Fix_UP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to -- ============================================
+        ///-- CommandLog table
+        ///-- ============================================
+        ///IF OBJECT_ID(&apos;dbo.CommandLog&apos;, &apos;U&apos;) IS NOT NULL DROP TABLE dbo.CommandLog;
+        ///CREATE TABLE dbo.CommandLog (
+        ///    ID INT IDENTITY PRIMARY KEY,
+        ///    DatabaseName SYSNAME NULL,
+        ///    SchemaName SYSNAME NULL,
+        ///    ObjectName SYSNAME NULL,
+        ///    ObjectType CHAR(2) NULL,
+        ///    IndexName SYSNAME NULL,
+        ///    IndexType TINYINT NULL,
+        ///    StatisticsName SYSNAME NULL,
+        ///    PartitionNumber INT NULL,
+        ///    Ext [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_5670_MaintenanceScripts_UP {
+            get {
+                return ResourceManager.GetString("TD_5670_MaintenanceScripts_UP", resourceCulture);
+                }
+        }
+        ///   Looks up a localized string similar to CREATE OR ALTER FUNCTION dbo.GetOtherCentresForSelfAssessmentTVF
+        ///(
+        ///    @UserID INT,
+        ///    @SelfAssessmentID INT,
+        ///    @ExcludeCentreID INT
+        ///)
+        ///RETURNS TABLE
+        ///AS
+        ///RETURN
+        ///(
+        ///    SELECT 
+        ///        STUFF((
+        ///            SELECT DISTINCT 
+        ///                &apos;, &apos; + c.CentreName
+        ///            FROM Users AS u
+        ///            INNER JOIN DelegateAccounts AS da ON u.ID = da.UserID
+        ///            INNER JOIN Centres AS c ON da.CentreID = c.CentreID
+        ///            INNER JOIN CentreSelfAssessments AS csa ON c.CentreID = csa.CentreID [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_5759_CreateOrAlterSelfAssessmentReportSPandTVF_UP {
+            get {
+                return ResourceManager.GetString("TD-5759_CreateOrAlterSelfAssessmentReportSPandTVF_UP", resourceCulture);
             }
         }
         
