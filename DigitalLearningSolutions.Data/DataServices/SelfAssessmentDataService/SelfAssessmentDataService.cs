@@ -16,6 +16,8 @@
     {
         //Self Assessments
         string? GetSelfAssessmentNameById(int selfAssessmentId);
+        SelfAssessment? GetSelfAssessmentById(int selfAssessmentId);
+        SelfAssessment GetSelfAssessmentRetirementDateById(int selfAssessmentId);
 
         // CompetencyDataService
         IEnumerable<int> GetCompetencyIdsForSelfAssessment(int selfAssessmentId);
@@ -203,6 +205,67 @@
                 new { selfAssessmentId }
             );
             return name;
+        }
+
+        public SelfAssessment? GetSelfAssessmentById(int selfAssessmentId)
+        {
+            return connection.Query<SelfAssessment?>(
+                @"SELECT [ID]
+                      ,[Name]
+                      ,[Description]
+                      ,[IncludesSignposting]
+                      ,[BrandID]
+                      ,[CreatedDate]
+                      ,[CreatedByCentreID]
+                      ,[CreatedByAdminID]
+                      ,[ArchivedDate]
+                      ,[ArchivedByAdminID]
+                      ,[IncludeDevelopment]
+                      ,[ParentSelfAssessmentID]
+                      ,[NRPProfessionalGroupID]
+                      ,[NRPSubGroupID]
+                      ,[NRPRoleID]
+                      ,[PublishStatusID]
+                      ,[UpdatedByAdminID]
+                      ,[National]
+                      ,[Public]
+                      ,[Archived]
+                      ,[LastEdit]
+                      ,[SupervisorSelfAssessmentReview]
+                      ,[SupervisorResultsReview]
+                      ,[RAGResults]
+                      ,[LinearNavigation]
+                      ,[CategoryID]
+                      ,[UseDescriptionExpanders]
+                      ,[ManageOptionalCompetenciesPrompt]
+                      ,[Vocabulary]
+                      ,[SignOffRequestorStatement]
+                      ,[SignOffSupervisorStatement]
+                      ,[QuestionLabel]
+                      ,[DescriptionLabel]
+                      ,[EnforceRoleRequirementsForSignOff]
+                      ,[ReviewerCommentsLabel]
+                      ,[ManageSupervisorsDescription]
+                      ,[IncludeRequirementsFilters]
+                      ,[MinimumOptionalCompetencies]
+                      ,[RetirementDate]
+                      ,[EnrolmentCutoffDate]
+                      ,[RetirementReason]
+                FROM SelfAssessments
+                WHERE ID = @selfAssessmentId",
+                new { selfAssessmentId }
+            ).SingleOrDefault();
+        }
+        public SelfAssessment GetSelfAssessmentRetirementDateById(int selfAssessmentId)
+        {
+            var date = connection.QueryFirstOrDefault<SelfAssessment>(
+                @"SELECT Id,Name,[RetirementDate]
+                        FROM SelfAssessments
+                        WHERE ID = @selfAssessmentId"
+            ,
+                new { selfAssessmentId }
+            );
+            return date;
         }
 
         public (IEnumerable<SelfAssessmentDelegate>, int) GetSelfAssessmentDelegates(string searchString, int offSet, int itemsPerPage, string sortBy, string sortDirection,

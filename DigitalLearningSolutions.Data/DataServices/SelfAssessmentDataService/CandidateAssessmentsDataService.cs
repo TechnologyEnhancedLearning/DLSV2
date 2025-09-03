@@ -12,28 +12,31 @@
         {
             return connection.Query<CurrentSelfAssessment>(
                 @"SELECT  SelfAssessment.Id,
-                        SelfAssessment.Name,
-                        SelfAssessment.Description,
-                        SelfAssessment.IncludesSignposting,
-                        SelfAssessment.IncludeRequirementsFilters,
-                         SelfAssessment. IsSupervisorResultsReviewed,
-                        SelfAssessment.ReviewerCommentsLabel,
-                         SelfAssessment. Vocabulary,
-                         SelfAssessment. NumberOfCompetencies,
-                        SelfAssessment.StartedDate,
-                        SelfAssessment.LastAccessed,
-                        SelfAssessment.CompleteByDate,
-                        SelfAssessment.CandidateAssessmentId,
-                        SelfAssessment.UserBookmark,
-                        SelfAssessment.UnprocessedUpdates,
-                        SelfAssessment.LaunchCount,
-                        SelfAssessment. IsSelfAssessment,
-                         SelfAssessment.SubmittedDate,
-                       SelfAssessment. CentreName,
-                        SelfAssessment.EnrolmentMethodId,
-						Signoff.SignedOff,
-						Signoff.Verified,
-						EnrolledByForename +' '+EnrolledBySurname AS EnrolledByFullName
+                            SelfAssessment.Name,
+                            SelfAssessment.Description,
+                            SelfAssessment.IncludesSignposting,
+                            SelfAssessment.IncludeRequirementsFilters,
+                            SelfAssessment. IsSupervisorResultsReviewed,
+                            SelfAssessment.ReviewerCommentsLabel,
+                            SelfAssessment. Vocabulary,
+                            SelfAssessment. NumberOfCompetencies,
+                            SelfAssessment.StartedDate,
+                            SelfAssessment.LastAccessed,
+                            SelfAssessment.CompleteByDate,
+                            SelfAssessment.CandidateAssessmentId,
+                            SelfAssessment.UserBookmark,
+                            SelfAssessment.UnprocessedUpdates,
+                            SelfAssessment.LaunchCount,
+                            SelfAssessment. IsSelfAssessment,
+                            SelfAssessment.SubmittedDate,
+                            SelfAssessment. CentreName,
+                            SelfAssessment.EnrolmentMethodId,
+                            SelfAssessment.RetirementDate,
+                            SelfAssessment.EnrolmentCutoffDate,
+                            SelfAssessment.RetirementReason,
+                            Signoff.SignedOff,
+                            Signoff.Verified,
+                            EnrolledByForename +' '+EnrolledBySurname AS EnrolledByFullName
                         FROM	(SELECT
                         CA.SelfAssessmentID AS Id,
                         SA.Name,
@@ -56,7 +59,10 @@
                         CR.CentreName AS CentreName,
                         CA.EnrolmentMethodId,
 						uEnrolledBy.FirstName AS EnrolledByForename,
-                        uEnrolledBy.LastName AS EnrolledBySurname
+                        uEnrolledBy.LastName AS EnrolledBySurname,
+                        SA.RetirementDate,
+                        SA.EnrolmentCutoffDate,
+                        SA.RetirementReason
                         FROM Centres AS CR INNER JOIN
                         CandidateAssessments AS CA INNER JOIN
                         SelfAssessments AS SA ON CA.SelfAssessmentID = SA.ID ON CR.CentreID = CA.CentreID INNER JOIN
@@ -71,7 +77,7 @@
                     AND (ISNULL(@adminIdCategoryID, 0) = 0 OR sa.CategoryID = @adminIdCategoryId)
                     GROUP BY
                         CA.SelfAssessmentID, SA.Name, SA.Description, SA.IncludesSignposting, SA.SupervisorResultsReview,
-                        SA.ReviewerCommentsLabel, SA.IncludeRequirementsFilters,
+                        SA.ReviewerCommentsLabel, SA.IncludeRequirementsFilters, SA.RetirementDate,SA.EnrolmentCutoffDate,SA.RetirementReason, 
                         COALESCE(SA.Vocabulary, 'Capability'), CA.StartedDate, CA.LastAccessed, CA.CompleteByDate,
                         CA.ID,
                         CA.UserBookmark, CA.UnprocessedUpdates, CA.LaunchCount, CA.SubmittedDate, CR.CentreName,CA.EnrolmentMethodId,

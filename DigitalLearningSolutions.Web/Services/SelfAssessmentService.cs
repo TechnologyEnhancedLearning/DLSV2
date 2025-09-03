@@ -14,6 +14,7 @@
     {
         //Self Assessments
         string? GetSelfAssessmentNameById(int selfAssessmentId);
+        SelfAssessment? GetSelfAssessmentById(int selfAssessmentId);
         // Candidate Assessments
         IEnumerable<CurrentSelfAssessment> GetSelfAssessmentsForCandidate(int delegateUserId, int centreId, int? adminIdCategoryID);
         IEnumerable<CurrentSelfAssessment> GetSelfAssessmentsForCandidate(int delegateUserId, int centreId);
@@ -163,6 +164,7 @@
         int competencyId
     );
         void RemoveReviewCandidateAssessmentOptionalCompetencies(int id);
+        SelfAssessment GetSelfAssessmentRetirementDateById(int selfAssessmentId);
     }
 
     public class SelfAssessmentService : ISelfAssessmentService
@@ -472,6 +474,11 @@
             return selfAssessmentDataService.GetSelfAssessmentNameById(selfAssessmentId);
         }
 
+        public SelfAssessment? GetSelfAssessmentById(int selfAssessmentId)
+        {
+            return selfAssessmentDataService.GetSelfAssessmentById(selfAssessmentId);
+        }
+
         public (SelfAssessmentDelegatesData, int?) GetSelfAssessmentDelegatesPerPage(string searchString, int offSet, int itemsPerPage, string sortBy, string sortDirection,
             int? selfAssessmentId, int centreId, bool? isDelegateActive, bool? removed, bool? submitted, bool? signedOff, int? adminCategoryId)
         {
@@ -615,6 +622,10 @@
         public void RemoveReviewCandidateAssessmentOptionalCompetencies(int id)
         {
             selfAssessmentDataService.RemoveReviewCandidateAssessmentOptionalCompetencies(id);
+        }
+      public SelfAssessment GetSelfAssessmentRetirementDateById(int selfAssessmentId)
+        {
+            return selfAssessmentDataService.GetSelfAssessmentRetirementDateById(selfAssessmentId);
         }
     }
 }
