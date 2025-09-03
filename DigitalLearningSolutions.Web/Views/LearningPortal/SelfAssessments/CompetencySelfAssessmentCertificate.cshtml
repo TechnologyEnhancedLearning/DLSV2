@@ -76,20 +76,21 @@
             <h1>Certificate</h1>
 
             <h2>@Model.CompetencySelfAssessmentCertificates.SelfAssessment - @Model.CompetencySelfAssessmentCertificates.LearnerName </h2>
-            @if (Model.Vocabulary == "Proficiencies")
+
+            @if (Model.Vocabulary == "ProfileAssessment")
             {
                 <a class="nhsuk-button "
-                   asp-controller="LearningPortal"
+                   asp-controller="Supervisor"
                    asp-route-candidateAssessmentId="@Model.CompetencySelfAssessmentCertificates.CandidateAssessmentID"
                    asp-action="DownloadCertificate"
                    role="button">
                     Download certificate
                 </a>
             }
-            @if (Model.Vocabulary == "ProfileAssessment")
+            else
             {
                 <a class="nhsuk-button "
-                   asp-controller="Supervisor"
+                   asp-controller="LearningPortal"
                    asp-route-candidateAssessmentId="@Model.CompetencySelfAssessmentCertificates.CandidateAssessmentID"
                    asp-action="DownloadCertificate"
                    role="button">
