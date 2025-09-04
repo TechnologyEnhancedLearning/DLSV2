@@ -30,7 +30,8 @@ namespace DigitalLearningSolutions.Web.Services
         bool RemoveSelfAssessmentFramework(int assessmentId, int frameworkId, int adminId);
 
         int[] GetLinkedFrameworkCompetencyIds(int competencyAssessmentId, int frameworkId);
-
+        CompetencyAssessmentFeatures? GetCompetencyAssessmentFeaturesTaskStatus(int competencyAssessmentId);
+        int? GetSelfAssessmentStructure(int competencyAssessmentId);
         //UPDATE DATA
         bool UpdateCompetencyAssessmentName(int competencyAssessmentId, int adminId, string competencyAssessmentName);
         bool UpdateCompetencyRoleProfileLinks(int competencyAssessmentId, int adminId, int? professionalGroupId, int? subGroupId, int? roleId);
@@ -53,13 +54,16 @@ namespace DigitalLearningSolutions.Web.Services
             int groupId,
             string direction
         );
+        bool UpdateCompetencyAssessmentFeaturesTaskStatus(int id, bool descriptionStatus, bool providerandCategoryStatus, bool vocabularyStatus,
+          bool workingGroupStatus, bool AllframeworkCompetenciesStatus);
+        void UpdateSelfAssessmentFromFramework(int selfAssessmentId, int? frameworkId);
 
         //INSERT DATA
         int InsertCompetencyAssessment(int adminId, int centreId, string competencyAssessmentName, int? frameworkId);
         bool InsertSelfAssessmentFramework(int adminId, int assessmentId, int frameworkId);
         int GetCompetencyCountByFrameworkId(int competencyAssessmentId, int frameworkId);
         bool InsertCompetenciesIntoAssessmentFromFramework(int[] selectedCompetencyIds, int frameworkId, int competencyAssessmentId);
-
+        bool InsertSelfAssessmentStructure(int selfAssessmentId, int? frameworkId);
         //DELETE DATA
         bool RemoveFrameworkCompetenciesFromAssessment(int competencyAssessmentId, int frameworkId);
         bool RemoveCompetencyFromAssessment(int competencyAssessmentId, int competencyId);
@@ -264,5 +268,27 @@ namespace DigitalLearningSolutions.Web.Services
         {
             competencyAssessmentDataService.MoveCompetencyGroupInSelfAssessment(competencyAssessmentId, groupId, direction);
         }
-    }
+        public bool UpdateCompetencyAssessmentFeaturesTaskStatus(int id, bool descriptionStatus, bool providerandCategoryStatus, bool vocabularyStatus,
+          bool workingGroupStatus, bool AllframeworkCompetenciesStatus)
+        {
+            return competencyAssessmentDataService.UpdateCompetencyAssessmentFeaturesTaskStatus(id, descriptionStatus, providerandCategoryStatus, vocabularyStatus,
+            workingGroupStatus, AllframeworkCompetenciesStatus);
+        }
+        public CompetencyAssessmentFeatures? GetCompetencyAssessmentFeaturesTaskStatus(int competencyAssessmentId)
+        {
+            return competencyAssessmentDataService.GetCompetencyAssessmentFeaturesTaskStatus(competencyAssessmentId);
+        }
+        public bool InsertSelfAssessmentStructure(int selfAssessmentId, int? frameworkId)
+        {
+            return competencyAssessmentDataService.InsertSelfAssessmentStructure(selfAssessmentId, frameworkId);
+        }
+        public void UpdateSelfAssessmentFromFramework(int selfAssessmentId, int? frameworkId)
+        {
+             competencyAssessmentDataService.UpdateSelfAssessmentFromFramework(selfAssessmentId, frameworkId);
+        }
+        public int? GetSelfAssessmentStructure(int competencyAssessmentId)
+        {
+            return competencyAssessmentDataService.GetSelfAssessmentStructure(competencyAssessmentId);
+        }
+        }
 }

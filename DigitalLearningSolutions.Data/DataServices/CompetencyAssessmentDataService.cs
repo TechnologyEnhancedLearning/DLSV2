@@ -7,7 +7,6 @@
     using System.Collections.Generic;
     using System.Data;
     using System.Linq;
-
     public interface ICompetencyAssessmentDataService
     {
         //GET DATA
@@ -34,6 +33,8 @@
         IEnumerable<Competency> GetCompetenciesForCompetencyAssessment(int competencyAssessmentId);
         IEnumerable<LinkedFramework> GetLinkedFrameworksForCompetencyAssessment(int competencyAssessmentId);
         int[] GetLinkedFrameworkCompetencyIds(int competencyAssessmentId, int frameworkId);
+        CompetencyAssessmentFeatures? GetCompetencyAssessmentFeaturesTaskStatus(int competencyAssessmentId);
+        int? GetSelfAssessmentStructure(int competencyAssessmentId);
 
         //UPDATE DATA
         bool UpdateCompetencyAssessmentName(int competencyAssessmentId, int adminId, string competencyAssessmentName);
@@ -64,12 +65,15 @@
             int groupId,
             string direction
         );
+        public bool UpdateCompetencyAssessmentFeaturesTaskStatus(int id, bool descriptionStatus, bool providerandCategoryStatus, bool vocabularyStatus,
+           bool workingGroupStatus, bool AllframeworkCompetenciesStatus);
+        void UpdateSelfAssessmentFromFramework(int selfAssessmentId, int? frameworkId);
 
         //INSERT DATA
         int InsertCompetencyAssessment(int adminId, int centreId, string competencyAssessmentName);
         bool InsertSelfAssessmentFramework(int adminId, int selfAssessmentId, int frameworkId);
         bool InsertCompetenciesIntoAssessmentFromFramework(int[] selectedCompetencyIds, int frameworkId, int competencyAssessmentId);
-
+        bool InsertSelfAssessmentStructure(int selfAssessmentId, int? frameworkId);
         //DELETE DATA
         bool RemoveFrameworkCompetenciesFromAssessment(int competencyAssessmentId, int frameworkId);
         bool RemoveCompetencyFromAssessment(int competencyAssessmentId, int competencyId);
@@ -753,6 +757,113 @@
                     new { SelfAssessmentID = competencyAssessmentId, GroupID = groupId, Direction = direction },
                     commandType: CommandType.StoredProcedure
                 );
+        }
+
+        public bool UpdateCompetencyAssessmentFeaturesTaskStatus(int id, bool descriptionStatus, bool providerandCategoryStatus, bool vocabularyStatus,
+            bool workingGroupStatus, bool AllframeworkCompetenciesStatus)
+        {
+            var numberOfAffectedRows = connection.Execute(
+               @"IF EXISTS (SELECT 1 FROM SelfAssessmentTaskStatus WHERE SelfAssessmentId = @id)
+               BEGIN
+               UPDATE SelfAssessmentTaskStatus
+               SET IntroductoryTextTaskStatus = CASE WHEN @descriptionStatus = 1 THEN 1 ELSE NULL END,
+                       BrandingTaskStatus         = CASE WHEN @providerandCategoryStatus = 1 THEN 1 ELSE NULL END,
+                       VocabularyTaskStatus       = CASE WHEN @vocabularyStatus = 1 THEN 1 ELSE NULL END,
+                       WorkingGroupTaskStatus     = CASE WHEN @workingGroupStatus = 1 THEN 1 ELSE NULL END,
+                       FrameworkLinksTaskStatus   = CASE WHEN @AllframeworkCompetenciesStatus = 1 THEN 1 ELSE NULL END
+                 WHERE SelfAssessmentId = @id;
+                    END
+                     ELSE
+                    BEGIN
+                 INSERT INTO SelfAssessmentTaskStatus
+                 (SelfAssessmentId, IntroductoryTextTaskStatus, BrandingTaskStatus, VocabularyTaskStatus, WorkingGroupTaskStatus, FrameworkLinksTaskStatus)
+                 VALUES
+                 (
+                       @id,
+                    CASE WHEN @descriptionStatus = 1 THEN 1 ELSE NULL END,
+                    CASE WHEN @providerandCategoryStatus = 1 THEN 1 ELSE NULL END,
+                    CASE WHEN @vocabularyStatus = 1 THEN 1 ELSE NULL END,
+                    CASE WHEN @workingGroupStatus = 1 THEN 1 ELSE NULL END,
+                    CASE WHEN @AllframeworkCompetenciesStatus = 1 THEN 1 ELSE NULL END
+                        );
+                        END",
+               new { id, descriptionStatus, providerandCategoryStatus, vocabularyStatus, workingGroupStatus, AllframeworkCompetenciesStatus }
+           );
+            if (numberOfAffectedRows < 1)
+            {
+                logger.LogWarning(
+                    "Not updating SelfAssessmentTaskStatus as db update failed. " +
+                    $"SelfAssessmentId: {id}, IntroductoryTextTaskStatus: {descriptionStatus}, BrandingTaskStatus: {providerandCategoryStatus}, " +
+                    $"VocabularyTaskStatus: {vocabularyStatus}, WorkingGroupTaskStatus: {workingGroupStatus}, FrameworkLinksTaskStatus: {AllframeworkCompetenciesStatus}"
+                );
+                return false;
+            }
+            return true;
+        }
+
+        public CompetencyAssessmentFeatures? GetCompetencyAssessmentFeaturesTaskStatus(int competencyAssessmentId)
+        {
+            return connection.QueryFirstOrDefault<CompetencyAssessmentFeatures>(
+               @"SELECT s.ID, s.Name AS CompetencyAssessmentName, sts.IntroductoryTextTaskStatus AS DescriptionStatus, sts.BrandingTaskStatus AS ProviderandCategoryStatus,
+	           sts.VocabularyTaskStatus AS VocabularyStatus, sts.WorkingGroupTaskStatus AS WorkingGroupStatus, sts.FrameworkLinksTaskStatus AS AllframeworkCompetenciesStatus
+	           FROM  SelfAssessments s INNER JOIN 
+	           SelfAssessmentTaskStatus sts ON s.ID = sts.SelfAssessmentId 
+	          WHERE s.ID = @competencyAssessmentId",
+               new { competencyAssessmentId }
+           );
+            
+        }
+
+        public void UpdateSelfAssessmentFromFramework( int selfAssessmentId, int? frameworkId)
+        {
+           
+            var numberOfAffectedRows = connection.Execute(
+                @"UPDATE s
+                    SET 
+                    [Description] = COALESCE(F.[Description], 'No description provided'),
+                    BrandID = F.BrandID,
+                    CategoryID = F.CategoryID,
+                    CreatedByCentreID = AU.CentreID,
+                    CreatedByAdminID = F.OwnerAdminID
+                    FROM SelfAssessments s
+                    INNER JOIN Frameworks F ON F.ID = @frameworkId
+                    INNER JOIN AdminUsers AU ON F.OwnerAdminID = AU.AdminID
+                    WHERE s.id = @selfAssessmentId;"
+            ,
+                new {selfAssessmentId, frameworkId }
+            );
+        }
+        public bool InsertSelfAssessmentStructure(int selfAssessmentId, int? frameworkId)
+        {
+
+                var numberOfAffectedRows = connection.Execute(
+                @"INSERT INTO SelfAssessmentStructure (SelfAssessmentID, CompetencyID, Ordering, CompetencyGroupID)
+                SELECT s.ID, FC.CompetencyID, ROW_NUMBER() OVER( ORDER BY FCG.Ordering, FC.Ordering ), FCG.CompetencyGroupID
+                 FROM FrameworkCompetencies AS FC 
+                INNER JOIN FrameworkCompetencyGroups AS FCG ON FC.FrameworkCompetencyGroupID = FCG.ID INNER JOIN
+				SelfAssessments s ON s.id = @selfAssessmentId
+                WHERE FC.FrameworkID = @frameworkId"
+            ,
+                new { selfAssessmentId, frameworkId }
+            );
+            if (numberOfAffectedRows < 1)
+            {
+                logger.LogWarning(
+                "Not inserting SelfAssessmentStructure record as db insert failed. " +
+                    $"selfAssessmentId: {selfAssessmentId}, frameworkId: {frameworkId}"
+                );
+                return false;
+            }
+
+            return true;
+        }
+        public int? GetSelfAssessmentStructure(int competencyAssessmentId)
+        {
+            return connection.QueryFirstOrDefault<int>(
+               @"SELECT 1 from dbo.SelfAssessmentStructure where selfassessmentid  = @competencyAssessmentId",
+               new { competencyAssessmentId }
+           );
+
         }
     }
 }
