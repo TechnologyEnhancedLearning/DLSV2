@@ -1,0 +1,81 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
+@model CompetencyAssessmentFeaturesViewModel
+@{
+    ViewData["Title"] = "Competency assessment features summary";
+    ViewData["Application"] = "Framework Service";
+    ViewData["HeaderPathName"] = "Framework Service";
+}
+
+@section NavMenuItems {
+    <partial name="Shared/_NavMenuItems" />
+}
+@section NavBreadcrumbs {
+    <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+        <div class="nhsuk-width-container">
+            <ol class="nhsuk-breadcrumb__list">
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewCompetencyAssessments" asp-route-tabname="Mine">Competency Assessments</a></li>
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="CompetencyAssessmentFeatures" asp-route-competencyAssessmentId="@Model.ID" asp-route-frameworkId="@Model.FrameworkId">Competency Assessment Features</a></li>
+                <li class="nhsuk-breadcrumb__item">Competency assessment features summary</li>
+            </ol>
+        </div>
+    </nav>
+}
+
+
+<h1> Check your answer before creating competency assessment</h1>
+ <form method="post">
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <partial name="_ErrorSummary" />
+    }
+<div class="nhsuk-u-reading-width">
+    <dl class="nhsuk-summary-list nhsuk-summary-list--no-border">
+
+        <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+                Assessment name
+            </dt>
+            <dd class="nhsuk-summary-list__value">
+                @Model.CompetencyAssessmentName
+            </dd>
+            <dd class="nhsuk-summary-list__actions">
+                    <a asp-action="CompetencyAssessmentName" asp-route-actionName="Edit" asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]"
+                   asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]">
+                    Change<span class="nhsuk-u-visually-hidden"> assessment name</span>
+                </a>
+            </dd>
+        </div>
+        <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+              Features to copy from framework
+            </dt>
+            <dd class="nhsuk-summary-list__value">
+                @if (Model.SelectedFeatures.Any())
+                {
+                    <ul class="nhsuk-list nhsuk-list--bullet">
+                        @foreach (var feature in Model.SelectedFeatures)
+                        {
+                            <li>@feature</li>
+                        }
+                    </ul>
+                }
+                else
+                {
+                    <span>No features selected</span>
+                }
+            </dd>
+            <dd class="nhsuk-summary-list__actions">
+                <a asp-action="CompetencyAssessmentFeatures"  asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]"
+                   asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]">
+                    Change<span class="nhsuk-u-visually-hidden"> features</span>
+                </a>
+            </dd>
+        </div>
+    </dl>
+        <input name="ID" type="hidden" asp-for="ID" />
+        <input name="CompetencyAssessmentName" type="hidden" asp-for="CompetencyAssessmentName" />
+        <input name="userRole" type="hidden" asp-for="UserRole" />
+        <input name="FrameID" type="hidden" asp-for="FrameworkId" />
+</div>
+<button type="submit" class="nhsuk-button">Confirm and create assessment</button>
+</form> 

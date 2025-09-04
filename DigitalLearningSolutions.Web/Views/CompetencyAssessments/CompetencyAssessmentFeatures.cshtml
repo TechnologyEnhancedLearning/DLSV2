@@ -1,0 +1,64 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
+@model CompetencyAssessmentFeaturesViewModel
+@{
+    ViewData["Title"] = "Competency assessment features ";
+    ViewData["Application"] = "Framework Service";
+    ViewData["HeaderPathName"] = "Framework Service";
+}
+
+@section NavMenuItems {
+    <partial name="Shared/_NavMenuItems" />
+}
+ @section NavBreadcrumbs {
+    <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+        <div class="nhsuk-width-container">
+            <ol class="nhsuk-breadcrumb__list">
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewCompetencyAssessments" asp-route-tabname="Mine">Competency Assessments</a></li>
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="CompetencyAssessmentName" asp-route-competencyAssessmentId="@Model.ID">Manage Competency Assessment</a></li>
+                <li class="nhsuk-breadcrumb__item">Competency assessment features</li>
+            </ol>
+        </div>
+    </nav>
+} 
+
+<h1>Create a new competency assessment</h1>
+<h2> Which features of the framework do you want to copy into the competency assessment?</h2>
+<p class="nhsuk-body-m">The framework itself will be used as the source for this self-assessment. </p>
+<p class="nhsuk-body-m">Select any additional features you want to copy into the competency assessment. You can edit all features later if needed.</p>
+ <form method="post">
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <partial name="_ErrorSummary" />
+    }
+   
+    <nhs-form-group>
+        <vc:single-checkbox asp-for="@nameof(Model.DescriptionStatus)" label="Description" hint-text="The framework description will be copied into the competency assessment description."></vc:single-checkbox>
+    </nhs-form-group>
+    <nhs-form-group>
+        <vc:single-checkbox asp-for="@nameof(Model.ProviderandCategoryStatus)" label="Provider and category" hint-text="The framework branding (provider and category) will be copied."></vc:single-checkbox>
+    </nhs-form-group>
+    <nhs-form-group>
+        <vc:single-checkbox asp-for="@nameof(Model.VocabularyStatus)" label="Vocabulary" hint-text="The framework vocabulary (such as proficiency, competency, or capability) will be copied."></vc:single-checkbox>
+    </nhs-form-group>
+    <nhs-form-group>
+        <vc:single-checkbox asp-for="@nameof(Model.WorkingGroupStatus)" label="Working group" hint-text="Contributors and reviewers from the framework will be copied."></vc:single-checkbox>
+    </nhs-form-group>
+    <nhs-form-group>
+        <vc:single-checkbox asp-for="@nameof(Model.AllframeworkCompetenciesStatus)" label="All framework competencies" hint-text="All competencies in the framework will be copied."></vc:single-checkbox>
+    </nhs-form-group>
+    <input name="ID" type="hidden" asp-for="ID" />
+    <input name="CompetencyAssessmentName" type="hidden" asp-for="CompetencyAssessmentName" />
+    <input name="userRole" type="hidden" asp-for="UserRole" />
+    <input name="FrameID" type="hidden" asp-for="FrameworkId" />
+    <button class="nhsuk-button" type="submit">
+        Next
+    </button>
+    <div class="nhsuk-back-link">
+        <a class="nhsuk-back-link__link" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.ID">
+            <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
+            </svg>
+            Cancel
+        </a>
+    </div>
+</form> 
