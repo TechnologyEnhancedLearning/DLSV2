@@ -8,6 +8,7 @@
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments;
+    using GDS.MultiPageFormData.Enums;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Rendering;
     using Microsoft.Extensions.Logging;
@@ -82,7 +83,6 @@
                    isWorkforceManager
                    );
             }
-
             var currentTab = tabname == "All" ? CompetencyAssessmentsTab.AllCompetencyAssessments : CompetencyAssessmentsTab.MyCompetencyAssessments;
             CompetencyAssessmentsViewModel? model = new CompetencyAssessmentsViewModel(
                 isWorkforceManager,
@@ -103,6 +103,11 @@
         {
             var adminId = GetAdminID();
             var competencyAssessmentBase = new CompetencyAssessmentBase();
+            if ((frameworkId.HasValue && frameworkId.Value != 0 && actionName == "New"))
+            {
+                var data = new CompetencyAssessmentFeaturesViewModel();
+                SetcompetencyAssessmentFeaturesData(data);
+            }
             if (competencyAssessmentId > 0)
             {
                 competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
@@ -168,8 +173,7 @@
                     }
                     if (frameworkId.HasValue && frameworkId.Value != 0
                          && competencyAssessmentId != 0
-                         && actionName == "Edit")  return RedirectToAction("CompetencyAssessmentFeatures", new { competencyAssessmentId, frameworkId });
-                   
+                         && actionName == "Edit") return RedirectToAction("CompetencyAssessmentFeatures", new { competencyAssessmentId, frameworkId });
                 }
                 return RedirectToAction("ManageCompetencyAssessment", new { competencyAssessmentId, frameworkId });
             }
@@ -653,18 +657,11 @@
         {
            
                 var adminId = GetAdminID();
-            if (competencyAssessmentId == 0) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
-            var competencyAssessment = competencyAssessmentService.GetCompetencyAssessmentFeaturesTaskStatus(competencyAssessmentId);
-            if (competencyAssessment != null)
-            {
-                var model = new CompetencyAssessmentFeaturesViewModel(competencyAssessment, frameworkId);
-                return View(model);
-            }
-           
+            var data = GetcompetencyAssessmentFeaturesData();
+            if (!string.IsNullOrEmpty(data.CompetencyAssessmentName)) return View(data);
                 var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
                 if (competencyAssessmentBase == null) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 500 });
                 if (competencyAssessmentBase.UserRole < 2) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
-
                 var baseModel = new CompetencyAssessmentFeaturesViewModel(competencyAssessmentBase.ID,
                     competencyAssessmentBase.CompetencyAssessmentName,
                     competencyAssessmentBase.UserRole,
@@ -676,15 +673,8 @@
         public IActionResult CompetencyAssessmentFeatures(CompetencyAssessmentFeaturesViewModel featuresViewModel)
         {
             if (featuresViewModel == null) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 500 });
-            var competency = competencyAssessmentService.UpdateCompetencyAssessmentFeaturesTaskStatus(featuresViewModel.ID,
-                featuresViewModel.DescriptionStatus,
-                featuresViewModel.ProviderandCategoryStatus,
-                featuresViewModel.VocabularyStatus,
-          featuresViewModel.WorkingGroupStatus,
-          featuresViewModel.AllframeworkCompetenciesStatus);
-            if (!competency) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 500 });
+            SetcompetencyAssessmentFeaturesData(featuresViewModel);
             return RedirectToAction("CompetencyAssessmentSummary", new { competencyAssessmentId = featuresViewModel.ID,featuresViewModel.FrameworkId  });
-
         }
 
         [Route("/CompetencyAssessments/Framework/{frameworkId}/{competencyAssessmentId}/Summary")]
@@ -692,22 +682,49 @@
         {
             if (competencyAssessmentService.GetSelfAssessmentStructure(competencyAssessmentId) != 0) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 410 });
             if (competencyAssessmentId == 0)  return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
-            var competencyAssessment = competencyAssessmentService.GetCompetencyAssessmentFeaturesTaskStatus(competencyAssessmentId);
-            if (competencyAssessment == null) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 500 });
-            var model = new CompetencyAssessmentFeaturesViewModel(competencyAssessment, frameworkId);
-             return View(model);
+            var data = GetcompetencyAssessmentFeaturesData();
+            if (data == null) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 500 });
+            SetcompetencyAssessmentFeaturesData(data);
+            return View(data);
         }
         [HttpPost]
         [Route("/CompetencyAssessments/Framework/{frameworkId}/{competencyAssessmentId}/Summary")]
         public IActionResult CompetencyAssessmentSummary(CompetencyAssessmentFeaturesViewModel competency)
         {
-            if (competencyAssessmentService.GetSelfAssessmentStructure(competency.ID) != 0) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 410 });
-            if (competency.ID == 0) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
-            competencyAssessmentService.UpdateSelfAssessmentFromFramework(competency.ID , competency.FrameworkId );
-            var insertSelfAssessment =  competencyAssessmentService.InsertSelfAssessmentStructure(competency.ID, competency.FrameworkId);
+            var data = GetcompetencyAssessmentFeaturesData();
+            if (data.ID == 0) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
+            if (competencyAssessmentService.GetSelfAssessmentStructure(data.ID) != 0) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 410 });
+            var features = competencyAssessmentService.UpdateCompetencyAssessmentFeaturesTaskStatus(data.ID,
+               data.DescriptionStatus,
+               data.ProviderandCategoryStatus,
+               data.VocabularyStatus,
+                data.WorkingGroupStatus,
+            data.AllframeworkCompetenciesStatus);
+            if (!features) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 500 });
+            competencyAssessmentService.UpdateSelfAssessmentFromFramework(data.ID , data.FrameworkId );
+            var insertSelfAssessment =  competencyAssessmentService.InsertSelfAssessmentStructure(data.ID, data.FrameworkId);
             if (!insertSelfAssessment) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 500 });
+            multiPageFormService.ClearMultiPageFormData(MultiPageFormDataFeature.AddCustomWebForm("AssessmentFeaturesDataCWF"), TempData);
+            TempData.Clear();
             return RedirectToAction("ManageCompetencyAssessment", new { competencyAssessmentId = competency.ID, competency.FrameworkId });
+        }
 
+        private void SetcompetencyAssessmentFeaturesData(CompetencyAssessmentFeaturesViewModel data)
+        {
+            multiPageFormService.SetMultiPageFormData(
+                 data,
+                 MultiPageFormDataFeature.AddCustomWebForm("AssessmentFeaturesDataCWF"),
+                 TempData
+             );
+        }
+
+        private CompetencyAssessmentFeaturesViewModel GetcompetencyAssessmentFeaturesData()
+        {
+            var data = multiPageFormService.GetMultiPageFormData<CompetencyAssessmentFeaturesViewModel>(
+               MultiPageFormDataFeature.AddCustomWebForm("AssessmentFeaturesDataCWF"),
+               TempData
+           ).GetAwaiter().GetResult();
+            return data;
         }
     }
 }

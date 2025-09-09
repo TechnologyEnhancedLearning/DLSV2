@@ -15,7 +15,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
             FrameworkId = frameworkId;
         }
 
-        public CompetencyAssessmentFeaturesViewModel(CompetencyAssessmentFeatures features,  int? frameworkId)
+        public CompetencyAssessmentFeaturesViewModel(CompetencyAssessmentFeaturesViewModel features)
         {
             ID = features.ID;
             CompetencyAssessmentName = features.CompetencyAssessmentName;
@@ -24,7 +24,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
             VocabularyStatus = features.VocabularyStatus;
             WorkingGroupStatus = features.WorkingGroupStatus;
             AllframeworkCompetenciesStatus = features.AllframeworkCompetenciesStatus;
-            FrameworkId = frameworkId.Value;
+            FrameworkId = features.FrameworkId.Value;
         }
         public int ID { get; set; }
         public string CompetencyAssessmentName { get; set; } = string.Empty;

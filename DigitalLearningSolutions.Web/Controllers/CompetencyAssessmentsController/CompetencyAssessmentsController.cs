@@ -2,6 +2,7 @@
 {
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Services;
+    using GDS.MultiPageFormData;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Configuration;
@@ -16,13 +17,15 @@
         private readonly IFrameworkNotificationService frameworkNotificationService;
         private readonly ILogger<CompetencyAssessmentsController> logger;
         private readonly IConfiguration config;
+        private readonly IMultiPageFormService multiPageFormService;
         public CompetencyAssessmentsController(
            ICompetencyAssessmentService competencyAssessmentService,
            IFrameworkService frameworkService,
            ICommonService commonService,
            IFrameworkNotificationService frameworkNotificationService,
            ILogger<CompetencyAssessmentsController> logger,
-           IConfiguration config)
+           IConfiguration config,
+            IMultiPageFormService multiPageFormService)
         {
             this.competencyAssessmentService = competencyAssessmentService;
             this.frameworkService = frameworkService;
@@ -30,6 +33,7 @@
             this.frameworkNotificationService = frameworkNotificationService;
             this.logger = logger;
             this.config = config;
+            this.multiPageFormService = multiPageFormService;
         }
         public IActionResult Index()
         {
