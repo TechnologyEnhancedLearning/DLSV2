@@ -21,7 +21,6 @@ using Org.BouncyCastle.Asn1.Misc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 
 namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
 {
@@ -331,8 +330,7 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
         {
             editCentreManagerDetailsViewModel.FirstName = editCentreManagerDetailsViewModel.FirstName == null ? string.Empty : editCentreManagerDetailsViewModel.FirstName.Trim();
             editCentreManagerDetailsViewModel.LastName = editCentreManagerDetailsViewModel.LastName == null ? string.Empty : editCentreManagerDetailsViewModel.LastName.Trim();
-            editCentreManagerDetailsViewModel.Telephone = editCentreManagerDetailsViewModel.Telephone != null   ? Regex.Replace(editCentreManagerDetailsViewModel.Telephone, @"\s+", "")
-                : string.Empty; ;
+            editCentreManagerDetailsViewModel.Telephone = editCentreManagerDetailsViewModel.Telephone?.Trim() ?? string.Empty;
             if (!ModelState.IsValid)
             {
                 return View(editCentreManagerDetailsViewModel);
