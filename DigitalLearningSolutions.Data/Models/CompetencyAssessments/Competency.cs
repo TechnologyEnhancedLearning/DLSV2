@@ -11,5 +11,6 @@
         public string? CompetencyName { get; set; }
         public string? CompetencyDescription { get; set; }
         public bool Optional { get; set; }
+        public bool GroupOptionalCompetencies { get; set; }
     }
 }

@@ -13,7 +13,7 @@
             TaskStatus = taskStatus;
             CompetencyAssessmentName = competencyAssessmentBase.CompetencyAssessmentName;
             UserRole = competencyAssessmentBase.UserRole;
-            Competencies = competencies;
+            Competencies = competencies.Where(c => c.Optional == true);
             VocabularySingular = FrameworkVocabularyHelper.VocabularySingular(competencyAssessmentBase.Vocabulary);
             VocabularyPlural = FrameworkVocabularyHelper.VocabularyPlural(competencyAssessmentBase.Vocabulary);
             SelectedCompetencyIds = competencies.Where(c => c.Optional == true).Select(c => c.CompetencyID).ToArray();

@@ -1,3 +1,44 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
 @model SelectOptionalCompetenciesViewModel;
-<h1>Select optional competencies</h1>
+<h1>Manage optional competencies</h1>
+<p class="nhsuk-lede-text">
+    Manage optional competencies for the assessment @Model.CompetencyAssessmentName. Optional competencies can be selected for inclusion in a self assessment by a learner if required. Optional competencies can be configured to be added to the assessment individually or as a group.
+</p>
+@if(!Model.SelectedCompetencyIds.Any())
+{
+    <p>No competencies have been made optional for this self assessment.</p>
+    <a class="nhsuk-button" asp-action="SelectOptionalCompetencies"></a>
+}
+else
+{
+    <table class="nhsuk-table">
+        <caption class="nhsuk-table__caption nhsuk-table__caption--m">Optional competencies for @Model.CompetencyAssessmentName</caption>
+        <thead class="nhsuk-table__head">
+            <tr class="nhsuk-table__row">
+                <th scope="col" class="nhsuk-table__header">Competency group</th>
+                <th scope="col" class="nhsuk-table__header">Competency name</th>
+                <th scope="col" class="nhsuk-table__header">Actions</th>
+            </tr>
+        </thead>
+        <tbody class="nhsuk-table__body">
+            @foreach (var competency in Model.Competencies)
+            {
+                <tr class="nhsuk-table__row">
+                    <td class="nhsuk-table__cell">@competency.GroupName</td>
+                    <td class="nhsuk-table__cell">@competency.CompetencyName</td>
+                    
+                    <td class="nhsuk-table__cell">
+                        <a asp-action="RemoveOptionalCompetency" asp-route-competencyId="@competency.CompetencyID" class="nhsuk-link">Remove</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <p class="nhsuk-lede-text">
+        You can provide optional instruction text for learners explaining how to choose optional competencies for inclusion.
+    </p>
+    <p class="nhsuk-lede-text">
+        You can also, optionally define a minimum number of optional competencies that must be included in an assessment for it to be valid.
+    </p>
+}
+

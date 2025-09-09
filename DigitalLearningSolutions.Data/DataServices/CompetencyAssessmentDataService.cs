@@ -83,7 +83,9 @@
                 sa.NRPProfessionalGroupID,
                  sa.NRPSubGroupID,
                  sa.NRPRoleID,
-                 sa.PublishStatusID, sa.Vocabulary, CASE WHEN sa.CreatedByAdminID = @adminId THEN 3 WHEN sac.CanModify = 1 THEN 2 WHEN sac.CanModify = 0 THEN 1 ELSE 0 END AS UserRole";
+                 sa.PublishStatusID, sa.Vocabulary, CASE WHEN sa.CreatedByAdminID = @adminId THEN 3 WHEN sac.CanModify = 1 THEN 2 WHEN sac.CanModify = 0 THEN 1 ELSE 0 END AS UserRole,
+                 sa.MinimumOptionalCompetencies,
+                 sa.ManageOptionalCompetenciesPrompt";
 
         private const string SelfAssessmentFields =
             @", sa.CategoryID, sa.CreatedDate,
@@ -646,7 +648,7 @@
         public IEnumerable<Competency> GetCompetenciesForCompetencyAssessment(int competencyAssessmentId)
         {
             return connection.Query<Competency>(
-               @"SELECT sas.ID AS StructureId, sas.CompetencyID, f.ID AS FrameworkId, f.FrameworkName, cg.ID AS GroupId, cg.Name AS GroupName, c.Name AS CompetencyName, c.Description AS CompetencyDescription, sas.Optional
+               @"SELECT sas.ID AS StructureId, sas.CompetencyID, f.ID AS FrameworkId, f.FrameworkName, cg.ID AS GroupId, cg.Name AS GroupName, c.Name AS CompetencyName, c.Description AS CompetencyDescription, sas.Optional, sas.GroupOptionalCompetencies
                     FROM   SelfAssessmentStructure AS sas INNER JOIN
                                 Competencies AS c ON sas.CompetencyID = c.ID INNER JOIN
                                 CompetencyGroups AS cg ON sas.CompetencyGroupID = cg.ID INNER JOIN
