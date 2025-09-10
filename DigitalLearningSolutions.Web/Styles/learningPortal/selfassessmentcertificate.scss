@@ -99,13 +99,12 @@
   width: 100%;
 }
 
-.pg-2 {
+.certificate .pg-2 {
   background-color: white;
   width: 100%;
   position: relative;
   display: flex;
   flex-direction: column;
-  width: 100%;
   max-width: 210mm;
   min-height: 297mm;
   margin: 0;
@@ -113,8 +112,9 @@
   background: white;
 }
 
-.pg-2 .body {
+.certificate .pg-2 .body {
   padding: 50px;
+  flex: 1;
 }
 
 .activity {
@@ -126,6 +126,7 @@
 
 .activity p, ul {
   width: 100%;
+  word-break: break-word;
 }
 
 .activity ul {
@@ -155,12 +156,6 @@
   }
 
   .certificate .pg-1 {
-    width: 100%;
-  }
-
-
-
-  .pg-2 {
     width: 100%;
   }
 }
@@ -378,18 +373,21 @@
   .certificate .nhsuk-u-margin-bottom-2 {
     margin-bottom: 8px !important;
   }
- }
+}
+
 @media screen and (max-width: 767px) {
   .certificate {
-    width: 95%;
+    width: 100%;
     justify-content: space-around;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     -webkit-print-color-adjust: exact;
   }
+
   .certificate .pg-1 {
-    width: 95%;
+    width: 100%;
   }
+
   .pg-2 {
-    width: 95%;
+    width: 100%;
   }
 }

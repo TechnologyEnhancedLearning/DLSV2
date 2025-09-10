@@ -199,6 +199,7 @@
                         SA.LinearNavigation,
                         SA.UseDescriptionExpanders,
                         SA.ManageOptionalCompetenciesPrompt,
+                        CAST(CASE WHEN CA.SelfAssessmentProcessAgreed IS NOT NULL THEN 1 ELSE 0 END AS BIT) AS SelfAssessmentProcessAgreed,
                         CAST(CASE WHEN SA.SupervisorSelfAssessmentReview = 1 OR SA.SupervisorResultsReview = 1 THEN 1 ELSE 0 END AS BIT) AS IsSupervised,
                         CASE
                             WHEN (SELECT COUNT(*) FROM SelfAssessmentSupervisorRoles WHERE SelfAssessmentID = @selfAssessmentId AND AllowDelegateNomination = 1) > 0
@@ -247,7 +248,7 @@
                         CA.LaunchCount, CA.SubmittedDate, SA.LinearNavigation, SA.UseDescriptionExpanders,
                         SA.ManageOptionalCompetenciesPrompt, SA.SupervisorSelfAssessmentReview, SA.SupervisorResultsReview,
                         SA.ReviewerCommentsLabel,SA.EnforceRoleRequirementsForSignOff, SA.ManageSupervisorsDescription,CA.NonReportable,
-                        U.FirstName , U.LastName,SA.MinimumOptionalCompetencies",
+                        U.FirstName , U.LastName,SA.MinimumOptionalCompetencies, CA.SelfAssessmentProcessAgreed",
                 new { delegateUserId, selfAssessmentId }
             );
         }
@@ -327,6 +328,22 @@
                 logger.LogWarning(
                     "Not setting self assessment complete by date as db update failed. " +
                     $"Self assessment id: {selfAssessmentId}, Delegate User id: {delegateUserId}, complete by date: {completeByDate}"
+                );
+            }
+        }
+
+        public void MarkProgressAgreed(int selfAssessmentId, int delegateUserId)
+        {
+            var numberOfAffectedRows = connection.Execute(
+                @"UPDATE CandidateAssessments SET SelfAssessmentProcessAgreed = GETDATE()
+              WHERE SelfAssessmentID = @selfAssessmentId AND DelegateUserID = @delegateUserId",
+                new { selfAssessmentId, delegateUserId }
+            );
+            if (numberOfAffectedRows < 1)
+            {
+                logger.LogWarning(
+                    "SelfAssessmentProcessAgreed not set as db update failed. " +
+                    $"Self assessment id: {selfAssessmentId}, Delegate User id: {delegateUserId}"
                 );
             }
         }
