@@ -1,11 +1,12 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Helpers
 {
-    using System.Linq;
     using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using FluentAssertions;
     using FluentAssertions.Execution;
     using Microsoft.AspNetCore.Mvc.ModelBinding;
     using NUnit.Framework;
+    using System.Linq;
 
     public class ProfessionalRegistrationNumberHelperTests
     {
@@ -104,37 +105,13 @@
             }
         }
 
-        [TestCase(null, "Enter a professional registration number")]
-        [TestCase("", "Enter a professional registration number")]
-        [TestCase("1234", "Professional registration number must be between 5 and 20 characters")]
-        [TestCase("1234", "Professional registration number must be between 5 and 20 characters")]
-        [TestCase(
-            "01234_",
-         "Invalid professional registration number format. " +
-        "Valid formats include: 7 digits (e.g., 1234567), 1–2 letters followed by 6 digits (e.g., AB123456), " +
-        "4–8 digits, an optional 'P' plus 5–6 digits, 'C' or 'P' plus 6 digits, " +
-        "an optional letter plus 5–6 digits, 'L' plus 4–6 digits, " +
-        "or 2 digits followed by a hyphen and 4–5 alphanumeric characters (e.g., 12-AB123)."
-
-        )]
-        [TestCase(
-            "01234 ",
-          "Invalid professional registration number format. " +
-        "Valid formats include: 7 digits (e.g., 1234567), 1–2 letters followed by 6 digits (e.g., AB123456), " +
-        "4–8 digits, an optional 'P' plus 5–6 digits, 'C' or 'P' plus 6 digits, " +
-        "an optional letter plus 5–6 digits, 'L' plus 4–6 digits, " +
-        "or 2 digits followed by a hyphen and 4–5 alphanumeric characters (e.g., 12-AB123)."
-
-        )]
-        [TestCase(
-            "01234$",
-          "Invalid professional registration number format. " +
-        "Valid formats include: 7 digits (e.g., 1234567), 1–2 letters followed by 6 digits (e.g., AB123456), " +
-        "4–8 digits, an optional 'P' plus 5–6 digits, 'C' or 'P' plus 6 digits, " +
-        "an optional letter plus 5–6 digits, 'L' plus 4–6 digits, " +
-        "or 2 digits followed by a hyphen and 4–5 alphanumeric characters (e.g., 12-AB123)."
-
-        )]
+        [TestCase(null, ErrorMessagesTestHelper.MissingNumberError)]
+        [TestCase("", ErrorMessagesTestHelper.MissingNumberError)]
+        [TestCase("1234", ErrorMessagesTestHelper.LengthError)]
+        [TestCase("1234", ErrorMessagesTestHelper.LengthError)]
+        [TestCase("01234_", ErrorMessagesTestHelper.InvalidFormatError)]
+        [TestCase("01234 ", ErrorMessagesTestHelper.InvalidFormatError)]
+        [TestCase("01234$", ErrorMessagesTestHelper.InvalidFormatError)]
         public void ValidateProfessionalRegistrationNumber_sets_error_when_prn_is_invalid(
             string prn,
             string expectedError
