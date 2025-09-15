@@ -13,6 +13,7 @@ namespace DigitalLearningSolutions.Web.Services
 
         IEnumerable<CompetencyResourceAssessmentQuestionParameter> GetCompetencyResourceAssessmentQuestionParameters(IEnumerable<int> competencyLearningResourceIds);
         int AddCompetencyLearningResource(int resourceRefID, string originalResourceName, string description, string resourceType, string link, string catalogue, decimal rating, int competencyID, int adminId);
+        IEnumerable<CompetencyLearningResource> GetActiveCompetencyLearningResourcesByCompetencyIdAndReferenceId(int competencyId, int referenceId);
     }
     public class CompetencyLearningResourcesService : ICompetencyLearningResourcesService
     {
@@ -39,6 +40,10 @@ namespace DigitalLearningSolutions.Web.Services
         public IEnumerable<CompetencyResourceAssessmentQuestionParameter> GetCompetencyResourceAssessmentQuestionParameters(IEnumerable<int> competencyLearningResourceIds)
         {
             return competencyLearningResourcesDataService.GetCompetencyResourceAssessmentQuestionParameters(competencyLearningResourceIds);
+        }
+        public IEnumerable<CompetencyLearningResource> GetActiveCompetencyLearningResourcesByCompetencyIdAndReferenceId(int competencyId, int referenceId)
+        {
+            return competencyLearningResourcesDataService.GetActiveCompetencyLearningResourcesByCompetencyIdAndReferenceId(competencyId, referenceId);
         }
     }
 }

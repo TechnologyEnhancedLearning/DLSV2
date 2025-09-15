@@ -14,6 +14,7 @@
 
         IEnumerable<CompetencyResourceAssessmentQuestionParameter> GetCompetencyResourceAssessmentQuestionParameters(IEnumerable<int> competencyLearningResourceIds);
         int AddCompetencyLearningResource(int resourceRefID, string originalResourceName, string description, string resourceType, string link, string catalogue, decimal rating, int competencyID, int adminId);
+        IEnumerable<CompetencyLearningResource> GetActiveCompetencyLearningResourcesByCompetencyIdAndReferenceId(int competencyId, int referenceId);
     }
 
     public class CompetencyLearningResourcesDataService : ICompetencyLearningResourcesDataService
@@ -118,6 +119,21 @@
                     FROM CompetencyResourceAssessmentQuestionParameters
                     WHERE CompetencyLearningResourceId IN @competencyLearningResourceIds",
                 new { competencyLearningResourceIds }
+            );
+        }
+        public IEnumerable<CompetencyLearningResource> GetActiveCompetencyLearningResourcesByCompetencyIdAndReferenceId(int competencyId, int referenceId)
+        {
+            return connection.Query<CompetencyLearningResource>(
+                @"SELECT
+                 clr.ID,
+                 clr.CompetencyID,
+                 clr.LearningResourceReferenceID,
+                 clr.AdminID,
+                 lrr.ResourceRefID AS LearningHubResourceReferenceId
+             FROM CompetencyLearningResources AS clr
+             INNER JOIN LearningResourceReferences AS lrr ON lrr.ID = clr.LearningResourceReferenceID
+             WHERE CompetencyID = @competencyId AND ResourceRefID = @referenceId AND clr.RemovedDate IS NULL",
+                new { competencyId, referenceId }
             );
         }
     }

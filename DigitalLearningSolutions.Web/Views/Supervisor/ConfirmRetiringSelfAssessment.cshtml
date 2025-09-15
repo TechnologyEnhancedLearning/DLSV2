@@ -1,0 +1,56 @@
+﻿@using DigitalLearningSolutions.Web.Extensions
+@using DigitalLearningSolutions.Web.ViewModels.Supervisor
+@using Microsoft.Extensions.Configuration
+@model RetiringSelfAssessmentViewModel;
+@inject IConfiguration Configuration;
+@{
+    var errorHasOccurred = !ViewData.ModelState.IsValid;
+    ViewData["Title"] = (errorHasOccurred ? "Error: " : "") + "Enrol on Profile Assessment";
+    ViewData["Application"] = "Supervisor";
+    ViewData["HeaderPathName"] = "Supervisor";
+}
+
+@section NavMenuItems {
+    <partial name="Shared/_NavMenuItems" />
+}
+
+<div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full word-break">
+        @if (errorHasOccurred)
+        {
+            <vc:error-summary order-of-property-names="@(new[] { nameof(Model.ActionConfirmed) })" />
+        }
+        <h1 class="nhsuk-u-padding-bottom-3" id="page-heading">Confirm Enrolment</h1>
+        <p class="nhsuk-body-m">You are about to enrol learners on a retiring self-assessment.</p>
+        <p class="nhsuk-body-m nhsuk-u-font-weight-bold">Retirement date: @Model.RetirementDate?.ToString("dd/MM/yyyy")</p>
+        <p class="nhsuk-body-m">After this date, this self-assessment will no longer be available for use.</p>
+        <p class="nhsuk-body-m">Please note:</p>
+        <ul>
+            <li>Learners may not have enough time to complete the self-assessment before it is retired</li>
+            <li>You may wish to consider enrolling them on an updated version, if available</li>
+        </ul>
+        <p class="nhsuk-body-m">To continue, you must acknowledge that you understand the self-assessment is being retired and you still wish to proceed.</p>
+        <form method="post" asp-controller="Supervisor">
+            <div class="nhsuk-checkboxes__item">
+                <vc:single-checkbox asp-for="@nameof(Model.ActionConfirmed)"
+                                    label=" I understand this self-assessment is being retired and I still want to enrol learners."
+                                    hint-text="" />
+            </div>
+            <button type="submit" class="nhsuk-button nhsuk-button nhsuk-u-margin-top-4" asp-action="RetiringSelfAssessmentConfirmed">
+                Continue
+            </button>
+            @Html.HiddenFor(m => m.SelfAssessmentID)
+            @Html.HiddenFor(m => m.SupervisorDelegateID)
+            @Html.HiddenFor(m => m.RetirementDate)
+        </form>
+        <div class="nhsuk-back-link">
+            <a class="nhsuk-back-link__link" asp-controller="Supervisor"
+               asp-action="DelegateProfileAssessments" asp-route-supervisorDelegateId="@Model.SupervisorDelegateID">
+                <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
+                </svg>
+                Cancel
+            </a>
+        </div>
+    </div>
+</div>

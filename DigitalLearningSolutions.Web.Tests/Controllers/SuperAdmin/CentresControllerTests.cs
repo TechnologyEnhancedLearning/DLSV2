@@ -83,7 +83,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
                 CentreTypeId = 1,
                 CentreType = "NHS Organisation",
                 RegionName = "National",
-                CentreEmail = "no.email@hee.nhs.uk",
+                RegistrationEmail = "no.email@hee.nhs.uk",
                 IpPrefix = "12.33.4",
                 ShowOnMap = true,
                 RegionId = 13
@@ -99,7 +99,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.SuperAdmin
                                                 model.CentreName,
                                                 model.CentreTypeId,
                                                 model.RegionId,
-                                                model.CentreEmail,
+                                                model.RegistrationEmail,
                                                 model.IpPrefix,
                                                 model.ShowOnMap))
                                                 .MustHaveHappenedOnceExactly();

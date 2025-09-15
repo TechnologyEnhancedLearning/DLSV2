@@ -12,28 +12,31 @@
         {
             return connection.Query<CurrentSelfAssessment>(
                 @"SELECT  SelfAssessment.Id,
-                        SelfAssessment.Name,
-                        SelfAssessment.Description,
-                        SelfAssessment.IncludesSignposting,
-                        SelfAssessment.IncludeRequirementsFilters,
-                         SelfAssessment. IsSupervisorResultsReviewed,
-                        SelfAssessment.ReviewerCommentsLabel,
-                         SelfAssessment. Vocabulary,
-                         SelfAssessment. NumberOfCompetencies,
-                        SelfAssessment.StartedDate,
-                        SelfAssessment.LastAccessed,
-                        SelfAssessment.CompleteByDate,
-                        SelfAssessment.CandidateAssessmentId,
-                        SelfAssessment.UserBookmark,
-                        SelfAssessment.UnprocessedUpdates,
-                        SelfAssessment.LaunchCount,
-                        SelfAssessment. IsSelfAssessment,
-                         SelfAssessment.SubmittedDate,
-                       SelfAssessment. CentreName,
-                        SelfAssessment.EnrolmentMethodId,
-						Signoff.SignedOff,
-						Signoff.Verified,
-						EnrolledByForename +' '+EnrolledBySurname AS EnrolledByFullName
+                            SelfAssessment.Name,
+                            SelfAssessment.Description,
+                            SelfAssessment.IncludesSignposting,
+                            SelfAssessment.IncludeRequirementsFilters,
+                            SelfAssessment. IsSupervisorResultsReviewed,
+                            SelfAssessment.ReviewerCommentsLabel,
+                            SelfAssessment. Vocabulary,
+                            SelfAssessment. NumberOfCompetencies,
+                            SelfAssessment.StartedDate,
+                            SelfAssessment.LastAccessed,
+                            SelfAssessment.CompleteByDate,
+                            SelfAssessment.CandidateAssessmentId,
+                            SelfAssessment.UserBookmark,
+                            SelfAssessment.UnprocessedUpdates,
+                            SelfAssessment.LaunchCount,
+                            SelfAssessment. IsSelfAssessment,
+                            SelfAssessment.SubmittedDate,
+                            SelfAssessment. CentreName,
+                            SelfAssessment.EnrolmentMethodId,
+                            SelfAssessment.RetirementDate,
+                            SelfAssessment.EnrolmentCutoffDate,
+                            SelfAssessment.RetirementReason,
+                            Signoff.SignedOff,
+                            Signoff.Verified,
+                            EnrolledByForename +' '+EnrolledBySurname AS EnrolledByFullName
                         FROM	(SELECT
                         CA.SelfAssessmentID AS Id,
                         SA.Name,
@@ -56,7 +59,10 @@
                         CR.CentreName AS CentreName,
                         CA.EnrolmentMethodId,
 						uEnrolledBy.FirstName AS EnrolledByForename,
-                        uEnrolledBy.LastName AS EnrolledBySurname
+                        uEnrolledBy.LastName AS EnrolledBySurname,
+                        SA.RetirementDate,
+                        SA.EnrolmentCutoffDate,
+                        SA.RetirementReason
                         FROM Centres AS CR INNER JOIN
                         CandidateAssessments AS CA INNER JOIN
                         SelfAssessments AS SA ON CA.SelfAssessmentID = SA.ID ON CR.CentreID = CA.CentreID INNER JOIN
@@ -71,7 +77,7 @@
                     AND (ISNULL(@adminIdCategoryID, 0) = 0 OR sa.CategoryID = @adminIdCategoryId)
                     GROUP BY
                         CA.SelfAssessmentID, SA.Name, SA.Description, SA.IncludesSignposting, SA.SupervisorResultsReview,
-                        SA.ReviewerCommentsLabel, SA.IncludeRequirementsFilters,
+                        SA.ReviewerCommentsLabel, SA.IncludeRequirementsFilters, SA.RetirementDate,SA.EnrolmentCutoffDate,SA.RetirementReason, 
                         COALESCE(SA.Vocabulary, 'Capability'), CA.StartedDate, CA.LastAccessed, CA.CompleteByDate,
                         CA.ID,
                         CA.UserBookmark, CA.UnprocessedUpdates, CA.LaunchCount, CA.SubmittedDate, CR.CentreName,CA.EnrolmentMethodId,
@@ -193,6 +199,7 @@
                         SA.LinearNavigation,
                         SA.UseDescriptionExpanders,
                         SA.ManageOptionalCompetenciesPrompt,
+                        CAST(CASE WHEN CA.SelfAssessmentProcessAgreed IS NOT NULL THEN 1 ELSE 0 END AS BIT) AS SelfAssessmentProcessAgreed,
                         CAST(CASE WHEN SA.SupervisorSelfAssessmentReview = 1 OR SA.SupervisorResultsReview = 1 THEN 1 ELSE 0 END AS BIT) AS IsSupervised,
                         CASE
                             WHEN (SELECT COUNT(*) FROM SelfAssessmentSupervisorRoles WHERE SelfAssessmentID = @selfAssessmentId AND AllowDelegateNomination = 1) > 0
@@ -241,7 +248,7 @@
                         CA.LaunchCount, CA.SubmittedDate, SA.LinearNavigation, SA.UseDescriptionExpanders,
                         SA.ManageOptionalCompetenciesPrompt, SA.SupervisorSelfAssessmentReview, SA.SupervisorResultsReview,
                         SA.ReviewerCommentsLabel,SA.EnforceRoleRequirementsForSignOff, SA.ManageSupervisorsDescription,CA.NonReportable,
-                        U.FirstName , U.LastName,SA.MinimumOptionalCompetencies",
+                        U.FirstName , U.LastName,SA.MinimumOptionalCompetencies, CA.SelfAssessmentProcessAgreed",
                 new { delegateUserId, selfAssessmentId }
             );
         }
@@ -321,6 +328,22 @@
                 logger.LogWarning(
                     "Not setting self assessment complete by date as db update failed. " +
                     $"Self assessment id: {selfAssessmentId}, Delegate User id: {delegateUserId}, complete by date: {completeByDate}"
+                );
+            }
+        }
+
+        public void MarkProgressAgreed(int selfAssessmentId, int delegateUserId)
+        {
+            var numberOfAffectedRows = connection.Execute(
+                @"UPDATE CandidateAssessments SET SelfAssessmentProcessAgreed = GETDATE()
+              WHERE SelfAssessmentID = @selfAssessmentId AND DelegateUserID = @delegateUserId",
+                new { selfAssessmentId, delegateUserId }
+            );
+            if (numberOfAffectedRows < 1)
+            {
+                logger.LogWarning(
+                    "SelfAssessmentProcessAgreed not set as db update failed. " +
+                    $"Self assessment id: {selfAssessmentId}, Delegate User id: {delegateUserId}"
                 );
             }
         }

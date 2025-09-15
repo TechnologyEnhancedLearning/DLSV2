@@ -21,7 +21,7 @@
     public class SelfAssessmentReportService : ISelfAssessmentReportService
     {
         private const string SelfAssessment = "SelfAssessment";
-        private const string Learner = "Leaner";
+        private const string Learner = "Learner";
         private const string LearnerActive = "LearnerActive";
         private const string PRN = "PRN";
         private const string JobGroup = "JobGroup";

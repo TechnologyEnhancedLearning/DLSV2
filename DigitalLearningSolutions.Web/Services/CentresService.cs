@@ -52,7 +52,7 @@
             string centreName,
             int centreTypeId,
             int regionId,
-            string? centreEmail,
+            string? registrationEmail,
             string? ipPrefix,
             bool showOnMap
         );
@@ -227,9 +227,9 @@
             return centresDataService.GetAllCentres(activeOnly);
         }
 
-        public void UpdateCentreDetailsForSuperAdmin(int centreId, string centreName, int centreTypeId, int regionId, string? centreEmail, string? ipPrefix, bool showOnMap)
+        public void UpdateCentreDetailsForSuperAdmin(int centreId, string centreName, int centreTypeId, int regionId, string? registrationEmail, string? ipPrefix, bool showOnMap)
         {
-            centresDataService.UpdateCentreDetailsForSuperAdmin(centreId, centreName, centreTypeId, regionId, centreEmail, ipPrefix, showOnMap);
+            centresDataService.UpdateCentreDetailsForSuperAdmin(centreId, centreName, centreTypeId, regionId, registrationEmail, ipPrefix, showOnMap);
         }
 
         public CentreSummaryForRoleLimits GetRoleLimitsForCentre(int centreId)

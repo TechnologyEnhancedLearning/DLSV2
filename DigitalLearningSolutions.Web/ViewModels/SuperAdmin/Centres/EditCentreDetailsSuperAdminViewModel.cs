@@ -19,6 +19,7 @@
             IpPrefix = centre.IpPrefix?.Trim();
             ShowOnMap = centre.ShowOnMap;
             RegionId = centre.RegionId;
+            RegistrationEmail = centre.RegistrationEmail;
         }
 
         public int CentreId { get; set; }
@@ -37,5 +38,10 @@
         [RegularExpression(@"^[\d.,\s]+$", ErrorMessage = "IP Prefix can contain only digits, stops, commas and spaces")]
         public string? IpPrefix { get; set; }
         public bool ShowOnMap { get; set; }
+
+        [MaxLength(250, ErrorMessage = "Email must be 250 characters or fewer")]
+        [EmailAddress(ErrorMessage = "Enter an email in the correct format, like name@example.com")]
+        [NoWhitespace(ErrorMessage = "Email must not contain any whitespace characters")]
+        public string? RegistrationEmail { get; set; }
     }
 }

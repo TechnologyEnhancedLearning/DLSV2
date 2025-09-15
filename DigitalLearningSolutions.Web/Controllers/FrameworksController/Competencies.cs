@@ -68,11 +68,11 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             if (string.IsNullOrWhiteSpace(StringHelper.StripHtmlTags(competencyGroupBase?.Description))) { competencyGroupBase.Description = null; }
             if (competencyGroupBase.ID > 0)
             {
-                frameworkService.UpdateFrameworkCompetencyGroup(frameworkCompetencyGroupId, competencyGroupBase.CompetencyGroupID, competencyGroupBase.Name, SanitizerHelper.SanitizeHtmlData
+                frameworkService.UpdateFrameworkCompetencyGroup(frameworkCompetencyGroupId, competencyGroupBase.CompetencyGroupID, competencyGroupBase.Name.Trim(), SanitizerHelper.SanitizeHtmlData
              (competencyGroupBase.Description), adminId);
                 return new RedirectResult(Url.Action("ViewFramework", new { tabname = "Structure", frameworkId }) + "#fcgroup-" + frameworkCompetencyGroupId.ToString());
             }
-            var newCompetencyGroupId = frameworkService.InsertCompetencyGroup(competencyGroupBase.Name, SanitizerHelper.SanitizeHtmlData(competencyGroupBase.Description), adminId, frameworkId);
+            var newCompetencyGroupId = frameworkService.InsertCompetencyGroup(competencyGroupBase.Name.Trim(), SanitizerHelper.SanitizeHtmlData(competencyGroupBase.Description), adminId, frameworkId);
             if (newCompetencyGroupId > 0)
             {
                 var newFrameworkCompetencyGroupId = frameworkService.InsertFrameworkCompetencyGroup(newCompetencyGroupId, frameworkId, adminId);
@@ -169,7 +169,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             {
 
 
-                frameworkService.UpdateFrameworkCompetency(frameworkCompetencyId, frameworkCompetency.Name, frameworkCompetency.Description, adminId);
+                frameworkService.UpdateFrameworkCompetency(frameworkCompetencyId, frameworkCompetency.Name.Trim(), frameworkCompetency.Description, adminId);
                 frameworkService.UpdateCompetencyFlags(frameworkId, frameworkCompetency.CompetencyID, selectedFlagIds);
                 return new RedirectResult(Url.Action("ViewFramework", new { tabname = "Structure", frameworkId, frameworkCompetencyGroupId, frameworkCompetencyId }) + "#fc-" + frameworkCompetencyId.ToString());
             }
@@ -216,7 +216,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
 
         private IActionResult SaveCompetency(int adminId, int frameworkId, FrameworkCompetency frameworkCompetency, int frameworkCompetencyId, int? frameworkCompetencyGroupId, int[]? selectedFlagIds)
         {
-            var newCompetencyId = frameworkService.InsertCompetency(frameworkCompetency.Name, frameworkCompetency.Description, adminId);
+            var newCompetencyId = frameworkService.InsertCompetency(frameworkCompetency.Name.Trim(), frameworkCompetency.Description, adminId);
             if (newCompetencyId > 0)
             {
                 var newFrameworkCompetencyId = frameworkService.InsertFrameworkCompetency(newCompetencyId, frameworkCompetencyGroupId, adminId, frameworkId);
