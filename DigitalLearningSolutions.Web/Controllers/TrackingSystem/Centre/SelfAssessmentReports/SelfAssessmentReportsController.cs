@@ -16,6 +16,7 @@
     using Microsoft.FeatureManagement;
     using Microsoft.FeatureManagement.Mvc;
     using System;
+    using System.Linq;
     using System.Threading.Tasks;
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
@@ -40,7 +41,7 @@
             IClockUtility clockUtility,
             IConfiguration config,
             ISelfAssessmentService selfAssessmentService,
-            ICentreSelfAssessmentsService centreSelfAssessmentsService
+            ICentreSelfAssessmentsService centreSelfAssessmentsService,
             IFeatureManager featureManager
         )
         {
@@ -63,11 +64,10 @@
             var categoryId = this.selfAssessmentService.GetSelfAssessmentCategoryId(1);
             var selfAssessments = centreSelfAssessmentsService.GetCentreSelfAssessments(centreId.Value);
             var dSATreportIsPublish = selfAssessments.Any(x => x.SelfAssessmentId == 1);
-            var model = new SelfAssessmentReportsViewModel(selfAssessmentReportService.GetSelfAssessmentsForReportList((int)centreId, adminCategoryId), adminCategoryId, categoryId, dSATreportIsPublish); return View(model);
             var tableauFlag = await featureManager.IsEnabledAsync(FeatureFlags.TableauSelfAssessmentDashboards);
             var tableauQueryOverride = string.Equals(Request.Query["tableaulink"], "true", StringComparison.OrdinalIgnoreCase);
             var showTableauLink = tableauFlag || tableauQueryOverride;
-            var model = new SelfAssessmentReportsViewModel(selfAssessmentReportService.GetSelfAssessmentsForReportList((int)centreId, adminCategoryId), adminCategoryId, categoryId, showTableauLink);
+            var model = new SelfAssessmentReportsViewModel(selfAssessmentReportService.GetSelfAssessmentsForReportList((int)centreId, adminCategoryId), adminCategoryId, categoryId, dSATreportIsPublish, showTableauLink);
             return View(model);
         }
         [HttpGet]

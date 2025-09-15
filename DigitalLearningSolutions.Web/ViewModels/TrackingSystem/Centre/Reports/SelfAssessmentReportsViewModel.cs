@@ -6,8 +6,7 @@
     public class SelfAssessmentReportsViewModel
     {
         public SelfAssessmentReportsViewModel(
-            IEnumerable<SelfAssessmentSelect> selfAssessmentSelects, int? adminCategoryId, int categoryId, bool dSATreportIsPublish
-            IEnumerable<SelfAssessmentSelect> selfAssessmentSelects, int? adminCategoryId, int categoryId, bool showTableauLink
+            IEnumerable<SelfAssessmentSelect> selfAssessmentSelects, int? adminCategoryId, int categoryId, bool dSATreportIsPublish, bool showTableauLink
             )
         {
             SelfAssessmentSelects = selfAssessmentSelects;
