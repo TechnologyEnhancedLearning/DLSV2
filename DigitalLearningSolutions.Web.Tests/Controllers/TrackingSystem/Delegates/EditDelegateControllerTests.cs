@@ -175,7 +175,7 @@
                 result.As<ViewResult>().Model.Should().BeOfType<EditDelegateViewModel>();
                 AssertModelStateErrorIsExpected(
                     result,
-                    "Invalid professional registration number format - Only alphanumeric characters (a-z, A-Z and 0-9) and hyphens (-) allowed"
+                   ErrorMessagesTestHelper.InvalidFormatError
                 );
                 A.CallTo(() => userService.GetDelegateById(A<int>._)).MustNotHaveHappened();
             }
