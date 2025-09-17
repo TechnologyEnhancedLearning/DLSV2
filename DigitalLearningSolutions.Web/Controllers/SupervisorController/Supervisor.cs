@@ -785,6 +785,9 @@
                 return View("EnrolDelegateOnProfileAssessment", model);
             }
 
+            if (sessionEnrolOnRoleProfile.SelfAssessmentID != selfAssessmentID)
+                sessionEnrolOnRoleProfile = new SessionEnrolOnRoleProfile();
+
             sessionEnrolOnRoleProfile.SelfAssessmentID = selfAssessmentID;
             multiPageFormService.SetMultiPageFormData(
                 sessionEnrolOnRoleProfile,
