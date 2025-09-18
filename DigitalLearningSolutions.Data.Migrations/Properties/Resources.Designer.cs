@@ -2565,6 +2565,50 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[SendRetiringSelfAssessmentNotification]    Script Date: 18/09/2025 09:03:21 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///-- =============================================
+        ///-- Author:		Auldrin Possa
+        ///-- Create date: 04/08/2015
+        ///-- Description:	Uses DB mail to send notification to delegates on retiring self assessment.
+        ///-- =============================================
+        ///ALTER PROCEDURE [dbo].[SendRetiringSelfAssessmentNotification]
+        ///	@SelfAssessmentId [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_5552_Alter_SendRetiringSelfAssessmentNotification_Down {
+            get {
+                return ResourceManager.GetString("TD_5552_Alter_SendRetiringSelfAssessmentNotification_Down", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[SendRetiringSelfAssessmentNotification]    Script Date: 18/09/2025 09:03:21 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///-- =============================================
+        ///-- Author:		Auldrin Possa
+        ///-- Create date: 04/08/2015
+        ///-- Description:	Uses DB mail to send notification to delegates on retiring self assessment.
+        ///-- =============================================
+        ///ALTER PROCEDURE [dbo].[SendRetiringSelfAssessmentNotification]
+        ///	@SelfAssessmentId [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_5552_Alter_SendRetiringSelfAssessmentNotification_Up {
+            get {
+                return ResourceManager.GetString("TD_5552_Alter_SendRetiringSelfAssessmentNotification_Up", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to SET ANSI_NULLS ON
         ///GO
         ///
