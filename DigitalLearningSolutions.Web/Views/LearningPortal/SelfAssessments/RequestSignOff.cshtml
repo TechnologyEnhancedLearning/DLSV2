@@ -92,7 +92,6 @@
 else
 {
     <p>No supervisors are identified who can sign-off the activity <strong>@Model.SelfAssessment.Name</strong> who don't have an outstanding sign-off request.</p>
-    <div class="nhsuk-action-link">
         <a class="nhsuk-back-link__link"
            asp-action="SelfAssessmentOverview" asp-route-vocabulary="@Model.VocabPlural()"
            asp-route-selfAssessmentId="@Model.SelfAssessment.Id">
@@ -101,5 +100,4 @@ else
             </svg>
             Cancel
         </a>
-    </div>
 }
