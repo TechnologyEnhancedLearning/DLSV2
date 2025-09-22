@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import Details from 'nhsuk-frontend/packages/components/details/details';
+import Details from 'nhsuk-frontend/packages/components/details/details'; //qqqq still packages! not node_modules/nhsuk-frontend/dist/nhsuk/components
 import {
   ISearchableData,
   ISearchableElement,

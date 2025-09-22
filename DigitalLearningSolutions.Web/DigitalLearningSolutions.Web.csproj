@@ -153,18 +153,18 @@
 
     <ItemGroup>
       <!--NHSUK Static Assets -->
-      <Content Include="node_modules\nhsuk-frontend\packages\assets\favicons\apple-touch-icon-180x180.png" />
-      <Content Include="node_modules\nhsuk-frontend\packages\assets\favicons\apple-touch-icon.png" />
-      <Content Include="node_modules\nhsuk-frontend\packages\assets\favicons\favicon-192x192.png" />
-      <Content Include="node_modules\nhsuk-frontend\packages\assets\favicons\favicon.ico" />
-      <Content Include="node_modules\nhsuk-frontend\packages\assets\favicons\favicon.png" />
-      <Content Include="node_modules\nhsuk-frontend\packages\assets\favicons\largetile-310x310.png" />
-      <Content Include="node_modules\nhsuk-frontend\packages\assets\favicons\mediumtile-144x144.png" />
-      <Content Include="node_modules\nhsuk-frontend\packages\assets\favicons\mediumtile-150x150.png" />
-      <Content Include="node_modules\nhsuk-frontend\packages\assets\favicons\smalltile-70x70.png" />
-      <Content Include="node_modules\nhsuk-frontend\packages\assets\favicons\widetile-310x150.png" />
-      <Content Include="node_modules\nhsuk-frontend\packages\assets\logos\nhs-logo.png" />
-      <Content Include="node_modules\nhsuk-frontend\packages\assets\logos\open-graph.png" />
+      <Content Include="node_modules\nhsuk-frontend\dist\nhsuk\assets\favicons\apple-touch-icon-180x180.png" />
+      <Content Include="node_modules\nhsuk-frontend\dist\nhsuk\assets\favicons\apple-touch-icon.png" />
+      <Content Include="node_modules\nhsuk-frontend\dist\nhsuk\assets\favicons\favicon-192x192.png" />
+      <Content Include="node_modules\nhsuk-frontend\dist\nhsuk\assets\favicons\favicon.ico" />
+      <Content Include="node_modules\nhsuk-frontend\dist\nhsuk\assets\favicons\favicon.png" />
+      <Content Include="node_modules\nhsuk-frontend\dist\nhsuk\assets\favicons\largetile-310x310.png" />
+      <Content Include="node_modules\nhsuk-frontend\dist\nhsuk\assets\favicons\mediumtile-144x144.png" />
+      <Content Include="node_modules\nhsuk-frontend\dist\nhsuk\assets\favicons\mediumtile-150x150.png" />
+      <Content Include="node_modules\nhsuk-frontend\dist\nhsuk\assets\favicons\smalltile-70x70.png" />
+      <Content Include="node_modules\nhsuk-frontend\dist\nhsuk\assets\favicons\widetile-310x150.png" />
+      <Content Include="node_modules\nhsuk-frontend\dist\nhsuk\assets\logos\nhs-logo.png" />
+      <Content Include="node_modules\nhsuk-frontend\dist\nhsuk\assets\logos\open-graph.png" />
     </ItemGroup>
 
     <ItemGroup>
