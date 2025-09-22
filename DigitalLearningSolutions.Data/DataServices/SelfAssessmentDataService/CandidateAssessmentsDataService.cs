@@ -202,22 +202,29 @@
                         CAST(CASE WHEN CA.SelfAssessmentProcessAgreed IS NOT NULL THEN 1 ELSE 0 END AS BIT) AS SelfAssessmentProcessAgreed,
                         CAST(CASE WHEN SA.SupervisorSelfAssessmentReview = 1 OR SA.SupervisorResultsReview = 1 THEN 1 ELSE 0 END AS BIT) AS IsSupervised,
                         CASE
-                            WHEN (SELECT COUNT(*) FROM SelfAssessmentSupervisorRoles WHERE SelfAssessmentID = @selfAssessmentId AND AllowDelegateNomination = 1) > 0
+                            WHEN (SELECT COUNT(*) FROM SelfAssessmentSupervisorRoles WHERE
+                                    (SelfAssessmentID = @selfAssessmentId OR 
+								        (SelfAssessmentID IS NULL AND NOT EXISTS (SELECT 1 FROM SelfAssessmentSupervisorRoles WHERE SelfAssessmentID = @selfAssessmentId)))
+                                    AND AllowDelegateNomination = 1) > 0
                             THEN 1
                             ELSE 0
                         END AS HasDelegateNominatedRoles,
                         COALESCE(
                             (SELECT TOP (1) RoleName FROM SelfAssessmentSupervisorRoles
-                            WHERE (ResultsReview = 1) AND (SelfAssessmentID = @selfAssessmentId) AND
+                            WHERE (ResultsReview = 1) AND (SelfAssessmentID = @selfAssessmentId OR 
+								        (SelfAssessmentID IS NULL AND NOT EXISTS (SELECT 1 FROM SelfAssessmentSupervisorRoles WHERE SelfAssessmentID = @selfAssessmentId))) AND
                                    ((SELECT COUNT(*) AS Expr1 FROM SelfAssessmentSupervisorRoles AS SelfAssessmentSupervisorRoles_1
-                                    WHERE (ResultsReview = 1) AND (SelfAssessmentID = @selfAssessmentId)) = 1)),
+                                    WHERE (ResultsReview = 1) AND (SelfAssessmentID = @selfAssessmentId OR 
+								        (SelfAssessmentID IS NULL AND NOT EXISTS (SELECT 1 FROM SelfAssessmentSupervisorRoles WHERE SelfAssessmentID = @selfAssessmentId)))) = 1)),
                             'Supervisor') AS VerificationRoleName,
                         COALESCE(
                             (SELECT TOP (1) RoleName FROM SelfAssessmentSupervisorRoles
-                            WHERE (SelfAssessmentReview = 1) AND (SelfAssessmentID = @selfAssessmentId) AND
+                            WHERE (SelfAssessmentReview = 1) AND (SelfAssessmentID = @selfAssessmentId OR 
+								        (SelfAssessmentID IS NULL AND NOT EXISTS (SELECT 1 FROM SelfAssessmentSupervisorRoles WHERE SelfAssessmentID = @selfAssessmentId))) AND
                                    ((SELECT COUNT(*) AS Expr1
                                     FROM SelfAssessmentSupervisorRoles AS SelfAssessmentSupervisorRoles_1
-                                    WHERE (SelfAssessmentReview = 1) AND (SelfAssessmentID = @selfAssessmentId)) = 1)),
+                                    WHERE (SelfAssessmentReview = 1) AND (SelfAssessmentID = @selfAssessmentId OR 
+								        (SelfAssessmentID IS NULL AND NOT EXISTS (SELECT 1 FROM SelfAssessmentSupervisorRoles WHERE SelfAssessmentID = @selfAssessmentId)))) = 1)),
                             'Supervisor') AS SignOffRoleName,
                         SA.SignOffRequestorStatement,
                         SA.ManageSupervisorsDescription,
