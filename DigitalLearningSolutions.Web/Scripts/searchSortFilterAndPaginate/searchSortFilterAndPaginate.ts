@@ -1,4 +1,4 @@
-import Details from 'nhsuk-frontend/packages/components/details/details';
+import { Details } from 'nhsuk-frontend'; // no export qqqq or initDetails
 import _ from 'lodash';
 import {
   setUpFilter, filterSearchableElements, IAppliedFilterTag,
@@ -236,7 +236,7 @@ export class SearchSortFilterAndPaginate {
       (searchableElement) => searchableElementsContainer.appendChild(searchableElement.element),
     );
     // This is required to polyfill the new elements in IE
-    Details();
+    Details(); // qqqq come back to this may need something else
   }
 
   updateResultCountAndPageNumber(count: number): void {
