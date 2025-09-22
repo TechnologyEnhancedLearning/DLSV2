@@ -2,11 +2,13 @@
 {
     using FluentMigrator;
 
-    [Migration(202508261415)]
-    public class RemoveCustomAdminTitlesAddSupervisorNominatedSupervisor : ForwardOnlyMigration
+    [Migration(202508261415, TransactionBehavior.None)]
+    public class RemoveCustomAdminTitlesAddSupervisorNominatedSupervisor : Migration
     {
         public override void Up()
         {
+            Execute.Sql(Properties.Resources.TD_5638_SnapshotData_UP);
+
             Execute.Sql($@"
                     -- 1. Drop old FK
                     ALTER TABLE [dbo].[SelfAssessmentSupervisorRoles]
@@ -58,6 +60,11 @@
                     DELETE FROM SelfAssessmentSupervisorRoles WHERE SelfAssessmentID IS NOT NULL;
                 "
             );
+        }
+
+        public override void Down()
+        {
+            // Intentionally empty. If things go wrong later, we will manually restore the snapshot
         }
     }
 }

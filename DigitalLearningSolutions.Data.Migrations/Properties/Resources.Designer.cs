@@ -2661,6 +2661,22 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to DECLARE @dbName NVARCHAR(128) = DB_NAME()
+        ///DECLARE @defaultPath NVARCHAR(500) = CONVERT(NVARCHAR(500), SERVERPROPERTY(&apos;InstanceDefaultDataPath&apos;))
+        ///DECLARE @snapshotTime NVARCHAR(12) = FORMAT(GETDATE(), &apos;yyyyMMddHHmm&apos;)
+        ///
+        ///DECLARE @snapSql NVARCHAR(4000) = &apos;CREATE DATABASE &apos; + @dbName + &apos;_&apos; + @snapshotTime + &apos; ON 
+        ///( NAME = mbdbx101, FILENAME = &apos;&apos;&apos; + @defaultPath + @dbName + &apos;_&apos; + @snapshotTime + &apos;&apos;&apos;),
+        ///( NAME = mbdbx101files, FILENAME = &apos;&apos;&apos; + @defaultPath + @dbName + &apos;_filestream1_&apos; + @snapshotTime + &apos;&apos;&apos;)
+        ///A [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_5638_SnapshotData_UP {
+            get {
+                return ResourceManager.GetString("TD_5638_SnapshotData_UP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to IF OBJECT_ID(&apos;dbo.IndexOptimize&apos;, &apos;P&apos;) IS NOT NULL DROP PROCEDURE dbo.IndexOptimize;
         ///IF OBJECT_ID(&apos;dbo.CommandExecute&apos;, &apos;P&apos;) IS NOT NULL DROP PROCEDURE dbo.CommandExecute;
         ///IF OBJECT_ID(&apos;dbo.sp_purge_commandlog&apos;, &apos;P&apos;) IS NOT NULL DROP PROCEDURE dbo.sp_purge_commandlog;
