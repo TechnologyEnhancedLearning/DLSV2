@@ -1,4 +1,4 @@
-﻿@use "nhsuk-frontend/packages/core/all" as *;
+﻿@use "nhsuk-frontend/dist/core/all" as *;
 @use "../shared/searchableElements/searchableElements";
 
 $current-centre-highlight: $color_nhsuk-pale-yellow;
