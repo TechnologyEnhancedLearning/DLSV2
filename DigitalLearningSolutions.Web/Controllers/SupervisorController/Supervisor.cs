@@ -910,19 +910,13 @@
             {
                 var validationResult = OldDateValidator.ValidateDate(day, month, year);
                 if (!validationResult.DateValid)
-                {
                     return RedirectToAction("EnrolDelegateCompleteBy", new { supervisorDelegateId, day, month, year });
-                }
-                else
-                {
-                    var completeByDate = new DateTime(year, month, day);
-                    sessionEnrolOnRoleProfile.CompleteByDate = completeByDate;
-                    multiPageFormService.SetMultiPageFormData(
-                        sessionEnrolOnRoleProfile,
-                        MultiPageFormDataFeature.EnrolDelegateOnProfileAssessment,
-                        TempData
-                    );
-                }
+
+                sessionEnrolOnRoleProfile.CompleteByDate = new DateTime(year, month, day);
+            }
+            else
+            {
+                sessionEnrolOnRoleProfile.CompleteByDate = null;
             }
 
             var supervisorRoles =
