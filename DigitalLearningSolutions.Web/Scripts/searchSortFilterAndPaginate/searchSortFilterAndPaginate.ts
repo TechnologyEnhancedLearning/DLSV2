@@ -1,4 +1,3 @@
-import { Details } from 'nhsuk-frontend'; // no export qqqq or initDetails
 import _ from 'lodash';
 import {
   setUpFilter, filterSearchableElements, IAppliedFilterTag,
@@ -235,8 +234,6 @@ export class SearchSortFilterAndPaginate {
     searchableElements.forEach(
       (searchableElement) => searchableElementsContainer.appendChild(searchableElement.element),
     );
-    // This is required to polyfill the new elements in IE
-    Details(); // qqqq come back to this may need something else because details has changed in version 10
   }
 
   updateResultCountAndPageNumber(count: number): void {

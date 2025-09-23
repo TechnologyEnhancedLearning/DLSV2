@@ -1,5 +1,4 @@
 import * as _ from 'lodash';
-import Details from 'nhsuk-frontend/packages/components/details/details'; //qqqq still packages! not node_modules/nhsuk-frontend/dist/nhsuk/components
 import {
   ISearchableData,
   ISearchableElement,
@@ -112,8 +111,6 @@ function displaySearchableElements(searchableElements: ISearchableElement[]): vo
   searchableElementsContainer.selectedIndex = selectedElement
     ? searchableElements.indexOf(selectedElement) + 1 : 0;
 
-  // This is required to polyfill the new elements in IE
-  Details();
 }
 
 function getCategoryAndTopicFilterStringAndUpdateHiddenInputs() {
