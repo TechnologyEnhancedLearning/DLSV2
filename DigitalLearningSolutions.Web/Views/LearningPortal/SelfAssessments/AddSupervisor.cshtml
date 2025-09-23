@@ -9,13 +9,13 @@
 <link rel="stylesheet" href="@Url.Content("~/css/shared/searchableElements/searchableElements.css")" asp-append-version="true">
 
 @section breadcrumbs {
-    <li class="nhsuk-breadcrumb__item">
+    <li class="nhsuk-breadcrumb__list-item">
         <a class="nhsuk-breadcrumb__link" asp-action="SelfAssessment" asp-route-selfAssessmentId="@Model.SelfAssessmentID">@Model.SelfAssessmentName</a>
     </li>
-    <li class="nhsuk-breadcrumb__item">
+    <li class="nhsuk-breadcrumb__list-item">
         <a class="nhsuk-breadcrumb__link" asp-action="ManageSupervisors" asp-route-selfAssessmentId="@Model.SelfAssessmentID">Manage Supervisors</a>
     </li>
-    <li class="nhsuk-breadcrumb__item">Add</li>
+    <li class="nhsuk-breadcrumb__list-item">Add</li>
 }
 @if (Model.JavascriptSearchSortFilterPaginateEnabled)
 {
@@ -23,16 +23,14 @@
 }
 @section mobilebacklink
 {
-    <p class="nhsuk-breadcrumb__back">
-        @if (TempData["CentreID"] == null)
-        {
-            <a class="nhsuk-breadcrumb__backlink" asp-action="ManageSupervisors" asp-route-selfAssessmentId="@Model.SelfAssessmentID">Back to Manage Supervisors</a>
-        }
-        else
-        {
-            <a class="nhsuk-breadcrumb__backlink" asp-action="SelectSupervisorCentre" asp-route-selfAssessmentId="@Model.SelfAssessmentID">Back to Choose a centre</a>
-        }
-    </p>
+      @if (TempData["CentreID"] == null)
+      {
+          <a class="nhsuk-back-link" asp-action="ManageSupervisors" asp-route-selfAssessmentId="@Model.SelfAssessmentID">Back to Manage Supervisors</a>
+      }
+      else
+      {
+          <a class="nhsuk-back-link" asp-action="SelectSupervisorCentre" asp-route-selfAssessmentId="@Model.SelfAssessmentID">Back to Choose a centre</a>
+      }
 }
 <h1>New activity supervisor</h1>
 <div id="@(Model.JavascriptSearchSortFilterPaginateEnabled ? "js-styling-hidden-area-while-loading" : "no-js-styling")">

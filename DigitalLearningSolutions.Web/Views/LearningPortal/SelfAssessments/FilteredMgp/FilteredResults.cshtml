@@ -8,8 +8,8 @@
   ViewData["SelfAssessmentTitle"] = "Recommended Learning Resources";
 }
 @section breadcrumbs {
-  <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="SelfAssessmentOverview" asp-route-vocabulary="Capabilities" asp-route-selfAssessmentId="@(ViewContext.RouteData.Values["selfAssessmentId"])">Self Assessment</a></li>
-  <li class="nhsuk-breadcrumb__item">Recommended Learning Resources</li>
+  <li class="nhsuk-breadcrumb__list-item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="SelfAssessmentOverview" asp-route-vocabulary="Capabilities" asp-route-selfAssessmentId="@(ViewContext.RouteData.Values["selfAssessmentId"])">Self Assessment</a></li>
+  <li class="nhsuk-breadcrumb__list-item">Recommended Learning Resources</li>
 }
   <link rel="stylesheet" href="@Url.Content("~/css/learningPortal/selfAssessment.css")" asp-append-version="true">
   <style>

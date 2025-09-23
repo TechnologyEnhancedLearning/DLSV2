@@ -5,20 +5,18 @@
     Layout = "SelfAssessments/_Layout";
 }
 @section breadcrumbs {
-    <li class="nhsuk-breadcrumb__item">
+    <li class="nhsuk-breadcrumb__list-item">
         <a class="nhsuk-breadcrumb__link" asp-action="SelfAssessment" asp-route-selfAssessmentId="@Model.SelfAssessment.Id">@(Model.SelfAssessment.Name) introduction</a>
     </li>
-    <li class="nhsuk-breadcrumb__item">Add optional @(Model.VocabPlural().ToLower())?</li>
+    <li class="nhsuk-breadcrumb__list-item">Add optional @(Model.VocabPlural().ToLower())?</li>
 }
 
 @section mobilebacklink
 {
-    <p class="nhsuk-breadcrumb__back">
-        <a class="nhsuk-breadcrumb__backlink" asp-action="SelfAssessment"
+        <a class="nhsuk-back-link" asp-action="SelfAssessment"
            asp-route-selfAssessmentId="@Model.SelfAssessment.Id">
             Back to @Model.SelfAssessment.Name
         </a>
-    </p>
 }
 <form method="post" asp-action="AddOptionalCompetencies" asp-route-selfAssessmentId="@Model.SelfAssessment.Id" asp-route-vocabulary="@Model.VocabPlural()">
     <div class="nhsuk-grid-row">

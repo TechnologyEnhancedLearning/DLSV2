@@ -81,7 +81,7 @@
                 <ol class="nhsuk-breadcrumb__list">
                     @if (ViewBag.FromAddOptionalPage == null)
                     {
-                        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="LearningPortal" asp-action="Current">Current activities</a></li>
+                        <li class="nhsuk-breadcrumb__list-item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="LearningPortal" asp-action="Current">Current activities</a></li>
                     }
                     @RenderSection("breadcrumbs", required: false)
                 </ol>

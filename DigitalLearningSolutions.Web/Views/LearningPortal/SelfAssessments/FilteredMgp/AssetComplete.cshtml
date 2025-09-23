@@ -6,10 +6,10 @@
   ViewData["SelfAssessmentTitle"] = "Learning Resource Complete";
 }
 @section breadcrumbs {
-  <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="SelfAssessment" asp-route-selfAssessmentId="@(ViewContext.RouteData.Values["selfAssessmentId"])">Self Assessment</a></li>
-  <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-controller="RecommendedLearning" asp-action="RecommendedLearning" asp-route-selfAssessmentId="@(ViewContext.RouteData.Values["selfAssessmentId"])">Recommended Learning Resources</a></li>
-  <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-controller="RecommendedLearning" asp-action="FilteredLearningAsset" asp-route-selfAssessmentId="@(ViewContext.RouteData.Values["selfAssessmentId"])" asp-route-assetId="@Model.Id">Learning Resource</a></li>
-  <li class="nhsuk-breadcrumb__item">Complete</li>
+  <li class="nhsuk-breadcrumb__list-item"><a class="nhsuk-breadcrumb__link" asp-action="SelfAssessment" asp-route-selfAssessmentId="@(ViewContext.RouteData.Values["selfAssessmentId"])">Self Assessment</a></li>
+  <li class="nhsuk-breadcrumb__list-item"><a class="nhsuk-breadcrumb__link" asp-controller="RecommendedLearning" asp-action="RecommendedLearning" asp-route-selfAssessmentId="@(ViewContext.RouteData.Values["selfAssessmentId"])">Recommended Learning Resources</a></li>
+  <li class="nhsuk-breadcrumb__list-item"><a class="nhsuk-breadcrumb__link" asp-controller="RecommendedLearning" asp-action="FilteredLearningAsset" asp-route-selfAssessmentId="@(ViewContext.RouteData.Values["selfAssessmentId"])" asp-route-assetId="@Model.Id">Learning Resource</a></li>
+  <li class="nhsuk-breadcrumb__list-item">Complete</li>
 }
   <link rel="stylesheet" href="@Url.Content("~/css/learningPortal/selfAssessment.css")" asp-append-version="true">
 

@@ -6,18 +6,16 @@
     ViewData["SelfAssessmentTitle"] = @Model.SelfAssessmentName;
 }
 @section breadcrumbs {
-    <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="SelfAssessment" asp-route-selfAssessmentId="@Model.SelfAssessmentID">@Model.SelfAssessmentName</a></li>
-    <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="ManageSupervisors" asp-route-selfAssessmentId="@Model.SelfAssessmentID">Manage Supervisors</a></li>
-    <li class="nhsuk-breadcrumb__item">Add</li>
+    <li class="nhsuk-breadcrumb__list-item"><a class="nhsuk-breadcrumb__link" asp-action="SelfAssessment" asp-route-selfAssessmentId="@Model.SelfAssessmentID">@Model.SelfAssessmentName</a></li>
+    <li class="nhsuk-breadcrumb__list-item"><a class="nhsuk-breadcrumb__link" asp-action="ManageSupervisors" asp-route-selfAssessmentId="@Model.SelfAssessmentID">Manage Supervisors</a></li>
+    <li class="nhsuk-breadcrumb__list-item">Add</li>
 }
 @section mobilebacklink
 {
-    <p class="nhsuk-breadcrumb__back">
-        <a class="nhsuk-breadcrumb__backlink" asp-action="SetSupervisorRole"
-           asp-route-selfAssessmentId="@Model.SelfAssessmentID">
-            Back to Choose supervisor role
-        </a>
-    </p>
+      <a class="nhsuk-back-link" asp-action="SetSupervisorRole"
+          asp-route-selfAssessmentId="@Model.SelfAssessmentID">
+          Back to Choose supervisor role
+      </a>
 }
 <h1 class="">
     Supervisor summary

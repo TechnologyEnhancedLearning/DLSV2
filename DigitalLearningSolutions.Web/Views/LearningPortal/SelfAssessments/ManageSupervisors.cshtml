@@ -8,13 +8,13 @@
     ViewData["SelfAssessmentTitle"] = @Model.SelfAssessment.Name;
 }
 @section breadcrumbs {
-    <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="SelfAssessment" asp-route-selfAssessmentId="@Model.SelfAssessment.Id">@Model.SelfAssessment.Name</a></li>
-    <li class="nhsuk-breadcrumb__item">Manage Supervisors</li>
+    <li class="nhsuk-breadcrumb__list-item"><a class="nhsuk-breadcrumb__link" asp-action="SelfAssessment" asp-route-selfAssessmentId="@Model.SelfAssessment.Id">@Model.SelfAssessment.Name</a></li>
+    <li class="nhsuk-breadcrumb__list-item">Manage Supervisors</li>
 }
 @section mobilebacklink
 {
     <p class="nhsuk-breadcrumb__back">
-        <a class="nhsuk-breadcrumb__backlink" asp-action="SelfAssessment"
+        <a class="nhsuk-back-link" asp-action="SelfAssessment"
            asp-route-selfAssessmentId="@Model.SelfAssessment.Id">
             Back to @Model.SelfAssessment.Name
         </a>

@@ -24,23 +24,23 @@
   <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
     <div class="nhsuk-width-container">
       <ol class="nhsuk-breadcrumb__list">
-        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="Close" asp-route-learningActivity=@learningActivity>@learningActivity activities</a></li>
-        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="Index" asp-route-customisationId="@Model.CustomisationId">@Model.CourseTitle</a></li>
-        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="Section" asp-route-customisationId="@Model.CustomisationId" asp-route-sectionId="@Model.SectionId">@Model.SectionName</a></li>
-        <li class="nhsuk-breadcrumb__item">Diagnostic assessment</li>
+        <li class="nhsuk-breadcrumb__list-item"><a class="nhsuk-breadcrumb__link" asp-action="Close" asp-route-learningActivity=@learningActivity>@learningActivity activities</a></li>
+        <li class="nhsuk-breadcrumb__list-item"><a class="nhsuk-breadcrumb__link" asp-action="Index" asp-route-customisationId="@Model.CustomisationId">@Model.CourseTitle</a></li>
+        <li class="nhsuk-breadcrumb__list-item"><a class="nhsuk-breadcrumb__link" asp-action="Section" asp-route-customisationId="@Model.CustomisationId" asp-route-sectionId="@Model.SectionId">@Model.SectionName</a></li>
+        <li class="nhsuk-breadcrumb__list-item">Diagnostic assessment</li>
       </ol>
 
       @if (Model.OnlyItemInOnlySection)
       {
-        <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="Close" asp-route-learningActivity=@learningActivity>Return to @learningActivity activities</a></p>
+        <p class="nhsuk-breadcrumb__back"><a class="nhsuk-back-link" asp-action="Close" asp-route-learningActivity=@learningActivity>Return to @learningActivity activities</a></p>
       }
       else if (Model.OnlyItemInThisSection)
       {
-        <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="Index" asp-route-customisationId="@Model.CustomisationId">Return to course menu</a></p>
+        <p class="nhsuk-breadcrumb__back"><a class="nhsuk-back-link" asp-action="Index" asp-route-customisationId="@Model.CustomisationId">Return to course menu</a></p>
       }
       else
       {
-        <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="Section" asp-route-customisationId="@Model.CustomisationId" asp-route-sectionId="@Model.SectionId">Return to section</a></p>
+        <p class="nhsuk-breadcrumb__back"><a class="nhsuk-back-link" asp-action="Section" asp-route-customisationId="@Model.CustomisationId" asp-route-sectionId="@Model.SectionId">Return to section</a></p>
       }
     </div>
   </nav>

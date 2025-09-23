@@ -24,8 +24,8 @@
   <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
     <div class="nhsuk-width-container">
       <ol class="nhsuk-breadcrumb__list">
-        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="Close" asp-route-learningActivity=@learningActivity>@learningActivity activities</a></li>
-        <li class="nhsuk-breadcrumb__item">@Model.Title</li>
+        <li class="nhsuk-breadcrumb__list-item"><a class="nhsuk-breadcrumb__link" asp-action="Close" asp-route-learningActivity=@learningActivity>@learningActivity activities</a></li>
+        <li class="nhsuk-breadcrumb__list-item">@Model.Title</li>
       </ol>
       <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__link" asp-action="Close" asp-route-learningActivity=@learningActivity>Return to @learningActivity activities</a></p>
     </div>

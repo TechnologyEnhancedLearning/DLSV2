@@ -9,14 +9,14 @@
     ViewData["SelfAssessmentTitle"] = @Model.Assessment.Name;
 }
 @section breadcrumbs {
-    <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="SelfAssessment" asp-route-selfAssessmentId="@Model.Assessment.Id">@(Model.Assessment.Name) introduction</a></li>
-    <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="SelfAssessmentOverview" asp-route-vocabulary="@Model.VocabPlural()" asp-route-selfAssessmentId="@Model.Assessment.Id" asp-route-competencyGroupId="@Model.Competency.CompetencyGroupID" asp-fragment="comp-@Model.CompetencyNumber">@(Model.VocabPlural()) home</a></li>
-    <li class="nhsuk-breadcrumb__item">@DisplayStringHelper.Ellipsis(Model.Competency?.Name, 30)</li>
+    <li class="nhsuk-breadcrumb__list-item"><a class="nhsuk-breadcrumb__link" asp-action="SelfAssessment" asp-route-selfAssessmentId="@Model.Assessment.Id">@(Model.Assessment.Name) introduction</a></li>
+    <li class="nhsuk-breadcrumb__list-item"><a class="nhsuk-breadcrumb__link" asp-action="SelfAssessmentOverview" asp-route-vocabulary="@Model.VocabPlural()" asp-route-selfAssessmentId="@Model.Assessment.Id" asp-route-competencyGroupId="@Model.Competency.CompetencyGroupID" asp-fragment="comp-@Model.CompetencyNumber">@(Model.VocabPlural()) home</a></li>
+    <li class="nhsuk-breadcrumb__list-item">@DisplayStringHelper.Ellipsis(Model.Competency?.Name, 30)</li>
 }
 @section mobilebacklink
     {
     <p class="nhsuk-breadcrumb__back">
-        <a class="nhsuk-breadcrumb__backlink" asp-action="SelfAssessmentOverview"
+        <a class="nhsuk-back-link" asp-action="SelfAssessmentOverview"
        asp-route-vocabulary="@Model.VocabPlural()"
        asp-route-selfAssessmentId="@Model.Assessment.Id"
        asp-route-competencyGroupId="@Model.Competency.CompetencyGroupID"

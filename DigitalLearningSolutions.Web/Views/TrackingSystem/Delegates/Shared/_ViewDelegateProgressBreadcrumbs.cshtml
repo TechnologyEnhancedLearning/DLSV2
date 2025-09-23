@@ -4,13 +4,13 @@
 <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
   <div class="nhsuk-width-container">
     <ol class="nhsuk-breadcrumb__list">
-      <li class="nhsuk-breadcrumb__item">
+      <li class="nhsuk-breadcrumb__list-item">
         <a class="nhsuk-breadcrumb__link" asp-controller="AllDelegates" asp-action="Index">All delegates</a>
       </li>
-      <li class="nhsuk-breadcrumb__item">
+      <li class="nhsuk-breadcrumb__list-item">
         <a class="nhsuk-breadcrumb__link" asp-controller="ViewDelegate" asp-action="Index" asp-route-delegateId="@Model.delegateId">View delegate</a>
       </li>
-      <li class="nhsuk-breadcrumb__item">
+      <li class="nhsuk-breadcrumb__list-item">
         <a class="nhsuk-breadcrumb__link"
            asp-controller="DelegateProgress"
            asp-action="Index"
@@ -21,7 +21,7 @@
       </li>
     </ol>
     <p class="nhsuk-breadcrumb__back">
-      <a class="nhsuk-breadcrumb__backlink"
+      <a class="nhsuk-back-link"
          asp-controller="DelegateProgress"
          asp-action="Index"
          asp-route-progressId="@Model.progressId"

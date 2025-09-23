@@ -14,11 +14,11 @@
     <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
         <div class="nhsuk-width-container">
             <ol class="nhsuk-breadcrumb__list">
-                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFrameworks" asp-route-tabname="Mine">Frameworks</a></li>
-                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFramework" asp-route-frameworkId="@(ViewContext.RouteData.Values["frameworkId"])" asp-route-tabname="Structure">Framework structure</a></li>
-                <li class="nhsuk-breadcrumb__item">Print layout</li>
+                <li class="nhsuk-breadcrumb__list-item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFrameworks" asp-route-tabname="Mine">Frameworks</a></li>
+                <li class="nhsuk-breadcrumb__list-item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFramework" asp-route-frameworkId="@(ViewContext.RouteData.Values["frameworkId"])" asp-route-tabname="Structure">Framework structure</a></li>
+                <li class="nhsuk-breadcrumb__list-item">Print layout</li>
             </ol>
-            <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ViewFramework" asp-route-frameworkId="@(ViewContext.RouteData.Values["frameworkId"])" asp-route-tabname="Structure">Back to Framework</a></p>
+            <p class="nhsuk-breadcrumb__back"><a class="nhsuk-back-link" asp-action="ViewFramework" asp-route-frameworkId="@(ViewContext.RouteData.Values["frameworkId"])" asp-route-tabname="Structure">Back to Framework</a></p>
         </div>
     </nav>
 }

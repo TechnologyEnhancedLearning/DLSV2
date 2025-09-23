@@ -8,22 +8,22 @@
 }
 
 @section breadcrumbs {
-    <li class="nhsuk-breadcrumb__item">
+    <li class="nhsuk-breadcrumb__list-item">
         <a class="nhsuk-breadcrumb__link" asp-action="SelfAssessment" asp-route-selfAssessmentId="@Model.SelfAssessmentId">@(Model.SelfAssessmentName) introduction</a>
     </li>
-    <li class="nhsuk-breadcrumb__item">
+    <li class="nhsuk-breadcrumb__list-item">
         <a class="nhsuk-breadcrumb__link" asp-action="SelfAssessmentOverview" asp-route-vocabulary="@Model.VocabPlural()" asp-route-selfAssessmentId="@Model.SelfAssessmentId">@(Model.VocabPlural()) home</a>
     </li>
-    <li class="nhsuk-breadcrumb__item">
+    <li class="nhsuk-breadcrumb__list-item">
         <a class="nhsuk-breadcrumb__link" asp-action="ReviewConfirmationRequests" asp-route-selfAssessmentId="@Model.SelfAssessmentId">Confirmation requests</a>
     </li>
-    <li class="nhsuk-breadcrumb__item">New</li>
+    <li class="nhsuk-breadcrumb__list-item">New</li>
 }
 
 @section mobilebacklink
 {
     <p class="nhsuk-breadcrumb__back">
-        <a class="nhsuk-breadcrumb__backlink"
+        <a class="nhsuk-back-link"
            asp-action="VerificationPickSupervisor"
            asp-route-selfAssessmentId="@Model.SelfAssessmentId">
             Back to Choose a supervisor

@@ -12,11 +12,11 @@
     <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
         <div class="nhsuk-width-container">
             <ol class="nhsuk-breadcrumb__list">
-                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewCompetencyAssessments" asp-route-tabname="Mine">Competency Assessments</a></li>
-                <li class="nhsuk-breadcrumb__item">@Model.CompetencyAssessmentName</li>
+                <li class="nhsuk-breadcrumb__list-item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewCompetencyAssessments" asp-route-tabname="Mine">Competency Assessments</a></li>
+                <li class="nhsuk-breadcrumb__list-item">@Model.CompetencyAssessmentName</li>
             </ol>
             <p class="nhsuk-breadcrumb__back">
-                <a class="nhsuk-breadcrumb__backlink" asp-action="ViewCompetencyAssessments" asp-route-tabname="Mine">
+                <a class="nhsuk-back-link" asp-action="ViewCompetencyAssessments" asp-route-tabname="Mine">
                     <span class="nhsuk-u-visually-hidden">Back to &nbsp;</span>Competency Assessments
                 </a>
             </p>
