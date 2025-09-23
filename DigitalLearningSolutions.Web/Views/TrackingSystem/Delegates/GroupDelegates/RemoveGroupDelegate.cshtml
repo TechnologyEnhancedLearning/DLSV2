@@ -37,7 +37,7 @@
               <span class="nhsuk-u-visually-hidden">Error:</span> @ViewData.ModelState[nameof(Model.ConfirmRemovalFromGroup)].Errors[0].ErrorMessage
             </span>
           }
-          <div class="nhsuk-checkboxes">
+            <div class="nhsuk-checkboxes" data-module="nhsuk-checkboxes">
             <div class="nhsuk-checkboxes__item">
               <input class="nhsuk-checkboxes__input" asp-for="ConfirmRemovalFromGroup" />
               <label class="nhsuk-label nhsuk-checkboxes__label word-break" asp-for="ConfirmRemovalFromGroup">
@@ -52,7 +52,7 @@
       {
         <div class="nhsuk-form-group">
           <fieldset class="nhsuk-fieldset" aria-describedby="@(nameof(Model.RemoveStartedEnrolments))-error">
-            <div class="nhsuk-checkboxes">
+              <div class="nhsuk-checkboxes" data-module="nhsuk-checkboxes">
               <div class="nhsuk-checkboxes__item">
                 <input class="nhsuk-checkboxes__input" asp-for="RemoveStartedEnrolments" aria-describedby="@(nameof(Model.RemoveStartedEnrolments))-item-hint" />
                 <label class="nhsuk-label nhsuk-checkboxes__label" asp-for="RemoveStartedEnrolments">

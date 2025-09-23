@@ -51,7 +51,7 @@
             <input type="hidden" asp-for="SelfAssessmentID" value="@Model.SupervisorDelegateId" />
             <input type="hidden" asp-for="SelfAssessmentName" value="@Model.SelfAssessmentName" />
             <input type="hidden" asp-for="CentreID" value="@Model.CentreID" />
-            <div class="nhsuk-radios">
+            <div class="nhsuk-radios" data-module="nhsuk-radios">
                 @foreach (var role in Model.SelfAssessmentSupervisorRoles)
                 {
                     <div class="nhsuk-radios__item">

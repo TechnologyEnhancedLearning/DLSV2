@@ -25,7 +25,7 @@
           </div>
         }
 
-    <div class="nhsuk-radios">
+    <div class="nhsuk-radios" data-module="nhsuk-radios">
             @foreach (var (radio, index) in Model.Radios.Select((r, i) => (r, i)))
             {
                 var radioId = $"{radio.Value}-{index}";
