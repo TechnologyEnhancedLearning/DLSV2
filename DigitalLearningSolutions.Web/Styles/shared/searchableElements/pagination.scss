@@ -1,4 +1,4 @@
-﻿@use "nhsuk-frontend/dist/core/all" as *;
+﻿@use "nhsuk-frontend/dist/nhsuk/core/all" as *;
 @use "common" as *;
 
 .pagination-hidden {
@@ -37,7 +37,7 @@
 }
 
 .page-indicator {
-  @include nhsuk-typography-responsive(24);
+  @include nhsuk-font-size(26);
   padding-top: 1px;
 }
 

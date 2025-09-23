@@ -1,23 +1,23 @@
-declare module 'nhsuk-frontend/packages/components/header/header' { // qqqq still packages! not node_modules/nhsuk-frontend/dist/nhsuk/components 
+declare module 'nhsuk-frontend/dist/nhsuk/components/header/header' { // qqqq still packages! not node_modules/nhsuk-frontend/dist/nhsuk/nhsuk/components 
   export default function Header(): void;
 }
 
-declare module 'nhsuk-frontend/packages/components/skip-link/skip-link' {
+declare module 'nhsuk-frontend/dist/nhsuk/components/skip-link/skip-link' {
   export default function SkipLink(): void;
 }
 
-declare module 'nhsuk-frontend/packages/components/details/details' {
+declare module 'nhsuk-frontend/dist/nhsuk/components/details/details' {
   export default function Details(): void;
 }
 
-declare module 'nhsuk-frontend/packages/components/radios/radios' {
+declare module 'nhsuk-frontend/dist/nhsuk/components/radios/radios' {
   export default function Radios(): void;
 }
 
-declare module 'nhsuk-frontend/packages/components/checkboxes/checkboxes' {
+declare module 'nhsuk-frontend/dist/nhsuk/components/checkboxes/checkboxes' {
   export default function Checkboxes(): void;
 }
 
-declare module 'nhsuk-frontend/packages/components/card/card' {
+declare module 'nhsuk-frontend/dist/nhsuk/components/card/card' {
   export default function Card(): void;
 }

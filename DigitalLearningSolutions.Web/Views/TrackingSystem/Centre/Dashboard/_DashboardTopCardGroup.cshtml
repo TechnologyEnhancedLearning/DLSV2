@@ -8,7 +8,7 @@
   <li class="nhsuk-grid-column-one-quarter nhsuk-card-group__item dashboard-4-1-card">
     <div class="nhsuk-card nhsuk-card--clickable">
       <div class="nhsuk-card__content">
-        <p class="nhsuk-heading-xl nhsuk-u-font-size-24 nhsuk-u-margin-bottom-1">
+        <p class="nhsuk-heading-xl nhsuk-u-font-size-26 nhsuk-u-margin-bottom-1">
           @Model.NumberOfDelegates <span class="nhsuk-u-visually-hidden">Delegates</span>
         </p>
         <a class="nhsuk-card__link nhsuk-u-font-weight-normal nhsuk-u-font-size-19 nhsuk-link--no-visited-state"
@@ -23,7 +23,7 @@
   <li class="nhsuk-grid-column-one-quarter nhsuk-card-group__item dashboard-4-1-card">
     <div class="nhsuk-card nhsuk-card--clickable">
       <div class="nhsuk-card__content">
-        <p class="nhsuk-heading-xl nhsuk-u-font-size-24 nhsuk-u-margin-bottom-1">
+        <p class="nhsuk-heading-xl nhsuk-u-font-size-26 nhsuk-u-margin-bottom-1">
           @Model.NumberOfCourses <span class="nhsuk-u-visually-hidden">Courses</span>
         </p>
         <a class="nhsuk-card__link nhsuk-u-font-weight-normal nhsuk-u-font-size-19 nhsuk-link--no-visited-state"
@@ -38,7 +38,7 @@
   <li class="nhsuk-grid-column-one-quarter nhsuk-card-group__item dashboard-4-1-card">
     <div class="nhsuk-card @(User.HasCentreManagerPermissions() ? "nhsuk-card--clickable" : "nhsuk-card--not-clickable")">
       <div class="nhsuk-card__content">
-        <p class="nhsuk-heading-xl nhsuk-u-font-size-24 nhsuk-u-margin-bottom-1">
+        <p class="nhsuk-heading-xl nhsuk-u-font-size-26 nhsuk-u-margin-bottom-1">
           @Model.NumberOfAdmins <span class="nhsuk-u-visually-hidden">Admins</span>
         </p>
         @if (User.HasCentreManagerPermissions())
@@ -60,7 +60,7 @@
   <li class="nhsuk-grid-column-one-quarter nhsuk-card-group__item dashboard-4-1-card">
     <div class="nhsuk-card nhsuk-card--clickable">
       <div class="nhsuk-card__content">
-        <p class="nhsuk-heading-xl nhsuk-u-font-size-24 nhsuk-u-margin-bottom-1">
+        <p class="nhsuk-heading-xl nhsuk-u-font-size-26 nhsuk-u-margin-bottom-1">
           @Model.NumberOfSupportTickets <span class="nhsuk-u-visually-hidden">Support tickets</span>
         </p>
         <a class="nhsuk-card__link nhsuk-u-font-weight-normal nhsuk-u-font-size-19 nhsuk-link--no-visited-state"
