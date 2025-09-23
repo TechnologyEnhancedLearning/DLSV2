@@ -18,7 +18,7 @@ namespace DigitalLearningSolutions.Web.Helpers
                 var searchText = search.SearchText?.Trim() ?? string.Empty;
                 var filters = search.AppliedFilters?.Select(f => int.Parse(f.FilterValue)) ?? Enumerable.Empty<int>();
                 search.CompetencyFlags = competencyFlags.ToList();
-                ResponseStatusFilters(ref filteredCompetencies, filters, searchText);
+                ApplyResponseStatusFilters(ref filteredCompetencies, filters, searchText);
                 UpdateRequirementsFilterDropdownOptionsVisibility(search, filteredCompetencies);
                 ApplyRequirementsFilters(ref filteredCompetencies, filters);
 
@@ -30,7 +30,7 @@ namespace DigitalLearningSolutions.Web.Helpers
             return filteredCompetencies;
         }
 
-        public static void ResponseStatusFilters(ref IEnumerable<Competency> competencies, IEnumerable<int> filters, string searchText = "")
+        private static void ApplyResponseStatusFilters(ref IEnumerable<Competency> competencies, IEnumerable<int> filters, string searchText = "")
         {
             var appliedResponseStatusFilters = filters.Where(IsResponseStatusFilter).ToList();
 
@@ -72,33 +72,6 @@ namespace DigitalLearningSolutions.Web.Helpers
             // Final filtering
             competencies = competencies.Where(c => MatchesSearch(c) && MatchesFilters(c));
         }
-        private static void ApplyResponseStatusFilters(ref IEnumerable<Competency> competencies, IEnumerable<int> filters, string searchText = "")
-        {
-            var filteredCompetencies = competencies;
-            var appliedResponseStatusFilters = filters.Where(f => IsResponseStatusFilter(f));
-
-            if (appliedResponseStatusFilters.Any() || searchText.Length > 0)
-            {
-                var wordsInSearchText = searchText.Split().Where(w => w != string.Empty);
-                                    filteredCompetencies = from c in competencies
-                                           let searchTextMatchesGroup = wordsInSearchText.All(w => c.CompetencyGroup?.Contains(w, StringComparison.CurrentCultureIgnoreCase) ?? false)
-                                           let searchTextMatchesCompetencyDescription = wordsInSearchText.All(w => c.Description?.Contains(w, StringComparison.CurrentCultureIgnoreCase) ?? false)
-                                           let searchTextMatchesCompetencyName = wordsInSearchText.All(w => c.Name?.Contains(w, StringComparison.CurrentCultureIgnoreCase) ?? false)
-                                           let responseStatusFilterMatchesAll =
-                                              (filters.Contains((int)SelfAssessmentCompetencyFilter.RequiresSelfAssessment) && c.AssessmentQuestions.Any(q => q.ResultId == null))
-                                           || (filters.Contains((int)SelfAssessmentCompetencyFilter.SelfAssessed) && c.AssessmentQuestions.Any(q => q.ResultId != null && q.Requested == null && q.SignedOff == null))
-                                           || (filters.Contains((int)SelfAssessmentCompetencyFilter.ConfirmationRequested) && c.AssessmentQuestions.Any(q => q.Verified == null && q.Requested != null))
-                                           || (filters.Contains((int)SelfAssessmentCompetencyFilter.ConfirmationRejected) && c.AssessmentQuestions.Any(q => q.Verified.HasValue && q.SignedOff != true))
-                                           || (filters.Contains((int)SelfAssessmentCompetencyFilter.Verified) && c.AssessmentQuestions.Any(q => q.Verified.HasValue && q.SignedOff == true))
-                                           || (filters.Contains((int)SelfAssessmentCompetencyFilter.Optional) && c.Optional)
-                                           where (wordsInSearchText.Count() == 0 || searchTextMatchesGroup || searchTextMatchesCompetencyDescription || searchTextMatchesCompetencyName)
-                                               && (!appliedResponseStatusFilters.Any() || responseStatusFilterMatchesAll)
-                                           select c;
-               
-            }
-            competencies = filteredCompetencies;
-        }
-
         private static void ApplyRequirementsFilters(ref IEnumerable<Competency> competencies, IEnumerable<int> filters)
         {
             var filteredCompetencies = competencies;
