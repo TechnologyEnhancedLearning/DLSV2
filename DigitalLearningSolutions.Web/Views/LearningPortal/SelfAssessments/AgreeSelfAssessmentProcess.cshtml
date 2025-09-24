@@ -31,7 +31,7 @@
             <li>If you don’t fully meet the requirements, you can still document your progress and next steps for future assessment.</li>
         </ol>
 
-        <form method="post" asp-controller="LearningPortal" asp-action="ProcessAgreed">
+        <form method="post" asp-controller="LearningPortal" asp-action="ProcessAgreed" asp-route-selfAssessmentId="@Model.SelfAssessmentID">
             <div class="nhsuk-checkboxes__item">
                 <vc:single-checkbox asp-for="@nameof(Model.ActionConfirmed)"
                                     label=" I understand and agree to the self-assessment process described above."
