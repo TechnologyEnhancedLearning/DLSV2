@@ -10,7 +10,7 @@
     var srcUrl = $"{tableauServerUrl}/t/{siteName}/views/{workbookName}/{viewName}";
     ViewData["Title"] = "Supervised self assessments dashboard";
 }
-<div class="nhsuk-back-link">
+<div class="nhsuk-link">
     <a class="nhsuk-back-link" role="button" asp-controller="@(ViewBag.Source == "Supervisor" ? "Supervisor" : "SelfAssessmentReports")" asp-action="Index">Back</a>
 </div>
 <h1>@ViewData["Title"]</h1>

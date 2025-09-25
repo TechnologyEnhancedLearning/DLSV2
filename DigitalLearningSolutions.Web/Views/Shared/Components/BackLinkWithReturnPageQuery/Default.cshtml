@@ -3,7 +3,7 @@
 
 <link rel="stylesheet" href="@Url.Content("~/css/shared/components/cancelLink.css")" asp-append-version="true">
 
-<div class="nhsuk-back-link">
+<div class="nhsuk-link">
   @if (Model.Fragment == null)
   {
     <a class="nhsuk-back-link" asp-controller="@Model.AspController" asp-action="@Model.AspAction" asp-all-route-data="@Model.AspAllRouteData">

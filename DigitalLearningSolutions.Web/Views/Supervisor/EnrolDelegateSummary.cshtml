@@ -125,7 +125,7 @@
 <a class="nhsuk-button" role="button" asp-action="EnrolDelegateConfirm" asp-route-supervisorDelegateId="@Model.SupervisorDelegateDetail.ID" asp-route-delegateUserId="@Model.SupervisorDelegateDetail.DelegateUserID.Value">
     Confirm
 </a>
-<div class="nhsuk-back-link">
+<div class="nhsuk-link">
     <a class="nhsuk-back-link__link" asp-controller="Supervisor"
        asp-action="DelegateProfileAssessments"
        asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]">
