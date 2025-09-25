@@ -144,7 +144,7 @@ ol.hee-fwservice--framework-progress-bar {
     width: 150px; // hacky way to make the line the right size
     .hee-fwservice--framework-progress-marker {
       position: relative;
-      border: 2px solid $color_nhsuk-blue;
+      border: 2px solid nhsuk-colour("blue");
       border-radius: 50%;
       width: 2rem;
       height: 2rem;
@@ -154,7 +154,7 @@ ol.hee-fwservice--framework-progress-bar {
       .hee-fwservice--framework-progress-marker::before {
         content: '';
         width: 120px;
-        border-top: 1px solid $color_nhsuk-blue;
+        border-top: 1px solid nhsuk-colour("blue");
         position: absolute;
         top: 50%;
         left: 100%;
@@ -171,8 +171,8 @@ ol.hee-fwservice--framework-progress-bar {
 
     .hee-fwservice--framework-progress-marker {
       font-weight: normal;
-      color: $color_nhsuk-white;
-      background-color: $color_nhsuk-blue;
+      color: nhsuk-colour("white");
+      background-color: nhsuk-colour("blue");
     }
   }
 }
@@ -182,7 +182,7 @@ ul.no-decs {
 }
 
 .hee-fwservice--framework-structure {
-  background-color: $color_nhsuk-white;
+  background-color: nhsuk-colour("white");
   display: block;
   padding: 24px;
   margin-bottom: 24px;

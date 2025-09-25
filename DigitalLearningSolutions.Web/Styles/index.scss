@@ -219,7 +219,7 @@ ul.no-bullets {
 
 .side-nav__heading {
   @extend .nhsuk-u-font-weight-bold;
-  color: $color_nhsuk-grey-1;
+  color: nhsuk-colour("grey-1");
   @include nhsuk-responsive-margin(3, "bottom");
   @include nhsuk-responsive-padding(1, "top");
   @extend .nhsuk-u-font-size-19;
@@ -266,7 +266,7 @@ ul.no-bullets {
   ul {
     display: table;
     list-style-type: none;
-    border-bottom: 1px solid $color_nhsuk-grey-1;
+    border-bottom: 1px solid nhsuk-colour("grey-1");
     table-layout: fixed;
     width: 100%;
     text-align: center;
@@ -283,7 +283,7 @@ ul.no-bullets {
       }
 
       &.active {
-        border-bottom: 3px solid $color_nhsuk-blue;
+        border-bottom: 3px solid nhsuk-colour("blue");
         font-weight: bold;
         background-color: white;
       }

@@ -102,7 +102,7 @@
   @extend .inline-button;
   width: 20%;
   border-radius: 4px;
-  background-color: $color_nhsuk-red;
+  background-color: nhsuk-colour("red");
 
   @include mq($until: tablet) {
     margin-top: nhsuk-spacing(2);

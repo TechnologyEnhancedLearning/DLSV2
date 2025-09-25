@@ -26,9 +26,9 @@
 }
 
 .auth-button--blue {
-    background-color: $color_nhsuk-blue;
+    background-color: nhsuk-colour("blue");
 }
 
 .auth-button--blue:hover {
-    background-color: darken($color_nhsuk-blue, 5%);
+    background-color: darken(nhsuk-colour("blue"), 5%);
 }

@@ -25,7 +25,7 @@
   .nhsuk-icon__search {
     height: 27px;
     width: 27px;
-    fill: $color_nhsuk-white;
+    fill: nhsuk-colour("white");
   }
 
   &:focus:not(:active) .nhsuk-icon__search {
