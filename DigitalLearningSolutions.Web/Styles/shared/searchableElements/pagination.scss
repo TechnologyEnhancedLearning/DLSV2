@@ -44,7 +44,7 @@
 button.nhsuk-pagination__link {
   border: none;
   background-color: transparent;
-  color: $nhsuk-link-color;
+  color: $nhsuk-link-colour;
   display: flex;
   width: auto;
   // Since IE is bad at drawing boxes the correct size
@@ -65,11 +65,11 @@ button.nhsuk-pagination__link {
   }
 
   &:hover {
-    color: $nhsuk-link-hover-color;
+    color: $nhsuk-link-hover-colour;
   }
 
   &:active {
-    color: $nhsuk-link-active-color;
+    color: $nhsuk-link-active-colour;
   }
 }
 

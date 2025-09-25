@@ -56,7 +56,7 @@ $track-radius: 5px !default;
 
   &:focus {
     border: $focus-track-border-width solid nhsuk-colour("black");
-    box-shadow: 0 0 0 4px $nhsuk-focus-color;
+    box-shadow: 0 0 0 4px $nhsuk-focus-colour;
 
     &::-webkit-slider-runnable-track {
       border: none;

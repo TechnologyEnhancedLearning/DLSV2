@@ -155,7 +155,7 @@ details.nhsuk-details {
 .asset-title-header .title {
   font-size: 1.6rem;
   font-weight: bold;
-  color: $nhsuk-secondary-text-color;
+  color: $nhsuk-secondary-text-colour;
   padding: 1rem 0 0 0;
   display: inline-block;
 }
@@ -186,19 +186,19 @@ details.nhsuk-details {
 }
 
 .tag.tag-article {
-  background-color: $nhsuk-link-active-color;
+  background-color: $nhsuk-link-active-colour;
 }
 
 .tag.tag-online.course {
-  background-color: $nhsuk-link-color;
+  background-color: $nhsuk-link-colour;
 }
 
 .tag.tag-learning.guide {
-  background-color: $nhsuk-link-hover-color;
+  background-color: $nhsuk-link-hover-colour;
 }
 
 .tag.tag-video {
-  background-color: $nhsuk-link-visited-color;
+  background-color: $nhsuk-link-visited-colour;
 }
 
 @media only screen and (max-width: $mq-tablet) {

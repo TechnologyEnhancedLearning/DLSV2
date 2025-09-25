@@ -26,7 +26,7 @@ ul > li > ul > li {
 }
 
 .delete-button {
-  background-color: $nhsuk-error-color;
+  background-color: $nhsuk-error-colour;
   box-shadow: 0 4px 0 #6b140e;
   margin-bottom: 16px !important;
 }
@@ -65,7 +65,7 @@ ul > li > ul > li {
 
 
 input:invalid {
-  border: $nhsuk-border-width-form-element-error solid $nhsuk-error-color;
+  border: $nhsuk-border-width-form-element-error solid $nhsuk-error-colour;
 }
 
 input[type=file] {
@@ -190,7 +190,7 @@ ul.no-bullets {
 }
 
 .divider {
-  border-bottom: 1px solid $nhsuk-border-color;
+  border-bottom: 1px solid $nhsuk-border-colour;
   margin-bottom: nhsuk-spacing(3);
 }
 
@@ -225,7 +225,7 @@ ul.no-bullets {
   @extend .nhsuk-u-font-size-19;
 
   @include govuk-media-query($until: desktop) {
-    color: $nhsuk-text-color;
+    color: $nhsuk-text-colour;
   }
 }
 
@@ -233,11 +233,11 @@ ul.no-bullets {
   text-decoration: none;
 
   &:visited {
-    color: $nhsuk-link-color;
+    color: $nhsuk-link-colour;
   }
 
   &:hover {
-    color: $nhsuk-link-hover-color;
+    color: $nhsuk-link-hover-colour;
     text-decoration: underline;
   }
 }
@@ -253,7 +253,7 @@ ul.no-bullets {
 }
 
 .side-nav__item--selected {
-  border-left: 4px solid $nhsuk-link-color;
+  border-left: 4px solid $nhsuk-link-colour;
   @include nhsuk-responsive-padding(2, "left");
   @extend .nhsuk-u-font-weight-bold;
 
@@ -302,12 +302,12 @@ ul.no-bullets {
 .button-as-link {
   background: none;
   border: none;
-  color: $nhsuk-link-color;
+  color: $nhsuk-link-colour;
   @extend .nhsuk-u-font-size-19;
   text-decoration: underline;
 
   &:hover {
-    color: $nhsuk-link-hover-color;
+    color: $nhsuk-link-hover-colour;
     text-decoration: none;
     cursor: pointer;
   }

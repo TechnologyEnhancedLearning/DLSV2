@@ -71,18 +71,18 @@
 
 .see-more-link {
   &:visited {
-    color: $nhsuk-link-visited-color;
+    color: $nhsuk-link-visited-colour;
   }
 
   &:link {
-    color: $nhsuk-link-color;
+    color: $nhsuk-link-colour;
   }
 
   &:hover {
-    color: $nhsuk-link-hover-color;
+    color: $nhsuk-link-hover-colour;
   }
 
   &:active {
-    color: $nhsuk-link-active-color;
+    color: $nhsuk-link-active-colour;
   }
 }
