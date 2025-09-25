@@ -37,7 +37,7 @@ namespace DigitalLearningSolutions.Web.Services
             var newCompetencyIds = competencyRows.Select(row => row.ID ?? 0).ToList();
             var existingIds = frameworkService.GetFrameworkCompetencyOrder(frameworkId, newCompetencyIds);
             var existingGroups = frameworkService
-                .GetFrameworkCompetencyGroups(frameworkId).Where(x => x.FrameworkCompetencies.Any()).ToList()
+                .GetFrameworkCompetencyGroups(frameworkId, null).Where(x => x.FrameworkCompetencies.Any()).ToList()
                 .Select(row => row.Name)
                 .Distinct()
                 .ToList();
