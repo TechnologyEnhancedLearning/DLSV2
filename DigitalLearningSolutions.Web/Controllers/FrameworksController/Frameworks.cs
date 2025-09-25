@@ -582,14 +582,33 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         {
             if (ModelState.IsValid)
             {
+                var flags = frameworkService.GetCustomFlagsByFrameworkId(frameworkId, null)
+                    .Where(fn => fn.FlagName?.Trim().ToLower() == model.FlagName?.Trim().ToLower()).ToList();
+
+                bool nameExists = flags.Any(x => x.FlagName?.Trim().ToLower() == model.FlagName?.Trim().ToLower());
+                bool idExists = flags.Any(x => x.FlagId == flagId);
+
                 if (actionName == "Edit")
                 {
-                    frameworkService.UpdateFrameworkCustomFlag(frameworkId, model.Id, model.FlagName, model.FlagGroup, model.FlagTagClass);
+                    if (nameExists && !idExists)
+                    {
+                        ModelState.AddModelError(nameof(model.FlagName), "A custom flag already exists.");
+                        return View("Developer/EditCustomFlag", model);
+                    }
+                    else
+                        frameworkService.UpdateFrameworkCustomFlag(frameworkId, model.Id, model.FlagName?.Trim(), model.FlagGroup?.Trim(), model.FlagTagClass);
                 }
                 else
                 {
-                    frameworkService.AddCustomFlagToFramework(frameworkId, model.FlagName, model.FlagGroup, model.FlagTagClass);
+                    if (nameExists)
+                    {
+                        ModelState.AddModelError(nameof(model.FlagName), "A custom flag already exists.");
+                        return View("Developer/EditCustomFlag", model);
+                    }
+                    else
+                        frameworkService.AddCustomFlagToFramework(frameworkId, model.FlagName?.Trim(), model.FlagGroup?.Trim(), model.FlagTagClass);
                 }
+
                 return RedirectToAction("EditFrameworkFlags", "Frameworks", new { frameworkId });
             }
             return View("Developer/EditCustomFlag", model);
@@ -704,9 +723,9 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                     model.TabNavLinks = new TabsNavViewModel(FrameworkTab.Details, routeData);
                     break;
                 case "Structure":
-                    model.FrameworkCompetencyGroups = frameworkService.GetFrameworkCompetencyGroups(frameworkId).ToList();
+                    model.FrameworkCompetencyGroups = frameworkService.GetFrameworkCompetencyGroups(frameworkId, null).ToList();
                     model.CompetencyFlags = frameworkService.GetCompetencyFlagsByFrameworkId(frameworkId, null, selected: true);
-                    model.FrameworkCompetencies = frameworkService.GetFrameworkCompetenciesUngrouped(frameworkId);
+                    model.FrameworkCompetencies = frameworkService.GetFrameworkCompetenciesUngrouped(frameworkId, null);
                     model.TabNavLinks = new TabsNavViewModel(FrameworkTab.Structure, routeData);
                     break;
                 case "Comments":
@@ -718,7 +737,8 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         }
 
         [Route("/Framework/{frameworkId}/Structure/PrintLayout")]
-        public IActionResult PrintLayout(int frameworkId) {
+        public IActionResult PrintLayout(int frameworkId)
+        {
             var adminId = GetAdminId();
             var detailFramework = frameworkService.GetFrameworkDetailByFrameworkId(frameworkId, adminId);
             var routeData = new Dictionary<string, string> { { "frameworkId", detailFramework?.ID.ToString() } };
@@ -726,9 +746,9 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             {
                 DetailFramework = detailFramework,
             };
-            model.FrameworkCompetencyGroups = frameworkService.GetFrameworkCompetencyGroups(frameworkId).ToList();
+            model.FrameworkCompetencyGroups = frameworkService.GetFrameworkCompetencyGroups(frameworkId, null).ToList();
             model.CompetencyFlags = frameworkService.GetCompetencyFlagsByFrameworkId(frameworkId, null, selected: true);
-            model.FrameworkCompetencies = frameworkService.GetFrameworkCompetenciesUngrouped(frameworkId);
+            model.FrameworkCompetencies = frameworkService.GetFrameworkCompetenciesUngrouped(frameworkId, null);
             return View("Developer/FrameworkPrintLayout", model);
         }
         [ResponseCache(CacheProfileName = "Never")]

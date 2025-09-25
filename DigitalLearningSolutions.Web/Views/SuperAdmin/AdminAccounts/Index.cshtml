@@ -1,7 +1,7 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.SuperAdmin.Administrators
 @model AdminAccountsViewModel
 @{
-  ViewData["Title"] = "Administrators";
+    ViewData["Title"] = "Administrators";
 }
 <link rel="stylesheet" href="@Url.Content("~/css/superAdmin/users.css")" asp-append-version="true">
 <div class="nhsuk-grid-row">
@@ -16,23 +16,23 @@
 
                 <div class="nhsuk-grid-column-three-quarters">
                     <div class="nhsuk-grid-row">
-                      <div class="nhsuk-grid-column-one-half">
-                        <h1 class="nhsuk-heading-xl">@ViewData["Title"]</h1>
-                      </div>
-                      <div class="nhsuk-grid-column-one-half">
-                        <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-float-right"
-                         id="export"
-                         asp-controller="AdminAccounts"
-                         asp-action="Export"
-                         asp-route-searchString="@Model.SearchString"
-                         asp-route-existingFilterString="@Model.ExistingFilterString"
-                         role="button">
-                         Export to Excel
-                        </a>
-                      </div>
+                        <div class="nhsuk-grid-column-one-half">
+                            <h1 class="nhsuk-heading-xl">@ViewData["Title"]</h1>
+                        </div>
+                        <div class="nhsuk-grid-column-one-half">
+                            <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-float-right"
+                               id="export"
+                               asp-controller="AdminAccounts"
+                               asp-action="Export"
+                               asp-route-searchString="@Model.SearchString"
+                               asp-route-existingFilterString="@Model.ExistingFilterString"
+                               role="button">
+                                Export to Excel
+                            </a>
+                        </div>
                     </div>
                     <form class="nhsuk-u-margin-bottom-3" method="get" role="search" asp-controller="AdminAccounts" asp-action="Index" asp-route-page="@Model.Page">
-                      <input type="hidden" name="itemsPerPage" value="@Model.ItemsPerPage" />
+                        <input type="hidden" name="itemsPerPage" value="@Model.ItemsPerPage" />
                         <div class="nhsuk-grid-row">
                             <div id="search">
                                 <div class="nhsuk-grid-column-one-quarter">
@@ -64,24 +64,26 @@
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                        <div class="nhsuk-grid-row">
                             <div class="filter-container nhsuk-u-margin-top-5">
-                                <div class="nhsuk-grid-column-one-quarter">
+                                <div class="nhsuk-grid-column-one-quarter nhsuk-u-margin-right-4">
                                     <vc:select-list asp-for="@nameof(Model.UserStatus)"
                                                     label="Account status"
                                                     value="@Model.UserStatus"
                                                     required="true"
                                                     hint-text=""
-                                                    css-class="nhsuk-grid-column-full nhsuk-u-width-full"
+                                                    css-class=""
                                                     default-option=""
                                                     select-list-options="@ViewBag.UserStatus" />
                                 </div>
-                                <div class="nhsuk-grid-column-one-quarter">
+                                <div class="nhsuk-grid-column-one-quarter nhsuk-u-margin-right-4">
                                     <vc:select-list asp-for="@nameof(Model.Role)"
                                                     label="Role"
                                                     value="@Model.Role"
                                                     required="true"
                                                     hint-text=""
-                                                    css-class="nhsuk-grid-column-full nhsuk-u-width-full"
+                                                    css-class=""
                                                     default-option=""
                                                     select-list-options="@ViewBag.Roles" />
                                 </div>
@@ -91,7 +93,7 @@
                                                     value="@Model.CentreID.ToString()"
                                                     hint-text=""
                                                     required="true"
-                                                    css-class="nhsuk-grid-column-full  nhsuk-u-width-full"
+                                                    css-class=""
                                                     default-option=""
                                                     select-list-options="@ViewBag.Centres" />
                                 </div>
@@ -115,7 +117,7 @@
                                 <partial name="_SearchableAdminAccountsCard" model="admin" />
                             }
                         </div>
-                        <partial name="SearchablePage/_BottomPagination" model="Model" />                        
+                        <partial name="SearchablePage/_BottomPagination" model="Model" />
                     }
                 </div>
                 <nav class="side-nav-menu-bottom" aria-label="Bottom navigation bar">

@@ -5,6 +5,7 @@ using DigitalLearningSolutions.Data.Models.Frameworks;
 using DigitalLearningSolutions.Data.Models.Frameworks.Import;
 using DigitalLearningSolutions.Data.Models.SelfAssessments;
 using System.Collections.Generic;
+using DigitalLearningSolutions.Web.Helpers;
 using AssessmentQuestion = DigitalLearningSolutions.Data.Models.Frameworks.AssessmentQuestion;
 using CompetencyResourceAssessmentQuestionParameter =
     DigitalLearningSolutions.Data.Models.Frameworks.CompetencyResourceAssessmentQuestionParameter;
@@ -45,9 +46,9 @@ namespace DigitalLearningSolutions.Web.Services
         CollaboratorNotification? GetCollaboratorNotification(int id, int invitedByAdminId);
 
         //  Competencies/groups:
-        IEnumerable<FrameworkCompetencyGroup> GetFrameworkCompetencyGroups(int frameworkId);
+        IEnumerable<FrameworkCompetencyGroup> GetFrameworkCompetencyGroups(int frameworkId, int? assessmentId);
 
-        IEnumerable<FrameworkCompetency> GetFrameworkCompetenciesUngrouped(int frameworkId);
+        IEnumerable<FrameworkCompetency> GetFrameworkCompetenciesUngrouped(int frameworkId, int? assessmentId);
 
         CompetencyGroupBase? GetCompetencyGroupBaseById(int Id);
 
@@ -58,6 +59,7 @@ namespace DigitalLearningSolutions.Web.Services
         int GetMaxFrameworkCompetencyGroupID();
         IEnumerable<BulkCompetency> GetBulkCompetenciesForFramework(int frameworkId);
         List<int> GetFrameworkCompetencyOrder(int frameworkId, List<int> frameworkCompetencyIds);
+        int GetFrameworkCompetencyGroupId(int frameworkId, int competencyGroupId);
 
         //  Assessment questions:
         IEnumerable<AssessmentQuestion> GetAllCompetencyQuestions(int adminId);
@@ -119,11 +121,11 @@ namespace DigitalLearningSolutions.Web.Services
 
         int InsertCompetencyGroup(string groupName, string? groupDescription, int adminId, int? frameworkId = null);
 
-        int InsertFrameworkCompetency(int competencyId, int? frameworkCompetencyGroupID, int adminId, int frameworkId, bool alwaysShowDescription = false);
+        int InsertFrameworkCompetency(int competencyId, int? frameworkCompetencyGroupID, int adminId, int frameworkId, bool addDefaultQuestions = true);
 
         IEnumerable<FrameworkCompetency> GetAllCompetenciesForAdminId(string name, int adminId);
 
-        int InsertCompetency(string name, string? description, int adminId);
+        int InsertCompetency(string name, string? description, int adminId, bool alwaysShowDescription = false);
 
         int InsertFrameworkCompetencyGroup(int groupId, int frameworkID, int adminId);
 
@@ -192,7 +194,7 @@ namespace DigitalLearningSolutions.Web.Services
 
         void UpdateFrameworkConfig(int frameworkId, int adminId, string? frameworkConfig);
 
-        void UpdateFrameworkCompetencyGroup(
+        bool UpdateFrameworkCompetencyGroup(
             int frameworkCompetencyGroupId,
             int competencyGroupId,
             string name,
@@ -245,9 +247,9 @@ namespace DigitalLearningSolutions.Web.Services
         void RemoveCustomFlag(int flagId);
         void RemoveCollaboratorFromFramework(int frameworkId, int id);
 
-        void DeleteFrameworkCompetencyGroup(int frameworkCompetencyGroupId, int competencyGroupId, int adminId);
+        void DeleteFrameworkCompetencyGroup(int frameworkCompetencyGroupId, int competencyGroupId, int frameworkId, int adminId);
 
-        void DeleteFrameworkCompetency(int frameworkCompetencyId, int adminId);
+        void DeleteFrameworkCompetency(int frameworkCompetencyId, int? frameworkCompetencyGroupId, int frameworkId, int adminId);
 
         void DeleteFrameworkDefaultQuestion(
             int frameworkId,
@@ -259,6 +261,7 @@ namespace DigitalLearningSolutions.Web.Services
         void DeleteCompetencyAssessmentQuestion(int frameworkCompetencyId, int assessmentQuestionId, int adminId);
 
         void DeleteCompetencyLearningResource(int competencyLearningResourceId, int adminId);
+        void UpdateFrameworkCompetencyFrameworkCompetencyGroup(int? competencyGroupId, int frameworkCompetencyGroupId, int adminId);
     }
     public class FrameworkService : IFrameworkService
     {
@@ -313,14 +316,14 @@ namespace DigitalLearningSolutions.Web.Services
             frameworkDataService.DeleteCompetencyLearningResource(competencyLearningResourceId, adminId);
         }
 
-        public void DeleteFrameworkCompetency(int frameworkCompetencyId, int adminId)
+        public void DeleteFrameworkCompetency(int frameworkCompetencyId, int? frameworkCompetencyGroupId, int frameworkId, int adminId)
         {
-            frameworkDataService.DeleteFrameworkCompetency(frameworkCompetencyId, adminId);
+            frameworkDataService.DeleteFrameworkCompetency(frameworkCompetencyId, frameworkCompetencyGroupId, frameworkId, adminId);
         }
 
-        public void DeleteFrameworkCompetencyGroup(int frameworkCompetencyGroupId, int competencyGroupId, int adminId)
+        public void DeleteFrameworkCompetencyGroup(int frameworkCompetencyGroupId, int competencyGroupId, int frameworkId, int adminId)
         {
-            frameworkDataService.DeleteFrameworkCompetencyGroup(frameworkCompetencyGroupId, competencyGroupId, adminId);
+            frameworkDataService.DeleteFrameworkCompetencyGroup(frameworkCompetencyGroupId, competencyGroupId, frameworkId, adminId);
         }
 
         public void DeleteFrameworkDefaultQuestion(int frameworkId, int assessmentQuestionId, int adminId, bool deleteFromExisting)
@@ -478,9 +481,9 @@ namespace DigitalLearningSolutions.Web.Services
             return frameworkDataService.GetFrameworkByFrameworkName(frameworkName, adminId);
         }
 
-        public IEnumerable<FrameworkCompetency> GetFrameworkCompetenciesUngrouped(int frameworkId)
+        public IEnumerable<FrameworkCompetency> GetFrameworkCompetenciesUngrouped(int frameworkId, int? assessmentId)
         {
-            return frameworkDataService.GetFrameworkCompetenciesUngrouped(frameworkId);
+            return frameworkDataService.GetFrameworkCompetenciesUngrouped(frameworkId, assessmentId);
         }
 
         public FrameworkCompetency? GetFrameworkCompetencyById(int Id)
@@ -493,9 +496,9 @@ namespace DigitalLearningSolutions.Web.Services
             return frameworkDataService.GetFrameworkCompetencyForPreview(frameworkCompetencyId);
         }
 
-        public IEnumerable<FrameworkCompetencyGroup> GetFrameworkCompetencyGroups(int frameworkId)
+        public IEnumerable<FrameworkCompetencyGroup> GetFrameworkCompetencyGroups(int frameworkId, int? assessmentId)
         {
-            return frameworkDataService.GetFrameworkCompetencyGroups(frameworkId);
+            return frameworkDataService.GetFrameworkCompetencyGroups(frameworkId, assessmentId);
         }
 
         public string? GetFrameworkConfigForFrameworkId(int frameworkId)
@@ -515,7 +518,12 @@ namespace DigitalLearningSolutions.Web.Services
 
         public DetailFramework? GetFrameworkDetailByFrameworkId(int frameworkId, int adminId)
         {
-            return frameworkDataService.GetFrameworkDetailByFrameworkId(frameworkId, adminId);
+            var detailFramework = frameworkDataService.GetFrameworkDetailByFrameworkId(frameworkId, adminId);
+            if (StringHelper.StripHtmlTags(detailFramework.Description) == string.Empty)
+            {
+                detailFramework.Description = string.Empty;
+            }
+            return detailFramework;
         }
 
         public FrameworkReview? GetFrameworkReview(int frameworkId, int adminId, int reviewId)
@@ -593,19 +601,19 @@ namespace DigitalLearningSolutions.Web.Services
             return frameworkDataService.InsertComment(frameworkId, adminId, comment, replyToCommentId);
         }
 
-        public int InsertCompetency(string name, string? description, int adminId)
+        public int InsertCompetency(string name, string? description, int adminId, bool alwaysShowDescription = false)
         {
-            return frameworkDataService.InsertCompetency(name, description, adminId);
+            return frameworkDataService.InsertCompetency(name.Trim(), description, adminId, alwaysShowDescription);
         }
 
         public int InsertCompetencyGroup(string groupName, string? groupDescription, int adminId, int? frameworkId)
         {
-            return frameworkDataService.InsertCompetencyGroup(groupName, groupDescription, adminId, frameworkId);
+            return frameworkDataService.InsertCompetencyGroup(groupName.Trim(), groupDescription, adminId, frameworkId);
         }
 
-        public int InsertFrameworkCompetency(int competencyId, int? frameworkCompetencyGroupID, int adminId, int frameworkId, bool alwaysShowDescription = false)
+        public int InsertFrameworkCompetency(int competencyId, int? frameworkCompetencyGroupID, int adminId, int frameworkId, bool addDefaultQuestions = true)
         {
-            return frameworkDataService.InsertFrameworkCompetency(competencyId, frameworkCompetencyGroupID, adminId, frameworkId, alwaysShowDescription);
+            return frameworkDataService.InsertFrameworkCompetency(competencyId, frameworkCompetencyGroupID, adminId, frameworkId, addDefaultQuestions);
         }
 
         public int InsertFrameworkCompetencyGroup(int groupId, int frameworkID, int adminId)
@@ -675,12 +683,12 @@ namespace DigitalLearningSolutions.Web.Services
 
         public void UpdateFrameworkCompetency(int frameworkCompetencyId, string name, string? description, int adminId, bool? alwaysShowDescription)
         {
-            frameworkDataService.UpdateFrameworkCompetency(frameworkCompetencyId, name, description, adminId, alwaysShowDescription);
+            frameworkDataService.UpdateFrameworkCompetency(frameworkCompetencyId, name.Trim(), description, adminId, alwaysShowDescription);
         }
 
-        public void UpdateFrameworkCompetencyGroup(int frameworkCompetencyGroupId, int competencyGroupId, string name, string? description, int adminId)
+        public bool UpdateFrameworkCompetencyGroup(int frameworkCompetencyGroupId, int competencyGroupId, string name, string? description, int adminId)
         {
-            frameworkDataService.UpdateFrameworkCompetencyGroup(frameworkCompetencyGroupId, competencyGroupId, name, description, adminId);
+            return frameworkDataService.UpdateFrameworkCompetencyGroup(frameworkCompetencyGroupId, competencyGroupId, name.Trim(), description, adminId);
         }
 
         public void UpdateFrameworkConfig(int frameworkId, int adminId, string? frameworkConfig)
@@ -716,6 +724,16 @@ namespace DigitalLearningSolutions.Web.Services
         public void UpdateReviewRequestedDate(int reviewId)
         {
             frameworkDataService.UpdateReviewRequestedDate(reviewId);
+        }
+
+        public int GetFrameworkCompetencyGroupId(int frameworkId, int competencyGroupId)
+        {
+            return frameworkDataService.GetFrameworkCompetencyGroupId(frameworkId, competencyGroupId);
+        }
+
+        public void UpdateFrameworkCompetencyFrameworkCompetencyGroup(int? competencyGroupId, int frameworkCompetencyGroupId, int adminId)
+        {
+            frameworkDataService.UpdateFrameworkCompetencyFrameworkCompetencyGroup(competencyGroupId, frameworkCompetencyGroupId, adminId);
         }
     }
 }

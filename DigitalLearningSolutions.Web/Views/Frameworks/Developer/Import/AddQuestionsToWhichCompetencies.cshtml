@@ -47,7 +47,7 @@
                             @if (Model.CompetenciesToAddCount > 0)
                             {
                                 <div class="nhsuk-radios__item">
-                                    <input class="nhsuk-radios__input" id="option-1" asp-for="@Model.AddAssessmentQuestionsOption" type="radio" value="1" aria-describedby="option-1-hint">
+                                    <input class="nhsuk-radios__input" id="option-1" asp-for="AddAssessmentQuestionsOption" type="radio" value="1" aria-describedby="option-1-hint">
                                     <label class="nhsuk-label nhsuk-radios__label" for="option-1">
                                         Only add questions to new @Model.FrameworkVocabularyPlural.ToLower()
                                     </label>
@@ -57,7 +57,7 @@
                                 </div>
                             }
                             <div class="nhsuk-radios__item">
-                                <input class="nhsuk-radios__input" id="option-2" asp-for="@Model.AddAssessmentQuestionsOption" type="radio" value="2" aria-describedby="option-2-hint">
+                                <input class="nhsuk-radios__input" id="option-2" asp-for="AddAssessmentQuestionsOption" type="radio" value="2" aria-describedby="option-2-hint">
                                 <label class="nhsuk-label nhsuk-radios__label" for="option-2">
                                     Only add questions to @(Model.CompetenciesToAddCount > 0 ? " new and " : "") modified @Model.FrameworkVocabularyPlural.ToLower()
                                 </label>
@@ -66,7 +66,7 @@
                                 </div>
                             </div>
                             <div class="nhsuk-radios__item">
-                                <input class="nhsuk-radios__input" id="option-3" asp-for="@Model.AddAssessmentQuestionsOption" type="radio" value="3" aria-describedby="option-3-hint">
+                                <input class="nhsuk-radios__input" id="option-3" asp-for="AddAssessmentQuestionsOption" type="radio" value="3" aria-describedby="option-3-hint">
                                 <label class="nhsuk-label nhsuk-radios__label" for="option-3">
                                     Add questions to all @Model.FrameworkVocabularyPlural.ToLower() in my uploaded sheet
                                 </label>

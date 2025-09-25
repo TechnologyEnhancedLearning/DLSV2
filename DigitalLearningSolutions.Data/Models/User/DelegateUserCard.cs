@@ -23,6 +23,7 @@
             Password = delegateEntity.UserAccount.PasswordHash;
             CandidateNumber = delegateEntity.DelegateAccount.CandidateNumber;
             DateRegistered = delegateEntity.DelegateAccount.DateRegistered;
+            LastAccessed = delegateEntity.DelegateAccount.LastAccessed;
             JobGroupId = delegateEntity.UserAccount.JobGroupId;
             JobGroupName = delegateEntity.UserAccount.JobGroupName;
             Answer1 = delegateEntity.DelegateAccount.Answer1;

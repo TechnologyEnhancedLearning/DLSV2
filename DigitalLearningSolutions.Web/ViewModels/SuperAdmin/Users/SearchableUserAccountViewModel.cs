@@ -27,6 +27,10 @@
             ProfessionalRegistrationNumber = user.UserAccount.ProfessionalRegistrationNumber;
             LearningHubAuthId = user.UserAccount.LearningHubAuthId;
             ReturnPageQuery = returnPageQuery;
+            if (user.UserAccount.LastAccessed.HasValue)
+            {
+                LastAccessed = user.UserAccount.LastAccessed.Value.ToString(DateHelper.StandardDateFormat);
+            }
         }
 
         public int Id { get; set; }
@@ -51,6 +55,7 @@
 
         public int? LearningHubAuthId { get; set; }
 
+        public string? LastAccessed { get; set; }
         public ReturnPageQuery ReturnPageQuery { get; set; }
     }
 }

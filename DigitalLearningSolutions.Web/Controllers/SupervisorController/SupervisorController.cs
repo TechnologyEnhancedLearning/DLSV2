@@ -8,6 +8,7 @@
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
+    using Microsoft.FeatureManagement;
 
     [Authorize(Policy = CustomPolicies.UserSupervisor)]
     public partial class SupervisorController : Controller
@@ -28,7 +29,7 @@
         private readonly IClockUtility clockUtility;
         private readonly IPdfService pdfService;
         private readonly ICourseCategoriesService courseCategoriesService;
-
+        private readonly IFeatureManager featureManager;
         public SupervisorController(
            ISupervisorService supervisorService,
            ICommonService commonService,
@@ -49,7 +50,8 @@
            ICandidateAssessmentDownloadFileService candidateAssessmentDownloadFileService,
            IClockUtility clockUtility,
            IPdfService pdfService,
-           ICourseCategoriesService courseCategoriesService
+           ICourseCategoriesService courseCategoriesService,
+           IFeatureManager featureManager
            )
         {
             this.supervisorService = supervisorService;
@@ -68,6 +70,7 @@
             this.clockUtility = clockUtility;
             this.pdfService = pdfService;
             this.courseCategoriesService = courseCategoriesService;
+            this.featureManager = featureManager;
         }
 
         private int GetCentreId()

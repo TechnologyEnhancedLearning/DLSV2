@@ -50,24 +50,26 @@
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                        <div class="nhsuk-grid-row">
                             <div class="filter-container nhsuk-u-margin-top-5">
-                                <div class="nhsuk-grid-column-one-quarter">
+                                <div class="nhsuk-grid-column-one-quarter nhsuk-u-margin-right-4">
                                     <vc:select-list asp-for="@nameof(Model.UserStatus)"
                                                     label="User status"
                                                     value="@Model.UserStatus"
                                                     required="true"
                                                     hint-text=""
-                                                    css-class="nhsuk-grid-column-full nhsuk-u-width-full"
+                                                    css-class=""
                                                     default-option=""
                                                     select-list-options="@ViewBag.UserStatus" />
                                 </div>
-                                <div class="nhsuk-grid-column-one-quarter">
+                                <div class="nhsuk-grid-column-one-quarter nhsuk-u-margin-right-4">
                                     <vc:select-list asp-for="@nameof(Model.EmailStatus)"
                                                     label="Email status"
                                                     value="@Model.EmailStatus"
                                                     required="true"
                                                     hint-text=""
-                                                    css-class="nhsuk-grid-column-full nhsuk-u-width-full"
+                                                    css-class=""
                                                     default-option=""
                                                     select-list-options="@ViewBag.EmailStatus" />
                                 </div>
@@ -77,7 +79,7 @@
                                                     value="@Model.JobGroupId.ToString()"
                                                     hint-text=""
                                                     required="true"
-                                                    css-class="nhsuk-grid-column-full  nhsuk-u-width-full"
+                                                    css-class=""
                                                     default-option=""
                                                     select-list-options="@ViewBag.JobGroups" />
                                 </div>

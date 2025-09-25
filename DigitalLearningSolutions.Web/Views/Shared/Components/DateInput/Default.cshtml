@@ -8,7 +8,7 @@
     var yearErrorCss = Model.HasYearError ? "nhsuk-input--error" : "";
     var hintTextLine = string.Empty;
 }
-
+@* Removed pattern property *@
 <div class="@Model.CssClass @errorCss" id="@Model.Id">
     <fieldset class="nhsuk-fieldset" aria-describedby="@Model.Id-hint" role="group">
         <legend class="nhsuk-fieldset__legend nhsuk-label">
@@ -54,12 +54,12 @@
                            id="@Model.DayId"
                            name="@Model.DayId"
                            value="@Model.DayValue"
-                           type="number"
-                           pattern="[0-9]*"
+                           type="text"
                            min="1"
                            max="31"
                            step="1"
-                           inputmode="numeric" />
+                           inputmode="numeric"
+                           aria-describedby="date-error" aria-invalid="false" />
                 </div>
             </div>
             <div class="nhsuk-date-input__item">
@@ -69,12 +69,12 @@
                            id="@Model.MonthId"
                            name="@Model.MonthId"
                            value="@Model.MonthValue"
-                           type="number"
-                           pattern="[0-9]*"
+                           type="text"
                            min="1"
                            max="12"
                            step="1"
-                           inputmode="numeric" />
+                           inputmode="numeric"
+                           aria-describedby="date-error" aria-invalid="false" />
                 </div>
             </div>
             <div class="nhsuk-date-input__item">
@@ -84,12 +84,12 @@
                            id="@Model.YearId"
                            name="@Model.YearId"
                            value="@Model.YearValue"
-                           type="number"
-                           pattern="[0-9]*"
+                           type="text"
                            min="1900"
                            max="9999"
                            step="1"
-                           inputmode="numeric" />
+                           inputmode="numeric"
+                           aria-describedby="date-error" aria-invalid="false" />
                 </div>
             </div>
         </div>

@@ -456,6 +456,7 @@
                 return RedirectToAction("EditAssessmentQuestionOptions", "Frameworks", new { frameworkId, assessmentQuestionId, frameworkCompetencyId });
             }
             assessmentQuestionDetail.ScoringInstructions = SanitizerHelper.SanitizeHtmlData(assessmentQuestionDetail.ScoringInstructions);
+            if (string.IsNullOrWhiteSpace(StringHelper.StripHtmlTags(assessmentQuestionDetail?.ScoringInstructions))) { assessmentQuestionDetail.ScoringInstructions = null; }
             SessionAssessmentQuestion sessionAssessmentQuestion = multiPageFormService
             .GetMultiPageFormData<SessionAssessmentQuestion>(MultiPageFormDataFeature.EditAssessmentQuestion, TempData)
             .GetAwaiter()

@@ -14,6 +14,7 @@
         public string? ProfessionalRegistrationNumber { get; set; }
         public byte[]? ProfileImage { get; set; }
         public bool Active { get; set; }
+        public DateTime? LastAccessed { get; set; }
         public int? ResetPasswordId { get; set; }
         public DateTime? TermsAgreed { get; set; }
         public int FailedLoginCount { get; set; }

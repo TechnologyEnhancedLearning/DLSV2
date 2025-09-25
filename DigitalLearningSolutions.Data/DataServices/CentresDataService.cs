@@ -84,7 +84,7 @@
             string centreName,
             int centreTypeId,
             int regionId,
-            string? centreEmail,
+            string? registrationEmail,
             string? ipPrefix,
             bool showOnMap
         );
@@ -180,7 +180,7 @@
                             c.ContactSurname,
                             c.ContactEmail,
                             c.ContactTelephone,
-                            c.AutoRegisterManagerEmail AS CentreEmail,
+                            c.AutoRegisterManagerEmail AS RegistrationEmail,
                             c.ShowOnMap,
                             c.CMSAdministrators AS CmsAdministratorSpots,
                             c.CMSManagers AS CmsManagerSpots,
@@ -192,7 +192,8 @@
                             c.ServerSpaceBytes,
                             cty.CentreType,
                             c.CandidateByteLimit,
-                            c.ContractReviewDate
+                            c.ContractReviewDate,
+                            c.pwEmail as CentreEmail
                         FROM Centres AS c
                         INNER JOIN Regions AS r ON r.RegionID = c.RegionID
                         INNER JOIN ContractTypes AS ct ON ct.ContractTypeID = c.ContractTypeId
@@ -232,7 +233,7 @@
                             c.ContactEmail,
                             c.ContactTelephone,
                             c.pwTelephone AS CentreTelephone,
-                            c.AutoRegisterManagerEmail AS CentreEmail,
+                            c.AutoRegisterManagerEmail AS RegistrationEmail,
                             c.pwPostCode AS CentrePostcode,
                             c.ShowOnMap,
                             c.Long AS Longitude,
@@ -253,7 +254,7 @@
                             c.ServerSpaceBytes,
                             c.CentreTypeID,
                             ctp.CentreType,
-                            c.pwEmail as RegistrationEmail
+                            c.pwEmail as CentreEmail
                         FROM Centres AS c
                         INNER JOIN Regions AS r ON r.RegionID = c.RegionID
                         INNER JOIN ContractTypes AS ct ON ct.ContractTypeID = c.ContractTypeId
@@ -472,7 +473,7 @@
             string centreName,
             int centreTypeId,
             int regionId,
-            string? centreEmail,
+            string? registrationEmail,
             string? ipPrefix,
             bool showOnMap
         )
@@ -482,7 +483,7 @@
                     CentreName = @centreName,
                     CentreTypeId = @centreTypeId,
                     RegionId = @regionId,
-                    AutoRegisterManagerEmail = @centreEmail,
+                    AutoRegisterManagerEmail = @registrationEmail,
                     IPPrefix = @ipPrefix,
                     ShowOnMap = @showOnMap
                 WHERE CentreId = @centreId",
@@ -491,7 +492,7 @@
                     centreName,
                     centreTypeId,
                     regionId,
-                    centreEmail,
+                    registrationEmail,
                     ipPrefix,
                     showOnMap,
                     centreId

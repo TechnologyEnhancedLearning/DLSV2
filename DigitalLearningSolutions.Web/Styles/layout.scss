@@ -14,82 +14,12 @@ body {
 }
 
 #pagewrapper {
-  display: flex;
-  flex-direction: column;
   height: 100%;
   min-height: 100vh;
 }
 
-#maincontentwrapper {
-  flex: 1 0 auto;
-  align-self: center;
-  width: 100%;
-  margin: 0;
-}
-
 footer {
   flex-shrink: 0;
-}
-
-.nhsuk-header__navigation-item.selected {
-  a {
-    font-weight: bold;
-  }
-}
-
-.nhsuk-header__logo {
-  @include mq($until: large-desktop) {
-    max-width: unset;
-
-    .nhsuk-header__link--service {
-      align-items: center;
-      display: flex;
-      -ms-flex-align: center;
-      margin-bottom: 0;
-      width: auto;
-    }
-
-    .nhsuk-header__service-name {
-      padding-left: nhsuk-spacing(3);
-      max-width: unset;
-    }
-  }
-}
-.nhsuk-navigation-container {
-  @include mq($until: tablet) {
-    margin-top: unset;
-  }
-}
-
-body:not(.js-enabled) {
-  .nhsuk-header__menu {
-    display: none;
-  }
-
-  #close-menu {
-    display: none;
-  }
-
-  .nhsuk-header__navigation {
-    display: block;
-  }
-}
-
-:not(.nhsuk-header--transactional) div.nhsuk-header__container {
-  @media (max-width: 40.0525em) {
-    margin: 0;
-  }
-}
-
-.nhsuk-header--transactional {
-  .nhsuk-header__link--service {
-    width: auto;
-    height: auto;
-
-    @include mq($from: large-desktop) {
-      display: flex;
-    }
-  }
 }
 
 .centre-brand-logo {
@@ -100,14 +30,6 @@ body:not(.js-enabled) {
   @include mq($until: large-desktop) {
     display: none;
   }
-}
-
-nav .nhsuk-width-container {
-  margin: 0 auto;
-}
-
-nav, .nhsuk-header__navigation, #header-navigation {
-  border-bottom: 0;
 }
 
 .visual-separator {
@@ -307,19 +229,7 @@ nav, .nhsuk-header__navigation, #header-navigation {
   clip: auto;
 }
 
-.nhsuk-button--danger {
-  background-color: $color_nhsuk-red;
-  box-shadow: 0 4px 0 shade($color_nhsuk-red, 50%);
-  margin-bottom: 16px !important;
 
-  &:hover {
-    background-color: shade($color_nhsuk-red, 20%);
-  }
-
-  &:active {
-    background-color: shade($color_nhsuk-red, 50%);
-  }
-}
 
 .first-row td {
   border-top: 2px solid #d8dde0;
@@ -328,12 +238,6 @@ nav, .nhsuk-header__navigation, #header-navigation {
 .status-tag {
   overflow: hidden;
   white-space: nowrap;
-}
-
-.nhsuk-header__link--service {
-  @include mq($from: large-desktop) {
-    align-items: unset;
-  }
 }
 
 .header-beta {
@@ -347,15 +251,8 @@ nav, .nhsuk-header__navigation, #header-navigation {
   }
 }
 
-.nhsuk-width-container, .nhsuk-header__navigation-list {
-  max-width: 1144px !important;
-  padding-left: $nhsuk-gutter !important;
-  padding-right: $nhsuk-gutter !important;
-}
 
-.nhsuk-width-container {
-  margin: auto !important;
-}
+
 
 @media only screen and (max-width: 767px) {
   .section-card-result {

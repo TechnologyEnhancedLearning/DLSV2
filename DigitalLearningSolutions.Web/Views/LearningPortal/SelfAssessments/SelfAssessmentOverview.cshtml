@@ -1,5 +1,6 @@
 ﻿@inject IConfiguration Configuration
 @using DigitalLearningSolutions.Data.Extensions
+@using DigitalLearningSolutions.Web.Helpers
 @using DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments
 @using Microsoft.Extensions.Configuration
 @model SelfAssessmentOverviewViewModel
@@ -113,7 +114,7 @@
                         </summary>
                         <div class="nhsuk-details__text">
                             <partial name="SelfAssessments/_CompetencySummary" view-data="@competencySummariesEnumerator.Current" />
-                            @if (!String.IsNullOrEmpty(groupDetails.CompetencyGroupDescription))
+                            @if (!String.IsNullOrEmpty(StringHelper.StripHtmlTags(groupDetails.CompetencyGroupDescription)))
                             {
                                 <p class="nhsuk-body-l nhsuk-u-margin-left-7">@Html.Raw(groupDetails.CompetencyGroupDescription)</p>
                             }

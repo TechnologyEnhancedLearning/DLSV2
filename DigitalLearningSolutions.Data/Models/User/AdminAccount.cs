@@ -1,5 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.User
 {
+    using System;
+
     public class AdminAccount
     {
         public int Id { get; set; }
@@ -26,6 +28,7 @@
         public bool IsWorkforceContributor { get; set; }
         public bool IsLocalWorkforceManager { get; set; }
         public bool IsNominatedSupervisor { get; set; }
+        public DateTime? LastAccessed { get; set; }
 
         public bool IsCmsAdministrator => ImportOnly && IsContentManager;
         public bool IsCmsManager => IsContentManager && !ImportOnly;

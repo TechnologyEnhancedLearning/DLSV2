@@ -3,6 +3,7 @@
     using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.Centres;
     using DigitalLearningSolutions.Data.Models.SearchSortFilterPaginate;
+    using System;
 
     public class AdminEntity : BaseSearchableItem
     {
@@ -72,6 +73,7 @@
         public bool IsSuperAdmin => AdminAccount.IsSuperAdmin;
         public bool IsReportsViewer => AdminAccount.IsReportsViewer;
         public bool IsActive => AdminAccount.Active;
+        public DateTime? LastAccessed => AdminAccount.LastAccessed;
 
     }
 }

@@ -28,6 +28,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.SuperAdmin.Delegates
             LearningHubID = delegates.LearningHubAuthId;
             AccountClaimed = delegates.RegistrationConfirmationHash;
             DateRegistered = delegates.DateRegistered?.ToString(Data.Helpers.DateHelper.StandardDateFormat);
+            LastAccessed = delegates.LastAccessed?.ToString(Data.Helpers.DateHelper.StandardDateFormat);
             SelRegistered = delegates.SelfReg;
             IsDelegateActive = delegates.Active;
             IsCentreEmailVerified = delegates.CentreEmailVerified == null ? false : true;
@@ -52,6 +53,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.SuperAdmin.Delegates
         public bool IsLocked { get; set; }
         public string AccountClaimed { get; set; }
         public string? DateRegistered { get; set; }
+        public string? LastAccessed { get; set; }
         public bool SelRegistered { get; set; }
         public bool IsDelegateActive { get; set; }
         public bool IsUserActive { get; set; }

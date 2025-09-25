@@ -35,6 +35,14 @@
                         @Model.CategoryName
                     </dd>
                 </div>
+                <div class="nhsuk-summary-list__row">
+                    <dt class="nhsuk-summary-list__key">
+                        Last accessed date
+                    </dt>
+                    <dd class="nhsuk-summary-list__value">
+                        @(Model.LastAccessed != null ? Model.LastAccessed : "-")
+                    </dd>
+                </div>
             </dl>
 
             @if (Model.IsLocked)

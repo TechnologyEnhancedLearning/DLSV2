@@ -41,6 +41,10 @@
             {
                 RegistrationDate = delegateUser.DateRegistered.Value.ToString(DateHelper.StandardDateFormat);
             }
+            if (delegateUser.LastAccessed.HasValue)
+            {
+                LastAccessed = delegateUser.LastAccessed.Value.ToString(DateHelper.StandardDateFormat);
+            }
 
             DelegateRegistrationPrompts = delegateRegistrationPrompts;
             RegistrationConfirmationHash = delegateUser.RegistrationConfirmationHash;
@@ -61,6 +65,7 @@
         public int JobGroupId { get; set; }
         public string? JobGroup { get; set; }
         public string? RegistrationDate { get; set; }
+        public string? LastAccessed { get; set; }
         public string ProfessionalRegistrationNumber { get; set; }
         public string? RegistrationConfirmationHash { get; set; }
 

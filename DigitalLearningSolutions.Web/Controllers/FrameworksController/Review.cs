@@ -63,6 +63,7 @@
         {
             var adminId = GetAdminId();
             var framework = frameworkService.GetBaseFrameworkByFrameworkId(frameworkId, adminId);
+            if (framework.FrameworkReviewID == 0 || framework.FrameworkReviewID == null) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 410 });
             if (framework == null) return StatusCode(404);
             if (framework.UserRole < 1) return StatusCode(403);
             var frameworkName = framework.FrameworkName;
@@ -81,8 +82,27 @@
         public IActionResult SubmitFrameworkReview(int frameworkId, int reviewId, string? comment, bool signedOff)
         {
             var adminId = GetAdminId();
+            var framework = frameworkService.GetBaseFrameworkByFrameworkId(frameworkId, adminId);
+            if (framework.FrameworkReviewID == 0 || framework.FrameworkReviewID == null) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 410 });
             int? commentId = null;
-            if (!string.IsNullOrWhiteSpace(comment)) commentId = frameworkService.InsertComment(frameworkId, adminId, comment, null);
+            if (string.IsNullOrWhiteSpace(comment))
+            {
+                ModelState.AddModelError("comment", "Please enter comment");
+                var frameworkReview = frameworkService.GetFrameworkReview(frameworkId, adminId, reviewId);
+                frameworkReview.SignedOff = signedOff;
+                var model = new SubmitReviewViewModel()
+                {
+                    FrameworkId = frameworkId,
+                    FrameworkName = framework.FrameworkName,
+                    FrameworkReview = frameworkReview
+                };
+                return View("Developer/SubmitReview", model);
+            }
+            else
+            {
+                commentId = frameworkService.InsertComment(frameworkId, adminId, comment, null);
+            }
+
             frameworkService.SubmitFrameworkReview(frameworkId, reviewId, signedOff, commentId);
             frameworkNotificationService.SendReviewOutcomeNotification(reviewId, User.GetCentreIdKnownNotNull());
             return RedirectToAction("ViewFramework", "Frameworks", new { frameworkId, tabname = "Structure" });
