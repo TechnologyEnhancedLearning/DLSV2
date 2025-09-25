@@ -34,7 +34,6 @@
         IEnumerable<LinkedFramework> GetLinkedFrameworksForCompetencyAssessment(int competencyAssessmentId);
         int[] GetLinkedFrameworkCompetencyIds(int competencyAssessmentId, int frameworkId);
         CompetencyAssessmentFeatures? GetCompetencyAssessmentFeaturesTaskStatus(int competencyAssessmentId);
-        int? GetSelfAssessmentStructure(int competencyAssessmentId);
 
         //UPDATE DATA
         bool UpdateCompetencyAssessmentName(int competencyAssessmentId, int adminId, string competencyAssessmentName);
@@ -68,6 +67,7 @@
         public bool UpdateCompetencyAssessmentFeaturesTaskStatus(int id, bool descriptionStatus, bool providerandCategoryStatus, bool vocabularyStatus,
            bool workingGroupStatus, bool AllframeworkCompetenciesStatus);
         void UpdateSelfAssessmentFromFramework(int selfAssessmentId, int? frameworkId);
+        bool UpdatePrimaryFrameworkCompetencies(int assessmentId, int frameworkId);
 
         //INSERT DATA
         int InsertCompetencyAssessment(int adminId, int centreId, string competencyAssessmentName);
@@ -857,13 +857,25 @@
 
             return true;
         }
-        public int? GetSelfAssessmentStructure(int competencyAssessmentId)
+        public bool UpdatePrimaryFrameworkCompetencies(int assessmentId, int frameworkId)
         {
-            return connection.QueryFirstOrDefault<int>(
-               @"SELECT 1 from dbo.SelfAssessmentStructure where selfassessmentid  = @competencyAssessmentId",
-               new { competencyAssessmentId }
+            var numberOfAffectedRows = connection.Execute(
+               @"UPDATE SelfAssessmentFrameworks SET IsPrimary = 0  WHERE (SelfAssessmentId = @assessmentId) AND (RemovedDate IS NULL)",
+               new { assessmentId, frameworkId }
            );
-
+            var numberOfAffectedRow = connection.Execute(
+              @"UPDATE SelfAssessmentFrameworks SET IsPrimary = 1  WHERE (SelfAssessmentId = @assessmentId) AND (FrameworkId = @frameworkId ) AND (RemovedDate IS NULL)",
+              new { assessmentId, frameworkId }
+          );
+            if (numberOfAffectedRow < 1)
+            {
+                logger.LogWarning(
+                    "Not updating SelfAssessmentFrameworks as db update failed. " +
+                    $"assessmentId: {assessmentId}, frameworkId: {frameworkId}"
+                );
+                return false;
+            }
+            return true;
         }
     }
 }

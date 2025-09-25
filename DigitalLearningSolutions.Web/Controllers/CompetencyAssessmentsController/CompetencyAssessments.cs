@@ -680,7 +680,7 @@
         [Route("/CompetencyAssessments/Framework/{frameworkId}/{competencyAssessmentId}/Summary")]
         public IActionResult CompetencyAssessmentSummary(int competencyAssessmentId, int? frameworkId = null)
         {
-            if (competencyAssessmentService.GetSelfAssessmentStructure(competencyAssessmentId) != 0) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 410 });
+            
             if (competencyAssessmentId == 0)  return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
             var data = GetcompetencyAssessmentFeaturesData();
             if (data == null) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 500 });
@@ -693,7 +693,6 @@
         {
             var data = GetcompetencyAssessmentFeaturesData();
             if (data.ID == 0) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
-            if (competencyAssessmentService.GetSelfAssessmentStructure(data.ID) != 0) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 410 });
             var features = competencyAssessmentService.UpdateCompetencyAssessmentFeaturesTaskStatus(data.ID,
                data.DescriptionStatus,
                data.ProviderandCategoryStatus,
@@ -708,7 +707,31 @@
             TempData.Clear();
             return RedirectToAction("ManageCompetencyAssessment", new { competencyAssessmentId = competency.ID, competency.FrameworkId });
         }
-
+        [Route("/CompetencyAssessments/{competencyAssessmentId}/Frameworks/{frameworkId}/Change")]
+        public IActionResult ConfirmChangePrimaryFramework(int frameworkId, int competencyAssessmentId)
+        {
+                var adminId = GetAdminID();
+                var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
+                var framework = frameworkService.GetFrameworkDetailByFrameworkId(frameworkId, adminId);
+                var model = new ConfirmChangePrimaryFrameworkViewModel(competencyAssessmentBase, framework);
+                return View("ConfirmChangePrimaryFramework", model);
+        }
+        [HttpPost]
+        [Route("/CompetencyAssessments/{competencyAssessmentId}/Frameworks/{frameworkId}/Change")]
+        public IActionResult ConfirmChangePrimaryFramework(ConfirmChangePrimaryFrameworkViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View("ConfirmChangePrimaryFramework", model);
+            }
+            competencyAssessmentService.UpdatePrimaryFrameworkCompetencies(model.CompetencyAssessmentId, model.FrameworkId);
+            var baseModel = new CompetencyAssessmentFeaturesViewModel(model.CompetencyAssessmentId,
+                    model.FrameworkName,
+                    model.UserRole,
+                    model.FrameworkId);
+            SetcompetencyAssessmentFeaturesData(baseModel);
+            return RedirectToAction("CompetencyAssessmentFeatures", new { model.CompetencyAssessmentId, model.FrameworkId });
+        }
         private void SetcompetencyAssessmentFeaturesData(CompetencyAssessmentFeaturesViewModel data)
         {
             multiPageFormService.SetMultiPageFormData(
@@ -717,7 +740,6 @@
                  TempData
              );
         }
-
         private CompetencyAssessmentFeaturesViewModel GetcompetencyAssessmentFeaturesData()
         {
             var data = multiPageFormService.GetMultiPageFormData<CompetencyAssessmentFeaturesViewModel>(
