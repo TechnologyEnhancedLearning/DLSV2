@@ -19,14 +19,12 @@
                 <li class="nhsuk-breadcrumb__list-item">Sign-off Email</li>
             </ol>
         </div>
-        <p class="nhsuk-breadcrumb__back">
-            <a class="nhsuk-back-link"
-           asp-action="SignOffHistory"
-           asp-route-selfAssessmentId="@Model.Id"
-           asp-route-vocabulary="@Model.Vocabulary">
-                Back to Sign-off History
-            </a>
-        </p>
+          <a class="nhsuk-back-link"
+          asp-action="SignOffHistory"
+          asp-route-selfAssessmentId="@Model.Id"
+          asp-route-vocabulary="@Model.Vocabulary">
+              Back to Sign-off History
+          </a>
     </nav>
 }
 

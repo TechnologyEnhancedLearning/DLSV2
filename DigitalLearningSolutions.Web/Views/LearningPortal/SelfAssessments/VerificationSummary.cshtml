@@ -14,13 +14,11 @@
 }
 @section mobilebacklink
 {
-    <p class="nhsuk-breadcrumb__back">
-        <a class="nhsuk-back-link"
-           asp-action="VerificationPickResults"
-           asp-route-selfAssessmentId="@Model.SelfAssessment.Id">
-            Back to Choose proficiency results
-        </a>
-    </p>
+    <a class="nhsuk-back-link"
+        asp-action="VerificationPickResults"
+        asp-route-selfAssessmentId="@Model.SelfAssessment.Id">
+        Back to Choose proficiency results
+    </a>
 }
 <link rel="stylesheet" href="@Url.Content("~/css/learningPortal/selfAssessment.css")" asp-append-version="true">
 <h1>Request @Model.SelfAssessment.Vocabulary.ToLower() confirmation</h1>

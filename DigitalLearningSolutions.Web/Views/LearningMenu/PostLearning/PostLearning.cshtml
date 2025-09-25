@@ -33,15 +33,15 @@
 
       @if (Model.OnlyItemInOnlySection)
       {
-        <p class="nhsuk-breadcrumb__back"><a class="nhsuk-back-link" asp-action="Close" asp-route-learningActivity=@learningActivity>Return to @learningActivity activities</a></p>
+        <a class="nhsuk-back-link" asp-action="Close" asp-route-learningActivity=@learningActivity>Return to @learningActivity activities</a>
       }
       else if (Model.OnlyItemInThisSection)
       {
-        <p class="nhsuk-breadcrumb__back"><a class="nhsuk-back-link" asp-action="Index" asp-route-customisationId="@Model.CustomisationId">Return to course menu</a></p>
+        <a class="nhsuk-back-link" asp-action="Index" asp-route-customisationId="@Model.CustomisationId">Return to course menu</a>
       }
       else
       {
-        <p class="nhsuk-breadcrumb__back"><a class="nhsuk-back-link" asp-action="Section" asp-route-customisationId="@Model.CustomisationId" asp-route-sectionId="@Model.SectionId">Return to section</a></p>
+        <a class="nhsuk-back-link" asp-action="Section" asp-route-customisationId="@Model.CustomisationId" asp-route-sectionId="@Model.SectionId">Return to section</a>
       }
     </div>
   </nav>

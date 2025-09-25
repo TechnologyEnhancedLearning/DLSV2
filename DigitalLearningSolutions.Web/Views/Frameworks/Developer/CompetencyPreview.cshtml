@@ -17,7 +17,7 @@
         <li class="nhsuk-breadcrumb__list-item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFramework" asp-route-frameworkCompetencyGroupId="@ViewContext.RouteData.Values["frameworkCompetencyGroupId"]" asp-fragment="fc-@(ViewContext.RouteData.Values["frameworkCompetencyId"])" asp-route-frameworkId="@(ViewContext.RouteData.Values["frameworkId"])" asp-route-tabname="Structure">Framework Structure</a></li>
         <li class="nhsuk-breadcrumb__list-item">Preview Competency</li>
       </ol>
-      <p class="nhsuk-breadcrumb__back"><a class="nhsuk-back-link" asp-action="ViewFramework" asp-route-frameworkCompetencyGroupId="@ViewContext.RouteData.Values["frameworkCompetencyGroupId"]" asp-fragment="fc-@(ViewContext.RouteData.Values["frameworkCompetencyId"])" asp-route-frameworkId="@(ViewContext.RouteData.Values["frameworkId"])" asp-route-tabname="Structure">Back to framework structure</a></p>
+      <a class="nhsuk-back-link" asp-action="ViewFramework" asp-route-frameworkCompetencyGroupId="@ViewContext.RouteData.Values["frameworkCompetencyGroupId"]" asp-fragment="fc-@(ViewContext.RouteData.Values["frameworkCompetencyId"])" asp-route-frameworkId="@(ViewContext.RouteData.Values["frameworkId"])" asp-route-tabname="Structure">Back to framework structure</a>
     </div>
   </nav>
 }

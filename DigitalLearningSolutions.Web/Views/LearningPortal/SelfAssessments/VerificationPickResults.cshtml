@@ -22,13 +22,11 @@
 
 @section mobilebacklink
 {
-    <p class="nhsuk-breadcrumb__back">
-        <a class="nhsuk-back-link"
-           asp-action="VerificationPickSupervisor"
-           asp-route-selfAssessmentId="@Model.SelfAssessmentId">
-            Back to Choose a supervisor
-        </a>
-    </p>
+    <a class="nhsuk-back-link"
+        asp-action="VerificationPickSupervisor"
+        asp-route-selfAssessmentId="@Model.SelfAssessmentId">
+        Back to Choose a supervisor
+    </a>
 }
 
 <link rel="stylesheet" href="@Url.Content("~/css/learningPortal/selfAssessment.css")" asp-append-version="true">

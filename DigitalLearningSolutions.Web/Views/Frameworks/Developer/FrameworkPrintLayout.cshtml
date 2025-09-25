@@ -18,7 +18,7 @@
                 <li class="nhsuk-breadcrumb__list-item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFramework" asp-route-frameworkId="@(ViewContext.RouteData.Values["frameworkId"])" asp-route-tabname="Structure">Framework structure</a></li>
                 <li class="nhsuk-breadcrumb__list-item">Print layout</li>
             </ol>
-            <p class="nhsuk-breadcrumb__back"><a class="nhsuk-back-link" asp-action="ViewFramework" asp-route-frameworkId="@(ViewContext.RouteData.Values["frameworkId"])" asp-route-tabname="Structure">Back to Framework</a></p>
+            <a class="nhsuk-back-link" asp-action="ViewFramework" asp-route-frameworkId="@(ViewContext.RouteData.Values["frameworkId"])" asp-route-tabname="Structure">Back to Framework</a>
         </div>
     </nav>
 }

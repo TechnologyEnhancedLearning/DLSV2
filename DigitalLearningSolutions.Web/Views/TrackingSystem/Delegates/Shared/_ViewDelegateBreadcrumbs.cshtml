@@ -10,8 +10,6 @@
         <a class="nhsuk-breadcrumb__link" asp-controller="ViewDelegate" asp-action="Index" asp-route-delegateId="@Model">View delegate</a>
       </li>
     </ol>
-    <p class="nhsuk-breadcrumb__back">
-      <a class="nhsuk-breadcrumb__link" asp-controller="ViewDelegate" asp-action="Index" asp-route-delegateId="@Model">Back to view delegate</a>
-    </p>
+    <a class="nhsuk-back-link" asp-controller="ViewDelegate" asp-action="Index" asp-route-delegateId="@Model">Back to view delegate</a>
   </div>
 </nav>

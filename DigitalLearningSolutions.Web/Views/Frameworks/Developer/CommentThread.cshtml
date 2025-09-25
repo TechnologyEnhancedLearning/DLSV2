@@ -18,7 +18,7 @@
         <li class="nhsuk-breadcrumb__list-item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFramework" asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]" asp-route-tabname="Comments">Framework Comments</a></li>
         <li class="nhsuk-breadcrumb__list-item">View Thread</li>
       </ol>
-      <p class="nhsuk-breadcrumb__back"><a class="nhsuk-back-link" asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]" asp-route-tabname="Comments">Back to framework comments</a></p>
+      <a class="nhsuk-back-link" asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]" asp-route-tabname="Comments">Back to framework comments</a>
     </div>
   </nav>
 }

@@ -35,14 +35,12 @@
                 </li>
             </ol>
         </div>
-        <p class="nhsuk-breadcrumb__back">
-            <a class="nhsuk-back-link" asp-controller="Supervisor"
-               asp-action="ReviewDelegateSelfAssessment"
-               asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]"
-               asp-route-candidateAssessmentId="@Model.DelegateSelfAssessment.ID">
-                Back to  @(Model.DelegateSelfAssessment.RoleName.Length > 35 ? Model.DelegateSelfAssessment.RoleName.Substring(0, 32) + "..." : Model.DelegateSelfAssessment.RoleName)
-            </a>
-        </p>
+        <a class="nhsuk-back-link" asp-controller="Supervisor"
+            asp-action="ReviewDelegateSelfAssessment"
+            asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]"
+            asp-route-candidateAssessmentId="@Model.DelegateSelfAssessment.ID">
+            Back to  @(Model.DelegateSelfAssessment.RoleName.Length > 35 ? Model.DelegateSelfAssessment.RoleName.Substring(0, 32) + "..." : Model.DelegateSelfAssessment.RoleName)
+        </a>
     </nav>
 }
 <details class="nhsuk-details nhsuk-expander">

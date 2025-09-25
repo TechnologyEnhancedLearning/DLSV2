@@ -10,8 +10,6 @@
         <a class="nhsuk-breadcrumb__link" asp-controller="ManageCourse" asp-action="Index" asp-route-customisationId="@Model">Manage course</a>
       </li>
     </ol>
-    <p class="nhsuk-breadcrumb__back">
-      <a class="nhsuk-breadcrumb__link" asp-controller="ManageCourse" asp-action="Index" asp-route-customisationId="@Model">Back to manage course</a>
-    </p>
+    <a class="nhsuk-back-link" asp-controller="ManageCourse" asp-action="Index" asp-route-customisationId="@Model">Back to manage course</a>
   </div>
 </nav>

@@ -14,10 +14,8 @@
                 <li class="nhsuk-breadcrumb__list-item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Centres" asp-action="Index">Centres</a></li>
                 <li class="nhsuk-breadcrumb__list-item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Centres" asp-route-centreID="@ViewContext.RouteData.Values["centreId"]" asp-action="SelfAssessments">View self assessments</a></li>
             </ol>
-            <p class="nhsuk-breadcrumb__back">
-                <a class="nhsuk-back-link"
+            <a class="nhsuk-back-link"
                    asp-controller="Centres" asp-route-centreID="@ViewContext.RouteData.Values["centreId"]" asp-action="SelfAssessments">Back to view centre self assessments</a>
-            </p>
         </div>
     </nav>
 }

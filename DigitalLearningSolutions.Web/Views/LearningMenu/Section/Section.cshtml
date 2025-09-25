@@ -30,11 +30,11 @@
 
       @if (Model.OtherSectionsExist)
       {
-        <p class="nhsuk-breadcrumb__back"><a class="nhsuk-back-link" asp-action="Index" asp-route-customisationId="@Model.CustomisationId">Return to course menu</a></p>
+        <a class="nhsuk-back-link" asp-action="Index" asp-route-customisationId="@Model.CustomisationId">Return to course menu</a>
       }
       else
       {
-        <p class="nhsuk-breadcrumb__back"><a class="nhsuk-back-link" asp-action="Close" asp-route-learningActivity=@learningActivity>Return to @learningActivity activities</a></p>
+        <a class="nhsuk-back-link" asp-action="Close" asp-route-learningActivity=@learningActivity>Return to @learningActivity activities</a>
       }
     </div>
   </nav>

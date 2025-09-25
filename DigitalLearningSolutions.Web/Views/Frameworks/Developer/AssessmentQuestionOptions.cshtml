@@ -31,11 +31,11 @@
       </ol>
       @if (Model.FrameworkCompetencyId == 0)
       {
-        <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="FrameworkDefaultQuestions" asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]">Back to Default Questions</a></p>
+        <a class="nhsuk-breadcrumb__link trigger-loader" asp-action="FrameworkDefaultQuestions" asp-route-frameworkId="@ViewContext.RouteData.Values["frameworkId"]">Back to Default Questions</a>
       }
       else
       {
-        <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="EditCompetencyAssessmentQuestions" asp-route-frameworkId="@Model.DetailFramework.ID" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId">Back to @Model.VocabSingular() Assessment Questions</a></p>
+        <a class="nhsuk-breadcrumb__link trigger-loader" asp-action="EditCompetencyAssessmentQuestions" asp-route-frameworkId="@Model.DetailFramework.ID" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId">Back to @Model.VocabSingular() Assessment Questions</a>
       }
     </div>
   </nav>

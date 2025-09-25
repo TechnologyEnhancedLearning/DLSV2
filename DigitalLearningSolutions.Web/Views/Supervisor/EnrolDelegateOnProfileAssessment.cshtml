@@ -29,13 +29,11 @@
         </li>
       </ol>
     </div>
-    <p class="nhsuk-breadcrumb__back">
-      <a class="nhsuk-back-link" asp-controller="Supervisor"
-       asp-action="DelegateProfileAssessments"
-       asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]">
-        Back to @Model.SupervisorDelegateDetail.FirstName @Model.SupervisorDelegateDetail.LastName
-      </a>
-    </p>
+    <a class="nhsuk-back-link" asp-controller="Supervisor"
+      asp-action="DelegateProfileAssessments"
+      asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]">
+      Back to @Model.SupervisorDelegateDetail.FirstName @Model.SupervisorDelegateDetail.LastName
+    </a>
   </nav>
 }
   @if (errorHasOccurred)

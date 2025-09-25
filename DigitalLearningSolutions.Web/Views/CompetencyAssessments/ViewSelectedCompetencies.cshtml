@@ -20,7 +20,7 @@
                 <li class="nhsuk-breadcrumb__list-item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.ID">Manage Competency Assessment</a></li>
                 <li class="nhsuk-breadcrumb__list-item">Select @Model.VocabularyPlural.ToLower() to assess</li>
             </ol>
-            <p class="nhsuk-breadcrumb__back"><a class="nhsuk-back-link" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.ID">Back to manage competency assessment</a></p>
+            <a class="nhsuk-back-link" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.ID">Back to manage competency assessment</a>
         </div>
     </nav>
 }

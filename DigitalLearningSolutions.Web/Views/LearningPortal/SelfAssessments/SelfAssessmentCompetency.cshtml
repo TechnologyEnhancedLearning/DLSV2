@@ -14,16 +14,14 @@
     <li class="nhsuk-breadcrumb__list-item">@DisplayStringHelper.Ellipsis(Model.Competency?.Name, 30)</li>
 }
 @section mobilebacklink
-    {
-    <p class="nhsuk-breadcrumb__back">
-        <a class="nhsuk-back-link" asp-action="SelfAssessmentOverview"
-       asp-route-vocabulary="@Model.VocabPlural()"
-       asp-route-selfAssessmentId="@Model.Assessment.Id"
-       asp-route-competencyGroupId="@Model.Competency.CompetencyGroupID"
-       asp-fragment="comp-@Model.CompetencyNumber">
-            Back to @Model.VocabPlural()
-        </a>
-    </p>
+{
+    <a class="nhsuk-back-link" asp-action="SelfAssessmentOverview"
+    asp-route-vocabulary="@Model.VocabPlural()"
+    asp-route-selfAssessmentId="@Model.Assessment.Id"
+    asp-route-competencyGroupId="@Model.Competency.CompetencyGroupID"
+    asp-fragment="comp-@Model.CompetencyNumber">
+        Back to @Model.VocabPlural()
+    </a>
 }
 <link rel="stylesheet" href="@Url.Content("~/css/learningPortal/selfAssessment.css")" asp-append-version="true">
 <link rel="stylesheet" href="@Url.Content("~/css/shared/searchableElements/pagination.css")" asp-append-version="true">

@@ -22,13 +22,11 @@
 
 @section mobilebacklink
 {
-    <p class="nhsuk-breadcrumb__back">
-        <a class="nhsuk-back-link" asp-action="SelfAssessmentOverview"
-           asp-route-vocabulary="@Model.VocabPlural()"
-           asp-route-selfAssessmentId="@Model.SelfAssessment.Id">
-            Back to @Model.VocabPlural()
-        </a>
-    </p>
+    <a class="nhsuk-back-link" asp-action="SelfAssessmentOverview"
+        asp-route-vocabulary="@Model.VocabPlural()"
+        asp-route-selfAssessmentId="@Model.SelfAssessment.Id">
+        Back to @Model.VocabPlural()
+    </a>
 }
 
 <link rel="stylesheet" href="@Url.Content("~/css/learningPortal/selfAssessment.css")" asp-append-version="true">

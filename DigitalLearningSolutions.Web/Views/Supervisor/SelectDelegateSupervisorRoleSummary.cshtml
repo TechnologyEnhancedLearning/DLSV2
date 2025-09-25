@@ -27,13 +27,11 @@
                 </li>
             </ol>
         </div>
-        <p class="nhsuk-breadcrumb__back">
-            <a class="nhsuk-back-link" asp-controller="Supervisor"
-           asp-action="DelegateProfileAssessments"
-           asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]">
-                Back to @Model.Item1.SupervisorDelegateDetail.FirstName @Model.Item1.SupervisorDelegateDetail.LastName
-            </a>
-        </p>
+        <a class="nhsuk-back-link" asp-controller="Supervisor"
+        asp-action="DelegateProfileAssessments"
+        asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]">
+            Back to @Model.Item1.SupervisorDelegateDetail.FirstName @Model.Item1.SupervisorDelegateDetail.LastName
+        </a>
     </nav>
 }
 

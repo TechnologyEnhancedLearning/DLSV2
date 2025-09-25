@@ -18,7 +18,7 @@
         <li class="nhsuk-breadcrumb__list-item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFrameworks" asp-route-tabname="Mine">Frameworks</a></li>
         <li class="nhsuk-breadcrumb__list-item">Create framework</li>
       </ol>
-      <p class="nhsuk-breadcrumb__back"><a class="nhsuk-back-link" asp-action="ViewFrameworks" asp-route-tabname="Mine">Back to My Frameworks</a></p>
+      <a class="nhsuk-back-link" asp-action="ViewFrameworks" asp-route-tabname="Mine">Back to My Frameworks</a>
     </div>
   </nav>
   }
@@ -33,7 +33,7 @@ else
         <li class="nhsuk-breadcrumb__list-item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFramework" asp-route-frameworkId="@Model.DetailFramework.ID" asp-route-tabname="Details">Framework Details</a></li>
         <li class="nhsuk-breadcrumb__list-item">Branding</li>
       </ol>
-      <p class="nhsuk-breadcrumb__back"><a class="nhsuk-back-link" asp-action="ViewFramework" asp-route-frameworkId="@Model.DetailFramework.ID" asp-route-tabname="Details">Back to framework detail</a></p>
+      <a class="nhsuk-back-link" asp-action="ViewFramework" asp-route-frameworkId="@Model.DetailFramework.ID" asp-route-tabname="Details">Back to framework detail</a>
     </div>
   </nav>
   }

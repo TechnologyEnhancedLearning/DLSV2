@@ -27,27 +27,25 @@
                 </li>
             </ol>
         </div>
-        <p class="nhsuk-breadcrumb__back">
-            @if (ViewBag.navigatedFrom == "EnrolDelegateSupervisorRole")
-            {
-                <a class="nhsuk-back-link" asp-controller="Supervisor"
-                   asp-action="EnrolDelegateSupervisorRole"
-                   asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]">
-                    Back to Enrol Delegate Supervisor Role
-                </a>
-            }
-            else
-            {
-                <a class="nhsuk-back-link" asp-controller="Supervisor"
-                   asp-action="EnrolDelegateCompleteBy"
-                   asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]"
-                   asp-route-day="@ViewBag.completeByDate"
-                   asp-route-month="@ViewBag.completeByMonth"
-                   asp-route-year="@ViewBag.completeByYear">
-                    Back to Complete By Date
-                </a>
-            }
-        </p>
+        @if (ViewBag.navigatedFrom == "EnrolDelegateSupervisorRole")
+        {
+            <a class="nhsuk-back-link" asp-controller="Supervisor"
+                asp-action="EnrolDelegateSupervisorRole"
+                asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]">
+                Back to Enrol Delegate Supervisor Role
+            </a>
+        }
+        else
+        {
+            <a class="nhsuk-back-link" asp-controller="Supervisor"
+                asp-action="EnrolDelegateCompleteBy"
+                asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]"
+                asp-route-day="@ViewBag.completeByDate"
+                asp-route-month="@ViewBag.completeByMonth"
+                asp-route-year="@ViewBag.completeByYear">
+                Back to Complete By Date
+            </a>
+        }
     </nav>
 }
 

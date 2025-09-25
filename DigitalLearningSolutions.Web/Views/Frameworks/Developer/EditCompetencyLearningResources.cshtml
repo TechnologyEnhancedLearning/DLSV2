@@ -16,7 +16,7 @@
         <li class="nhsuk-breadcrumb__list-item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFramework" asp-fragment="fc-@Model.FrameworkCompetencyId" asp-route-frameworkId="@Model.FrameworkId" asp-route-tabname="Structure">Framework Structure</a></li>
         <li class="nhsuk-breadcrumb__list-item">Signposting</li>
       </ol>
-      <p class="nhsuk-breadcrumb__back"><a class="nhsuk-back-link" asp-action="ViewFramework" asp-fragment="fc-@Model.FrameworkCompetencyId" asp-route-frameworkId="@Model.FrameworkId" asp-route-tabname="Structure">Back to Framework Structure</a></p>
+      <a class="nhsuk-back-link" asp-action="ViewFramework" asp-fragment="fc-@Model.FrameworkCompetencyId" asp-route-frameworkId="@Model.FrameworkId" asp-route-tabname="Structure">Back to Framework Structure</a>
     </div>
   </nav>
 }

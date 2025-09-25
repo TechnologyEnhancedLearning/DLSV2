@@ -17,7 +17,7 @@
         <li class="nhsuk-breadcrumb__list-item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFramework" asp-route-frameworkId="@Model.BaseFramework.ID" asp-route-tabname="Details">Framework Details</a></li>
         <li class="nhsuk-breadcrumb__list-item">Default Questions</li>
       </ol>
-      <p class="nhsuk-breadcrumb__back"><a class="nhsuk-back-link" asp-action="ViewFramework" asp-route-frameworkId="@Model.BaseFramework.ID" asp-route-tabname="Details">Back to Framework Details</a></p>
+      <a class="nhsuk-back-link" asp-action="ViewFramework" asp-route-frameworkId="@Model.BaseFramework.ID" asp-route-tabname="Details">Back to Framework Details</a>
     </div>
   </nav>
 }

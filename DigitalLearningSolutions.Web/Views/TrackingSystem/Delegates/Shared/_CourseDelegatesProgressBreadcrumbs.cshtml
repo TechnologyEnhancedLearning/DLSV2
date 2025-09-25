@@ -30,14 +30,12 @@
                 </a>
             </li>
         </ol>
-        <p class="nhsuk-breadcrumb__back">
-            <a class="nhsuk-back-link"
-               asp-controller="DelegateProgress"
-               asp-action="Index"
-               asp-route-progressId="@Model.progressId"
-               asp-route-accessedVia="@DelegateAccessRoute.ActivityDelegates">
-                Back to delegate progress
-            </a>
-        </p>
+        <a class="nhsuk-back-link"
+            asp-controller="DelegateProgress"
+            asp-action="Index"
+            asp-route-progressId="@Model.progressId"
+            asp-route-accessedVia="@DelegateAccessRoute.ActivityDelegates">
+            Back to delegate progress
+        </a>
     </div>
 </nav>

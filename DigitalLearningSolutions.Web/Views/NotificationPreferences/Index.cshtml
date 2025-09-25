@@ -18,9 +18,7 @@
           <a class="nhsuk-breadcrumb__link" asp-controller="MyAccount" asp-action="Index" asp-route-dlsSubApplication="@Model.DlsSubApplication.UrlSegment">My account</a>
         </li>
       </ol>
-      <p class="nhsuk-breadcrumb__back">
-        <a class="nhsuk-back-link" asp-controller="MyAccount" asp-action="Index" asp-route-dlsSubApplication="@Model.DlsSubApplication.UrlSegment">Back to my account</a>
-      </p>
+      <a class="nhsuk-back-link" asp-controller="MyAccount" asp-action="Index" asp-route-dlsSubApplication="@Model.DlsSubApplication.UrlSegment">Back to my account</a>
     </div>
   </nav>
 }

@@ -31,7 +31,7 @@
         <li class="nhsuk-breadcrumb__list-item"><a class="nhsuk-breadcrumb__link" asp-action="Diagnostic" asp-route-customisationId="@Model.CustomisationId" asp-route-sectionId="@Model.SectionId">Diagnostic assessment</a></li>
         <li class="nhsuk-breadcrumb__list-item">Content</li>
       </ol>
-      <p class="nhsuk-breadcrumb__back"><a class="nhsuk-back-link" asp-action="Diagnostic" asp-route-customisationId="@Model.CustomisationId" asp-route-sectionId="@Model.SectionId">Return to diagnostic assessment</a></p>
+      <a class="nhsuk-back-link" asp-action="Diagnostic" asp-route-customisationId="@Model.CustomisationId" asp-route-sectionId="@Model.SectionId">Return to diagnostic assessment</a>
     </div>
   </nav>
 }

@@ -18,11 +18,9 @@
 }
 @section mobilebacklink
 {
-    <p class="nhsuk-breadcrumb__back">
-        <a class="nhsuk-breadcrumb__link trigger-loader" asp-action="Current">
-            Back to Current activities
-        </a>
-    </p>
+    <a class="nhsuk-breadcrumb__link trigger-loader" asp-action="Current">
+        Back to Current activities
+    </a>
 }
 <h1>@Model.Name</h1>
 @if (Model.NonReportable)
