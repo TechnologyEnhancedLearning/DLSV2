@@ -22,6 +22,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.Delegate
         private ISupervisorService supervisorService = null!;
         private ICourseService courseService = null!;
         private IEnrolService enrolService = null!;
+        private ISelfAssessmentService selfAssessmentService = null!;
         private HttpRequest httpRequest = null!;
         private HttpResponse httpResponse = null!;
         private HttpContext httpContext = null!;
@@ -35,6 +36,7 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.Delegate
             supervisorService = A.Fake<ISupervisorService>();
             enrolService = A.Fake<IEnrolService>();
             courseService = A.Fake<ICourseService>();
+            selfAssessmentService = A.Fake<ISelfAssessmentService>();
             sessionEnrolDelegate = A.Fake<SessionEnrolDelegate>();
 
             httpRequest = A.Fake<HttpRequest>();
@@ -46,7 +48,8 @@ namespace DigitalLearningSolutions.Web.Tests.Controllers.TrackingSystem.Delegate
                 multiPageFormService,
                 supervisorService,
                 enrolService,
-                courseService)
+                courseService,
+                selfAssessmentService)
                 .WithMockHttpContext(httpRequest, null, null, httpResponse)
                 .WithMockTempData()
                 .WithDefaultContext()

@@ -12,6 +12,7 @@
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ServiceFilter;
+    using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
     using DigitalLearningSolutions.Web.ViewModels.Supervisor;
     using GDS.MultiPageFormData.Enums;
@@ -796,7 +797,7 @@
             );
 
             var retirementDate = selfAssessmentService.GetSelfAssessmentById(selfAssessmentID).RetirementDate;
-            if (CheckRetirementDate(retirementDate))
+            if (SelfAssessmentHelper.CheckRetirementDate(retirementDate))
             {
                 return RedirectToAction("ConfirmRetiringSelfAssessment", "Supervisor", new { supervisorDelegateId });
             }
@@ -817,14 +818,14 @@
                    ).GetAwaiter().GetResult();
 
             var retirementDate = selfAssessmentService.GetSelfAssessmentById((int)sessionEnrolOnRoleProfile.SelfAssessmentID).RetirementDate;
-            if (!CheckRetirementDate((retirementDate)))
+            if (!SelfAssessmentHelper.CheckRetirementDate((retirementDate)))
             {
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 410 });
             }
             var model = new RetiringSelfAssessmentViewModel()
             {
                 SelfAssessmentID = (int)sessionEnrolOnRoleProfile.SelfAssessmentID,
-                SupervisorDelegateID = supervisorDelegateId,
+                RouteID = supervisorDelegateId,
                 RetirementDate = retirementDate,
                 ActionConfirmed = sessionEnrolOnRoleProfile.ActionConfirmed
             };
@@ -853,7 +854,7 @@
                 return RedirectToAction(
                     "EnrolDelegateCompleteBy",
                     "Supervisor",
-                    new { supervisorDelegateId = retiringSelfAssessment.SupervisorDelegateID }
+                    new { supervisorDelegateId = retiringSelfAssessment.RouteID }
                 );
             }
             else
@@ -876,7 +877,7 @@
             ).GetAwaiter().GetResult();
 
             var retirementDate = selfAssessmentService.GetSelfAssessmentById((int)sessionEnrolOnRoleProfile.SelfAssessmentID).RetirementDate;
-            if (CheckRetirementDate(retirementDate) && !sessionEnrolOnRoleProfile.ActionConfirmed)
+            if (SelfAssessmentHelper.CheckRetirementDate(retirementDate) && !sessionEnrolOnRoleProfile.ActionConfirmed)
             {
                 return RedirectToAction("ConfirmRetiringSelfAssessment", "Supervisor", new { supervisorDelegateId });
             }
@@ -1030,7 +1031,7 @@
             );
 
             var retirementDate = selfAssessmentService.GetSelfAssessmentById((int)sessionEnrolOnRoleProfile.SelfAssessmentID).RetirementDate;
-            if (CheckRetirementDate(retirementDate) && !sessionEnrolOnRoleProfile.ActionConfirmed)
+            if (SelfAssessmentHelper.CheckRetirementDate(retirementDate) && !sessionEnrolOnRoleProfile.ActionConfirmed)
             {
                 return RedirectToAction("ConfirmRetiringSelfAssessment", "Supervisor", new { supervisorDelegateId });
             }
@@ -1585,16 +1586,6 @@
                 viewResult.View.RenderAsync(viewContext);
                 return sw.GetStringBuilder().ToString();
             }
-        }
-
-        private bool CheckRetirementDate(DateTime? date)
-        {
-            if (date == null)
-                return false;
-
-            DateTime retirementOffsetDate = DateTime.Today.AddDays(14);
-            DateTime today = DateTime.Today;
-            return (date >= today && date <= retirementOffsetDate);
         }
     }
 }
