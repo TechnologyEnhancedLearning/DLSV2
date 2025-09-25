@@ -53,7 +53,7 @@
 
   &.inactive {
     background-color: #fff;
-    border-left: 6px solid tint(nhsuk-colour("red"), 80);
+    border-left: 6px solid nhsuk-tint(nhsuk-colour("red"), 80);
   }
 
   &.archived {
@@ -63,7 +63,7 @@
 }
 
 .status-inactive {
-  border-left: 6px solid tint(nhsuk-colour("red"), 80);
+  border-left: 6px solid nhsuk-tint(nhsuk-colour("red"), 80);
 }
 
 .status-archived {
