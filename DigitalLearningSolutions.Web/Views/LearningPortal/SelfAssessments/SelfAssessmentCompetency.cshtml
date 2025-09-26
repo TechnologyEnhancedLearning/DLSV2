@@ -118,8 +118,7 @@
                     </div>
                 </div>
                 <div class="page-indicator-container">
-                  @**qqqq no chevron here so come back to it**@
-                    <a class="nhsuk-back-link__link"
+                    <a class="nhsuk-back-link"
                    asp-action="SelfAssessmentOverview"
                    asp-route-selfAssessmentId="@Model.Assessment.Id" asp-route-vocabulary="@Model.VocabPlural()" asp-route-competencyGroupId="@Model.Competency.CompetencyGroupID" asp-fragment="comp-@Model.CompetencyNumber">
                         <span class="nhsuk-pagination__page">Return to @Model.VocabPlural() home</span>
@@ -145,7 +144,6 @@
     }
     else
     {
-        @* qqqq check it nhsuk-grid-column-full may have need to be paired with nhsuk-back-link *@
         <div class="nhsuk-grid-column-full">
             <a class="nhsuk-back-link"
            asp-action="SelfAssessmentOverview"

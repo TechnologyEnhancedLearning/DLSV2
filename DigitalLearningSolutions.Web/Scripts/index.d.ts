@@ -1,4 +1,4 @@
-declare module 'nhsuk-frontend/dist/nhsuk/components/header/header' { // qqqq still packages! not node_modules/nhsuk-frontend/dist/nhsuk/nhsuk/components 
+declare module 'nhsuk-frontend/dist/nhsuk/components/header/header' {
   export default function Header(): void;
 }
 
