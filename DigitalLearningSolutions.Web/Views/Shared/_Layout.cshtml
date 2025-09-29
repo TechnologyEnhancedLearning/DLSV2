@@ -49,6 +49,7 @@
     <link rel="icon" href="@Url.Content("~/assets/images/favicon.ico")" sizes="48x48">
 
     <!-- Icons -->
+    <!--qqqq these are not being found-->
     <link rel="icon" href="@Url.Content("~/assets/images/favicon.svg")" sizes="any" type="image/svg+xml">
     <link rel="mask-icon" href="@Url.Content("~/assets/images/nhsuk-icon-mask.svg")" color="#005eb8">
     <link rel="apple-touch-icon" href="@Url.Content("~/assets/images/nhsuk-icon-180.png")">
@@ -64,13 +65,13 @@
     <meta name="twitter:title" content="@(ViewData["twitter:title"] ?? ViewData[LayoutViewDataKeys.Title] ?? "Digital Learning Solutions")">
     <meta name="twitter:description" content="@(ViewData["twitter:description"] ?? "")">
 </head>
-
-<body>
+<!-- qqqq go back to the docs do all bodys want this -->
+<body class="nhsuk-frontend-supported">
     @if (cookieConsent == "true")
     {
         @await Html.PartialAsync("~/Views/Shared/_GoogleTagManagerBodyTagJs.cshtml")
     }
-    <script>document.body.className += ' js-enabled' + ('noModule' in HTMLScriptElement.prototype ? ' nhsuk-frontend-supported' : '');</script>
+    <script nonce="random772362">document.body.className += ' js-enabled' + ('noModule' in HTMLScriptElement.prototype ? ' nhsuk-frontend-supported' : '');</script>
     <a class="nhsuk-skip-link" href="#maincontent">Skip to main content</a>
     <div id="pagewrapper">
         <header class="nhsuk-header nhsuk-header--transactional nhsuk-header--white" role="banner">
