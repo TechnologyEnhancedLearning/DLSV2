@@ -1,9 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Helpers
 {
-    using DocumentFormat.OpenXml.Spreadsheet;
+
     using Microsoft.AspNetCore.Mvc.ModelBinding;
-    using MimeKit;
-    using System;
     using System.Text.RegularExpressions;
 
     public class ProfessionalRegistrationNumberHelper
