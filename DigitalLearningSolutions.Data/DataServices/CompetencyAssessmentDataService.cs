@@ -34,6 +34,7 @@
         IEnumerable<LinkedFramework> GetLinkedFrameworksForCompetencyAssessment(int competencyAssessmentId);
         int[] GetLinkedFrameworkCompetencyIds(int competencyAssessmentId, int frameworkId);
         CompetencyAssessmentFeatures? GetCompetencyAssessmentFeaturesTaskStatus(int competencyAssessmentId);
+        int? GetSelfAssessmentStructure(int competencyAssessmentId);
 
         //UPDATE DATA
         bool UpdateCompetencyAssessmentName(int competencyAssessmentId, int adminId, string competencyAssessmentName);
@@ -876,6 +877,14 @@
                 return false;
             }
             return true;
+        }
+
+        public int? GetSelfAssessmentStructure(int competencyAssessmentId)
+        {
+            return connection.QueryFirstOrDefault<int>(
+               @"SELECT 1 from dbo.SelfAssessmentStructure where selfassessmentid  = @competencyAssessmentId",
+               new { competencyAssessmentId }
+               );
         }
     }
 }

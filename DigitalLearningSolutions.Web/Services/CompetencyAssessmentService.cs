@@ -31,6 +31,7 @@ namespace DigitalLearningSolutions.Web.Services
 
         int[] GetLinkedFrameworkCompetencyIds(int competencyAssessmentId, int frameworkId);
         CompetencyAssessmentFeatures? GetCompetencyAssessmentFeaturesTaskStatus(int competencyAssessmentId);
+        int? GetSelfAssessmentStructure(int competencyAssessmentId);
 
         //UPDATE DATA
         bool UpdateCompetencyAssessmentName(int competencyAssessmentId, int adminId, string competencyAssessmentName);
@@ -290,6 +291,10 @@ namespace DigitalLearningSolutions.Web.Services
        public  bool UpdatePrimaryFrameworkCompetencies(int assessmentId, int frameworkId)
         {
             return competencyAssessmentDataService.UpdatePrimaryFrameworkCompetencies(assessmentId, frameworkId);
+        }
+       public int? GetSelfAssessmentStructure(int competencyAssessmentId)
+        {
+            return competencyAssessmentDataService.GetSelfAssessmentStructure(competencyAssessmentId);
         }
     }
 }
