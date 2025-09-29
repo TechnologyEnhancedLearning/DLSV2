@@ -1,6 +1,9 @@
 ﻿namespace DigitalLearningSolutions.Web.Helpers
 {
+    using DocumentFormat.OpenXml.Spreadsheet;
     using Microsoft.AspNetCore.Mvc.ModelBinding;
+    using MimeKit;
+    using System;
     using System.Text.RegularExpressions;
 
     public class ProfessionalRegistrationNumberHelper
@@ -39,28 +42,27 @@
                 modelState.AddModelError("ProfessionalRegistrationNumber", "Enter a professional registration number");
                 return;
             }
-
-            if (prn.Length < 5 || prn.Length > 20)
-            {
-                modelState.AddModelError(
-                    "ProfessionalRegistrationNumber",
-                    "Professional registration number must be between 5 and 20 characters"
-                );
-            }
-
-           const string pattern = @"^(\d{7}|[A-Za-z]{1,2}\d{6}|\d{4,8}|P?\d{5,6}|[C|P]\d{6}|[A-Za-z]?\d{5,6}|L\d{4,6}|\d{2}-[A-Za-z\d]{4,5})$";
+            const string pattern = @"^(\d{7}|[A-Za-z]{1,2}\d{6}|\d{4,8}|P?\d{5,6}|[C|P]\d{6}|[A-Za-z]?\d{5,6}|L\d{4,6}|\d{2}-[A-Za-z\d]{4,5})$";
             var rg = new Regex(pattern, RegexOptions.IgnoreCase);
             if (!rg.Match(prn).Success)
             {
                 modelState.AddModelError(
                     "ProfessionalRegistrationNumber",
-                   "Invalid professional registration number format. " +
-        "Valid formats include: 7 digits (e.g., 1234567), 1–2 letters followed by 6 digits (e.g., AB123456), " +
-        "4–8 digits, an optional 'P' plus 5–6 digits, 'C' or 'P' plus 6 digits, " +
-        "an optional letter plus 5–6 digits, 'L' plus 4–6 digits, " +
-        "or 2 digits followed by a hyphen and 4–5 alphanumeric characters (e.g., 12-AB123)."
+                 GetProfessionalRegistrationNumberErrorMessage()
                 );
             }
+        }
+        public static string GetProfessionalRegistrationNumberErrorMessage()
+        {
+            return @"The format you entered isn’t recognised. Please check and try again.
+            Valid formats include
+            7 digits - example, 1234567
+            1-2 letters followed by 6 digits - example, AB123456
+            ‘P’ followed by 5-6 digits - example, P12345, P123456
+            ‘C’ or ‘P’ followed by 6 digits - example, C123456, P123456
+            Optional letter followed by 5-6 digits - example, A12345, B123456
+            ‘L’ followed by 4-6 digits - example, L1234, L123456
+            2 digits, hyphen, then 4-5 alphanumeric characters - example, 12-AB123";
         }
     }
 }

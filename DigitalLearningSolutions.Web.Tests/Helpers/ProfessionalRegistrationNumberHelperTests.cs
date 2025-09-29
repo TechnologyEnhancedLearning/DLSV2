@@ -107,8 +107,6 @@
 
         [TestCase(null, ErrorMessagesTestHelper.MissingNumberError)]
         [TestCase("", ErrorMessagesTestHelper.MissingNumberError)]
-        [TestCase("1234", ErrorMessagesTestHelper.LengthError)]
-        [TestCase("1234", ErrorMessagesTestHelper.LengthError)]
         [TestCase("01234_", ErrorMessagesTestHelper.InvalidFormatError)]
         [TestCase("01234 ", ErrorMessagesTestHelper.InvalidFormatError)]
         [TestCase("01234$", ErrorMessagesTestHelper.InvalidFormatError)]
