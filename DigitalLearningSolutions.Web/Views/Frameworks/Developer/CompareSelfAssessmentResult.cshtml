@@ -33,7 +33,7 @@
   </label>
   <form method="post" asp-controller="Frameworks">
     <fieldset class="nhsuk-fieldset nhsuk-u-margin-top-5">
-      <div class="nhsuk-radios nhsuk-radios--conditional">
+        <div class="nhsuk-radios nhsuk-radios--conditional" data-module="nhsuk-radios">
         <div class="nhsuk-radios__item">
           <input name="compareQuestionType" type="radio" class="nhsuk-radios__input"
                value="0"
@@ -64,7 +64,7 @@
           </label>
         </div>
 
-        <div id="conditional-compareToOther" class="nhsuk-radios__conditional @(Model.SelectedCompareQuestionType != CompareAssessmentQuestionType.CompareToOtherQuestion ? "nhsuk-radios__conditional--hidden" : String.Empty)">
+        <div id="conditional-compareToOther" class="nhsuk-radios__conditional @(Model.SelectedCompareQuestionType != CompareAssessmentQuestionType.CompareToOtherQuestion ? "nhsuk-radios__conditional--hidden" : String.Empty)" >
           <label class="nhsuk-label" for="email">
             <select name="compareToQuestionId" class="nhsuk-select nhsuk-u-width-two-thirds nhsuk-u-margin-top-3">
               @foreach (var question in Model.Questions)

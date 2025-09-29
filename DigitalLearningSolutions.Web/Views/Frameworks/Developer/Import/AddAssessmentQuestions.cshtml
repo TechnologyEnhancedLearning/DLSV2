@@ -46,7 +46,7 @@
                         <div class="nhsuk-hint" id="contact-hint">
                             Which assessment questions would you like to attach to the @hintTextString @Model.FrameworkVocabularyPlural.ToLower()?
                         </div>
-                        <div class="nhsuk-checkboxes nhsuk-checkboxes--conditional">
+                        <div class="nhsuk-checkboxes nhsuk-checkboxes--conditional" data-module="nhsuk-checkboxes">
                             @if (Model.DefaultQuestions.Any())
                             {
                                 <div class="nhsuk-checkboxes__item">

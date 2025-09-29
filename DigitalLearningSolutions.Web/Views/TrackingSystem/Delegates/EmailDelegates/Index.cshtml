@@ -57,7 +57,7 @@
             </span>
           </div>
           <fieldset class="nhsuk-fieldset">
-            <div id="searchable-elements" class="nhsuk-checkboxes">
+              <div id="searchable-elements" class="nhsuk-checkboxes" data-module="nhsuk-checkboxes">
               @foreach (var delegateModel in Model.Delegates)
               {
                 <partial name="_SearchableDelegateCheckbox" model="delegateModel" />
