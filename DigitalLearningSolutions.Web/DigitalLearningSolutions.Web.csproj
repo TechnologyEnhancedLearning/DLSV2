@@ -93,6 +93,8 @@
         <None Include="wwwroot\images\nhsDigitalLogo.png" />
         <None Include="wwwroot\images\reasonableAdjustmentFlagLogo.png" />
         <None Include="wwwroot\README.txt" />
+        <Folder Include="wwwroot\assets\" />
+        <Folder Include="wwwroot\assets\images" />
     </ItemGroup>
 
     <ItemGroup>
