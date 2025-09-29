@@ -45,7 +45,7 @@
     <meta name="twitter:description" content="@(ViewData["twitter:description"] ?? "")">
 </head>
 
-<body>
+<body class="nhsuk-frontend-supported">
     @if (cookieConsent == "true")
     {
         @await Html.PartialAsync("~/Views/Shared/_GoogleTagManagerBodyTagJs.cshtml")
