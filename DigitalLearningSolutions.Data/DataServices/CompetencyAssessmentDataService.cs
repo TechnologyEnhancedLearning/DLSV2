@@ -822,9 +822,7 @@
                     SET 
                     [Description] = COALESCE(F.[Description], 'No description provided'),
                     BrandID = F.BrandID,
-                    CategoryID = F.CategoryID,
-                    CreatedByCentreID = AU.CentreID,
-                    CreatedByAdminID = F.OwnerAdminID
+                    CategoryID = F.CategoryID
                     FROM SelfAssessments s
                     INNER JOIN Frameworks F ON F.ID = @frameworkId
                     INNER JOIN AdminUsers AU ON F.OwnerAdminID = AU.AdminID
