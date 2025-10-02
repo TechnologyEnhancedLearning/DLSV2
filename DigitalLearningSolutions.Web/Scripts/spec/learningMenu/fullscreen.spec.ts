@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { JSDOM } from 'jsdom';
 import { exitFullscreen, enterFullscreen } from '../../learningMenu/fullscreen';
-
+/*qqqq what is this page do i need to update it*/
 describe('enterFullscreen', () => {
   it('should show the exit fullscreen button', () => {
     // Given
