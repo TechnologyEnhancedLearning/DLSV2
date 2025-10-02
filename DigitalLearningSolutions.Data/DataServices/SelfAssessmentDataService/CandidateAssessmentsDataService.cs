@@ -423,7 +423,7 @@
         public void RemoveEnrolment(int selfAssessmentId, int delegateUserId)
         {
             connection.Execute(
-                @"UPDATE CandidateAssessments SET RemovedDate = GETDATE()
+                @"UPDATE CandidateAssessments SET RemovedDate = GETDATE(), SelfAssessmentProcessAgreed = NULL
                       WHERE SelfAssessmentID = @selfAssessmentId AND DelegateUserID = @delegateUserId",
                 new { selfAssessmentId, delegateUserId }
             );
