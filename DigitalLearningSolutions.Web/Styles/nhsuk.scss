@@ -70,9 +70,10 @@ body:not(.js-enabled) {
   margin-bottom: 0;
 }
 
-nav, .nhsuk-header__navigation, #header-navigation {
+/*Breaks mobile more expansion qqqq */
+/*nav, .nhsuk-header__navigation, #header-navigation {
   border-bottom: 0;
-}
+}*/
 
 .nhsuk-heading-xl.heading-margin-2 {
   margin-bottom: nhsuk-spacing(2);
