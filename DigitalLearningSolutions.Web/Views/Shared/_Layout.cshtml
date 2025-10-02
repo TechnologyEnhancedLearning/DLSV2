@@ -73,7 +73,7 @@
     <script nonce="random772362">document.body.className += ' js-enabled' + ('noModule' in HTMLScriptElement.prototype ? ' nhsuk-frontend-supported' : '');</script>
     <a class="nhsuk-skip-link" href="#maincontent">Skip to main content</a>
     <div id="pagewrapper">
-        <header class="nhsuk-header nhsuk-header--transactional nhsuk-header--white" role="banner">
+        <header class="nhsuk-header nhsuk-header--white" role="banner" data-module="nhsuk-header">
             <partial name="_CookieConsentPartial" />
             @if (Configuration["ShowAlertBanner"] == "True")
             {
@@ -86,8 +86,9 @@
                 </div>
             }
 
-            <div class="nhsuk-header__container">
-                <div class="nhsuk-header__transactional--logo nhsuk-header__logo">
+            <div class="nhsuk-header__container nhsuk-width-container">
+                <div class="nhsuk-header__service">
+                @*qqqq <div class="nhsuk-header__transactional--logo nhsuk-header__logo"> *@
                     <a class="nhsuk-header__link"
                        href="@(ViewData[LayoutViewDataKeys.HeaderPath] ?? Configuration["AppRootPath"] + "/Home")"
                        aria-label="NHS Digital Learning Solutions - @(ViewData[LayoutViewDataKeys.HeaderPathName] ?? "Landing Page")">
@@ -114,47 +115,48 @@
 
             @if ((bool?)ViewData[LayoutViewDataKeys.DoNotDisplayNavBar] != true)
             {
-                <div class="nhsuk-navigation-container">
-                    <nav class="nhsuk-navigation" id="header-navigation" aria-label="Primary navigation" role="navigation">
-                        <ul class="nhsuk-header__navigation-list">
-                            @if (IsSectionDefined("NavMenuItems"))
-                            {
-                                @RenderSection("NavMenuItems", true)
-                            }
-                            else if (dlsSubApplication != null)
-                            {
-                                <partial name="_AutoNavMenuItems.cshtml" model="@dlsSubApplication" />
-                            }
+                <nav class="nhsuk-header__navigation" id="header-navigation" aria-label="Primary navigation" role="navigation">
+                  <div class="nhsuk-header__navigation-container nhsuk-width-container">
+                    <ul class="nhsuk-header__navigation-list">
+                          @if (IsSectionDefined("NavMenuItems"))
+                          {
+                              @RenderSection("NavMenuItems", true)
+                          }
+                          else if (dlsSubApplication != null)
+                          {
+                              <partial name="_AutoNavMenuItems.cshtml" model="@dlsSubApplication" />
+                          }
 
-                            @if (User.IsAdminAccount())
-                            {
-                                if ((bool?)ViewData[LayoutViewDataKeys.DoNotDisplayUserFeedbackBar] != true)
-                                {
-                                    <li class="nhsuk-header__navigation-item @Html.GetSelectedCssClassIfTabSelected(NavMenuTab.SwitchApplication)">
-                                        <a class="nhsuk-header__navigation-link" asp-controller="ApplicationSelector" asp-action="Index">
-                                            Switch application
-                                        </a>
-                                    </li>
-                                }
+                          @if (User.IsAdminAccount())
+                          {
+                              if ((bool?)ViewData[LayoutViewDataKeys.DoNotDisplayUserFeedbackBar] != true)
+                              {
+                                  <li class="nhsuk-header__navigation-item @Html.GetSelectedCssClassIfTabSelected(NavMenuTab.SwitchApplication)">
+                                      <a class="nhsuk-header__navigation-link" asp-controller="ApplicationSelector" asp-action="Index">
+                                          Switch application
+                                      </a>
+                                  </li>
+                              }
 
-                            }
-                            <li class="nhsuk-header__navigation-item nhsuk-header__navigation-item--home">
-                                <a class="nhsuk-header__navigation-link" asp-controller="Home" asp-action="Index">
-                                    Home
-                                </a>
-                            </li>
-                            <li class="nhsuk-mobile-menu-container">
-                                <button class="nhsuk-header__menu-toggle nhsuk-header__navigation-link" id="toggle-menu" aria-expanded="false">
-                                    <span class="nhsuk-u-visually-hidden">Browse</span>
-                                    More
-                                    <svg class="nhsuk-icon nhsuk-icon__chevron-down" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                                        <path d="M15.5 12a1 1 0 0 1-.29.71l-5 5a1 1 0 0 1-1.42-1.42l4.3-4.29-4.3-4.29a1 1 0 0 1 1.42-1.42l5 5a1 1 0 0 1 .29.71z"></path>
-                                    </svg>
-                                </button>
-                            </li>
-                        </ul>
-                    </nav>
-                </div>
+                          }
+                          <li class="nhsuk-header__navigation-item">
+                              <a class="nhsuk-header__navigation-link" asp-controller="Home" asp-action="Index">
+                                  Home
+                              </a>
+                          </li>
+                            <li class="nhsuk-header__menu" hidden>
+                              <button class="nhsuk-header__menu-toggle nhsuk-header__navigation-link" id="toggle-menu" aria-expanded="false">
+                                    <span class="nhsuk-u-visually-hidden">Browse </span>More
+@*                                   qqqq try how it is in the template <span class="nhsuk-u-visually-hidden">Browse</span>
+                                  More
+                                  <svg class="nhsuk-icon nhsuk-icon__chevron-down" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                                      <path d="M15.5 12a1 1 0 0 1-.29.71l-5 5a1 1 0 0 1-1.42-1.42l4.3-4.29-4.3-4.29a1 1 0 0 1 1.42-1.42l5 5a1 1 0 0 1 .29.71z"></path>
+                                  </svg> *@
+                              </button>
+                          </li>
+                      </ul>
+                    </div>
+                </nav> 
             }
 
             @{
