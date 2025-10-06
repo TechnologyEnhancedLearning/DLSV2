@@ -46,6 +46,7 @@ namespace DigitalLearningSolutions.Web.Services
         bool UpdateSelectCompetenciesTaskStatus(int competencyAssessmentId, bool taskStatus, bool? previousStatus);
         bool UpdateOptionalCompetenciesTaskStatus(int assessmentId, bool taskStatus, bool? previousStatus);
         bool UpdateRoleRequirementsTaskStatus(int assessmentId, bool taskStatus, bool? previousStatus);
+        bool UpdateWorkingGroupTaskStatus(int assessmentId, bool taskStatus, bool? previousStatus);
         void MoveCompetencyInSelfAssessment(int competencyAssessmentId,
             int competencyId,
             string direction
@@ -67,7 +68,11 @@ namespace DigitalLearningSolutions.Web.Services
         //DELETE DATA
         bool RemoveFrameworkCompetenciesFromAssessment(int competencyAssessmentId, int frameworkId);
         bool RemoveCompetencyFromAssessment(int competencyAssessmentId, int competencyId);
-        }
+        IEnumerable<CompetencyAssessmentCollaboratorDetail> GetCollaboratorsForCompetencyAssessmentId(int competencyAssessmentId);
+        int AddCollaboratorToCompetencyAssessment(int competencyAssessmentId, string? userEmail, bool canModify, int? centreID);
+        void RemoveCollaboratorFromCompetencyAssessment(int competencyAssessmentId, int id);
+        CompetencyAssessmentCollaboratorNotification? GetCollaboratorNotification(int id, int invitedByAdminId);
+    }
     public class CompetencyAssessmentService : ICompetencyAssessmentService
     {
         private readonly ICompetencyAssessmentDataService competencyAssessmentDataService;
@@ -233,6 +238,10 @@ namespace DigitalLearningSolutions.Web.Services
         {
             return competencyAssessmentDataService.UpdateRoleRequirementsTaskStatus(assessmentId, taskStatus, previousStatus);
         }
+        public bool UpdateWorkingGroupTaskStatus(int assessmentId, bool taskStatus, bool? previousStatus)
+        {
+            return competencyAssessmentDataService.UpdateWorkingGroupTaskStatus(assessmentId, taskStatus, previousStatus);
+        }
 
         public IEnumerable<Competency> GetCompetenciesForCompetencyAssessment(int competencyAssessmentId)
         {
@@ -284,11 +293,27 @@ namespace DigitalLearningSolutions.Web.Services
         }
         public void UpdateSelfAssessmentFromFramework(int selfAssessmentId, int? frameworkId)
         {
-             competencyAssessmentDataService.UpdateSelfAssessmentFromFramework(selfAssessmentId, frameworkId);
+            competencyAssessmentDataService.UpdateSelfAssessmentFromFramework(selfAssessmentId, frameworkId);
         }
         public int? GetSelfAssessmentStructure(int competencyAssessmentId)
         {
             return competencyAssessmentDataService.GetSelfAssessmentStructure(competencyAssessmentId);
         }
+        public IEnumerable<CompetencyAssessmentCollaboratorDetail> GetCollaboratorsForCompetencyAssessmentId(int competencyAssessmentId)
+        {
+            return competencyAssessmentDataService.GetCollaboratorsForCompetencyAssessmentId(competencyAssessmentId);
         }
+        public int AddCollaboratorToCompetencyAssessment(int competencyAssessmentId, string? userEmail, bool canModify, int? centreID)
+        {
+            return competencyAssessmentDataService.AddCollaboratorToCompetencyAssessment(competencyAssessmentId, userEmail, canModify, centreID);
+        }
+        public void RemoveCollaboratorFromCompetencyAssessment(int competencyAssessmentId, int id)
+        {
+            competencyAssessmentDataService.RemoveCollaboratorFromCompetencyAssessment(competencyAssessmentId, id);
+        }
+        public CompetencyAssessmentCollaboratorNotification? GetCollaboratorNotification(int id, int invitedByAdminId)
+        {
+            return competencyAssessmentDataService.GetCollaboratorNotification(id, invitedByAdminId);
+        }
+    }
 }

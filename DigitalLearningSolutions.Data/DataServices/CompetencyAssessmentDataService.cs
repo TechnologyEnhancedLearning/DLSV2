@@ -57,6 +57,7 @@
         bool UpdateSelectCompetenciesTaskStatus(int assessmentId, bool taskStatus, bool? previousStatus);
         bool UpdateOptionalCompetenciesTaskStatus(int assessmentId, bool taskStatus, bool? previousStatus);
         bool UpdateRoleRequirementsTaskStatus(int assessmentId, bool taskStatus, bool? previousStatus);
+        bool UpdateWorkingGroupTaskStatus(int assessmentId, bool taskStatus, bool? previousStatus);
         void MoveCompetencyInSelfAssessment(int competencyAssessmentId,
             int competencyId,
             string direction
@@ -77,6 +78,10 @@
         //DELETE DATA
         bool RemoveFrameworkCompetenciesFromAssessment(int competencyAssessmentId, int frameworkId);
         bool RemoveCompetencyFromAssessment(int competencyAssessmentId, int competencyId);
+        IEnumerable<CompetencyAssessmentCollaboratorDetail> GetCollaboratorsForCompetencyAssessmentId(int competencyAssessmentId);
+        int AddCollaboratorToCompetencyAssessment(int competencyAssessmentId, string? userEmail, bool canModify, int? centreID);
+        void RemoveCollaboratorFromCompetencyAssessment(int competencyAssessmentId, int id);
+        CompetencyAssessmentCollaboratorNotification? GetCollaboratorNotification(int id, int invitedByAdminId);
     }
 
     public class CompetencyAssessmentDataService : ICompetencyAssessmentDataService
@@ -646,6 +651,23 @@
             }
             return true;
         }
+        public bool UpdateWorkingGroupTaskStatus(int assessmentId, bool taskStatus, bool? previousStatus)
+        {
+            var numberOfAffectedRows = connection.Execute(
+               @"UPDATE SelfAssessmentTaskStatus SET WorkingGroupTaskStatus = @taskStatus
+                    WHERE SelfAssessmentId = @assessmentId AND (@previousStatus IS NULL OR WorkingGroupTaskStatus = @previousStatus)",
+               new { assessmentId, taskStatus, previousStatus }
+           );
+            if (numberOfAffectedRows < 1)
+            {
+                logger.LogWarning(
+                    "Not updating WorkingGroupTaskStatus as db update failed. " +
+                    $"assessmentId: {assessmentId}, taskStatus: {taskStatus}"
+                );
+                return false;
+            }
+            return true;
+        }
 
         public IEnumerable<Competency> GetCompetenciesForCompetencyAssessment(int competencyAssessmentId)
         {
@@ -747,7 +769,7 @@
                     new { SelfAssessmentID = competencyAssessmentId, CompetencyID = competencyId, Direction = direction },
                     commandType: CommandType.StoredProcedure
                 );
-            
+
         }
 
         public void MoveCompetencyGroupInSelfAssessment(int competencyAssessmentId, int groupId, string direction)
@@ -811,12 +833,12 @@
 	          WHERE s.ID = @competencyAssessmentId",
                new { competencyAssessmentId }
            );
-            
+
         }
 
-        public void UpdateSelfAssessmentFromFramework( int selfAssessmentId, int? frameworkId)
+        public void UpdateSelfAssessmentFromFramework(int selfAssessmentId, int? frameworkId)
         {
-           
+
             var numberOfAffectedRows = connection.Execute(
                 @"UPDATE s
                     SET 
@@ -828,22 +850,22 @@
                     INNER JOIN AdminUsers AU ON F.OwnerAdminID = AU.AdminID
                     WHERE s.id = @selfAssessmentId;"
             ,
-                new {selfAssessmentId, frameworkId }
+                new { selfAssessmentId, frameworkId }
             );
         }
         public bool InsertSelfAssessmentStructure(int selfAssessmentId, int? frameworkId)
         {
 
-                var numberOfAffectedRows = connection.Execute(
-                @"INSERT INTO SelfAssessmentStructure (SelfAssessmentID, CompetencyID, Ordering, CompetencyGroupID)
+            var numberOfAffectedRows = connection.Execute(
+            @"INSERT INTO SelfAssessmentStructure (SelfAssessmentID, CompetencyID, Ordering, CompetencyGroupID)
                 SELECT s.ID, FC.CompetencyID, ROW_NUMBER() OVER( ORDER BY FCG.Ordering, FC.Ordering ), FCG.CompetencyGroupID
                  FROM FrameworkCompetencies AS FC 
                 INNER JOIN FrameworkCompetencyGroups AS FCG ON FC.FrameworkCompetencyGroupID = FCG.ID INNER JOIN
 				SelfAssessments s ON s.id = @selfAssessmentId
                 WHERE FC.FrameworkID = @frameworkId"
-            ,
-                new { selfAssessmentId, frameworkId }
-            );
+        ,
+            new { selfAssessmentId, frameworkId }
+        );
             if (numberOfAffectedRows < 1)
             {
                 logger.LogWarning(
@@ -862,6 +884,138 @@
                new { competencyAssessmentId }
            );
 
+        }
+        public IEnumerable<CompetencyAssessmentCollaboratorDetail> GetCollaboratorsForCompetencyAssessmentId(int competencyAssessmentId)
+        {
+            return connection.Query<CompetencyAssessmentCollaboratorDetail>(
+                @"SELECT
+                        0 AS ID,
+                        sa.ID AS SelfAssessmentID,
+                        au.AdminID AS AdminID,
+                        1 AS CanModify,
+                        au.Email AS UserEmail,
+                        au.Active AS UserActive,
+                        'Owner' AS CompetencyAssessmentRole
+                    FROM SelfAssessments AS sa
+                    INNER JOIN AdminUsers AS au ON sa.CreatedByAdminID = au.AdminID
+                    WHERE (sa.ID = @competencyAssessmentId)
+                    UNION ALL
+                    SELECT
+                        ID,
+                        SelfAssessmentID,
+                        sc.AdminID,
+                        CanModify,
+                        UserEmail,
+                        au.Active AS UserActive,
+                        CASE WHEN CanModify = 1 THEN 'Contributor' ELSE 'Reviewer' END AS CompetencyAssessmentRole
+                    FROM SelfAssessmentCollaborators sc
+                    INNER JOIN AdminUsers AS au ON sc.AdminID = au.AdminID
+                        AND sc.IsDeleted = 0
+                    WHERE (SelfAssessmentID = @competencyAssessmentId)",
+                new { competencyAssessmentId }
+            );
+        }
+        public int AddCollaboratorToCompetencyAssessment(int competencyAssessmentId, string? userEmail, bool canModify, int? centreID)
+        {
+            if (userEmail is null || userEmail.Length == 0)
+            {
+                logger.LogWarning(
+                    $"Not adding collaborator to competency assessment as it failed server side valiidation. competencyAssessmentId: {competencyAssessmentId}, userEmail: {userEmail}, canModify:{canModify}"
+                );
+                return -3;
+            }
+
+            var existingId = connection.QuerySingle<int>(
+                @"SELECT COALESCE
+                     ((SELECT ID
+                      FROM    SelfAssessmentCollaborators
+                      WHERE (SelfAssessmentID = @competencyAssessmentId) AND (UserEmail = @userEmail) AND (IsDeleted=0)), 0) AS ID",
+                new { competencyAssessmentId, userEmail }
+            );
+            if (existingId > 0)
+            {
+                return -2;
+            }
+
+            var adminId = (int?)connection.ExecuteScalar(
+                @"SELECT AdminID FROM AdminUsers WHERE Email = @userEmail AND Active = 1 AND CentreID = @centreID",
+                new { userEmail, centreID }
+            );
+            if (adminId is null)
+            {
+                return -4;
+            }
+
+            var ownerEmail = (string?)connection.ExecuteScalar(@"SELECT AU.Email FROM SelfAssessments SA
+                            INNER JOIN AdminUsers AU ON AU.AdminID = SA.CreatedByAdminID
+                            WHERE SA.ID = @competencyAssessmentId", new { competencyAssessmentId });
+            if (ownerEmail == userEmail)
+            {
+                return -5;
+            }
+
+            var numberOfAffectedRows = connection.Execute(
+                @"INSERT INTO SelfAssessmentCollaborators (SelfAssessmentID, AdminID, UserEmail, CanModify)
+                    VALUES (@competencyAssessmentId, @adminId, @userEmail, @canModify)",
+                new { competencyAssessmentId, adminId, userEmail, canModify }
+            );
+            if (numberOfAffectedRows < 1)
+            {
+                logger.LogWarning(
+                    $"Not inserting framework collaborator as db insert failed. AdminId: {adminId}, userEmail: {userEmail}, competencyAssessmentId: {competencyAssessmentId}, canModify: {canModify}"
+                );
+                return -1;
+            }
+
+            if (adminId > 0)
+            {
+                connection.Execute(
+                    @"UPDATE AdminUsers SET IsWorkforceManager = 1 WHERE AdminId = @adminId AND IsWorkforceManager = 0",
+                    new { adminId }
+                );
+            }
+
+            existingId = connection.QuerySingle<int>(
+                @"SELECT COALESCE
+                     ((SELECT ID
+                      FROM    SelfAssessmentCollaborators
+                      WHERE (SelfAssessmentID = @competencyAssessmentId) AND (UserEmail = @userEmail) AND (IsDeleted=0)), 0) AS AdminID",
+                new { competencyAssessmentId, adminId, userEmail }
+            );
+            return existingId;
+        }
+
+        public void RemoveCollaboratorFromCompetencyAssessment(int competencyAssessmentId, int id)
+        {
+            var adminId = (int?)connection.ExecuteScalar(
+                @"SELECT AdminID FROM SelfAssessmentCollaborators WHERE  (SelfAssessmentID = @competencyAssessmentId) AND (ID = @id)",
+                new { competencyAssessmentId, id }
+            );
+            connection.Execute(
+                @"UPDATE SelfAssessmentCollaborators SET IsDeleted=1 WHERE (SelfAssessmentID = @competencyAssessmentId) AND (ID = @id);
+                    UPDATE AdminUsers SET IsWorkforceManager = 0 WHERE AdminID = @adminId AND AdminID NOT IN (SELECT DISTINCT AdminID FROM SelfAssessmentCollaborators);",
+                new { competencyAssessmentId, id, adminId }
+            );
+        }
+        public CompetencyAssessmentCollaboratorNotification? GetCollaboratorNotification(int id, int invitedByAdminId)
+        {
+            return connection.Query<CompetencyAssessmentCollaboratorNotification>(
+                @"SELECT
+                    sc.SelfAssessmentID,
+                    sc.AdminID,
+                    sc.CanModify,
+                    sc.UserEmail,
+                    au.Active AS UserActive,
+                    CASE WHEN sc.CanModify = 1 THEN 'Contributor' ELSE 'Reviewer' END AS CompetencyAssessmentRole,
+                    sa.[Name] AS CompetencyAssessmentName,
+                    (SELECT Forename + ' ' + Surname + (CASE WHEN Active = 1 THEN '' ELSE ' (Inactive)' END) AS Expr1 FROM AdminUsers AS au1 WHERE (AdminID = @invitedByAdminId)) AS InvitedByName,
+                    (SELECT Email FROM AdminUsers AS au2 WHERE (AdminID = @invitedByAdminId)) AS InvitedByEmail
+                FROM SelfAssessmentCollaborators AS sc
+                INNER JOIN SelfAssessments AS sa ON sc.SelfAssessmentID = sa.ID
+                INNER JOIN AdminUsers AS au ON sc.AdminID = au.AdminID
+                WHERE (sc.ID = @id) AND (sc.IsDeleted=0)",
+                new { invitedByAdminId, id }
+            ).FirstOrDefault();
         }
     }
 }
