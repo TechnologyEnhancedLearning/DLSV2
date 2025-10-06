@@ -766,11 +766,11 @@
                @"IF EXISTS (SELECT 1 FROM SelfAssessmentTaskStatus WHERE SelfAssessmentId = @id)
                BEGIN
                UPDATE SelfAssessmentTaskStatus
-               SET IntroductoryTextTaskStatus = CASE WHEN @descriptionStatus = 1 THEN 1 ELSE NULL END,
-                       BrandingTaskStatus         = CASE WHEN @providerandCategoryStatus = 1 THEN 1 ELSE NULL END,
-                       VocabularyTaskStatus       = CASE WHEN @vocabularyStatus = 1 THEN 1 ELSE NULL END,
-                       WorkingGroupTaskStatus     = CASE WHEN @workingGroupStatus = 1 THEN 1 ELSE NULL END,
-                       FrameworkLinksTaskStatus   = CASE WHEN @AllframeworkCompetenciesStatus = 1 THEN 1 ELSE NULL END
+               SET IntroductoryTextTaskStatus = CASE WHEN @descriptionStatus = 1 THEN 0 ELSE NULL END,
+                       BrandingTaskStatus         = CASE WHEN @providerandCategoryStatus = 1 THEN 0 ELSE NULL END,
+                       VocabularyTaskStatus       = CASE WHEN @vocabularyStatus = 1 THEN 0 ELSE NULL END,
+                       WorkingGroupTaskStatus     = CASE WHEN @workingGroupStatus = 1 THEN 0 ELSE NULL END,
+                       FrameworkLinksTaskStatus   = CASE WHEN @AllframeworkCompetenciesStatus = 1 THEN 0 ELSE NULL END
                  WHERE SelfAssessmentId = @id;
                     END
                      ELSE
@@ -780,11 +780,11 @@
                  VALUES
                  (
                        @id,
-                    CASE WHEN @descriptionStatus = 1 THEN 1 ELSE NULL END,
-                    CASE WHEN @providerandCategoryStatus = 1 THEN 1 ELSE NULL END,
-                    CASE WHEN @vocabularyStatus = 1 THEN 1 ELSE NULL END,
-                    CASE WHEN @workingGroupStatus = 1 THEN 1 ELSE NULL END,
-                    CASE WHEN @AllframeworkCompetenciesStatus = 1 THEN 1 ELSE NULL END
+                    CASE WHEN @descriptionStatus = 1 THEN 0 ELSE NULL END,
+                    CASE WHEN @providerandCategoryStatus = 1 THEN 0 ELSE NULL END,
+                    CASE WHEN @vocabularyStatus = 1 THEN 0 ELSE NULL END,
+                    CASE WHEN @workingGroupStatus = 1 THEN 0 ELSE NULL END,
+                    CASE WHEN @AllframeworkCompetenciesStatus = 1 THEN 0 ELSE NULL END
                         );
                         END",
                new { id, descriptionStatus, providerandCategoryStatus, vocabularyStatus, workingGroupStatus, AllframeworkCompetenciesStatus }
@@ -822,9 +822,7 @@
                     SET 
                     [Description] = COALESCE(F.[Description], 'No description provided'),
                     BrandID = F.BrandID,
-                    CategoryID = F.CategoryID,
-                    CreatedByCentreID = AU.CentreID,
-                    CreatedByAdminID = F.OwnerAdminID
+                    CategoryID = F.CategoryID
                     FROM SelfAssessments s
                     INNER JOIN Frameworks F ON F.ID = @frameworkId
                     INNER JOIN AdminUsers AU ON F.OwnerAdminID = AU.AdminID

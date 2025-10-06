@@ -513,11 +513,13 @@
         {
             return connection.Query<Accessor>(
                 @"SELECT CASE  WHEN AccessorPRN IS NOT NULL THEN AccessorName+', '+AccessorPRN ELSE AccessorName END AS AccessorList,AccessorName,AccessorPRN   
-                   FROM (SELECT COALESCE(au.Forename + ' ' + au.Surname + (CASE WHEN au.Active = 1 THEN '' ELSE ' (Inactive)' END), sd.SupervisorEmail) AS AccessorName,
+                   FROM (SELECT DISTINCT COALESCE(au.Forename + ' ' + au.Surname + (CASE WHEN au.Active = 1 THEN '' ELSE ' (Inactive)' END), sd.SupervisorEmail) AS AccessorName,
                			u.ProfessionalRegistrationNumber AS AccessorPRN
             FROM SupervisorDelegates AS sd
             INNER JOIN CandidateAssessmentSupervisors AS cas
                 ON sd.ID = cas.SupervisorDelegateId
+            INNER JOIN SelfAssessmentResultSupervisorVerifications AS srsv
+			    ON cas.ID = srsv.CandidateAssessmentSupervisorID
             INNER JOIN CandidateAssessments AS ca
                 ON cas.CandidateAssessmentID = ca.ID
             LEFT OUTER JOIN AdminUsers AS au
@@ -527,7 +529,8 @@
                 ON cas.SelfAssessmentSupervisorRoleID = sasr.ID
 				INNER JOIN Users AS u ON U.PrimaryEmail =  au.Email 
              WHERE
-              (sd.Removed IS NULL) AND (cas.Removed IS NULL) AND (ca.DelegateUserID = @DelegateUserID) AND (ca.SelfAssessmentID = @selfAssessmentId)) Accessor
+                (ca.DelegateUserID = @DelegateUserID) AND (ca.SelfAssessmentID = @selfAssessmentId)
+                    AND (srsv.Verified IS NOT NULL)) Accessor
                 ORDER BY AccessorName, AccessorPRN DESC",
                 new { selfAssessmentId, delegateUserID }
             );
