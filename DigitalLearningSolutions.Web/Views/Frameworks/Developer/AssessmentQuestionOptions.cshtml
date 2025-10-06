@@ -71,14 +71,14 @@
         <div class="nhsuk-hint" id="includeComments-hint">
           When this question is presented, should the user be prompted for supporting comments by default?
         </div>
-            <div class="nhsuk-radios nhsuk-radios--conditional" data-module="nhsuk-radios">
+        <div class="nhsuk-radios nhsuk-radios--conditional" data-module="nhsuk-radios">
           <div class="nhsuk-radios__item">
             <input class="nhsuk-radios__input" id="rb-includeComments-yes" asp-for="AssessmentQuestionDetail.IncludeComments" name="IncludeComments" type="radio" value="true" aria-controls="conditional-comments-options" aria-expanded="@(Model.AssessmentQuestionDetail.IncludeComments == true)">
             <label class="nhsuk-label nhsuk-radios__label" for="rb-includeComments-yes">
               Yes
             </label>
           </div>
-                <div class="@(Model.AssessmentQuestionDetail.IncludeComments == true ? "nhsuk-radios__conditional" : "nhsuk-radios__conditional nhsuk-radios__conditional--hidden")" id="conditional-comments-options" data-module="nhsuk-radios">
+          <div class="@(Model.AssessmentQuestionDetail.IncludeComments == true ? "nhsuk-radios__conditional" : "nhsuk-radios__conditional nhsuk-radios__conditional--hidden")" id="conditional-comments-options" data-module="nhsuk-radios">
             <nhs-form-group nhs-validation-for="AssessmentQuestionDetail.CommentsPrompt">
               <label class="nhsuk-label" for="comments-prompt">
                 Comments field prompt (optional)

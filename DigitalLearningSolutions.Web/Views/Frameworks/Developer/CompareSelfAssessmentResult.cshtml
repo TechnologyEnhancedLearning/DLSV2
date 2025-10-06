@@ -33,16 +33,16 @@
   </label>
   <form method="post" asp-controller="Frameworks">
     <fieldset class="nhsuk-fieldset nhsuk-u-margin-top-5">
-        <div class="nhsuk-radios nhsuk-radios--conditional" data-module="nhsuk-radios">
-        <div class="nhsuk-radios__item">
-          <input name="compareQuestionType" type="radio" class="nhsuk-radios__input"
-               value="0"
-               @(Model.SelectedCompareQuestionType == CompareAssessmentQuestionType.DontCompare ? "checked" : String.Empty)>
-          <label class="nhsuk-label nhsuk-radios__label">
-            Don't compare result
-          </label>
-        </div>
-        @if (Model.SelectedQuestionRoleRequirements > 0)
+      <div class="nhsuk-radios nhsuk-radios--conditional" data-module="nhsuk-radios">
+      <div class="nhsuk-radios__item">
+        <input name="compareQuestionType" type="radio" class="nhsuk-radios__input"
+              value="0"
+              @(Model.SelectedCompareQuestionType == CompareAssessmentQuestionType.DontCompare ? "checked" : String.Empty)>
+        <label class="nhsuk-label nhsuk-radios__label">
+          Don't compare result
+        </label>
+      </div>
+      @if (Model.SelectedQuestionRoleRequirements > 0)
       {
         <div class="nhsuk-radios__item">
           <input type="radio" name="compareQuestionType" class="nhsuk-radios__input"
