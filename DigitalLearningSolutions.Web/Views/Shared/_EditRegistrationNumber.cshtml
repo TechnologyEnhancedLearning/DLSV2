@@ -17,6 +17,11 @@
 
   var subject = Model.IsSelfRegistrationOrEdit ? "you" : "they";
   var capitalisedSubject = Model.IsSelfRegistrationOrEdit ? "You" : "They";
+    var professionalRegistrationNumberError = ViewData.ModelState["ProfessionalRegistrationNumber"]?.Errors.FirstOrDefault()?.ErrorMessage;
+    if (ViewData.ModelState.ContainsKey("ProfessionalRegistrationNumber"))
+    {
+        ViewData.ModelState["ProfessionalRegistrationNumber"].Errors.Clear();
+    }
 }
 
 <input type="hidden" asp-for="IsSelfRegistrationOrEdit" />
@@ -53,7 +58,7 @@
           No
         </label>
       </div>
-
+           
       <div class="nhsuk-radios__item">
         <input name="@nameof(Model.HasProfessionalRegistrationNumber)"
                class="nhsuk-radios__input"
@@ -66,9 +71,16 @@
           Yes
         </label>
       </div>
-      <div class="nhsuk-radios__conditional @(optionYesSelected ? " " : " nhsuk-radios__conditional--hidden") @(professionalRegNumberErrorHasOccurred ? "form-group-wrapper--error" : "" )"
+      <div class="nhsuk-radios__conditional"
            id="@professionalRegConditionalId">
-        <vc:text-input asp-for="@nameof(Model.ProfessionalRegistrationNumber)"
+                @if (professionalRegistrationNumberError != null)
+                {
+                    <span class="nhsuk-error-message" id="ProfessionalRegistrationNumber-error">
+                        <span class="nhsuk-u-visually-hidden">Error:</span>
+                        @Html.Raw(professionalRegistrationNumberError)
+                    </span>
+                }
+                      <vc:text-input asp-for="@nameof(Model.ProfessionalRegistrationNumber)"
                        label="Professional Registration Number"
                        populate-with-current-value="true"
                        type="text"
