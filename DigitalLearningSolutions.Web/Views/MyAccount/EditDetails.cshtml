@@ -32,8 +32,15 @@
     nameof(Model.Answer5),
     nameof(Model.Answer6),
     };
-
+     var professionalRegistrationNumberError = ViewData.ModelState["ProfessionalRegistrationNumber"]?.Errors.FirstOrDefault();
+            if (professionalRegistrationNumberError == null)
+            {
       <vc:error-summary order-of-property-names="@orderOfPropertyNames" />
+        }
+            if (professionalRegistrationNumberError != null)
+            {
+                <partial name="_ProfessionalRegistrationNumberError" model=@(professionalRegistrationNumberError.ErrorMessage) />
+            }
     }
 
     <h1 class="nhsuk-heading-xl" id="app-page-heading">Edit details</h1>
