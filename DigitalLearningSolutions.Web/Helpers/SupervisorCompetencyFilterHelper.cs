@@ -17,7 +17,7 @@ namespace DigitalLearningSolutions.Web.Helpers
                 var searchText = search.SearchText?.Trim() ?? string.Empty;
                 var filters = search.AppliedFilters?.Select(f => int.Parse(f.FilterValue)) ?? Enumerable.Empty<int>();
                 search.CompetencyFlags = competencyFlags.ToList();
-                CompetencyFilterHelper.ApplyResponseStatusFilters(ref filteredCompetencies, filters, searchText);
+                ApplyResponseStatusFilters(ref filteredCompetencies, filters, searchText);
                 UpdateRequirementsFilterDropdownOptionsVisibility(search, filteredCompetencies);
                 ApplyRequirementsFilters(ref filteredCompetencies, filters);
 
@@ -28,6 +28,39 @@ namespace DigitalLearningSolutions.Web.Helpers
             }
             return filteredCompetencies;
         }
+        private static void ApplyResponseStatusFilters(ref IEnumerable<Competency> competencies, IEnumerable<int> filters, string searchText = "")
+        {
+            var appliedFilters = filters.Where(f => IsResponseStatusFilter(f)).ToList();
+            var wordsInSearchText = searchText.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+
+            if (!appliedFilters.Any() && string.IsNullOrWhiteSpace(searchText))
+                return;
+
+            competencies = competencies.Where(c =>
+            {
+                // Search text match
+                bool searchTextMatches = !wordsInSearchText.Any() ||
+                    wordsInSearchText.All(w =>
+                        (c.CompetencyGroup?.Contains(w, StringComparison.CurrentCultureIgnoreCase) ?? false) ||
+                        (c.Description?.Contains(w, StringComparison.CurrentCultureIgnoreCase) ?? false) ||
+                        (c.Name?.Contains(w, StringComparison.CurrentCultureIgnoreCase) ?? false)
+                    );
+
+                // All filters must match (AND)
+                bool allFiltersMatch = appliedFilters.All(f =>
+                    (f == (int)SelfAssessmentCompetencyFilter.Verified && c.AssessmentQuestions.Any(q => q.Verified.HasValue && q.SignedOff == true)) ||
+                    (f == (int)SelfAssessmentCompetencyFilter.Optional && c.Optional) ||
+                    (f == (int)SelfAssessmentCompetencyFilter.ConfirmationRejected && c.AssessmentQuestions.Any(q => q.Verified.HasValue && q.SignedOff != true)) ||
+                    (f == (int)SelfAssessmentCompetencyFilter.PendingConfirmation && c.AssessmentQuestions.Any(q => q.ResultId != null && q.Verified == null && q.Requested != null && q.UserIsVerifier == false)) ||
+                    (f == (int)SelfAssessmentCompetencyFilter.AwaitingConfirmation && c.AssessmentQuestions.Any(q => q.Verified == null && q.Requested != null && q.UserIsVerifier == true)) ||
+                    (f == (int)SelfAssessmentCompetencyFilter.RequiresSelfAssessment && c.AssessmentQuestions.Any(q => q.ResultId == null)) ||
+                    (f == (int)SelfAssessmentCompetencyFilter.SelfAssessed && c.AssessmentQuestions.Any(q => q.ResultId != null && q.Requested == null && q.SignedOff == null))
+                );
+
+                return searchTextMatches && allFiltersMatch;
+            }).ToList();
+        }
+
         private static void ApplyRequirementsFilters(ref IEnumerable<Competency> competencies, IEnumerable<int> filters)
         {
             var filteredCompetencies = competencies;
