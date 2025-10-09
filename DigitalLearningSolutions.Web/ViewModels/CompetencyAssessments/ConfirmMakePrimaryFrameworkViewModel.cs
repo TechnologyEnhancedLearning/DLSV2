@@ -1,6 +1,6 @@
 ﻿using DigitalLearningSolutions.Data.Models.CompetencyAssessments;
 using DigitalLearningSolutions.Data.Models.Frameworks;
-using DigitalLearningSolutions.Web.Attributes;
+using System.ComponentModel.DataAnnotations;
 
 namespace DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
 {
@@ -22,8 +22,8 @@ namespace DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
         public string? FrameworkName { get; set; }
         public int FrameworkId { get; set; }
         public string? Vocabulary { get; set; }
-        [BooleanMustBeTrue(ErrorMessage = "You need to confirm that you want to make this the primary framework")]
-        public bool Confirm { get; set; }
+        [Required(ErrorMessage = "You need to confirm that you want to make this the primary framework")]
+        public bool? Confirm { get; set; }
         public bool DescriptionStatus { get; set; }
         public bool ProviderandCategoryStatus { get; set; }
         public bool VocabularyStatus { get; set; }
