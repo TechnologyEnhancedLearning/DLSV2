@@ -30,7 +30,7 @@ namespace DigitalLearningSolutions.Web.Helpers
             return filteredCompetencies;
         }
 
-        public static void ApplyResponseStatusFilters(ref IEnumerable<Competency> competencies, IEnumerable<int> filters, string searchText = "")
+        private static void ApplyResponseStatusFilters(ref IEnumerable<Competency> competencies, IEnumerable<int> filters, string searchText = "")
         {
             var appliedResponseStatusFilters = filters.Where(IsResponseStatusFilter).ToList();
 
