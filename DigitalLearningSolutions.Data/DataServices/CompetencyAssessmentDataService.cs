@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Data.DataServices
 {
     using Dapper;
+    using DigitalLearningSolutions.Data.Extensions;
     using DigitalLearningSolutions.Data.Models.CompetencyAssessments;
     using Microsoft.Extensions.Logging;
     using System;
@@ -858,27 +859,45 @@
 
             return true;
         }
+       
         public bool UpdatePrimaryFrameworkCompetencies(int assessmentId, int frameworkId)
         {
-            var numberOfAffectedRows = connection.Execute(
-               @"UPDATE SelfAssessmentFrameworks SET IsPrimary = 0  WHERE (SelfAssessmentId = @assessmentId) AND (RemovedDate IS NULL)",
-               new { assessmentId, frameworkId }
-           );
-            var numberOfAffectedRow = connection.Execute(
-              @"UPDATE SelfAssessmentFrameworks SET IsPrimary = 1  WHERE (SelfAssessmentId = @assessmentId) AND (FrameworkId = @frameworkId ) AND (RemovedDate IS NULL)",
-              new { assessmentId, frameworkId }
-          );
-            if (numberOfAffectedRow < 1)
+            connection.EnsureOpen();
+            using (var transaction = connection.BeginTransaction())
             {
-                logger.LogWarning(
-                    "Not updating SelfAssessmentFrameworks as db update failed. " +
-                    $"assessmentId: {assessmentId}, frameworkId: {frameworkId}"
-                );
-                return false;
-            }
-            return true;
-        }
+                    var numberOfAffectedRows = connection.Execute(
+                        @"UPDATE SelfAssessmentFrameworks 
+                  SET IsPrimary = 0  
+                  WHERE (SelfAssessmentId = @assessmentId) 
+                    AND (RemovedDate IS NULL)",
+                        new { assessmentId },
+                        transaction: transaction
+                    );
 
+                    var numberOfAffectedRow = connection.Execute(
+                        @"UPDATE SelfAssessmentFrameworks 
+                  SET IsPrimary = 1  
+                  WHERE (SelfAssessmentId = @assessmentId) 
+                    AND (FrameworkId = @frameworkId) 
+                    AND (RemovedDate IS NULL)",
+                        new { assessmentId, frameworkId },
+                        transaction: transaction
+                    );
+
+                    if ((numberOfAffectedRow < 1) || (numberOfAffectedRows < 1))
+                    {
+                        logger.LogWarning(
+                            "Not updating SelfAssessmentFrameworks as db update failed. " +
+                            $"assessmentId: {assessmentId}, frameworkId: {frameworkId}"
+                        );
+                        transaction.Rollback();
+                        return false;
+                    }
+
+                    transaction.Commit();
+                    return true;
+            }
+        }
         public int? GetSelfAssessmentStructure(int competencyAssessmentId)
         {
             return connection.QueryFirstOrDefault<int>(
