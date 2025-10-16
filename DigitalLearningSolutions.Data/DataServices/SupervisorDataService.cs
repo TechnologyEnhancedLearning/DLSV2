@@ -893,14 +893,14 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                     @"UPDATE CandidateAssessments
                             SET DelegateUserID = @delegateUserId,
                                 SelfAssessmentID = @selfAssessmentId,
-                                CompleteByDate = NULL,
+                                CompleteByDate = @completeByDate,
                                 EnrolmentMethodId = 2,
                                 EnrolledByAdminId = @adminId,
                                 CentreID = @centreId,
                                 RemovedDate = NULL,
                                 NonReportable = CASE WHEN NonReportable = 1 THEN NonReportable ELSE @isLoggedInUser END
                             WHERE ID = @existingCandidateAssessmentId",
-                    new { delegateUserId, selfAssessmentId, adminId, centreId, existingCandidateAssessmentId, isLoggedInUser });
+                    new { delegateUserId, selfAssessmentId, adminId, centreId, existingCandidateAssessmentId, isLoggedInUser, completeByDate });
 
                 if (numberOfAffectedRows < 1)
                 {
