@@ -15,6 +15,7 @@
         private readonly IFrameworkService frameworkService;
         private readonly ICommonService commonService;
         private readonly IFrameworkNotificationService frameworkNotificationService;
+        private readonly ISelfAssessmentNotificationService selfAssessmentNotificationService;
         private readonly ILogger<CompetencyAssessmentsController> logger;
         private readonly IConfiguration config;
         private readonly IMultiPageFormService multiPageFormService;
@@ -23,6 +24,7 @@
            IFrameworkService frameworkService,
            ICommonService commonService,
            IFrameworkNotificationService frameworkNotificationService,
+           ISelfAssessmentNotificationService selfAssessmentNotificationService,
            ILogger<CompetencyAssessmentsController> logger,
            IConfiguration config,
             IMultiPageFormService multiPageFormService)
@@ -31,6 +33,7 @@
             this.frameworkService = frameworkService;
             this.commonService = commonService;
             this.frameworkNotificationService = frameworkNotificationService;
+            this.selfAssessmentNotificationService = selfAssessmentNotificationService;
             this.logger = logger;
             this.config = config;
             this.multiPageFormService = multiPageFormService;
