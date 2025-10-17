@@ -302,10 +302,10 @@ namespace DigitalLearningSolutions.Web.Services
             return competencyAssessmentDataService.UpdatePrimaryFrameworkCompetencies(assessmentId, frameworkId);
         }
 
-       public int? GetSelfAssessmentStructure(int competencyAssessmentId)
+        public int? GetSelfAssessmentStructure(int competencyAssessmentId)
         {
             return competencyAssessmentDataService.GetSelfAssessmentStructure(competencyAssessmentId);
-
+        }
         public IEnumerable<CompetencyAssessmentCollaboratorDetail> GetCollaboratorsForCompetencyAssessmentId(int competencyAssessmentId)
         {
             return competencyAssessmentDataService.GetCollaboratorsForCompetencyAssessmentId(competencyAssessmentId);
