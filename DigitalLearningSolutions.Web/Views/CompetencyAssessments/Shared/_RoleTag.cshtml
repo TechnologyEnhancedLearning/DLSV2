@@ -1,0 +1,29 @@
+﻿@using DigitalLearningSolutions.Data.Models.CompetencyAssessments;
+@model CompetencyAssessmentCollaboratorDetail
+@{
+    var role = (Model.AdminID == null ? Model.CompetencyAssessmentRole + " (not yet registered)" : Model.CompetencyAssessmentRole);
+    switch (Model.CompetencyAssessmentRole)
+    {
+        case "Owner":
+            <text>
+                <strong class="nhsuk-tag role-tag">
+                    @role
+                </strong>
+            </text>
+            break;
+        case "Contributor":
+            <text>
+                <strong class="nhsuk-tag nhsuk-tag--blue role-tag">
+                    @role
+                </strong>
+            </text>
+            break;
+        case "Reviewer":
+            <text>
+                <strong class="nhsuk-tag nhsuk-tag--grey role-tag">
+                    @role
+                </strong>
+            </text>
+            break;
+    }
+}
