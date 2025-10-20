@@ -178,7 +178,8 @@
                          view-data="@(new ViewDataDictionary(ViewData) { { "IsSupervisorResultsReviewed", Model.SelfAssessment.IsSupervisorResultsReviewed } })" />
                 <h2>@Model.SelfAssessment.SignOffRoleName Sign-off</h2>
                 <partial name="../../Supervisor/Shared/_SupervisorSignOffSummary.cshtml" model="Model.SupervisorSignOffs"
-                         view-data="@(new ViewDataDictionary(ViewData) { { "IsAllCompetencyConfirmed", competencySummaries.Sum(c => (int)c["questionsCount"]) == competencySummaries.Sum(c => (int)c["verifiedCount"]) }})" />
+                         view-data="@(new ViewDataDictionary(ViewData) { { "IsAllCompetencyConfirmed", competencySummaries.Sum(c => (int)c["questionsCount"]) == competencySummaries.Sum(c => (int)c["verifiedCount"]) },
+                                { "IsOngoingSelfAssessment", latestResult > latestSignoff }})" />
                 @if (Model.AllQuestionsVerifiedOrNotRequired)
                 {
                     @if (!Model.SupervisorSignOffs.Any())

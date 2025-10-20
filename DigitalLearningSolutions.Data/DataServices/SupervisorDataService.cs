@@ -106,16 +106,33 @@
             ";
 
         private const string delegateSelfAssessmentFields = "ca.ID, sa.ID AS SelfAssessmentID, sa.Name AS RoleName, sa.SupervisorSelfAssessmentReview, sa.SupervisorResultsReview, COALESCE (sasr.RoleName, 'Supervisor') AS SupervisorRoleTitle, ca.StartedDate";
-        private const string signedOffFields = @"(SELECT TOP (1) casv.Verified
-FROM CandidateAssessmentSupervisorVerifications AS casv INNER JOIN
-             CandidateAssessmentSupervisors AS cas ON casv.CandidateAssessmentSupervisorID = cas.ID
-WHERE(cas.CandidateAssessmentID = ca.ID) AND(casv.Requested IS NOT NULL) AND(casv.Verified IS NOT NULL)
-ORDER BY casv.Requested DESC) AS SignedOffDate,
-(SELECT TOP(1) casv.SignedOff
-FROM   CandidateAssessmentSupervisorVerifications AS casv INNER JOIN
-             CandidateAssessmentSupervisors AS cas ON casv.CandidateAssessmentSupervisorID = cas.ID
-WHERE(cas.CandidateAssessmentID = ca.ID) AND(casv.Requested IS NOT NULL) AND(casv.Verified IS NOT NULL)
-ORDER BY casv.Requested DESC) AS SignedOff,";
+        private const string signedOffFields = @"(SELECT CASE 
+				WHEN MAX(sar.[DateTime]) >= MAX(casv.Verified) THEN NULL
+				ELSE MAX(casv.Verified)
+				END AS Verified
+			FROM CandidateAssessmentSupervisorVerifications AS casv INNER JOIN
+					CandidateAssessmentSupervisors AS cas ON casv.CandidateAssessmentSupervisorID = cas.ID INNER JOIN
+					CandidateAssessments AS ca1 ON cas.CandidateAssessmentID = ca1.ID LEFT JOIN
+					SelfAssessmentResults AS sar ON ca1.SelfAssessmentID = sar.SelfAssessmentID AND ca1.DelegateUserID = sar.DelegateUserID
+			WHERE(cas.CandidateAssessmentID = ca.ID) AND(casv.Requested IS NOT NULL) AND(casv.Verified IS NOT NULL)
+			GROUP BY ca1.ID ) AS SignedOffDate,
+
+			(SELECT CASE 
+						WHEN MAX(sar.[DateTime]) >= MAX(casv.Verified) THEN NULL
+						ELSE (
+								SELECT TOP(1) casv.SignedOff
+								FROM   CandidateAssessmentSupervisorVerifications AS casv INNER JOIN
+										CandidateAssessmentSupervisors AS cas ON casv.CandidateAssessmentSupervisorID = cas.ID
+								WHERE(cas.CandidateAssessmentID = ca.ID) AND(casv.Requested IS NOT NULL) AND(casv.Verified IS NOT NULL)
+								ORDER BY casv.Verified DESC
+							)
+						END AS SignedOff
+			FROM CandidateAssessmentSupervisorVerifications AS casv INNER JOIN
+					CandidateAssessmentSupervisors AS cas ON casv.CandidateAssessmentSupervisorID = cas.ID INNER JOIN
+					CandidateAssessments AS ca1 ON cas.CandidateAssessmentID = ca1.ID LEFT JOIN
+					SelfAssessmentResults AS sar ON ca1.SelfAssessmentID = sar.SelfAssessmentID AND ca1.DelegateUserID = sar.DelegateUserID
+			WHERE(cas.CandidateAssessmentID = ca.ID) AND(casv.Requested IS NOT NULL) AND(casv.Verified IS NOT NULL)
+			GROUP BY ca1.ID) AS SignedOff,";
 
         public SupervisorDataService(IDbConnection connection, ILogger<SupervisorDataService> logger)
         {
@@ -583,7 +600,7 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
         public IEnumerable<DelegateSelfAssessment> GetSelfAssessmentsForSupervisorDelegateId(int supervisorDelegateId, int? adminIdCategoryId)
         {
             return connection.Query<DelegateSelfAssessment>(
-                @$"SELECT {delegateSelfAssessmentFields}, COALESCE(ca.LastAccessed, ca.StartedDate) AS LastAccessed, ca.CompleteByDate, ca.LaunchCount, ca.CompletedDate, r.CompetencyAssessment, sg.SubGroup, pg.ProfessionalGroup,CONVERT(BIT, IIF(cas.CandidateAssessmentID IS NULL, 0, 1)) AS IsAssignedToSupervisor,ca.DelegateUserID,
+                @$"SELECT {delegateSelfAssessmentFields}, COALESCE(ca.LastAccessed, ca.StartedDate) AS LastAccessed, ca.CompleteByDate, ca.LaunchCount, ca.CompletedDate, r.RoleProfile, sg.SubGroup, pg.ProfessionalGroup,CONVERT(BIT, IIF(cas.CandidateAssessmentID IS NULL, 0, 1)) AS IsAssignedToSupervisor,ca.DelegateUserID,
                  (SELECT COUNT(*) AS Expr1
                  FROM    CandidateAssessmentSupervisorVerifications AS casv
                  WHERE (CandidateAssessmentSupervisorID = cas.ID) AND (Requested IS NOT NULL) AND (Verified IS NULL)) AS SignOffRequested,
@@ -785,7 +802,7 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                             (SELECT SubGroup
                              FROM    NRPSubGroups
                              WHERE (ID = rp.NRPSubGroupID)) AS NRPSubGroup,
-                             (SELECT CompetencyAssessment
+                             (SELECT RoleProfile
                              FROM    NRPRoles
                              WHERE (ID = rp.NRPRoleID)) AS NRPRole, 0 AS SelfAssessmentReviewID
                 FROM   SelfAssessments AS rp INNER JOIN
@@ -816,7 +833,7 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                  (SELECT SubGroup
                  FROM    NRPSubGroups
                  WHERE (ID = rp.NRPSubGroupID)) AS NRPSubGroup,
-                 (SELECT CompetencyAssessment
+                 (SELECT RoleProfile
                  FROM    NRPRoles
                  WHERE (ID = rp.NRPRoleID)) AS NRPRole, 0 AS SelfAssessmentReviewID
                  FROM   SelfAssessments AS rp 
@@ -1147,7 +1164,7 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
         {
             return connection.Query<SelfAssessmentResultSummary>(
                 @"SELECT ca.ID, ca.SelfAssessmentID, sa.Name AS RoleName, sa.ReviewerCommentsLabel, COALESCE (sasr.SelfAssessmentReview, 1) AS SelfAssessmentReview, COALESCE (sasr.ResultsReview, 1) AS SupervisorResultsReview, COALESCE (sasr.RoleName, 'Supervisor') AS SupervisorRoleTitle, ca.StartedDate, 
-             ca.LastAccessed, ca.CompleteByDate, ca.LaunchCount, ca.CompletedDate, npg.ProfessionalGroup, nsg.SubGroup, nr.CompetencyAssessment, casv.ID AS CandidateAssessmentSupervisorVerificationId,
+             ca.LastAccessed, ca.CompleteByDate, ca.LaunchCount, ca.CompletedDate, npg.ProfessionalGroup, nsg.SubGroup, nr.RoleProfile, casv.ID AS CandidateAssessmentSupervisorVerificationId,
                  (SELECT COUNT(sas1.CompetencyID) AS CompetencyAssessmentQuestionCount
                  FROM    SelfAssessmentStructure AS sas1 INNER JOIN
                               CandidateAssessments AS ca1 ON sas1.SelfAssessmentID = ca1.SelfAssessmentID INNER JOIN
