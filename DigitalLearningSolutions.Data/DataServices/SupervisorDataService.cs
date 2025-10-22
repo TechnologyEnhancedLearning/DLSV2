@@ -583,7 +583,7 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
         public IEnumerable<DelegateSelfAssessment> GetSelfAssessmentsForSupervisorDelegateId(int supervisorDelegateId, int? adminIdCategoryId)
         {
             return connection.Query<DelegateSelfAssessment>(
-                @$"SELECT {delegateSelfAssessmentFields}, COALESCE(ca.LastAccessed, ca.StartedDate) AS LastAccessed, ca.CompleteByDate, ca.LaunchCount, ca.CompletedDate, r.CompetencyAssessment, sg.SubGroup, pg.ProfessionalGroup,CONVERT(BIT, IIF(cas.CandidateAssessmentID IS NULL, 0, 1)) AS IsAssignedToSupervisor,ca.DelegateUserID,
+                @$"SELECT {delegateSelfAssessmentFields}, COALESCE(ca.LastAccessed, ca.StartedDate) AS LastAccessed, ca.CompleteByDate, ca.LaunchCount, ca.CompletedDate, r.RoleProfile, sg.SubGroup, pg.ProfessionalGroup,CONVERT(BIT, IIF(cas.CandidateAssessmentID IS NULL, 0, 1)) AS IsAssignedToSupervisor,ca.DelegateUserID,
                  (SELECT COUNT(*) AS Expr1
                  FROM    CandidateAssessmentSupervisorVerifications AS casv
                  WHERE (CandidateAssessmentSupervisorID = cas.ID) AND (Requested IS NOT NULL) AND (Verified IS NULL)) AS SignOffRequested,
@@ -785,7 +785,7 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                             (SELECT SubGroup
                              FROM    NRPSubGroups
                              WHERE (ID = rp.NRPSubGroupID)) AS NRPSubGroup,
-                             (SELECT CompetencyAssessment
+                             (SELECT RoleProfile
                              FROM    NRPRoles
                              WHERE (ID = rp.NRPRoleID)) AS NRPRole, 0 AS SelfAssessmentReviewID
                 FROM   SelfAssessments AS rp INNER JOIN
@@ -816,7 +816,7 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                  (SELECT SubGroup
                  FROM    NRPSubGroups
                  WHERE (ID = rp.NRPSubGroupID)) AS NRPSubGroup,
-                 (SELECT CompetencyAssessment
+                 (SELECT RoleProfile
                  FROM    NRPRoles
                  WHERE (ID = rp.NRPRoleID)) AS NRPRole, 0 AS SelfAssessmentReviewID
                  FROM   SelfAssessments AS rp 
