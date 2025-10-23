@@ -15,10 +15,7 @@
   <div class="nhsuk-grid-column-full">
     @if (errorHasOccurred)
     {
-            var professionalRegistrationNumberError = ViewData.ModelState["ProfessionalRegistrationNumber"]?.Errors.FirstOrDefault();
-            if (professionalRegistrationNumberError == null)
-            {
-                <vc:error-summary order-of-property-names="@(new[] {
+      <vc:error-summary order-of-property-names="@(new[] {
                                                    nameof(Model.FirstName),
                                                    nameof(Model.LastName),
                                                    nameof(Model.CentreSpecificEmail),
@@ -31,23 +28,6 @@
                                                    nameof(Model.Answer4),
                                                    nameof(Model.Answer5),
                                                    nameof(Model.Answer6) })" />
-            }
-            if (professionalRegistrationNumberError != null)
-            {
-                <div class="nhsuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1">
-                    <h2 class="nhsuk-error-summary__title" id="error-summary-title">
-                        There is a problem
-                    </h2>
-                    <div class="nhsuk-error-summary__body">
-                        <span class="nhsuk-error-message" id="ProfessionalRegistrationNumber-error">
-                            <span class="nhsuk-u-visually-hidden">Error:</span> <span class="nhsuk-error-message" id="ProfessionalRegistrationNumber-error">
-                                <span class="nhsuk-u-visually-hidden">Error:</span>
-                                @Html.Raw(professionalRegistrationNumberError.ErrorMessage)
-                            </span>
-                        </span>
-                    </div>
-                </div>
-            }
     }
 
     <h1 class="nhsuk-heading-xl">Edit delegate details</h1>
