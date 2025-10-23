@@ -34,7 +34,19 @@
             }
             if (professionalRegistrationNumberError != null)
             {
-                <partial name="_ProfessionalRegistrationNumberError" model=@(professionalRegistrationNumberError.ErrorMessage) />
+                <div class="nhsuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1">
+                    <h2 class="nhsuk-error-summary__title" id="error-summary-title">
+                        There is a problem
+                    </h2>
+                    <div class="nhsuk-error-summary__body">
+                        <span class="nhsuk-error-message" id="ProfessionalRegistrationNumber-error">
+                            <span class="nhsuk-u-visually-hidden">Error:</span> <span class="nhsuk-error-message" id="ProfessionalRegistrationNumber-error">
+                                <span class="nhsuk-u-visually-hidden">Error:</span>
+                                @Html.Raw(professionalRegistrationNumberError.ErrorMessage)
+                            </span>
+                        </span>
+                    </div>
+                </div>
             }
     }
 
