@@ -2565,7 +2565,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[SendRetiringSelfAssessmentNotification]    Script Date: 18/09/2025 09:03:21 ******/
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GetAssessmentResultsByDelegate]    Script Date: 28/08/2025 16:32:01 ******/
         ///SET ANSI_NULLS ON
         ///GO
         ///
@@ -2574,8 +2574,110 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///
         ///-- =============================================
         ///-- Author:		Auldrin Possa
+        ///-- Create date: 30/11/2023
+        ///-- Description:	Returns assessment results for a delegate
+        ///-- =============================================
+        ///ALTER   PROCEDURE [dbo].[GetAssessmentResultsByDelegate]
+        ///	@selfAssessmentId as Int = 0,
+        ///	@delegateId as int = 0
+        ///AS
+        ///BEGIN [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_5638_Alter_GetAssessmentResultsByDelegate_DOWN {
+            get {
+                return ResourceManager.GetString("TD_5638_Alter_GetAssessmentResultsByDelegate_DOWN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GetAssessmentResultsByDelegate]    Script Date: 28/08/2025 16:32:01 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///-- =============================================
+        ///-- Author:		Auldrin Possa
+        ///-- Create date: 30/11/2023
+        ///-- Description:	Returns assessment results for a delegate
+        ///-- =============================================
+        ///ALTER   PROCEDURE [dbo].[GetAssessmentResultsByDelegate]
+        ///	@selfAssessmentId as Int = 0,
+        ///	@delegateId as int = 0
+        ///AS
+        ///BEGIN [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_5638_Alter_GetAssessmentResultsByDelegate_Up {
+            get {
+                return ResourceManager.GetString("TD_5638_Alter_GetAssessmentResultsByDelegate_Up", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GetCandidateAssessmentResultsById]    Script Date: 28/08/2025 16:46:37 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///-- =============================================
+        ///-- Author:		Auldrin Possa
+        ///-- Create date: 30/11/2023
+        ///-- Description:	Returns candidate assessment results by candidateAssessmentId
+        ///-- =============================================
+        ///ALTER   PROCEDURE [dbo].[GetCandidateAssessmentResultsById]
+        ///	@candidateAssessmentId as Int = 0,
+        ///	@a [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_5638_Alter_GetCandidateAssessmentResultsById_DOWN {
+            get {
+                return ResourceManager.GetString("TD_5638_Alter_GetCandidateAssessmentResultsById_DOWN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GetCandidateAssessmentResultsById]    Script Date: 28/08/2025 16:46:37 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///-- =============================================
+        ///-- Author:		Auldrin Possa
+        ///-- Create date: 30/11/2023
+        ///-- Description:	Returns candidate assessment results by candidateAssessmentId
+        ///-- =============================================
+        ///ALTER   PROCEDURE [dbo].[GetCandidateAssessmentResultsById]
+        ///	@candidateAssessmentId as Int = 0,
+        ///	@a [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_5638_Alter_GetCandidateAssessmentResultsById_Up {
+            get {
+                return ResourceManager.GetString("TD_5638_Alter_GetCandidateAssessmentResultsById_Up", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to DECLARE @dbName NVARCHAR(128) = DB_NAME()
+        ///DECLARE @defaultPath NVARCHAR(500) = CONVERT(NVARCHAR(500), SERVERPROPERTY(&apos;InstanceDefaultDataPath&apos;))
+        ///DECLARE @snapshotTime NVARCHAR(12) = FORMAT(GETDATE(), &apos;yyyyMMddHHmm&apos;)
+        ///
+        ///DECLARE @snapSql NVARCHAR(4000) = &apos;CREATE DATABASE &apos; + @dbName + &apos;_&apos; + @snapshotTime + &apos; ON 
+        ///( NAME = mbdbx101, FILENAME = &apos;&apos;&apos; + @defaultPath + @dbName + &apos;_&apos; + @snapshotTime + &apos;&apos;&apos;),
+        ///( NAME = mbdbx101files, FILENAME = &apos;&apos;&apos; + @defaultPath + @dbName + &apos;_filestream1_&apos; + @snapshotTime + &apos;&apos;&apos;)
+        ///A [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_5638_SnapshotData_UP {
+            get {
+                return ResourceManager.GetString("TD_5638_SnapshotData_UP", resourceCulture);
+			}
+		}
         ///-- Create date: 04/08/2015
         ///-- Description:	Uses DB mail to send notification to delegates on retiring self assessment.
+		///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[SendRetiringSelfAssessmentNotification]    Script Date: 18/09/2025 09:03:21 ******/
         ///-- =============================================
         ///ALTER PROCEDURE [dbo].[SendRetiringSelfAssessmentNotification]
         ///	@SelfAssessmentId [rest of string was truncated]&quot;;.
