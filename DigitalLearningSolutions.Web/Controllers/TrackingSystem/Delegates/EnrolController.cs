@@ -16,8 +16,12 @@ using GDS.MultiPageFormData.Enums;
 
 namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
 {
+    using DigitalLearningSolutions.Data.Models.SessionData.Supervisor;
+    using DigitalLearningSolutions.Data.Models.Supervisor;
     using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Web.ServiceFilter;
+    using DigitalLearningSolutions.Web.ViewModels.Common;
+    using Pipelines.Sockets.Unofficial;
 
     [FeatureGate(FeatureFlags.RefactoredTrackingSystem)]
     [Authorize(Policy = CustomPolicies.UserCentreAdmin)]
@@ -29,18 +33,21 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
         private readonly ISupervisorService supervisorService;
         private readonly IEnrolService enrolService;
         private readonly ICourseService courseService;
+        private readonly ISelfAssessmentService selfAssessmentService;
 
         public EnrolController(
             IMultiPageFormService multiPageFormService,
             ISupervisorService supervisorService,
             IEnrolService enrolService,
-            ICourseService courseService
+            ICourseService courseService,
+            ISelfAssessmentService selfAssessmentService
         )
         {
             this.multiPageFormService = multiPageFormService;
             this.supervisorService = supervisorService;
             this.enrolService = enrolService;
             this.courseService = courseService;
+            this.selfAssessmentService = selfAssessmentService;
         }
 
         public IActionResult StartEnrolProcess(int delegateId, int delegateUserId, string delegateName)
@@ -116,6 +123,15 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
                 return View(model);
             }
 
+            if (sessionEnrol.AssessmentID.HasValue && sessionEnrol.AssessmentID != enrolCurrentLearningViewModel.SelectedActivity)
+            {
+                var delegateUserID = sessionEnrol.DelegateUserID;
+                var userName = sessionEnrol.DelegateName;
+                sessionEnrol = new SessionEnrolDelegate();
+                sessionEnrol.DelegateID = delegateId;
+                sessionEnrol.DelegateName = userName;
+                sessionEnrol.DelegateUserID = delegateUserID;
+            }
             sessionEnrol.AssessmentID = enrolCurrentLearningViewModel.SelectedActivity;
             var availableCourse = selfAssessments as List<AvailableCourse>;
             var selectedCourse = availableCourse.Find(x => x.Id == enrolCurrentLearningViewModel.SelectedActivity);
@@ -126,15 +142,72 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
 
             multiPageFormService.SetMultiPageFormData(
                 sessionEnrol,
-                MultiPageFormDataFeature.EnrolDelegateInActivity,
+            MultiPageFormDataFeature.EnrolDelegateInActivity,
                 TempData
             );
+
+            if (HasNotConfirmedRetiring(sessionEnrol.IsSelfAssessment, (int)sessionEnrol.AssessmentID, delegateId, sessionEnrol.ActionConfirmed))
+            {
+                return RedirectToAction("ConfirmRetiring", "Enrol", new { delegateId });
+            }
 
             return RedirectToAction(
                "EnrolCompleteBy",
                "Enrol",
                new { delegateId }
            );
+        }
+
+        public IActionResult ConfirmRetiring(int delegateId)
+        {
+            var sessionEnrol = multiPageFormService.GetMultiPageFormData<SessionEnrolDelegate>(
+                   MultiPageFormDataFeature.EnrolDelegateInActivity,
+                   TempData
+                   ).GetAwaiter().GetResult();
+
+            var retirementDate = selfAssessmentService.GetSelfAssessmentById((int)sessionEnrol.AssessmentID).RetirementDate;
+            if (!SelfAssessmentHelper.CheckRetirementDate((retirementDate)))
+            {
+                return RedirectToAction("StatusCode", "LearningSolutions", new { code = 410 });
+            }
+            var model = new RetiringSelfAssessmentViewModel()
+            {
+                SelfAssessmentID = (int)sessionEnrol.AssessmentID,
+                RouteID = (int)sessionEnrol.DelegateID,
+                RetirementDate = retirementDate,
+                ActionConfirmed = sessionEnrol.ActionConfirmed
+            };
+            return View("ConfirmRetiring", model);
+        }
+
+        [HttpPost]
+        public IActionResult ConfirmRetiring(RetiringSelfAssessmentViewModel retiringSelfAssessment)
+        {
+            var sessionEnrol = multiPageFormService.GetMultiPageFormData<SessionEnrolDelegate>(
+                    MultiPageFormDataFeature.EnrolDelegateInActivity,
+                    TempData
+                    ).GetAwaiter().GetResult();
+
+            sessionEnrol.AssessmentID = retiringSelfAssessment.SelfAssessmentID;
+            sessionEnrol.ActionConfirmed = retiringSelfAssessment.ActionConfirmed;
+            multiPageFormService.SetMultiPageFormData(
+                sessionEnrol,
+                MultiPageFormDataFeature.EnrolDelegateInActivity,
+                TempData
+            );
+
+            if (ModelState.IsValid && retiringSelfAssessment.ActionConfirmed)
+            {
+                return RedirectToAction(
+                    "EnrolCompleteBy",
+                    "Enrol",
+                    new { delegateId = retiringSelfAssessment.RouteID }
+                );
+            }
+            else
+            {
+                return View("ConfirmRetiring", retiringSelfAssessment);
+            }
         }
 
         [HttpGet]
@@ -145,9 +218,15 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
         public IActionResult EnrolCompleteBy(int delegateId)
         {
             var sessionEnrol = multiPageFormService.GetMultiPageFormData<SessionEnrolDelegate>(
-               MultiPageFormDataFeature.EnrolDelegateInActivity,
-               TempData
-           ).GetAwaiter().GetResult();
+            MultiPageFormDataFeature.EnrolDelegateInActivity,
+            TempData
+            ).GetAwaiter().GetResult();
+
+            if (HasNotConfirmedRetiring(sessionEnrol.IsSelfAssessment, (int)sessionEnrol.AssessmentID, delegateId, sessionEnrol.ActionConfirmed))
+            {
+                return RedirectToAction("ConfirmRetiring", "Enrol", new { delegateId });
+            }
+
             multiPageFormService.SetMultiPageFormData(
                 sessionEnrol,
                 MultiPageFormDataFeature.EnrolDelegateInActivity,
@@ -202,6 +281,12 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
             var sessionEnrol = multiPageFormService.GetMultiPageFormData<SessionEnrolDelegate>(
               MultiPageFormDataFeature.EnrolDelegateInActivity,
               TempData).GetAwaiter().GetResult();
+
+            if (HasNotConfirmedRetiring(sessionEnrol.IsSelfAssessment, (int)sessionEnrol.AssessmentID, delegateId, sessionEnrol.ActionConfirmed))
+            {
+                return RedirectToAction("ConfirmRetiring", "Enrol", new { delegateId });
+            }
+
             var supervisorList = supervisorService.GetSupervisorForEnrolDelegate(centreId.Value, sessionEnrol.AssessmentCategoryID.Value);
             if (!sessionEnrol.IsSelfAssessment)
             {
@@ -283,6 +368,12 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
         public IActionResult EnrolDelegateSummary(int delegateId)
         {
             var sessionEnrol = multiPageFormService.GetMultiPageFormData<SessionEnrolDelegate>(MultiPageFormDataFeature.EnrolDelegateInActivity, TempData).GetAwaiter().GetResult();
+
+            if (HasNotConfirmedRetiring(sessionEnrol.IsSelfAssessment, (int)sessionEnrol.AssessmentID, delegateId, sessionEnrol.ActionConfirmed))
+            {
+                return RedirectToAction("ConfirmRetiring", "Enrol", new { delegateId });
+            }
+
             var roles = supervisorService.GetSupervisorRolesBySelfAssessmentIdForSupervisor(sessionEnrol.AssessmentID.GetValueOrDefault()).ToArray();
             var clockUtility = new ClockUtility();
             var monthDiffrence = "";
@@ -303,6 +394,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
             model.IsSelfAssessment = sessionEnrol.IsSelfAssessment;
             model.SupervisorRoleName = sessionEnrol.SelfAssessmentSupervisorRoleName;
             model.RoleCount = roles.Count();
+            ViewBag.actionConfirmed = sessionEnrol.ActionConfirmed;
             return View(model);
         }
 
@@ -344,6 +436,16 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
         private int GetAdminID()
         {
             return User.GetCustomClaimAsRequiredInt(CustomClaimTypes.UserAdminId);
+        }
+
+        private bool HasNotConfirmedRetiring(bool IsSelfAssessment, int selfAssessmentId, int delegateId, bool actionConfirmed)
+        {
+            if (IsSelfAssessment)
+            {
+                var retirementDate = selfAssessmentService.GetSelfAssessmentById(selfAssessmentId).RetirementDate;
+                return SelfAssessmentHelper.CheckRetirementDate(retirementDate) && !actionConfirmed;
+            }
+            return false;
         }
     }
 }
