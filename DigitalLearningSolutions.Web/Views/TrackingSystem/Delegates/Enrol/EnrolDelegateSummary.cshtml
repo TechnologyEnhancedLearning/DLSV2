@@ -40,6 +40,19 @@
                         </a>
                     </dd>
                 </div>
+                @if (ViewBag.actionConfirmed)
+                {
+                    <div class="nhsuk-summary-list__row">
+                        <dt class="nhsuk-summary-list__key">
+                            Retiring confirmed
+                        </dt>
+                        <dd class="nhsuk-summary-list__value">
+                            Yes
+                        </dd>
+                        <dd class="nhsuk-summary-list__actions">
+                        </dd>
+                    </div>
+                }
                 <div class="nhsuk-summary-list__row">
                     <dt class="nhsuk-summary-list__key">
                         Complete by date
@@ -101,7 +114,7 @@
                                 <text>Not Set</text>
                             }
                         </dd>
-                        @if (Model.RoleCount>1)
+                        @if (Model.RoleCount > 1)
                         {
                             <dd class="nhsuk-summary-list__actions">
                                 <a asp-action="EnrolDelegateSupervisor" asp-route-delegateId="@Model.DelegateId"

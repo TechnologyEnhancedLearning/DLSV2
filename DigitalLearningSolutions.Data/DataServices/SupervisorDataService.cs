@@ -1005,7 +1005,8 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
          @"
                 BEGIN TRY
                     BEGIN TRANSACTION
-                        UPDATE CandidateAssessments SET RemovedDate = getUTCDate(), RemovalMethodID = 2
+                        UPDATE CandidateAssessments SET RemovedDate = getUTCDate(), RemovalMethodID = 2,
+                                                        SelfAssessmentProcessAgreed = NULL
                             WHERE ID = @candidateAssessmentId AND RemovedDate IS NULL
 
                         COMMIT TRANSACTION
