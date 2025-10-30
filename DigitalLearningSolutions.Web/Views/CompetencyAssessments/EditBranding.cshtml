@@ -23,7 +23,7 @@
 }
 
 <h1>Edit @Model.CompetencyAssessmentName provider and category</h1>
-<p>This will be visible to users when they browse assessments. It wiull help them to identify where the assessment is from and what it contains.</p>
+<p>This will be visible to users when they browse assessments. It will help them to identify where the assessment is from and what it contains.</p>
 <form method="post">
     @if (!ViewData.ModelState.IsValid)
     {
@@ -40,7 +40,7 @@
             <label class="nhsuk-label" for="brand-field">
                 New provider name
             </label>
-            <input type="text" id="brand-field" name="Brand" class="nhsuk-input nhsuk-u-width-two-thirds" asp-for="Brand" />
+            <input type="text" id="brand-field" name="Brand" maxlength="50" class="nhsuk-input nhsuk-u-width-two-thirds" asp-for="Brand" />
         </div>
     </nhs-form-group>
     <nhs-form-group nhs-validation-for="CategoryID">
@@ -54,7 +54,7 @@
             <label class="nhsuk-label" for="category-field">
                 New category name
             </label>
-            <input type="text" id="category-field" name="Category" class="nhsuk-input nhsuk-u-width-two-thirds" asp-for="Category" />
+            <input type="text" id="category-field" name="Category" maxlength="100" class="nhsuk-input nhsuk-u-width-two-thirds" asp-for="Category" />
         </div>
     </nhs-form-group>
     <nhs-form-group>

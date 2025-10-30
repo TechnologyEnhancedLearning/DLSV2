@@ -177,10 +177,10 @@
                                     @if (!string.IsNullOrWhiteSpace(competency.Description) && !competency.AlwaysShowDescription)
                                     {
                                         <details class="nhsuk-details">
-                                            <summary class="nhsuk-details__summary"> 
-                                                    <span class="nhsuk-details__summary-text">
-                                                        @competency.Name
-                                                    </span>
+                                            <summary class="nhsuk-details__summary">
+                                                <span class="nhsuk-details__summary-text">
+                                                    @competency.Name
+                                                </span>
                                             </summary>
                                             <div class="nhsuk-details__text">
                                                 @(Html.Raw(@competency.Description))
@@ -225,7 +225,8 @@
 {
     <div class="nhsuk-u-margin-top-4">
         <h3>Self Assessment Sign-off Status</h3>
-        <partial name="Shared/_SupervisorSignOffSummary" model="@Model.SupervisorSignOffs" view-data="@(new ViewDataDictionary(ViewData) { { "IsAllCompetencyConfirmed", true }})" />
+        <partial name="Shared/_SupervisorSignOffSummary" model="@Model.SupervisorSignOffs" view-data="@(new ViewDataDictionary(ViewData) { { "IsAllCompetencyConfirmed", true },
+{ "IsOngoingSelfAssessment", !Model.DelegateSelfAssessment.SignedOff }})" />
     </div>
 }
 @if (Model.CompetencyGroups.Any())

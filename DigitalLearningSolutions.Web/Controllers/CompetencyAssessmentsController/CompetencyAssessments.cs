@@ -152,20 +152,20 @@
                 var adminId = GetAdminID();
                 if (actionName == "New")
                 {
-                    var sameItems = competencyAssessmentService.GetCompetencyAssessmentBaseByName(competencyAssessmentBase.CompetencyAssessmentName, GetAdminID());
+                    var sameItems = competencyAssessmentService.GetCompetencyAssessmentBaseByName(competencyAssessmentBase.CompetencyAssessmentName.Trim(), GetAdminID());
                     if (sameItems != null)
                     {
                         ModelState.Remove(nameof(CompetencyAssessmentBase.CompetencyAssessmentName));
                         ModelState.AddModelError(nameof(CompetencyAssessmentBase.CompetencyAssessmentName), "Another competency assessment exists with that name. Please choose a different name.");
                         return View("Name", competencyAssessmentBase);
                     }
-                    competencyAssessmentId = competencyAssessmentService.InsertCompetencyAssessment(adminId, userCentreId, competencyAssessmentBase.CompetencyAssessmentName, frameworkId);
-                    if(frameworkId.HasValue && frameworkId.Value != 0) return RedirectToAction("CompetencyAssessmentFeatures", new { competencyAssessmentId, frameworkId });
+                    competencyAssessmentId = competencyAssessmentService.InsertCompetencyAssessment(adminId, userCentreId, competencyAssessmentBase.CompetencyAssessmentName.Trim(), frameworkId);
+                    if (frameworkId.HasValue && frameworkId.Value != 0) return RedirectToAction("CompetencyAssessmentFeatures", new { competencyAssessmentId, frameworkId });
                 }
                 else
                 {
 
-                    var isUpdated = competencyAssessmentService.UpdateCompetencyAssessmentName(competencyAssessmentBase.ID, adminId, competencyAssessmentBase.CompetencyAssessmentName);
+                    var isUpdated = competencyAssessmentService.UpdateCompetencyAssessmentName(competencyAssessmentBase.ID, adminId, competencyAssessmentBase.CompetencyAssessmentName.Trim());
                     if (!isUpdated)
                     {
                         ModelState.AddModelError(nameof(CompetencyAssessmentBase.CompetencyAssessmentName), "Another competency assessment exists with that name. Please choose a different name.");
@@ -655,18 +655,18 @@
         [Route("/CompetencyAssessments/Framework/{frameworkId}/{competencyAssessmentId}/Features")]
         public IActionResult CompetencyAssessmentFeatures(int competencyAssessmentId, int? frameworkId = null)
         {
-           
-                var adminId = GetAdminID();
+
+            var adminId = GetAdminID();
             var data = GetcompetencyAssessmentFeaturesData();
             if (!string.IsNullOrEmpty(data.CompetencyAssessmentName)) return View(data);
-                var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
-                if (competencyAssessmentBase == null) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 500 });
-                if (competencyAssessmentBase.UserRole < 2) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
-                var baseModel = new CompetencyAssessmentFeaturesViewModel(competencyAssessmentBase.ID,
-                    competencyAssessmentBase.CompetencyAssessmentName,
-                    competencyAssessmentBase.UserRole,
-                    frameworkId);
-                return View(baseModel);
+            var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
+            if (competencyAssessmentBase == null) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 500 });
+            if (competencyAssessmentBase.UserRole < 2) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
+            var baseModel = new CompetencyAssessmentFeaturesViewModel(competencyAssessmentBase.ID,
+                competencyAssessmentBase.CompetencyAssessmentName,
+                competencyAssessmentBase.UserRole,
+                frameworkId);
+            return View(baseModel);
         }
         [HttpPost]
         [Route("/CompetencyAssessments/Framework/{frameworkId}/{competencyAssessmentId}/Features")]
@@ -674,14 +674,14 @@
         {
             if (featuresViewModel == null) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 500 });
             SetcompetencyAssessmentFeaturesData(featuresViewModel);
-            return RedirectToAction("CompetencyAssessmentSummary", new { competencyAssessmentId = featuresViewModel.ID,featuresViewModel.FrameworkId  });
+            return RedirectToAction("CompetencyAssessmentSummary", new { competencyAssessmentId = featuresViewModel.ID, featuresViewModel.FrameworkId });
         }
 
         [Route("/CompetencyAssessments/Framework/{frameworkId}/{competencyAssessmentId}/Summary")]
         public IActionResult CompetencyAssessmentSummary(int competencyAssessmentId, int? frameworkId = null)
         {
             if (competencyAssessmentService.GetSelfAssessmentStructure(competencyAssessmentId) != 0) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 410 });
-            if (competencyAssessmentId == 0)  return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
+            if (competencyAssessmentId == 0) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
             var data = GetcompetencyAssessmentFeaturesData();
             if (data == null) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 500 });
             SetcompetencyAssessmentFeaturesData(data);
@@ -692,8 +692,8 @@
         public IActionResult CompetencyAssessmentSummary(CompetencyAssessmentFeaturesViewModel competency)
         {
             var data = GetcompetencyAssessmentFeaturesData();
-            if (data.ID == 0) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
             if (competencyAssessmentService.GetSelfAssessmentStructure(data.ID) != 0) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 410 });
+            if (data.ID == 0) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
             var features = competencyAssessmentService.UpdateCompetencyAssessmentFeaturesTaskStatus(data.ID,
                data.DescriptionStatus,
                data.ProviderandCategoryStatus,
@@ -701,13 +701,120 @@
                 data.WorkingGroupStatus,
             data.AllframeworkCompetenciesStatus);
             if (!features) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 500 });
-            competencyAssessmentService.UpdateSelfAssessmentFromFramework(data.ID , data.FrameworkId );
-            var insertSelfAssessment =  competencyAssessmentService.InsertSelfAssessmentStructure(data.ID, data.FrameworkId);
+            competencyAssessmentService.UpdateSelfAssessmentFromFramework(data.ID, data.FrameworkId);
+            var insertSelfAssessment = competencyAssessmentService.InsertSelfAssessmentStructure(data.ID, data.FrameworkId);
             if (!insertSelfAssessment) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 500 });
             multiPageFormService.ClearMultiPageFormData(MultiPageFormDataFeature.AddCustomWebForm("AssessmentFeaturesDataCWF"), TempData);
             TempData.Clear();
             return RedirectToAction("ManageCompetencyAssessment", new { competencyAssessmentId = competency.ID, competency.FrameworkId });
         }
+
+        [Route("/CompetencyAssessments/{competencyAssessmentId}/Frameworks/{frameworkId}/Make")]
+        public IActionResult ConfirmMaKePrimaryFramework(int frameworkId, int competencyAssessmentId)
+        {
+                var adminId = GetAdminID();
+                var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
+                var framework = frameworkService.GetFrameworkDetailByFrameworkId(frameworkId, adminId);
+                var model = new ConfirmMakePrimaryFrameworkViewModel(competencyAssessmentBase, framework);
+                return View("ConfirmMaKePrimaryFramework", model);
+        }
+        [HttpPost]
+        [Route("/CompetencyAssessments/{competencyAssessmentId}/Frameworks/{frameworkId}/Make")]
+        public IActionResult ConfirmMaKePrimaryFramework(ConfirmMakePrimaryFrameworkViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View("ConfirmMaKePrimaryFramework", model);
+            }
+            competencyAssessmentService.UpdatePrimaryFrameworkCompetencies(model.CompetencyAssessmentId, model.FrameworkId);
+            var features = competencyAssessmentService.UpdateCompetencyAssessmentFeaturesTaskStatus(model.CompetencyAssessmentId,
+                model.DescriptionStatus,
+                model.ProviderandCategoryStatus,
+                model.VocabularyStatus,
+                 model.WorkingGroupStatus,
+             model.AllframeworkCompetenciesStatus);
+            return RedirectToAction("ManageCompetencyAssessment", new { model.CompetencyAssessmentId, model.FrameworkId });
+        }
+
+
+        [Route("/CompetencyAssessments/{competencyAssessmentId}/{actionName}")]
+        public IActionResult AssessmentWorkingGroup(int competencyAssessmentId, string actionName)
+        {
+            var adminId = GetAdminID();
+
+            var collaborators = competencyAssessmentService.GetCollaboratorsForCompetencyAssessmentId(competencyAssessmentId);
+            var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
+            if (competencyAssessmentBase == null) return StatusCode(404);
+            if (competencyAssessmentBase.UserRole < 2)
+                return StatusCode(403);
+            var taskStatus = competencyAssessmentService.GetCompetencyAssessmentTaskStatus(competencyAssessmentId, null);
+            var model = new WorkingGroupCollaboratorsViewModel()
+            {
+                CompetencyAssessmentID = competencyAssessmentId,
+                Collaborators = collaborators,
+                CompetencyAssessmentTaskStatus = taskStatus.WorkingGroupTaskStatus,
+                UserEmail = null,
+                Error = false,
+            };
+            if (TempData["CompetencyAssessmentError"] != null)
+            {
+                ModelState.AddModelError("userEmail", TempData.Peek("CompetencyAssessmentError").ToString());
+            }
+            return View("CompetencyAssessmentWorkingGroup", model);
+        }
+
+        [HttpPost]
+        [Route("/CompetencyAssessments/{competencyAssessmentId}/{actionName}")]
+        public IActionResult AssessmentWorkingGroup(WorkingGroupCollaboratorsViewModel model, bool canModify, string actionName)
+        {
+            int? centreID = GetCentreId();
+            if (actionName == "Collaborators")
+            {
+                var collaboratorId = competencyAssessmentService.AddCollaboratorToCompetencyAssessment(model.CompetencyAssessmentID, model.UserEmail, canModify, centreID);
+                if (collaboratorId > 0)
+                {
+                    selfAssessmentNotificationService.SendCompetencyAssessmentCollaboratorInvite(collaboratorId, GetAdminID());
+                }
+                else
+                {
+                    if (collaboratorId == -3)
+                    {
+                        TempData["CompetencyAssessmentError"] = "Email address should not be empty";
+
+                    }
+                    else if (collaboratorId == -2)
+                    {
+                        TempData["CompetencyAssessmentError"] = $"A user with the email address has been previously added";
+                    }
+                    else if (collaboratorId == -4)
+                    {
+                        TempData["CompetencyAssessmentError"] = $"The email address must match a registered DLS Admin account";
+                    }
+                    else if (collaboratorId == -5)
+                    {
+                        TempData["CompetencyAssessmentError"] = $"The owner cannot be the collaborator of the competency assessment.";
+                    }
+                    else
+                    {
+                        TempData["CompetencyAssessmentError"] = "User not added,Kindly try again;";
+                    }
+                }
+                return RedirectToAction("AssessmentWorkingGroup", "CompetencyAssessments", new { model.CompetencyAssessmentID, actionName = actionName });
+
+            }
+            else
+            {
+                competencyAssessmentService.UpdateWorkingGroupTaskStatus(model.CompetencyAssessmentID, model.CompetencyAssessmentTaskStatus ?? false, null);
+                return RedirectToAction("ManageCompetencyAssessment", "CompetencyAssessments", new { model.CompetencyAssessmentID });
+            }
+        }
+
+        public IActionResult RemoveCollaborator(int competencyAssessmentId, int id, string actionName)
+        {
+            competencyAssessmentService.RemoveCollaboratorFromCompetencyAssessment(competencyAssessmentId, id);
+            return RedirectToAction("AssessmentWorkingGroup", "CompetencyAssessments", new { competencyAssessmentId, actionName = actionName });
+        }
+
 
         private void SetcompetencyAssessmentFeaturesData(CompetencyAssessmentFeaturesViewModel data)
         {
@@ -717,7 +824,6 @@
                  TempData
              );
         }
-
         private CompetencyAssessmentFeaturesViewModel GetcompetencyAssessmentFeaturesData()
         {
             var data = multiPageFormService.GetMultiPageFormData<CompetencyAssessmentFeaturesViewModel>(

@@ -469,6 +469,7 @@ namespace DigitalLearningSolutions.Web
             services.AddScoped<ICentreSelfAssessmentsService, CentreSelfAssessmentsService>();
             services.AddScoped<IUserFeedbackService, UserFeedbackService>();
             services.AddScoped<IRequestSupportTicketService, RequestSupportTicketService>();
+            services.AddScoped<ISelfAssessmentNotificationService, SelfAssessmentNotificationService>();
         }
 
         private static void RegisterDataServices(IServiceCollection services)
