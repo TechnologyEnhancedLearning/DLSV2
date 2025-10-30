@@ -692,8 +692,8 @@
         public IActionResult CompetencyAssessmentSummary(CompetencyAssessmentFeaturesViewModel competency)
         {
             var data = GetcompetencyAssessmentFeaturesData();
-            if (data.ID == 0) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
             if (competencyAssessmentService.GetSelfAssessmentStructure(data.ID) != 0) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 410 });
+            if (data.ID == 0) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
             var features = competencyAssessmentService.UpdateCompetencyAssessmentFeaturesTaskStatus(data.ID,
                data.DescriptionStatus,
                data.ProviderandCategoryStatus,
@@ -708,6 +708,34 @@
             TempData.Clear();
             return RedirectToAction("ManageCompetencyAssessment", new { competencyAssessmentId = competency.ID, competency.FrameworkId });
         }
+
+        [Route("/CompetencyAssessments/{competencyAssessmentId}/Frameworks/{frameworkId}/Make")]
+        public IActionResult ConfirmMaKePrimaryFramework(int frameworkId, int competencyAssessmentId)
+        {
+                var adminId = GetAdminID();
+                var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
+                var framework = frameworkService.GetFrameworkDetailByFrameworkId(frameworkId, adminId);
+                var model = new ConfirmMakePrimaryFrameworkViewModel(competencyAssessmentBase, framework);
+                return View("ConfirmMaKePrimaryFramework", model);
+        }
+        [HttpPost]
+        [Route("/CompetencyAssessments/{competencyAssessmentId}/Frameworks/{frameworkId}/Make")]
+        public IActionResult ConfirmMaKePrimaryFramework(ConfirmMakePrimaryFrameworkViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View("ConfirmMaKePrimaryFramework", model);
+            }
+            competencyAssessmentService.UpdatePrimaryFrameworkCompetencies(model.CompetencyAssessmentId, model.FrameworkId);
+            var features = competencyAssessmentService.UpdateCompetencyAssessmentFeaturesTaskStatus(model.CompetencyAssessmentId,
+                model.DescriptionStatus,
+                model.ProviderandCategoryStatus,
+                model.VocabularyStatus,
+                 model.WorkingGroupStatus,
+             model.AllframeworkCompetenciesStatus);
+            return RedirectToAction("ManageCompetencyAssessment", new { model.CompetencyAssessmentId, model.FrameworkId });
+        }
+
 
         [Route("/CompetencyAssessments/{competencyAssessmentId}/{actionName}")]
         public IActionResult AssessmentWorkingGroup(int competencyAssessmentId, string actionName)
@@ -787,6 +815,7 @@
             return RedirectToAction("AssessmentWorkingGroup", "CompetencyAssessments", new { competencyAssessmentId, actionName = actionName });
         }
 
+
         private void SetcompetencyAssessmentFeaturesData(CompetencyAssessmentFeaturesViewModel data)
         {
             multiPageFormService.SetMultiPageFormData(
@@ -795,7 +824,6 @@
                  TempData
              );
         }
-
         private CompetencyAssessmentFeaturesViewModel GetcompetencyAssessmentFeaturesData()
         {
             var data = multiPageFormService.GetMultiPageFormData<CompetencyAssessmentFeaturesViewModel>(

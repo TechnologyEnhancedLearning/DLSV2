@@ -1,0 +1,121 @@
+﻿@using DigitalLearningSolutions.Web.Helpers
+@using DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
+@model ConfirmMakePrimaryFrameworkViewModel;
+
+@{
+    var errorHasOccurred = !ViewData.ModelState.IsValid && ViewData.ModelState.ContainsKey(nameof(Model.Confirm));
+    ViewData["Title"] = "Competency Assessments - make primary framework";
+}
+
+<div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full">
+        @if (errorHasOccurred)
+        {
+            <vc:error-summary order-of-property-names="@(new[] { nameof(Model.Confirm) })" />
+        }
+        <h1 class="nhsuk-heading-xl">Make @Model.FrameworkName primary framework</h1>
+    </div>
+</div>
+
+<div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full">
+        <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="ConfirmMakePrimaryFramework">
+
+            <fieldset class="nhsuk-fieldset">
+                <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--m">
+                    Which features of the framework do you want to copy into this @Model.FrameworkName framework?
+                </legend>
+                <div class="nhsuk-checkboxes">
+                    <div class="nhsuk-checkboxes__item ">
+                        <input class="nhsuk-checkboxes__input" id="DescriptionStatus" name="DescriptionStatus" type="checkbox" aria-describedby="DescriptionStatus-hint" value="true">
+                        <label class="nhsuk-label nhsuk-checkboxes__label" for="DescriptionStatus">
+                            Description
+                        </label>
+                        <div class="nhsuk-hint nhsuk-checkboxes__hint" id="DescriptionStatus-item-hint">
+                            The framework description will be copied into the competency assessment description.
+                        </div>
+                    </div>
+                </div>
+                <div class="nhsuk-checkboxes">
+                    <div class="nhsuk-checkboxes__item ">
+                        <input class="nhsuk-checkboxes__input" id="ProviderandCategoryStatus" name="ProviderandCategoryStatus" type="checkbox" aria-describedby="ProviderandCategoryStatus-hint" value="true">
+                        <label class="nhsuk-label nhsuk-checkboxes__label" for="ProviderandCategoryStatus">
+                            Provider and category
+                        </label>
+                        <div class="nhsuk-hint nhsuk-checkboxes__hint" id="ProviderandCategoryStatus-item-hint">
+                            The framework branding (provider and category) will be copied.
+                        </div>
+                    </div>
+                </div>
+                <div class="nhsuk-checkboxes">
+                    <div class="nhsuk-checkboxes__item ">
+                        <input class="nhsuk-checkboxes__input" id="VocabularyStatus" name="VocabularyStatus" type="checkbox" aria-describedby="VocabularyStatus-hint" value="true">
+                        <label class="nhsuk-label nhsuk-checkboxes__label" for="DescriptionStatus">
+                            Vocabulary
+                        </label>
+                        <div class="nhsuk-hint nhsuk-checkboxes__hint" id="VocabularyStatus-item-hint">
+                            The framework vocabulary (such as proficiency, competency, or capability) will be copied.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="nhsuk-checkboxes">
+                    <div class="nhsuk-checkboxes__item ">
+                        <input class="nhsuk-checkboxes__input" id="WorkingGroupStatus" name="WorkingGroupStatus" type="checkbox" aria-describedby="WorkingGroupStatus-hint" value="true">
+                        <label class="nhsuk-label nhsuk-checkboxes__label" for="WorkingGroupStatus">
+                            Working group
+                        </label>
+                        <div class="nhsuk-hint nhsuk-checkboxes__hint" id="WorkingGroupStatus-item-hint">
+                            Contributors and reviewers from the framework will be copied.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="nhsuk-checkboxes">
+                    <div class="nhsuk-checkboxes__item ">
+                        <input class="nhsuk-checkboxes__input" id="AllframeworkCompetenciesStatus" name="AllframeworkCompetenciesStatus" type="checkbox" aria-describedby="AllframeworkCompetenciesStatus-hint" value="true">
+                        <label class="nhsuk-label nhsuk-checkboxes__label" for="AllframeworkCompetenciesStatus">
+                            All framework competencies
+                        </label>
+                        <div class="nhsuk-hint nhsuk-checkboxes__hint" id="AllframeworkCompetenciesStatus-item-hint">
+                            All competencies in the framework will be copied.
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+            <hr class="nhsuk-section-break nhsuk-section-break--l nhsuk-section-break--visible" />
+
+            <nhs-form-group>
+                <div class="nhsuk-checkboxes__item">
+
+                    <input class="nhsuk-checkboxes__input" id="Confirm" name="Confirm" type="checkbox" aria-describedby="Confirm-hint" value="true">
+                    <label class="nhsuk-label nhsuk-checkboxes__label" for="@Model.Confirm">
+                        I am sure that I wish to make @Model.FrameworkName the primary framework
+                    </label>
+                </div>
+            </nhs-form-group>
+            @* Hidden fields *@
+            <input type="hidden" asp-for="CompetencyAssessmentId" />
+            <input type="hidden" asp-for="FrameworkId" />
+            <input type="hidden" asp-for="FrameworkName" />
+            <input type="hidden" asp-for="AssessmentName" />
+            <input type="hidden" asp-for="UserRole" />
+            <input type="hidden" asp-for="Vocabulary" />
+
+            <button class="nhsuk-button" type="submit">Make primary framework</button>
+
+
+        </form>
+
+        <div class="nhsuk-back-link">
+            <a class="nhsuk-back-link__link" asp-action="SelectFrameworkSources"
+               asp-route-actionName="Summary"
+               asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">
+                <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
+                </svg>
+                Cancel
+            </a>
+        </div>
+    </div>
+</div>

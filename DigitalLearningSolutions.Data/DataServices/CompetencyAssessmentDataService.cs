@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Data.DataServices
 {
     using Dapper;
+    using DigitalLearningSolutions.Data.Extensions;
     using DigitalLearningSolutions.Data.Models.CompetencyAssessments;
     using Microsoft.Extensions.Logging;
     using System;
@@ -69,6 +70,7 @@
         public bool UpdateCompetencyAssessmentFeaturesTaskStatus(int id, bool descriptionStatus, bool providerandCategoryStatus, bool vocabularyStatus,
            bool workingGroupStatus, bool AllframeworkCompetenciesStatus);
         void UpdateSelfAssessmentFromFramework(int selfAssessmentId, int? frameworkId);
+        bool UpdatePrimaryFrameworkCompetencies(int assessmentId, int frameworkId);
 
         //INSERT DATA
         int InsertCompetencyAssessment(int adminId, int centreId, string competencyAssessmentName);
@@ -877,13 +879,51 @@
 
             return true;
         }
+       
+        public bool UpdatePrimaryFrameworkCompetencies(int assessmentId, int frameworkId)
+        {
+            connection.EnsureOpen();
+            using (var transaction = connection.BeginTransaction())
+            {
+                    var numberOfAffectedRows = connection.Execute(
+                        @"UPDATE SelfAssessmentFrameworks 
+                  SET IsPrimary = 0  
+                  WHERE (SelfAssessmentId = @assessmentId) 
+                    AND (RemovedDate IS NULL)",
+                        new { assessmentId },
+                        transaction: transaction
+                    );
+
+                    var numberOfAffectedRow = connection.Execute(
+                        @"UPDATE SelfAssessmentFrameworks 
+                  SET IsPrimary = 1  
+                  WHERE (SelfAssessmentId = @assessmentId) 
+                    AND (FrameworkId = @frameworkId) 
+                    AND (RemovedDate IS NULL)",
+                        new { assessmentId, frameworkId },
+                        transaction: transaction
+                    );
+
+                    if ((numberOfAffectedRow < 1) || (numberOfAffectedRows < 1))
+                    {
+                        logger.LogWarning(
+                            "Not updating SelfAssessmentFrameworks as db update failed. " +
+                            $"assessmentId: {assessmentId}, frameworkId: {frameworkId}"
+                        );
+                        transaction.Rollback();
+                        return false;
+                    }
+
+                    transaction.Commit();
+                    return true;
+            }
+        }
         public int? GetSelfAssessmentStructure(int competencyAssessmentId)
         {
             return connection.QueryFirstOrDefault<int>(
                @"SELECT 1 from dbo.SelfAssessmentStructure where selfassessmentid  = @competencyAssessmentId",
                new { competencyAssessmentId }
-           );
-
+               );
         }
         public IEnumerable<CompetencyAssessmentCollaboratorDetail> GetCollaboratorsForCompetencyAssessmentId(int competencyAssessmentId)
         {
