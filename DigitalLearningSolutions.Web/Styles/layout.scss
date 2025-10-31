@@ -1,4 +1,4 @@
-﻿@use "nhse-tel-frontend/packages/core/all" as *;
+﻿@use "nhsuk-frontend/dist/nhsuk/core/all" as *;
 @use "shared/breakpoints" as *;
 
 html {
@@ -247,7 +247,7 @@ footer {
   text-transform: uppercase;
 
   &.header-beta--dark {
-    color: $color_nhsuk-dark-pink;
+    color: nhsuk-colour("dark-pink");
   }
 }
 
@@ -261,7 +261,7 @@ footer {
 }
 
 .dls-alert-banner {
-  background-color: $color_nhsuk-dark-pink;
+  background-color: nhsuk-colour("dark-pink");
   padding-bottom: 0.1px;
   color: #FFFFFF;
 
@@ -280,8 +280,8 @@ footer {
 
 .feedback-tag {
   align-items: center;
-  background-color: $color_nhsuk-blue;
-  color: $color_nhsuk-white;
+  background-color: nhsuk-colour("blue");
+  color: nhsuk-colour("white");
   display: inline-flex;
   font-family: "Frutiger W01", Arial, sans-serif;
   font-size: 19px;
@@ -302,8 +302,8 @@ footer {
 }
 
 .feedback-bar {
-  background-color: $color_nhsuk-grey-5;
-  border-bottom: 1px solid $color_nhsuk-grey-4;
+  background-color: nhsuk-colour("grey-5");
+  border-bottom: 1px solid nhsuk-colour("grey-4");
 }
 
 .validation-summary-valid {

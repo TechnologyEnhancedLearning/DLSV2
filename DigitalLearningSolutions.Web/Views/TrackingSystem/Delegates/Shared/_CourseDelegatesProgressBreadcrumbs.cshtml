@@ -4,7 +4,7 @@
 <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
     <div class="nhsuk-width-container">
         <ol class="nhsuk-breadcrumb__list">
-            <li class="nhsuk-breadcrumb__item">
+            <li class="nhsuk-breadcrumb__list-item">
                 <a class="nhsuk-breadcrumb__link"
                    asp-controller="DelegateCourses"
                    asp-action="Index"
@@ -12,7 +12,7 @@
                     Delegate activities
                 </a>
             </li>
-            <li class="nhsuk-breadcrumb__item">
+            <li class="nhsuk-breadcrumb__list-item">
                 <a class="nhsuk-breadcrumb__link"
                    asp-controller="ActivityDelegates"
                    asp-action="Index"
@@ -20,7 +20,7 @@
                     Activity delegates
                 </a>
             </li>
-            <li class="nhsuk-breadcrumb__item">
+            <li class="nhsuk-breadcrumb__list-item">
                 <a class="nhsuk-breadcrumb__link"
                    asp-controller="DelegateProgress"
                    asp-action="Index"
@@ -30,14 +30,12 @@
                 </a>
             </li>
         </ol>
-        <p class="nhsuk-breadcrumb__back">
-            <a class="nhsuk-breadcrumb__backlink"
-               asp-controller="DelegateProgress"
-               asp-action="Index"
-               asp-route-progressId="@Model.progressId"
-               asp-route-accessedVia="@DelegateAccessRoute.ActivityDelegates">
-                Back to delegate progress
-            </a>
-        </p>
+        <a class="nhsuk-back-link"
+            asp-controller="DelegateProgress"
+            asp-action="Index"
+            asp-route-progressId="@Model.progressId"
+            asp-route-accessedVia="@DelegateAccessRoute.ActivityDelegates">
+            Back to delegate progress
+        </a>
     </div>
 </nav>

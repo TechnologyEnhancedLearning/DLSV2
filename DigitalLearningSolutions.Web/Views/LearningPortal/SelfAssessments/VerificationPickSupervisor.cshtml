@@ -7,20 +7,18 @@
     ViewData["SelfAssessmentTitle"] = @Model.SelfAssessment.Name;
 }
 @section breadcrumbs {
-    <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="SelfAssessment" asp-route-selfAssessmentId="@Model.SelfAssessment.Id">@(Model.SelfAssessment.Name) introduction</a></li>
-    <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="SelfAssessmentOverview" asp-route-vocabulary="@Model.VocabPlural()" asp-route-selfAssessmentId="@Model.SelfAssessment.Id">@(Model.VocabPlural()) home</a></li>
-    <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="ReviewConfirmationRequests" asp-route-selfAssessmentId="@Model.SelfAssessment.Id">Confirmation requests</a></li>
-    <li class="nhsuk-breadcrumb__item">New</li>
+    <li class="nhsuk-breadcrumb__list-item"><a class="nhsuk-breadcrumb__link" asp-action="SelfAssessment" asp-route-selfAssessmentId="@Model.SelfAssessment.Id">@(Model.SelfAssessment.Name) introduction</a></li>
+    <li class="nhsuk-breadcrumb__list-item"><a class="nhsuk-breadcrumb__link" asp-action="SelfAssessmentOverview" asp-route-vocabulary="@Model.VocabPlural()" asp-route-selfAssessmentId="@Model.SelfAssessment.Id">@(Model.VocabPlural()) home</a></li>
+    <li class="nhsuk-breadcrumb__list-item"><a class="nhsuk-breadcrumb__link" asp-action="ReviewConfirmationRequests" asp-route-selfAssessmentId="@Model.SelfAssessment.Id">Confirmation requests</a></li>
+    <li class="nhsuk-breadcrumb__list-item">New</li>
 }
 @section mobilebacklink
 {
-    <p class="nhsuk-breadcrumb__back">
-        <a class="nhsuk-breadcrumb__backlink"
-           asp-action="ReviewConfirmationRequests"
-           asp-route-selfAssessmentId="@Model.SelfAssessment.Id">
-            Back to Confirmation requests
-        </a>
-    </p>
+    <a class="nhsuk-back-link"
+        asp-action="ReviewConfirmationRequests"
+        asp-route-selfAssessmentId="@Model.SelfAssessment.Id">
+        Back to Confirmation requests
+    </a>
 }
 <link rel="stylesheet" href="@Url.Content("~/css/learningPortal/selfAssessment.css")" asp-append-version="true">
 <h1>Request @Model.SelfAssessment.Vocabulary.ToLower() confirmation</h1>
@@ -42,7 +40,7 @@
 
             </legend>
             <nhs-form-group nhs-validation-for="CandidateAssessmentSupervisorId">
-                <div class="nhsuk-radios">
+                <div class="nhsuk-radios" data-module="nhsuk-radios">
                     @foreach (var supervisor in Model.Supervisors)
                     {
                         <div class="nhsuk-radios__item">
@@ -62,7 +60,7 @@
     </form>
 
     <p>Can't see the  @Model.SelfAssessment.VerificationRoleName you need? <a asp-action="ManageSupervisors" asp-route-selfAssessmentId="@Model.SelfAssessment.Id">Click here</a> to manage supervisors.</p>
-    <div class="nhsuk-back-link">
+    <div class="nhsuk-link">
         <a class="nhsuk-back-link__link"
            asp-action="ReviewConfirmationRequests"
            asp-route-selfAssessmentId="@Model.SelfAssessment.Id">
@@ -76,13 +74,10 @@
 else
 {
     <p>There are no supervisors identified who can confirm @Model.VocabPlural().ToLower() for this self assessment.</p>
-    <div class="nhsuk-action-link">
-        <a class="nhsuk-action-link__link" asp-action="ManageSupervisors" asp-route-selfAssessmentId="@Model.SelfAssessment.Id">
-            <svg class="nhsuk-icon nhsuk-icon__arrow-right-circle" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M0 0h24v24H0z" fill="none"></path>
-                <path d="M12 2a10 10 0 0 0-9.95 9h11.64L9.74 7.05a1 1 0 0 1 1.41-1.41l5.66 5.65a1 1 0 0 1 0 1.42l-5.66 5.65a1 1 0 0 1-1.41 0 1 1 0 0 1 0-1.41L13.69 13H2.05A10 10 0 1 0 12 2z"></path>
+        <a class="nhsuk-action-link" asp-action="ManageSupervisors" asp-route-selfAssessmentId="@Model.SelfAssessment.Id">
+            <svg class="nhsuk-icon nhsuk-icon--arrow-right" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" focusable="false" aria-hidden="true">
+                <path d="m14.7 6.3 5 5c.2.2.3.4.3.7 0 .3-.1.5-.3.7l-5 5a1 1 0 0 1-1.4-1.4l3.3-3.3H5a1 1 0 0 1 0-2h11.6l-3.3-3.3a1 1 0 1 1 1.4-1.4Z" />
             </svg>
             <span class="nhsuk-action-link__text">Manage supervisors</span>
         </a>
-    </div>
 }

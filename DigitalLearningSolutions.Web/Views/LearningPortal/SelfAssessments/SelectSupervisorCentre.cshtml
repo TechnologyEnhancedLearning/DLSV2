@@ -9,19 +9,17 @@
     ViewData["SelfAssessmentTitle"] = @Model.SelfAssessmentName;
 }
 @section breadcrumbs {
-    <li class="nhsuk-breadcrumb__item">
+    <li class="nhsuk-breadcrumb__list-item">
         <a class="nhsuk-breadcrumb__link" asp-action="SelfAssessment" asp-route-selfAssessmentId="@Model.SelfAssessmentID">@Model.SelfAssessmentName</a>
     </li>
-    <li class="nhsuk-breadcrumb__item">
+    <li class="nhsuk-breadcrumb__list-item">
         <a class="nhsuk-breadcrumb__link" asp-action="ManageSupervisors" asp-route-selfAssessmentId="@Model.SelfAssessmentID">Manage Supervisors</a>
     </li>
-    <li class="nhsuk-breadcrumb__item">Add</li>
+    <li class="nhsuk-breadcrumb__list-item">Add</li>
 }
 @section mobilebacklink
 {
-    <p class="nhsuk-breadcrumb__back">
-        <a class="nhsuk-breadcrumb__backlink" asp-action="ManageSupervisors" asp-route-selfAssessmentId="@Model.SelfAssessmentID">Back to Manage Supervisors </a>
-    </p>
+    <a class="nhsuk-back-link" asp-action="ManageSupervisors" asp-route-selfAssessmentId="@Model.SelfAssessmentID">Back to Manage Supervisors </a>
 }
 <link rel="stylesheet" href="@Url.Content("~/css/learningPortal/selfAssessment.css")" asp-append-version="true">
 <h1>New activity supervisor</h1>
@@ -45,7 +43,7 @@
                     <div class="nhsuk-hint" id="contact-hint">
                         Choose the centre that you wish to add a supervisor from.
                     </div>
-                    <div class="nhsuk-radios">
+                    <div class="nhsuk-radios" data-module="nhsuk-radios">
                         @foreach (var centre in Model.Centres)
                         {
                             <div class="nhsuk-radios__item">
@@ -67,7 +65,7 @@
         </form>
     </div>
 </div>
-<div class="nhsuk-back-link">
+<div class="nhsuk-link">
     <a class="nhsuk-back-link__link"
        asp-action="ManageSupervisors"
        asp-route-selfAssessmentId="@ViewContext.RouteData.Values["selfAssessmentId"]">

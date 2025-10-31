@@ -1,4 +1,4 @@
-﻿@use "nhse-tel-frontend/packages/core/all" as *;
+﻿@use "nhsuk-frontend/dist/nhsuk/core/all" as *;
 @use "common" as *;
 
 .tags {
@@ -17,19 +17,19 @@
 }
 
 .tag.tag-article {
-  background-color: $nhsuk-link-active-color;
+  background-color: $nhsuk-link-active-colour;
 }
 
 .tag.tag-online.course {
-  background-color: $nhsuk-link-color;
+  background-color: $nhsuk-link-colour;
 }
 
 .tag.tag-learning.guide {
-  background-color: $nhsuk-link-hover-color;
+  background-color: $nhsuk-link-hover-colour;
 }
 
 .tag.tag-video {
-  background-color: $nhsuk-link-visited-color;
+  background-color: $nhsuk-link-visited-colour;
 }
 
 .card-tag {

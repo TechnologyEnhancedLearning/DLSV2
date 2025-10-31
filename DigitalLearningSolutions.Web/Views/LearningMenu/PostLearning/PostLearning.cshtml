@@ -25,23 +25,23 @@
   <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
     <div class="nhsuk-width-container">
       <ol class="nhsuk-breadcrumb__list">
-        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="Close" asp-route-learningActivity=@learningActivity>@learningActivity activities</a></li>
-        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="Index" asp-route-customisationId="@Model.CustomisationId">@Model.CourseTitle</a></li>
-        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="Section" asp-route-customisationId="@Model.CustomisationId" asp-route-sectionId="@Model.SectionId">@Model.SectionName</a></li>
-        <li class="nhsuk-breadcrumb__item">Post learning assessment</li>
+        <li class="nhsuk-breadcrumb__list-item"><a class="nhsuk-breadcrumb__link" asp-action="Close" asp-route-learningActivity=@learningActivity>@learningActivity activities</a></li>
+        <li class="nhsuk-breadcrumb__list-item"><a class="nhsuk-breadcrumb__link" asp-action="Index" asp-route-customisationId="@Model.CustomisationId">@Model.CourseTitle</a></li>
+        <li class="nhsuk-breadcrumb__list-item"><a class="nhsuk-breadcrumb__link" asp-action="Section" asp-route-customisationId="@Model.CustomisationId" asp-route-sectionId="@Model.SectionId">@Model.SectionName</a></li>
+        <li class="nhsuk-breadcrumb__list-item">Post learning assessment</li>
       </ol>
 
       @if (Model.OnlyItemInOnlySection)
       {
-        <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="Close" asp-route-learningActivity=@learningActivity>Return to @learningActivity activities</a></p>
+        <a class="nhsuk-back-link" asp-action="Close" asp-route-learningActivity=@learningActivity>Return to @learningActivity activities</a>
       }
       else if (Model.OnlyItemInThisSection)
       {
-        <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="Index" asp-route-customisationId="@Model.CustomisationId">Return to course menu</a></p>
+        <a class="nhsuk-back-link" asp-action="Index" asp-route-customisationId="@Model.CustomisationId">Return to course menu</a>
       }
       else
       {
-        <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="Section" asp-route-customisationId="@Model.CustomisationId" asp-route-sectionId="@Model.SectionId">Return to section</a></p>
+        <a class="nhsuk-back-link" asp-action="Section" asp-route-customisationId="@Model.CustomisationId" asp-route-sectionId="@Model.SectionId">Return to section</a>
       }
     </div>
   </nav>
@@ -55,7 +55,7 @@
       </h1>
       @if (Model.OnlyItemInOnlySection)
     {
-      <p class="nhsuk-u-font-size-24">@Model.CourseDescription</p>
+      <p class="nhsuk-u-font-size-26">@Model.CourseDescription</p>
     }
     <h2 class="@Model.AssessmentStatusStyling">
       <span class="nhsuk-u-visually-hidden">Your status: </span>
@@ -73,7 +73,7 @@
 <div class="nhsuk-u-margin-bottom-5">
   @if (Model.PostLearningLocked)
   {
-    <p class="nhsuk-u-secondary-text-color">
+    <p class="nhsuk-u-secondary-text-colour">
       The assessment is locked as there have been too many failed attempts.
     </p>
 

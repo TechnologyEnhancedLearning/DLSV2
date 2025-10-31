@@ -9,13 +9,11 @@
     <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
         <div class="nhsuk-width-container">
             <ol class="nhsuk-breadcrumb__list">
-                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Centres" asp-action="Index">Centres</a></li>
-                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Centres" asp-route-centreID="@ViewContext.RouteData.Values["centreId"]" asp-action="Courses">View courses</a></li>
+                <li class="nhsuk-breadcrumb__list-item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Centres" asp-action="Index">Centres</a></li>
+                <li class="nhsuk-breadcrumb__list-item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Centres" asp-route-centreID="@ViewContext.RouteData.Values["centreId"]" asp-action="Courses">View courses</a></li>
             </ol>
-            <p class="nhsuk-breadcrumb__back">
-                <a class="nhsuk-breadcrumb__backlink"
+                <a class="nhsuk-back-link"
                    asp-controller="Centres" asp-route-centreID="@ViewContext.RouteData.Values["centreId"]" asp-action="Courses">Back to view centre courses</a>
-            </p>
         </div>
     </nav>
 }
@@ -31,7 +29,7 @@
         </div>
         <div class="nhsuk-form-group">
 
-            <div class="nhsuk-radios nhsuk-radios--conditional">
+            <div class="nhsuk-radios nhsuk-radios--conditional" data-module="nhsuk-radios">
 
                 <div class="nhsuk-radios__item">
                     <input class="nhsuk-radios__input" id="option-1" asp-for="AddCourseOption" checked="checked" type="radio" value="Core">

@@ -8,7 +8,7 @@
   var errorClass = Model.IsChecked == false ? "nhsuk-input--error" : "";
 }
 @section breadcrumbs {
-  <li class="nhsuk-breadcrumb__item">
+  <li class="nhsuk-breadcrumb__list-item">
     <a class="nhsuk-breadcrumb__link" asp-action="SelfAssessment" asp-route-selfAssessmentId="@Model.SelfAssessmentId">@(Model.CompetencyName)</a>
   </li>
 }

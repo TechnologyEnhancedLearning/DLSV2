@@ -1,4 +1,4 @@
-﻿@use "nhse-tel-frontend/packages/core/all" as *;
+﻿@use "nhsuk-frontend/dist/nhsuk/core/all" as *;
 @use "chartist/dist/scss/chartist";
 
 $dark-blue: #005EB8;
@@ -78,8 +78,8 @@ $light-blue: #8EBAFF;
 }
 
 .ct-label {
-  color: $nhsuk-secondary-text-color;
-  fill: $nhsuk-secondary-text-color;
+  color: $nhsuk-secondary-text-colour;
+  fill: $nhsuk-secondary-text-colour;
 }
 
 .ct-label.ct-label.ct-horizontal {

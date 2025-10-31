@@ -1,23 +1,23 @@
-declare module 'nhse-tel-frontend/packages/components/header/header' {
+declare module 'nhsuk-frontend/dist/nhsuk/components/header/header' {
   export default function Header(): void;
 }
 
-declare module 'nhse-tel-frontend/packages/components/skip-link/skip-link' {
+declare module 'nhsuk-frontend/dist/nhsuk/components/skip-link/skip-link' {
   export default function SkipLink(): void;
 }
 
-declare module 'nhse-tel-frontend/packages/components/details/details' {
+declare module 'nhsuk-frontend/dist/nhsuk/components/details/details' {
   export default function Details(): void;
 }
 
-declare module 'nhse-tel-frontend/packages/components/radios/radios' {
+declare module 'nhsuk-frontend/dist/nhsuk/components/radios/radios' {
   export default function Radios(): void;
 }
 
-declare module 'nhse-tel-frontend/packages/components/checkboxes/checkboxes' {
+declare module 'nhsuk-frontend/dist/nhsuk/components/checkboxes/checkboxes' {
   export default function Checkboxes(): void;
 }
 
-declare module 'nhse-tel-frontend/packages/components/card/card' {
+declare module 'nhsuk-frontend/dist/nhsuk/components/card/card' {
   export default function Card(): void;
 }

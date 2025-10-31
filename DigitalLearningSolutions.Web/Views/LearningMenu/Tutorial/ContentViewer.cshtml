@@ -24,13 +24,13 @@
   <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
     <div class="nhsuk-width-container">
       <ol class="nhsuk-breadcrumb__list">
-        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="Close" asp-route-learningActivity=@learningActivity>@learningActivity activities</a></li>
-        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="Index" asp-route-customisationId="@Model.CustomisationId">@Model.CourseTitle</a></li>
-        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="Section" asp-route-customisationId="@Model.CustomisationId" asp-route-sectionId="@Model.SectionId">@Model.SectionName</a></li>
-        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="Tutorial" asp-route-customisationId="@Model.CustomisationId" asp-route-sectionId="@Model.SectionId" asp-route-tutorialId="@Model.TutorialId">@Model.TutorialName</a></li>
-        <li class="nhsuk-breadcrumb__item">Tutorial content</li>
+        <li class="nhsuk-breadcrumb__list-item"><a class="nhsuk-breadcrumb__link" asp-action="Close" asp-route-learningActivity=@learningActivity>@learningActivity activities</a></li>
+        <li class="nhsuk-breadcrumb__list-item"><a class="nhsuk-breadcrumb__link" asp-action="Index" asp-route-customisationId="@Model.CustomisationId">@Model.CourseTitle</a></li>
+        <li class="nhsuk-breadcrumb__list-item"><a class="nhsuk-breadcrumb__link" asp-action="Section" asp-route-customisationId="@Model.CustomisationId" asp-route-sectionId="@Model.SectionId">@Model.SectionName</a></li>
+        <li class="nhsuk-breadcrumb__list-item"><a class="nhsuk-breadcrumb__link" asp-action="Tutorial" asp-route-customisationId="@Model.CustomisationId" asp-route-sectionId="@Model.SectionId" asp-route-tutorialId="@Model.TutorialId">@Model.TutorialName</a></li>
+        <li class="nhsuk-breadcrumb__list-item">Tutorial content</li>
       </ol>
-      <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__link" asp-action="Tutorial" asp-route-customisationId="@Model.CustomisationId" asp-route-sectionId="@Model.SectionId" asp-route-tutorialId="@Model.TutorialId">Return to tutorial</a></p>
+      <a class="nhsuk-breadcrumb__link" asp-action="Tutorial" asp-route-customisationId="@Model.CustomisationId" asp-route-sectionId="@Model.SectionId" asp-route-tutorialId="@Model.TutorialId">Return to tutorial</a>
     </div>
   </nav>
 }

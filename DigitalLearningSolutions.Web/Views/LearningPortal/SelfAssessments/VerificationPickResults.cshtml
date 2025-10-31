@@ -8,27 +8,25 @@
 }
 
 @section breadcrumbs {
-    <li class="nhsuk-breadcrumb__item">
+    <li class="nhsuk-breadcrumb__list-item">
         <a class="nhsuk-breadcrumb__link" asp-action="SelfAssessment" asp-route-selfAssessmentId="@Model.SelfAssessmentId">@(Model.SelfAssessmentName) introduction</a>
     </li>
-    <li class="nhsuk-breadcrumb__item">
+    <li class="nhsuk-breadcrumb__list-item">
         <a class="nhsuk-breadcrumb__link" asp-action="SelfAssessmentOverview" asp-route-vocabulary="@Model.VocabPlural()" asp-route-selfAssessmentId="@Model.SelfAssessmentId">@(Model.VocabPlural()) home</a>
     </li>
-    <li class="nhsuk-breadcrumb__item">
+    <li class="nhsuk-breadcrumb__list-item">
         <a class="nhsuk-breadcrumb__link" asp-action="ReviewConfirmationRequests" asp-route-selfAssessmentId="@Model.SelfAssessmentId">Confirmation requests</a>
     </li>
-    <li class="nhsuk-breadcrumb__item">New</li>
+    <li class="nhsuk-breadcrumb__list-item">New</li>
 }
 
 @section mobilebacklink
 {
-    <p class="nhsuk-breadcrumb__back">
-        <a class="nhsuk-breadcrumb__backlink"
-           asp-action="VerificationPickSupervisor"
-           asp-route-selfAssessmentId="@Model.SelfAssessmentId">
-            Back to Choose a supervisor
-        </a>
-    </p>
+    <a class="nhsuk-back-link"
+        asp-action="VerificationPickSupervisor"
+        asp-route-selfAssessmentId="@Model.SelfAssessmentId">
+        Back to Choose a supervisor
+    </a>
 }
 
 <link rel="stylesheet" href="@Url.Content("~/css/learningPortal/selfAssessment.css")" asp-append-version="true">
@@ -120,7 +118,7 @@
             </div>
         </div>
     </form>
-    <div class="nhsuk-back-link">
+    <div class="nhsuk-link">
         <a class="nhsuk-back-link__link"
            asp-action="SelfAssessmentOverview"
            asp-route-selfAssessmentId="@Model.SelfAssessmentId" asp-route-vocabulary="@Model.VocabPlural()">

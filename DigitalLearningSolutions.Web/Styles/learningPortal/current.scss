@@ -1,38 +1,38 @@
-﻿@use "nhse-tel-frontend/packages/core/all" as *;
+﻿@use "nhsuk-frontend/dist/nhsuk/core/all" as *;
 @use "courses";
 
 .searchable-element {
   &.overdue {
     background-color: #fff;
-    border-left: 6px solid $color_nhsuk-red;
+    border-left: 6px solid nhsuk-colour("red");
   }
 
   &.due-soon {
     background-color: #fff;
-    border-left: 6px solid $color_nhsuk-yellow;
+    border-left: 6px solid nhsuk-colour("yellow");
   }
 }
 
 a.delete-button {
-  background-color: $color_nhsuk-red;
-  box-shadow: 0 4px 0 shade($color_nhsuk-red, 50%);
+  background-color: nhsuk-colour("red");
+  box-shadow: 0 4px 0 nhsuk-shade(nhsuk-colour("red"), 50%);
   margin-bottom: 16px !important;
 
   &:hover {
-    background-color: shade($color_nhsuk-red, 20%);
+    background-color: nhsuk-shade(nhsuk-colour("red"), 20%);
   }
 
   &:active {
-    background-color: shade($color_nhsuk-red, 50%);
+    background-color: nhsuk-shade(nhsuk-colour("red"), 50%);
   }
 }
 
 .overdue {
-  background-color: tint($color_nhsuk-red, 80);
+  background-color: nhsuk-tint(nhsuk-colour("red"), 80);
 }
 
 .due-soon {
-  background-color: $color_nhsuk-yellow;
+  background-color: nhsuk-colour("yellow");
 }
 
 h3.course-title {

@@ -1,6 +1,6 @@
-﻿@use "nhse-tel-frontend/packages/core/all" as *;
+﻿@use "nhsuk-frontend/dist/nhsuk/core/all" as *;
 
 .loggedinuser .card-background {
-  color: $nhsuk-text-color;
+  color: $nhsuk-text-colour;
 }
 

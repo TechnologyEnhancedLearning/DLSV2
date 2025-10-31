@@ -1,11 +1,11 @@
-﻿@use "nhse-tel-frontend/packages/core/all" as *;
+﻿@use "nhsuk-frontend/dist/nhsuk/core/all" as *;
 
 .card-with-buttons {
   background-color: #fff;
   @extend .nhsuk-u-margin-top-3;
   @extend .nhsuk-u-margin-bottom-4;
   padding-bottom: 16px;
-  border: 1px solid $nhsuk-border-color;
+  border: 1px solid $nhsuk-border-colour;
   border-bottom-width: 4px;
 }
 

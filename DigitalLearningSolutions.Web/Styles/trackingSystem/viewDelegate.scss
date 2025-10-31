@@ -1,4 +1,4 @@
-﻿@use "nhse-tel-frontend/packages/core/all" as *;
+﻿@use "nhsuk-frontend/dist/nhsuk/core/all" as *;
 @use "../shared/searchableElements/searchableElements";
 
 .view-delegate-top-button-group {
@@ -43,29 +43,29 @@
 .nhsuk-expander-group {
   &.completed {
     background-color: #fff;
-    border-left: 6px solid $color_nhsuk-green;
+    border-left: 6px solid nhsuk-colour("green");
   }
 
   &.removed {
     background-color: #fff;
-    border-left: 6px solid $color_nhsuk-red;
+    border-left: 6px solid nhsuk-colour("red");
   }
 
   &.inactive {
     background-color: #fff;
-    border-left: 6px solid tint($color_nhsuk-red, 80);
+    border-left: 6px solid nhsuk-tint(nhsuk-colour("red"), 80);
   }
 
   &.archived {
     background-color: #fff;
-    border-left: 6px solid $color_nhsuk-grey-2;
+    border-left: 6px solid nhsuk-colour("grey-2");
   }
 }
 
 .status-inactive {
-  border-left: 6px solid tint($color_nhsuk-red, 80);
+  border-left: 6px solid nhsuk-tint(nhsuk-colour("red"), 80);
 }
 
 .status-archived {
-  border-left: 6px solid $color_nhsuk-grey-2;
+  border-left: 6px solid nhsuk-colour("grey-2");
 }

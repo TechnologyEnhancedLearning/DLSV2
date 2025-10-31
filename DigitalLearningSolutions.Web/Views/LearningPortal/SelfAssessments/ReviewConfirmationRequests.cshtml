@@ -11,24 +11,22 @@
 }
 
 @section breadcrumbs {
-    <li class="nhsuk-breadcrumb__item">
+    <li class="nhsuk-breadcrumb__list-item">
         <a class="nhsuk-breadcrumb__link" asp-action="SelfAssessment" asp-route-selfAssessmentId="@Model.SelfAssessment.Id">@(Model.SelfAssessment.Name) introduction</a>
     </li>
-    <li class="nhsuk-breadcrumb__item">
+    <li class="nhsuk-breadcrumb__list-item">
         <a class="nhsuk-breadcrumb__link" asp-action="SelfAssessmentOverview" asp-route-vocabulary="@Model.VocabPlural()" asp-route-selfAssessmentId="@Model.SelfAssessment.Id">@(Model.VocabPlural()) home</a>
     </li>
-    <li class="nhsuk-breadcrumb__item">Confirmation requests</li>
+    <li class="nhsuk-breadcrumb__list-item">Confirmation requests</li>
 }
 
 @section mobilebacklink
 {
-    <p class="nhsuk-breadcrumb__back">
-        <a class="nhsuk-breadcrumb__backlink" asp-action="SelfAssessmentOverview"
-           asp-route-vocabulary="@Model.VocabPlural()"
-           asp-route-selfAssessmentId="@Model.SelfAssessment.Id">
-            Back to @Model.VocabPlural()
-        </a>
-    </p>
+    <a class="nhsuk-back-link" asp-action="SelfAssessmentOverview"
+        asp-route-vocabulary="@Model.VocabPlural()"
+        asp-route-selfAssessmentId="@Model.SelfAssessment.Id">
+        Back to @Model.VocabPlural()
+    </a>
 }
 
 <link rel="stylesheet" href="@Url.Content("~/css/learningPortal/selfAssessment.css")" asp-append-version="true">
@@ -121,7 +119,7 @@
             </a>
         </div>
     </div>
-    <div class="nhsuk-back-link">
+    <div class="nhsuk-link">
         <a class="nhsuk-back-link__link"
            asp-action="SelfAssessmentOverview"
            asp-route-selfAssessmentId="@Model.SelfAssessment.Id" asp-route-vocabulary="@Model.VocabPlural()">

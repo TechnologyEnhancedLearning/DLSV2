@@ -18,20 +18,20 @@
     <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
         <div class="nhsuk-width-container">
             <ol class="nhsuk-breadcrumb__list">
-                <li class="nhsuk-breadcrumb__item">
+                <li class="nhsuk-breadcrumb__list-item">
                     <a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Supervisor" asp-action="Index">Supervisor</a>
                 </li>
-                <li class="nhsuk-breadcrumb__item">
+                <li class="nhsuk-breadcrumb__list-item">
                     <a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Supervisor" asp-action="MyStaffList">My Staff</a>
                 </li>
-                <li class="nhsuk-breadcrumb__item">
+                <li class="nhsuk-breadcrumb__list-item">
                     <a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Supervisor"
                        asp-action="DelegateProfileAssessments"
                        asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]">
                         @Model.SupervisorDelegate.FirstName @Model.SupervisorDelegate.LastName
                     </a>
                 </li>
-                <li class="nhsuk-breadcrumb__item">
+                <li class="nhsuk-breadcrumb__list-item">
                     <a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Supervisor"
                        asp-action="ReviewDelegateSelfAssessment"
                        asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]"
@@ -39,20 +39,18 @@
                         @(Model.SelfAssessmentResultSummary.RoleName.Length > 35 ? Model.SelfAssessmentResultSummary.RoleName.Substring(0, 32) + "..." : Model.SelfAssessmentResultSummary.RoleName)
                     </a>
                 </li>
-                <li class="nhsuk-breadcrumb__item">
+                <li class="nhsuk-breadcrumb__list-item">
                     Sign-off Self Assessment
                 </li>
             </ol>
         </div>
-        <p class="nhsuk-breadcrumb__back">
-            <a class="nhsuk-breadcrumb__backlink" asp-controller="Supervisor"
-               asp-action="ReviewDelegateSelfAssessment"
-               asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]"
-               asp-route-candidateAssessmentId="@Model.SelfAssessmentResultSummary.ID">
-                Back to @(Model.SelfAssessmentResultSummary.RoleName.Length > 35 ?
-            Model.SelfAssessmentResultSummary.RoleName.Substring(0, 32) + "..." : Model.SelfAssessmentResultSummary.RoleName)
-            </a>
-        </p>
+        <a class="nhsuk-back-link" asp-controller="Supervisor"
+            asp-action="ReviewDelegateSelfAssessment"
+            asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]"
+            asp-route-candidateAssessmentId="@Model.SelfAssessmentResultSummary.ID">
+            Back to @(Model.SelfAssessmentResultSummary.RoleName.Length > 35 ?
+        Model.SelfAssessmentResultSummary.RoleName.Substring(0, 32) + "..." : Model.SelfAssessmentResultSummary.RoleName)
+        </a>
     </nav>
 }
 @if (errorHasOccurred)
@@ -179,7 +177,7 @@
                 </nhs-form-group>
 
                 <nhs-form-group nhs-validation-for="SignedOff">
-                    <div class="nhsuk-radios nhsuk-radios--inline">
+                    <div class="nhsuk-radios nhsuk-radios--inline" data-module="nhsuk-radios">
                         <div class="nhsuk-radios__item">
                             <input class="nhsuk-radios__input" id="rb-verify" name="SignedOff" asp-for="IsSignOffverified" required="required" type="radio" value="true">
                             <label class="nhsuk-label nhsuk-radios__label" for="rb-verify">
@@ -223,15 +221,12 @@
         </form>
     </div>
 </div>
-<div class="nhsuk-back-link">
+<div class="nhsuk-link">
     <a class="nhsuk-back-link__link"
        asp-controller="Supervisor"
        asp-action="ReviewDelegateSelfAssessment"
        asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]"
        asp-route-candidateAssessmentId="@Model.SelfAssessmentResultSummary.ID">
-        <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-            <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
-        </svg>
         Cancel
     </a>
 </div>

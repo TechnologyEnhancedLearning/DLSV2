@@ -1,4 +1,4 @@
-﻿@use "nhse-tel-frontend/packages/core/all" as *;
+﻿@use "nhsuk-frontend/dist/nhsuk/core/all" as *;
 
 .feedback-chevron {
   padding: 0 !important;
@@ -7,7 +7,7 @@
 }
 
 .feedback-chevron svg {
-  fill: $color_nhsuk-white !important;
+  fill: nhsuk-colour("white") !important;
   height: 24px !important;
   width: 24px !important;
 }
