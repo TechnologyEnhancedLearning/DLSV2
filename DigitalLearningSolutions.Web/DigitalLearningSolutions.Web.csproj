@@ -152,15 +152,17 @@
     </ItemGroup>
 
     <ItemGroup>
-      <!--NHSUK Static Assets -->
-      <!-- Copy all NHS.UK Frontend images into wwwroot/assets/images -->
-      <Content Include="node_modules\nhsuk-frontend\dist\nhsuk\assets\images\**\*">
-          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-      <!-- Copy manifest.json into wwwroot/assets -->
-      <Content Include="node_modules\nhsuk-frontend\dist\nhsuk\assets\manifest.json">
-          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
+    <!--NHSUK Static Assets -->
+    <!-- Copy all NHS.UK Frontend images into wwwroot/assets/images -->
+    <None Include="node_modules\nhsuk-frontend\dist\nhsuk\assets\images\**\*">
+        <CopyToPublishDirectory>Always</CopyToPublishDirectory>
+        <Link>wwwroot\assets\images\%(RecursiveDir)%(Filename)%(Extension)</Link>
+    </None>
+    <!-- Copy manifest.json into wwwroot/assets -->
+    <None Include="node_modules\nhsuk-frontend\dist\nhsuk\assets\manifest.json">
+        <CopyToPublishDirectory>Always</CopyToPublishDirectory>
+        <Link>wwwroot\assets\%(Filename)%(Extension)</Link>
+    </None>
     </ItemGroup>
 
     <ItemGroup>
