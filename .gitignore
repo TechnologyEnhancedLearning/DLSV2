@@ -514,3 +514,11 @@ DigitalLearningSolutions.Web/Views/Shared/Components/TextArea/Default.cshtml
 DigitalLearningSolutions.Web/Views/Shared/Components/TextInput/Default.cshtml
 /DigitalLearningSolutions.Web/appsettings.Test.json
 /DigitalLearningSolutions.Web/web.config
+/DigitalLearningSolutions.Web/wwwroot/assets/images/favicon.ico
+/DigitalLearningSolutions.Web/wwwroot/assets/images/favicon.svg
+/DigitalLearningSolutions.Web/wwwroot/assets/images/nhsuk-icon-180.png
+/DigitalLearningSolutions.Web/wwwroot/assets/images/nhsuk-icon-192.png
+/DigitalLearningSolutions.Web/wwwroot/assets/images/nhsuk-icon-512.png
+/DigitalLearningSolutions.Web/wwwroot/assets/images/nhsuk-icon-mask.svg
+/DigitalLearningSolutions.Web/wwwroot/assets/images/nhsuk-opengraph-image.png
+/DigitalLearningSolutions.Web/wwwroot/assets/manifest.json
