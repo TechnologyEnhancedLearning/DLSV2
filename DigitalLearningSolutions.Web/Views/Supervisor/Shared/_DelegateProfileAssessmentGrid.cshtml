@@ -4,6 +4,16 @@
 @model DelegateSelfAssessmentsViewModel;
 @inject IClockUtility ClockUtility
 
+
+@{
+    var routeModelValues = new Dictionary<string, string>
+    {
+      { "firstName", Model.SupervisorDelegateDetail.FirstName},
+      { "lastName", Model.SupervisorDelegateDetail.LastName},
+    };
+}
+
+
 <table role="table" class="nhsuk-table-responsive">
     <caption class="nhsuk-table__caption"><h2>Self assessments</h2></caption>
     <thead role="rowgroup" class="nhsuk-table__head">
@@ -79,6 +89,11 @@
                             {
                                 <a asp-action="RemoveDelegateSelfAssessmentsupervisor" asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]" asp-route-candidateAssessmentId="@delegateSelfAssessment.ID">Stop supervising</a>
 
+                            }
+                            @if (delegateSelfAssessment.AllowSupervisorRoleSelection == true && delegateSelfAssessment.RoleCount > 1)
+                            {
+
+                                <a asp-action="ChangeRoleDelegateSelection" asp-all-route-data="routeModelValues" asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]" asp-route-selfAssessmentId="@delegateSelfAssessment.SelfAssessmentID" asp-route-candidateAssessmentId="@delegateSelfAssessment.ID">Change Role</a>
                             }
                         }
                         else

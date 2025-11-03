@@ -38,6 +38,9 @@
         IEnumerable<SupervisorForEnrolDelegate> GetSupervisorForEnrolDelegate(int CentreID, int CategoryID);
         IEnumerable<SupervisorDelegateDetail> GetSupervisorDelegateDetailsForAdminIdWithoutRemovedClause(int adminId);
         SupervisorDelegateDetail GetSupervisorDelegateDetailsByIdWithoutRemoveClause(int supervisorDelegateId, int adminId, int delegateUserId);
+        List<int> GetCandidateAssessmentSupervisorVerifications(int supervisorDelegateId);
+        List<int> GetSelfAssessmentResultSupervisorVerifications(int supervisorDelegateId, int selfAssessmentId);
+
         //UPDATE DATA
         bool ConfirmSupervisorDelegateById(int supervisorDelegateId, int candidateId, int adminId);
         bool RemoveSupervisorDelegateById(int supervisorDelegateId, int delegateUserId, int adminId);
@@ -105,7 +108,7 @@
             INNER JOIN Users AS au ON  aa.UserID = au.ID
             ";
 
-        private const string delegateSelfAssessmentFields = "ca.ID, sa.ID AS SelfAssessmentID, sa.Name AS RoleName, sa.SupervisorSelfAssessmentReview, sa.SupervisorResultsReview, COALESCE (sasr.RoleName, 'Supervisor') AS SupervisorRoleTitle, ca.StartedDate";
+        private const string delegateSelfAssessmentFields = "ca.ID, sa.ID AS SelfAssessmentID, sa.Name AS RoleName, sa.SupervisorSelfAssessmentReview, sa.SupervisorResultsReview, COALESCE (sasr.RoleName, 'Supervisor') AS SupervisorRoleTitle, ca.StartedDate, sasr.AllowSupervisorRoleSelection";
         private const string signedOffFields = @"(SELECT TOP (1) casv.Verified
 FROM CandidateAssessmentSupervisorVerifications AS casv INNER JOIN
              CandidateAssessmentSupervisors AS cas ON casv.CandidateAssessmentSupervisorID = cas.ID
@@ -116,6 +119,9 @@ FROM   CandidateAssessmentSupervisorVerifications AS casv INNER JOIN
              CandidateAssessmentSupervisors AS cas ON casv.CandidateAssessmentSupervisorID = cas.ID
 WHERE(cas.CandidateAssessmentID = ca.ID) AND(casv.Requested IS NOT NULL) AND(casv.Verified IS NOT NULL)
 ORDER BY casv.Requested DESC) AS SignedOff,";
+
+        private const string rolecount = @"(select COUNT(*) as RoleCount From SelfAssessmentSupervisorRoles AS sasr where sa.ID = sasr.SelfAssessmentID ) as RoleCount,";
+
 
         public SupervisorDataService(IDbConnection connection, ILogger<SupervisorDataService> logger)
         {
@@ -587,6 +593,7 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                  (SELECT COUNT(*) AS Expr1
                  FROM    CandidateAssessmentSupervisorVerifications AS casv
                  WHERE (CandidateAssessmentSupervisorID = cas.ID) AND (Requested IS NOT NULL) AND (Verified IS NULL)) AS SignOffRequested,
+                {rolecount}
                 {signedOffFields}
                  (SELECT COUNT(*) AS Expr1
                  FROM   SelfAssessmentResultSupervisorVerifications AS sarsv
@@ -1366,6 +1373,37 @@ WHERE (cas.CandidateAssessmentID = @candidateAssessmentId) AND (cas.SupervisorDe
                     INNER JOIN SupervisorDelegates AS SD ON SD.ID = CAS.SupervisorDelegateId
                     INNER JOIN AdminAccounts AS AA ON AA.ID = SD.SupervisorAdminID AND AA.UserID = SD.DelegateUserID
                         WHERE CA.ID = @candidateAssessmentId AND NonReportable = 0 ", new { candidateAssessmentId });
+        }
+
+        public List<int> GetSelfAssessmentResultSupervisorVerifications(int supervisorDelegateId, int selfAssessmentId)
+        {
+            var verificationIds = new List<int>();
+            verificationIds = connection.Query<int>(
+                $@"SELECT sarsv.ID FROM SelfAssessmentResultSupervisorVerifications as sarsv
+                    LEFT JOIN CandidateAssessmentSupervisors AS cas ON cas.ID = sarsv.CandidateAssessmentSupervisorID
+                    INNER JOIN SelfAssessmentResults AS srs ON sarsv.SelfAssessmentResultId = srs.ID
+                    INNER JOIN SelfAssessments AS sa ON srs.SelfAssessmentID = sa.ID
+                    WHERE cas.SupervisorDelegateId = @supervisorDelegateId
+                          AND cas.Removed IS NULL AND sarsv.Verified IS NULL
+                          AND sa.ID = @selfAssessmentId", new { supervisorDelegateId, selfAssessmentId }
+            ).ToList();
+
+            return verificationIds;
+        }
+
+        public List<int> GetCandidateAssessmentSupervisorVerifications(int supervisorDelegateId)
+        {
+            var verificationIds = new List<int>();
+            verificationIds = [.. connection.Query<int>(
+                $@"SELECT casv.ID  FROM CandidateAssessmentSupervisorVerifications as casv
+                    LEFT JOIN CandidateAssessmentSupervisors AS cas ON cas.ID = casv.CandidateAssessmentSupervisorID 
+					Inner JOIN CandidateAssessments AS ca ON ca.ID = cas.CandidateAssessmentID
+                    WHERE cas.SupervisorDelegateId = 445
+                    AND cas.Removed IS NULL AND casv.Verified IS NULL AND casv.SignedOff = 0
+                ", new { supervisorDelegateId}
+            )];
+
+            return verificationIds;
         }
     }
 }

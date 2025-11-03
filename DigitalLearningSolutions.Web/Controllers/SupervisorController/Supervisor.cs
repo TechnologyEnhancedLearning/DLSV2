@@ -333,6 +333,18 @@
                 SupervisorDelegateDetail = superviseDelegate,
                 DelegateSelfAssessments = delegateSelfAssessments
             };
+            foreach (var item in model.DelegateSelfAssessments)
+            {
+                if (item.SupervisorRoleTitle.ToUpper() == "EDUCATOR/MANAGER" || item.SupervisorRoleTitle.ToUpper() == "SUPERVISOR")
+                {
+                    item.SupervisorRoleTitle = "Supervising";
+                }
+
+                if (item.SupervisorRoleTitle.ToUpper() == "ASSESSOR" || item.SupervisorRoleTitle.ToUpper() == "NOMINATED SUPERVISOR")
+                {
+                    item.SupervisorRoleTitle = "Not Supervising";
+                }
+            }
             return View("DelegateProfileAssessments", model);
         }
 
@@ -1569,6 +1581,112 @@
             }
             return View("SelfAssessments/CompetencySelfAssessmentCertificate", model);
         }
+
+        public IActionResult ChangeRoleDelegateSelection(int selfAssessmentId, int supervisorDelegateId, int candidateAssessmentId, IDictionary<string, string> routeModelValues)
+        {
+
+            var supervisorRoles = supervisorService.GetSupervisorRolesForSelfAssessment(selfAssessmentId);
+            var roleOptions = new List<SelectOption<string>>();
+            if (supervisorRoles.Any())
+            {
+                foreach (var role in supervisorRoles)
+                {
+                    roleOptions.Add(new SelectOption<string> { Value = role.RoleName, Text = role.RoleName });
+                }
+
+                roleOptions.Add(new SelectOption<string>
+                {
+                    Value = "RemoveAsSupervisor",
+                    Text = "Remove me as a supervisor from this self assessment"
+                });
+            }
+
+            var model = new ChangeRoleSelectionViewModel()
+            {
+                DelegateFirstName = routeModelValues["firstName"],
+                DelegateLastName = routeModelValues["lastName"],
+                SelfAssessmentID = selfAssessmentId,
+                CandidateAssessmentID = candidateAssessmentId,
+                SupervisorDelegateID = supervisorDelegateId,
+                SupervisorRoleOptions = new OptionViewModel<string>()
+                {
+                    Options = roleOptions,
+                    GroupName = "ChangeRoleRadioButtons"
+                },
+            };
+            return View("ChangeRoleDelegateSelfAssessment", model);
+
+        }
+
+        public IActionResult ConfirmChangeRoleDelegateSelection(ChangeRoleSelectionViewModel model)
+        {
+            if (String.IsNullOrEmpty(model.SupervisorRoleOptions.SelectedValue))
+            {
+                ModelState.AddModelError("SupervisorRoleOptions", "You must select a Role");
+
+                var supervisorRoles = supervisorService.GetSupervisorRolesForSelfAssessment(model.SelfAssessmentID);
+                var roleOptions = new List<SelectOption<string>>();
+                if (supervisorRoles.Any())
+                {
+                    foreach (var role in supervisorRoles)
+                    {
+                        roleOptions.Add(new SelectOption<string> { Value = role.RoleName, Text = role.RoleName });
+                    }
+
+                    roleOptions.Add(new SelectOption<string>
+                    {
+                        Value = "RemoveAsSupervisor",
+                        Text = "Remove me as a supervisor from this self assessment"
+                    });
+                }
+                model.SupervisorRoleOptions = new OptionViewModel<string>()
+                {
+                    Options = roleOptions,
+                    GroupName = "ChangeRoleRadioButtons"
+                };
+
+                return View("ChangeRoleDelegateSelfAssessment", model);
+            }
+            if (model.SupervisorRoleOptions.SelectedValue == "RemoveAsSupervisor")
+            {
+                var removed = supervisorService.RemoveCandidateAssessmentSupervisor(model.CandidateAssessmentID, model.SupervisorDelegateID);
+            }
+            else
+            {
+                var supervisorRoles = supervisorService.GetSupervisorRolesForSelfAssessment(model.SelfAssessmentID);
+
+                var selectedRole = supervisorRoles.Where(x => x.RoleName == model.SupervisorRoleOptions.SelectedValue).FirstOrDefault();
+
+                if (selectedRole != null)
+                {
+                    if (!selectedRole.ResultsReview)
+                    {
+                        var selfAssessmentVerifications = supervisorService.GetSelfAssessmentResultSupervisorVerifications(model.SupervisorDelegateID, model.SelfAssessmentID);
+                        foreach (var verificationId in selfAssessmentVerifications)
+                        {
+                            supervisorService.RemoveSelfAssessmentResultSupervisorVerificationById(verificationId);
+                        }
+                    }
+
+                    if (!selectedRole.SelfAssessmentReview)
+                    {
+                        var supervisorVerifications = supervisorService.GetCandidateAssessmentSupervisorVerifications(model.SupervisorDelegateID);
+                        foreach (var verificationId in supervisorVerifications)
+                        {
+                            supervisorService.RemoveCandidateAssessmentSupervisorVerification(verificationId);
+                        }
+                    }
+                }
+
+
+            }
+
+            return RedirectToAction("DelegateProfileAssessments", new { supervisorDelegateId = model.SupervisorDelegateID });
+
+        }
+
+
+
         private static string RenderRazorViewToString(Controller controller, string viewName, object model = null)
         {
             controller.ViewData.Model = model;

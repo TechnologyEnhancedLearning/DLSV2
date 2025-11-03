@@ -29,5 +29,7 @@
         public bool IsAssignedToSupervisor { get; set; }
         public bool NonReportable { get; set; }
         public string? Vocabulary { get; set; }
+        public bool AllowSupervisorRoleSelection { get; set; }
+        public int RoleCount { get; set; }
     }
 }

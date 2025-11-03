@@ -36,6 +36,10 @@ namespace DigitalLearningSolutions.Web.Services
         IEnumerable<SupervisorDelegateDetail> GetSupervisorDelegateDetailsForAdminIdWithoutRemovedClause(int adminId);
         SupervisorDelegateDetail GetSupervisorDelegateDetailsByIdWithoutRemoveClause(int supervisorDelegateId, int adminId, int delegateUserId);
 
+        List<int> GetCandidateAssessmentSupervisorVerifications(int supervisorDelegateID);
+        List<int> GetSelfAssessmentResultSupervisorVerifications(int supervisorDelegateID, int selfAssessmentID);
+
+
         //UPDATE DATA
         bool ConfirmSupervisorDelegateById(int supervisorDelegateId, int candidateId, int adminId);
         bool RemoveSupervisorDelegateById(int supervisorDelegateId, int delegateUserId, int adminId);
@@ -276,6 +280,16 @@ namespace DigitalLearningSolutions.Web.Services
         public SupervisorDelegateDetail GetSupervisorDelegateDetailsByIdWithoutRemoveClause(int supervisorDelegateId, int adminId, int delegateUserId)
         {
             return supervisorDataService.GetSupervisorDelegateDetailsByIdWithoutRemoveClause(supervisorDelegateId, adminId, delegateUserId);
+        }
+
+        public List<int> GetCandidateAssessmentSupervisorVerifications(int supervisorDelegateId)
+        {
+            return supervisorDataService.GetCandidateAssessmentSupervisorVerifications(supervisorDelegateId);
+        }
+
+        public List<int> GetSelfAssessmentResultSupervisorVerifications(int supervisorDelegateId, int selfAssessmentId)
+        {
+            return supervisorDataService.GetSelfAssessmentResultSupervisorVerifications(supervisorDelegateId, selfAssessmentId);
         }
     }
 }

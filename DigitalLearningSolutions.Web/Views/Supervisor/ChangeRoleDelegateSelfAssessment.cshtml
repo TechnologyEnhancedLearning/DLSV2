@@ -1,0 +1,66 @@
+﻿@using DigitalLearningSolutions.Data.Models.Supervisor;
+@using DigitalLearningSolutions.Data.Utilities
+@using DigitalLearningSolutions.Web.ViewModels.Supervisor
+@model ChangeRoleSelectionViewModel
+@inject IClockUtility ClockUtility
+@{
+    var errorHasOccurred = !ViewData.ModelState.IsValid;
+    ViewData["Title"] = "Change Role on Delegate SelfAssessment";
+    ViewData["Application"] = "Supervisor";
+    ViewData["HeaderPathName"] = "Supervisor";
+}
+
+<link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
+<link rel="stylesheet" href="@Url.Content("~/css/shared/searchableElements/searchableElements.css")" asp-append-version="true">
+@section NavMenuItems {
+    <partial name="Shared/_NavMenuItems" />
+}
+@section NavBreadcrumbs {
+    <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+        <div class="nhsuk-width-container">
+            <ol class="nhsuk-breadcrumb__list">
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Supervisor" asp-action="Index">Supervisor</a></li>
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Supervisor" asp-action="MyStaffList">My Staff</a></li>
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader"  asp-controller="Supervisor" asp-route-supervisorDelegateId="@Model.SupervisorDelegateID" asp-action="DelegateProfileAssessments">@Model.DelegateFirstName @Model.DelegateLastName</a></li>
+                <li class="nhsuk-breadcrumb__item">Change Role</li>
+            </ol>
+        </div>
+        <p class="nhsuk-breadcrumb__back">
+            <a class="nhsuk-breadcrumb__backlink" asp-controller="Supervisor" asp-action="MyStaffList">Back to My Staff</a>
+        </p>
+    </nav>
+}
+
+@if (errorHasOccurred)
+{
+    <vc:error-summary order-of-property-names="@(new[] { nameof(Model.SupervisorRoleOptions.Options) })" />
+}
+
+
+<h2>Change Supervisor Role</h2>
+
+<h3>Choose Role</h3>
+<form asp-action="ConfirmChangeRoleDelegateSelection" method="post">
+    @foreach (var opt in Model.SupervisorRoleOptions.Options)
+    {
+        <div class="nhsuk-radios__item">
+
+            <input class="nhsuk-radios__input" id="supervisor-role-@opt.Value" type="radio"
+                   asp-for="SupervisorRoleOptions.SelectedValue"
+                   value="@opt.Value" />
+            <label class="nhsuk-label nhsuk-radios__label" for="supervisor-role-@opt.Value">@opt.Text</label>
+        </div>
+    }
+
+    <br />
+    <button type="submit" class="nhsuk-button nhsuk-u-margin-top-5">Submit</button>
+
+    <input type="hidden" asp-for="CandidateAssessmentID" value="@Model.CandidateAssessmentID" />
+    <input type="hidden" asp-for="SupervisorDelegateID" value="@Model.SupervisorDelegateID" />
+    <input type="hidden" asp-for="SelfAssessmentID" value="@Model.SelfAssessmentID" />
+    <input type="hidden" asp-for="SupervisorRoleOptions.Options" value="@Model.SupervisorRoleOptions.Options" />
+    <input type="hidden" asp-for="DelegateFirstName" value="@Model.DelegateFirstName" />
+    <input type="hidden" asp-for="DelegateLastName" value="@Model.DelegateLastName" />
+</form>
+
+
