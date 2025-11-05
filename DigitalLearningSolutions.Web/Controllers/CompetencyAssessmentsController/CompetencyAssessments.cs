@@ -429,9 +429,12 @@
         {
             var adminId = GetAdminID();
             var competencyAssessmentId = model.CompetencyAssessmentId;
-            if (!ModelState.IsValid)
+            if (!ModelState.IsValid || (model.FrameworkId == 0 && model.ActionName == "AddFramework"))
             {
-
+                if (model.FrameworkId == 0 && model.ActionName == "AddFramework")
+                {
+                    ModelState.AddModelError(nameof(model.FrameworkId), "You must select the framework sources you wish to add to the competency assessment");
+                }
                 var frameworks = frameworkService.GetAllFrameworks(adminId);
                 var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
                 if (competencyAssessmentBase == null)
