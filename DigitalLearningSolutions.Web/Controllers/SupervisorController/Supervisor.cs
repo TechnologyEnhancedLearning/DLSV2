@@ -343,11 +343,14 @@
             };
             foreach (var item in model.DelegateSelfAssessments)
             {
-
-                if (roleMappings.ContainsKey(item.SupervisorRoleTitle.ToUpper()))
+                if (item.SupervisorRoleTitle != null)
                 {
-                    item.SupervisorRoleTitle = roleMappings[item.SupervisorRoleTitle.ToUpper()];
+                    if (roleMappings.ContainsKey(item.SupervisorRoleTitle?.ToUpper()))
+                    {
+                        item.SupervisorRoleTitle = roleMappings[item.SupervisorRoleTitle.ToUpper()];
+                    }
                 }
+                
             }
             return View("DelegateProfileAssessments", model);
         }

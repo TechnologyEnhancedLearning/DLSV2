@@ -1076,7 +1076,7 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                 );
 
             connection.Execute(
-                @"DELETE FROM cas
+                @"DELETE FROM casv
 	                FROM CandidateAssessmentSupervisors AS cas
                     INNER JOIN CandidateAssessments AS ca ON cas.CandidateAssessmentID = ca.ID
 				    LEFT JOIN CandidateAssessmentSupervisorVerifications AS casv ON cas.ID = casv.CandidateAssessmentSupervisorID
