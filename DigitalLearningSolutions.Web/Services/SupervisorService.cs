@@ -49,6 +49,8 @@ namespace DigitalLearningSolutions.Web.Services
         bool RemoveCandidateAssessment(int candidateAssessmentId);
         void UpdateNotificationSent(int supervisorDelegateId);
         void UpdateCandidateAssessmentSupervisorVerificationById(int? candidateAssessmentSupervisorVerificationId, string? supervisorComments, bool signedOff);
+
+        bool UpdateCandidateAssessmentSupervisorRoleByIds(int candidateAssessmentSuperisorId, int supervisorDelegateId, int selfAssessmentSupervisorRoleId);
         //INSERT DATA
         int AddSuperviseDelegate(int? supervisorAdminId, int? delegateUserId, string delegateEmail, string supervisorEmail, int centreId);
         int EnrolDelegateOnAssessment(int delegateUserId, int supervisorDelegateId, int selfAssessmentId, DateTime? completeByDate, int? selfAssessmentSupervisorRoleId, int adminId, int centreId, bool isLoggedInUser);
@@ -290,6 +292,11 @@ namespace DigitalLearningSolutions.Web.Services
         public List<int> GetSelfAssessmentResultSupervisorVerifications(int supervisorDelegateId, int selfAssessmentId)
         {
             return supervisorDataService.GetSelfAssessmentResultSupervisorVerifications(supervisorDelegateId, selfAssessmentId);
+        }
+
+        public bool UpdateCandidateAssessmentSupervisorRoleByIds(int candidateAssessmentSuperisorId, int supervisorDelegateId, int selfAssessmentSupervisorRoleId)
+        {
+            return supervisorDataService.UpdateCandidateAssessmentSupervisorRoleByIds(candidateAssessmentSuperisorId, supervisorDelegateId, selfAssessmentSupervisorRoleId);
         }
     }
 }

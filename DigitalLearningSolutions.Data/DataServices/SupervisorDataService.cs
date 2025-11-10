@@ -50,6 +50,9 @@
         bool RemoveCandidateAssessment(int candidateAssessmentId);
         void UpdateNotificationSent(int supervisorDelegateId);
         void UpdateCandidateAssessmentSupervisorVerificationById(int? candidateAssessmentSupervisorVerificationId, string? supervisorComments, bool signedOff);
+
+
+        bool UpdateCandidateAssessmentSupervisorRoleByIds(int candidateAssessmentId, int supervisorDelegateId, int selfAssessmentSupervisorRoleId);
         //INSERT DATA
         int AddSuperviseDelegate(int? supervisorAdminId, int? delegateUserId, string delegateEmail, string supervisorEmail, int centreId);
         int EnrolDelegateOnAssessment(int delegateUserId, int supervisorDelegateId, int selfAssessmentId, DateTime? completeByDate, int? selfAssessmentSupervisorRoleId, int adminId, int centreId, bool isLoggedInUser);
@@ -108,7 +111,7 @@
             INNER JOIN Users AS au ON  aa.UserID = au.ID
             ";
 
-        private const string delegateSelfAssessmentFields = "ca.ID, sa.ID AS SelfAssessmentID, sa.Name AS RoleName, sa.SupervisorSelfAssessmentReview, sa.SupervisorResultsReview, COALESCE (sasr.RoleName, 'Supervisor') AS SupervisorRoleTitle, ca.StartedDate, sasr.AllowSupervisorRoleSelection";
+        private const string delegateSelfAssessmentFields = "ca.ID, sa.ID AS SelfAssessmentID, sa.Name AS RoleName, sa.SupervisorSelfAssessmentReview, sa.SupervisorResultsReview, ca.StartedDate, sasr.AllowSupervisorRoleSelection";
         private const string signedOffFields = @"(SELECT TOP (1) casv.Verified
 FROM CandidateAssessmentSupervisorVerifications AS casv INNER JOIN
              CandidateAssessmentSupervisors AS cas ON casv.CandidateAssessmentSupervisorID = cas.ID
@@ -120,7 +123,11 @@ FROM   CandidateAssessmentSupervisorVerifications AS casv INNER JOIN
 WHERE(cas.CandidateAssessmentID = ca.ID) AND(casv.Requested IS NOT NULL) AND(casv.Verified IS NOT NULL)
 ORDER BY casv.Requested DESC) AS SignedOff,";
 
-        private const string rolecount = @"(select COUNT(*) as RoleCount From SelfAssessmentSupervisorRoles AS sasr where sa.ID = sasr.SelfAssessmentID ) as RoleCount,";
+        // adding new property select subqueries to the existing delegateSelfAssessmentFields for the changeRole functionality
+        private const string rolecount = @"(SELECT COUNT(*) as RoleCount From SelfAssessmentSupervisorRoles AS sasr where sa.ID = sasr.SelfAssessmentID ) as RoleCount,";
+
+        // adding new property select subqueries to the existing delegateSelfAssessmentFields for the changeRole functionality
+        private const string supervisorRoleTitle = @"(SELECT SASR.RoleName FROM SelfAssessmentSupervisorRoles AS sasr Where sasr.id = cas.SelfAssessmentSupervisorRoleID),";
 
 
         public SupervisorDataService(IDbConnection connection, ILogger<SupervisorDataService> logger)
@@ -594,6 +601,7 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                  FROM    CandidateAssessmentSupervisorVerifications AS casv
                  WHERE (CandidateAssessmentSupervisorID = cas.ID) AND (Requested IS NOT NULL) AND (Verified IS NULL)) AS SignOffRequested,
                 {rolecount}
+                {supervisorRoleTitle}
                 {signedOffFields}
                  (SELECT COUNT(*) AS Expr1
                  FROM   SelfAssessmentResultSupervisorVerifications AS sarsv
@@ -1067,7 +1075,7 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
                           AND sa.ID = @selfAssessmentId", new { supervisorDelegateId, selfAssessmentId }
                 );
 
-            var deletedCandidateAssessmentSupervisors = connection.Execute(
+            connection.Execute(
                 @"DELETE FROM cas
 	                FROM CandidateAssessmentSupervisors AS cas
                     INNER JOIN CandidateAssessments AS ca ON cas.CandidateAssessmentID = ca.ID
@@ -1078,34 +1086,15 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
 					    AND (casv.ID IS NULL)
 					    AND (sarsr.ID IS NULL)",
                 new { selfAssessmentId, supervisorDelegateId });
-            if (deletedCandidateAssessmentSupervisors < 1)
-            {
-                deletedCandidateAssessmentSupervisors = connection.Execute(
+
+            connection.Execute(
                     @"UPDATE cas SET Removed = getUTCDate()
                         FROM CandidateAssessmentSupervisors AS cas
 	                    INNER JOIN CandidateAssessments AS ca ON cas.CandidateAssessmentID = ca.ID
                         WHERE (ca.SelfAssessmentID = @selfAssessmentId) AND (cas.SupervisorDelegateId = @supervisorDelegateId)",
                     new { selfAssessmentId, supervisorDelegateId });
-            }
 
-            if (deletedCandidateAssessmentSupervisors >= 1)
-            {
-                connection.Execute(
-                    @"UPDATE SupervisorDelegates SET Removed = getUTCDate() 
-                    WHERE ID = @supervisorDelegateId AND NOT EXISTS(
-                        SELECT *
-                        FROM CandidateAssessmentSupervisors
-                        WHERE (SupervisorDelegateId = @supervisorDelegateId) AND (Removed IS NULL))",
-                    new { supervisorDelegateId });
-            }
 
-            if (deletedCandidateAssessmentSupervisors < 1)
-            {
-                logger.LogWarning(
-                    $"Not removing Candidate Assessment Supervisor as db update failed. selfAssessmentId: {selfAssessmentId}, supervisorDelegateId: {supervisorDelegateId}"
-                );
-                return false;
-            }
 
             return true;
         }
@@ -1404,6 +1393,25 @@ WHERE (cas.CandidateAssessmentID = @candidateAssessmentId) AND (cas.SupervisorDe
             )];
 
             return verificationIds;
+        }
+
+        public bool UpdateCandidateAssessmentSupervisorRoleByIds(int candidateAssessmentId, int supervisorDelegateId, int selfAssessmentSupervisorRoleId)
+        {
+            var numberOfAffectedRows = connection.Execute(
+                @"UPDATE CandidateAssessmentSupervisors 
+                    SET SelfAssessmentSupervisorRoleID = @selfAssessmentSupervisorRoleId
+                    WHERE CandidateAssessmentID = @candidateAssessmentId 
+                    AND SupervisorDelegateId = @supervisorDelegateId
+                    AND Removed IS NULL",
+                new { candidateAssessmentId, supervisorDelegateId, selfAssessmentSupervisorRoleId });
+            if (numberOfAffectedRows < 1)
+            {
+                logger.LogWarning(
+                    $"Not updating Candidate Assessment Supervisor Role as db update failed. candidateAssessmentId: {candidateAssessmentId}, supervisorDelegateId: {supervisorDelegateId}, selfAssessmentSupervisorRoleId: {selfAssessmentSupervisorRoleId}"
+                );
+                return false;
+            }
+            return true;
         }
     }
 }

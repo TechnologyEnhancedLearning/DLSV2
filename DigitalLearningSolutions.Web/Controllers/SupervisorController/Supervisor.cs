@@ -333,16 +333,20 @@
                 SupervisorDelegateDetail = superviseDelegate,
                 DelegateSelfAssessments = delegateSelfAssessments
             };
+
+            // Dictionary to map SupervisorRoleTitle to new titles now or in the future
+            var roleMappings = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase){
+                { "EDUCATOR/MANAGER", "Supervising" },
+                { "SUPERVISOR", "Supervising" },
+                { "ASSESSOR", "Not Supervising" },
+                { "NOMINATED SUPERVISOR", "Not Supervising" }
+            };
             foreach (var item in model.DelegateSelfAssessments)
             {
-                if (item.SupervisorRoleTitle.ToUpper() == "EDUCATOR/MANAGER" || item.SupervisorRoleTitle.ToUpper() == "SUPERVISOR")
-                {
-                    item.SupervisorRoleTitle = "Supervising";
-                }
 
-                if (item.SupervisorRoleTitle.ToUpper() == "ASSESSOR" || item.SupervisorRoleTitle.ToUpper() == "NOMINATED SUPERVISOR")
+                if (roleMappings.ContainsKey(item.SupervisorRoleTitle.ToUpper()))
                 {
-                    item.SupervisorRoleTitle = "Not Supervising";
+                    item.SupervisorRoleTitle = roleMappings[item.SupervisorRoleTitle.ToUpper()];
                 }
             }
             return View("DelegateProfileAssessments", model);
@@ -1649,7 +1653,7 @@
             }
             if (model.SupervisorRoleOptions.SelectedValue == "RemoveAsSupervisor")
             {
-                var removed = supervisorService.RemoveCandidateAssessmentSupervisor(model.CandidateAssessmentID, model.SupervisorDelegateID);
+                supervisorService.RemoveCandidateAssessmentSupervisor(model.SelfAssessmentID, model.SupervisorDelegateID);
             }
             else
             {
@@ -1659,8 +1663,12 @@
 
                 if (selectedRole != null)
                 {
+
+                    // update the candidate assessment supervisor tables with the role selected from the UI
+                    var affected = supervisorService.UpdateCandidateAssessmentSupervisorRoleByIds(model.CandidateAssessmentID, model.SupervisorDelegateID, selectedRole.ID);
                     if (!selectedRole.ResultsReview)
                     {
+                        //fetch the associated selfAssessmentResultSupervisorVerificationsIds and remove them as stated
                         var selfAssessmentVerifications = supervisorService.GetSelfAssessmentResultSupervisorVerifications(model.SupervisorDelegateID, model.SelfAssessmentID);
                         foreach (var verificationId in selfAssessmentVerifications)
                         {
@@ -1670,6 +1678,7 @@
 
                     if (!selectedRole.SelfAssessmentReview)
                     {
+                        //fetch the associated candidateAssessmentSupervisorVerificationsIds and remove them as stated
                         var supervisorVerifications = supervisorService.GetCandidateAssessmentSupervisorVerifications(model.SupervisorDelegateID);
                         foreach (var verificationId in supervisorVerifications)
                         {
