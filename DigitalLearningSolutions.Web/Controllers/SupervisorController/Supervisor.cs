@@ -263,16 +263,6 @@
             return string.Empty;
         }
 
-        public IActionResult ConfirmSupervise(int supervisorDelegateId)
-        {
-            var adminId = GetAdminId();
-            if (supervisorService.ConfirmSupervisorDelegateById(supervisorDelegateId, 0, adminId))
-            {
-                frameworkNotificationService.SendSupervisorDelegateConfirmed(supervisorDelegateId, adminId, 0, GetCentreId());
-            }
-
-            return RedirectToAction("MyStaffList");
-        }
         public IActionResult RemoveSupervisorDelegate()
         {
             return RedirectToAction("MyStaffList");

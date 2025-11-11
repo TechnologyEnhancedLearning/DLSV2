@@ -16,7 +16,6 @@
         void SendReviewRequest(int id, int invitedByAdminId, bool required, bool reminder, int centreId);
         void SendReviewOutcomeNotification(int reviewId, int centreId);
         void SendSupervisorDelegateInvite(int supervisorDelegateId, int adminId, int centreId);
-        void SendSupervisorDelegateConfirmed(int superviseDelegateId, int adminId, int delegateUserId, int centreId);
         void SendSupervisorResultReviewed(int adminId, int supervisorDelegateId, int candidateAssessmentId, int resultId, int centreId);
         void SendSupervisorEnroledDelegate(int adminId, int supervisorDelegateId, int candidateAssessmentId, DateTime? completeByDate, int centreId);
         void SendReminderDelegateSelfAssessment(int adminId, int supervisorDelegateId, int candidateAssessmentId, int centreId);
@@ -225,24 +224,6 @@
                 builder.HtmlBody = $@"<body style= 'font-family: Calibri; font-size: small;'><p>Dear colleague,</p><p>You have been invited to register to access the NHS England, Digital Learning Solutions platform as a supervised delegate by <a href='mailto:{supervisorDelegate.SupervisorEmail}'>{supervisorDelegate.SupervisorName} ({centreName})</a>.</p><p><a href='{dlsUrlBuilder.Uri.ToString()}'>Click here</a> to register and confirm your acceptance of the invite.</p><p>Your supervisor will then be able to assign role profile assessments and view and validate your self assessment results.</p></body>";
                 emailService.SendEmail(new Email(emailSubjectLine, builder, supervisorDelegate.DelegateEmail));
             }
-        }
-
-        public void SendSupervisorDelegateConfirmed(int supervisorDelegateId, int adminId, int delegateUserId, int centreId)
-        {
-            var supervisorDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, adminId, delegateUserId);
-
-            string centreName = GetCentreName(centreId);
-            string emailSubjectLine = "Supervisor Confirmed - Digital Learning Solutions";
-            var builder = new BodyBuilder();
-            builder.TextBody = $@"Dear {supervisorDelegate.FirstName}
-You have been identified as a supervised delegate by {supervisorDelegate.SupervisorName} ({supervisorDelegate.SupervisorEmail}) ({centreName}) in the NHS England, Digital Learning Solutions (DLS) platform.
-
-You are already registered as a delegate at the supervisor's DLS centre so they can now assign competency self assessments and view and validate your self assessment results.
-
-If this looks like a mistake, please contact {supervisorDelegate.SupervisorName} ({supervisorDelegate.SupervisorEmail}) ({centreName}) directly to correct.";
-            builder.HtmlBody = $@"<body style= 'font-family: Calibri; font-size: small;'><p>Dear {supervisorDelegate.FirstName}</p><p>{supervisorDelegate.SupervisorName} ({centreName}) has accepted your request to be your supervisor for profile asessment activities in the NHS England, Digital Learning Solutions platform.</p><p><a href='{GetCurrentActivitiesUrl()}'>Click here</a> to access your role profile assessments.</p></body>";
-            string toEmail = (@adminId == 0 ? supervisorDelegate.DelegateEmail : supervisorDelegate.SupervisorEmail);
-            emailService.SendEmail(new Email(emailSubjectLine, builder, toEmail));
         }
 
         public void SendSupervisorResultReviewed(int adminId, int supervisorDelegateId, int candidateAssessmentId, int resultId, int centreId)
