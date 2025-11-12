@@ -54,7 +54,7 @@ namespace DigitalLearningSolutions.Web.Helpers
             // Define reusable filter checks
             var filterChecks = new Dictionary<SelfAssessmentCompetencyFilter, Func<Competency, bool>>
             {
-                [SelfAssessmentCompetencyFilter.RequiresSelfAssessment] = c => c.AssessmentQuestions.Any(q => q.ResultId == null),
+                [SelfAssessmentCompetencyFilter.RequiresSelfAssessment] = c => c.AssessmentQuestions.Any(q => q.ResultId == null || q.Result == 0),
                 [SelfAssessmentCompetencyFilter.SelfAssessed] = c => c.AssessmentQuestions.Any(q => q.ResultId != null && q.Requested == null && q.SignedOff == null),
                 [SelfAssessmentCompetencyFilter.ConfirmationRequested] = c => c.AssessmentQuestions.Any(q => q.Verified == null && q.Requested != null),
                 [SelfAssessmentCompetencyFilter.ConfirmationRejected] = c => c.AssessmentQuestions.Any(q => q.Verified.HasValue && q.SignedOff != true),
