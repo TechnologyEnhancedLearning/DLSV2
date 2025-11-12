@@ -1,0 +1,54 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Available
+@using Microsoft.Extensions.Configuration
+@model RetirementViewModel;
+@inject IConfiguration Configuration;
+@{
+  var errorHasOccurred = !ViewData.ModelState.IsValid;
+    ViewData["Application"] = "Learning Portal";
+    ViewData["Title"] = "Retirement  Confirmation";
+    ViewData["HeaderPath"] = $"{Configuration["AppRootPath"]}/LearningPortal/Retirement";
+    ViewData["HeaderPathName"] = "Learning Portal";
+}
+
+@section NavMenuItems {
+  <partial name="Shared/_NavMenuItems" />
+}
+<form asp-controller="LearningPortal" asp-action="ConfirmRetirement" method="post">
+  <div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full word-break">
+      @if (errorHasOccurred)
+    {
+      <vc:error-summary order-of-property-names="@(new[] { nameof(Model.ActionConfirmed) })" />
+    }
+    <h1 id="page-heading">Confirm Retirement</h1>
+            <p class="nhsuk-body-m">You are about to enrol on a retiring <strong>@Model.Name</strong> self-assessment.</p>
+            <p class="nhsuk-body-m">     Retirement date:   <strong>@Model.RetirementDate?.ToString("dd MMMM yyyy")</strong>  </p>
+            <p class="nhsuk-body-m">After this date, the <strong>@Model.Name</strong> self-assessment will no longer be accessible.</p>
+
+            <p class="nhsuk-body-m">Please consider:</p>
+            <ul class="nhsuk-list nhsuk-list--bullet">
+            <li>  you may have limited time to complete the self-assessment</li>
+
+          
+            <li>     if you do not complete it before the retirement date, your progress may not be saved</li>
+            </ul>
+            <p class="nhsuk-body-m">To continue, you must acknowledge that you understand the self-assessment is retiring and still wish to enrol.</p>
+           
+           
+            <p class="nhsuk-body-m">
+                <vc:single-checkbox asp-for="@nameof(Model.ActionConfirmed)"
+                                    label="I understand this self-assessment is retiring and still want to enrol."
+                                    hint-text="" />
+            </p>
+            <button type="submit" class="nhsuk-button">Enrol now</button>
+                    <a class="nhsuk-button nhsuk-button--secondary"
+                       role="button"
+                       asp-controller="LearningPortal" asp-action="Available">
+                       Cancel
+                    </a>
+        @Html.HiddenFor(m => m.SelfAssessmentId)
+            @Html.HiddenFor(m => m.RetirementDate)
+  </div>
+</div>
+</form>
+

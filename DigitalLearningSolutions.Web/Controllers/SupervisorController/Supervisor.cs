@@ -27,7 +27,7 @@
 
     public partial class SupervisorController
     {
-        public IActionResult Index()
+        public async Task<IActionResult> IndexAsync()
         {
             var adminId = GetAdminId();
             var dashboardData = supervisorService.GetDashboardDataForAdminId(adminId);
@@ -35,11 +35,15 @@
             var reviewRequests = supervisorService.GetSupervisorDashboardToDoItemsForRequestedReviews(adminId);
             var supervisorDashboardToDoItems = Enumerable.Concat(signOffRequests, reviewRequests);
             var bannerText = GetBannerText();
+            var tableauFlag = await featureManager.IsEnabledAsync(FeatureFlags.TableauSelfAssessmentDashboards);
+            var tableauQueryOverride = string.Equals(Request.Query["tableaulink"], "true", StringComparison.OrdinalIgnoreCase);
+            var showTableauLink = tableauFlag || tableauQueryOverride;
             var model = new SupervisorDashboardViewModel()
             {
                 DashboardData = dashboardData,
                 SupervisorDashboardToDoItems = supervisorDashboardToDoItems,
-                BannerText = bannerText
+                BannerText = bannerText,
+                ShowTableauLink = showTableauLink
             };
             return View(model);
         }
@@ -387,7 +391,7 @@
             foreach (var competency in competencies)
             {
                 competency.CompetencyFlags = flags.Where(f => f.CompetencyId == competency.Id);
-            };
+            }
 
             if (superviseDelegate.DelegateUserID != null)
             {
@@ -781,17 +785,81 @@
                 return View("EnrolDelegateOnProfileAssessment", model);
             }
 
+            if (sessionEnrolOnCompetencyAssessment.SelfAssessmentID != selfAssessmentID)
+                sessionEnrolOnCompetencyAssessment = new SessionEnrolOnCompetencyAssessment();
+
             sessionEnrolOnCompetencyAssessment.SelfAssessmentID = selfAssessmentID;
             multiPageFormService.SetMultiPageFormData(
                 sessionEnrolOnCompetencyAssessment,
                 MultiPageFormDataFeature.EnrolDelegateOnProfileAssessment,
                 TempData
             );
+
+            var retirementDate = selfAssessmentService.GetSelfAssessmentById(selfAssessmentID).RetirementDate;
+            if (CheckRetirementDate(retirementDate))
+            {
+                return RedirectToAction("ConfirmRetiringSelfAssessment", "Supervisor", new { supervisorDelegateId });
+            }
+
             return RedirectToAction(
                 "EnrolDelegateCompleteBy",
                 "Supervisor",
                 new { supervisorDelegateId = supervisorDelegateId }
             );
+        }
+
+        [Route("/Supervisor/Staff/{supervisorDelegateId}/ProfileAssessment/Enrol/Confirm")]
+        public IActionResult ConfirmRetiringSelfAssessment(int supervisorDelegateId)
+        {
+            var sessionEnrolOnRoleProfile = multiPageFormService.GetMultiPageFormData<SessionEnrolOnCompetencyAssessment>(
+                   MultiPageFormDataFeature.EnrolDelegateOnProfileAssessment,
+                   TempData
+                   ).GetAwaiter().GetResult();
+
+            var retirementDate = selfAssessmentService.GetSelfAssessmentById((int)sessionEnrolOnRoleProfile.SelfAssessmentID).RetirementDate;
+            if (!CheckRetirementDate((retirementDate)))
+            {
+                return RedirectToAction("StatusCode", "LearningSolutions", new { code = 410 });
+            }
+            var model = new RetiringSelfAssessmentViewModel()
+            {
+                SelfAssessmentID = (int)sessionEnrolOnRoleProfile.SelfAssessmentID,
+                SupervisorDelegateID = supervisorDelegateId,
+                RetirementDate = retirementDate,
+                ActionConfirmed = sessionEnrolOnRoleProfile.ActionConfirmed
+            };
+            return View("ConfirmRetiringSelfAssessment", model);
+        }
+
+        [HttpPost]
+        [Route("/Supervisor/Staff/{supervisorDelegateId}/ProfileAssessment/Enrol/Confirm")]
+        public IActionResult ConfirmRetiringSelfAssessment(RetiringSelfAssessmentViewModel retiringSelfAssessment)
+        {
+            var sessionEnrolOnRoleProfile = multiPageFormService.GetMultiPageFormData<SessionEnrolOnCompetencyAssessment>(
+                    MultiPageFormDataFeature.EnrolDelegateOnProfileAssessment,
+                    TempData
+                    ).GetAwaiter().GetResult();
+
+            sessionEnrolOnRoleProfile.SelfAssessmentID = retiringSelfAssessment.SelfAssessmentID;
+            sessionEnrolOnRoleProfile.ActionConfirmed = retiringSelfAssessment.ActionConfirmed;
+            multiPageFormService.SetMultiPageFormData(
+                sessionEnrolOnRoleProfile,
+                MultiPageFormDataFeature.EnrolDelegateOnProfileAssessment,
+                TempData
+            );
+
+            if (ModelState.IsValid && retiringSelfAssessment.ActionConfirmed)
+            {
+                return RedirectToAction(
+                    "EnrolDelegateCompleteBy",
+                    "Supervisor",
+                    new { supervisorDelegateId = retiringSelfAssessment.SupervisorDelegateID }
+                );
+            }
+            else
+            {
+                return View("ConfirmRetiringSelfAssessment", retiringSelfAssessment);
+            }
         }
 
         [Route("/Supervisor/Staff/{supervisorDelegateId}/ProfileAssessment/Enrol/CompleteBy")]
@@ -811,6 +879,12 @@
                 MultiPageFormDataFeature.EnrolDelegateOnProfileAssessment,
                 TempData
             );
+
+            var retirementDate = selfAssessmentService.GetSelfAssessmentById((int)sessionEnrolOnCompetencyAssessment.SelfAssessmentID).RetirementDate;
+            if (CheckRetirementDate(retirementDate) && !sessionEnrolOnCompetencyAssessment.ActionConfirmed)
+            {
+                return RedirectToAction("ConfirmRetiringSelfAssessment", "Supervisor", new { supervisorDelegateId });
+            }
             var supervisorDelegate =
                 supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminId(), 0);
             var competencyAssessment = supervisorService.GetCompetencyAssessmentById((int)sessionEnrolOnCompetencyAssessment.SelfAssessmentID);
@@ -818,7 +892,8 @@
             {
                 SupervisorDelegateDetail = supervisorDelegate,
                 CompetencyAssessment = competencyAssessment,
-                CompleteByDate = sessionEnrolOnCompetencyAssessment.CompleteByDate
+                CompleteByDate = sessionEnrolOnCompetencyAssessment.CompleteByDate,
+                ActionConfirmed = sessionEnrolOnCompetencyAssessment.ActionConfirmed
             };
             if (day != null && month != null && year != null)
             {
@@ -853,6 +928,12 @@
                         TempData
                     );
                 }
+
+                sessionEnrolOnCompetencyAssessment.CompleteByDate = new DateTime(year, month, day);
+            }
+            else
+            {
+                sessionEnrolOnCompetencyAssessment.CompleteByDate = null;
             }
 
             var supervisorRoles =
@@ -964,6 +1045,13 @@
                 MultiPageFormDataFeature.EnrolDelegateOnProfileAssessment,
                 TempData
             );
+
+            var retirementDate = selfAssessmentService.GetSelfAssessmentById((int)sessionEnrolOnCompetencyAssessment.SelfAssessmentID).RetirementDate;
+            if (CheckRetirementDate(retirementDate) && !sessionEnrolOnCompetencyAssessment.ActionConfirmed)
+            {
+                return RedirectToAction("ConfirmRetiringSelfAssessment", "Supervisor", new { supervisorDelegateId });
+            }
+
             var supervisorDelegate =
                 supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminId(), 0);
             var competencyAssessment = supervisorService.GetCompetencyAssessmentById((int)sessionEnrolOnCompetencyAssessment.SelfAssessmentID);
@@ -991,6 +1079,7 @@
             ViewBag.completeByMonth = TempData["completeByMonth"];
             ViewBag.completeByYear = TempData["completeByYear"];
             ViewBag.navigatedFrom = TempData["navigatedFrom"];
+            ViewBag.actionConfirmed = sessionEnrolOnCompetencyAssessment.ActionConfirmed;
             return View("EnrolDelegateSummary", model);
         }
 
@@ -1513,6 +1602,15 @@
                 viewResult.View.RenderAsync(viewContext);
                 return sw.GetStringBuilder().ToString();
             }
+        }
+        private bool CheckRetirementDate(DateTime? date)
+        {
+            if (date == null)
+                return false;
+
+            DateTime retirementOffsetDate = DateTime.Today.AddDays(14);
+            DateTime today = DateTime.Today;
+            return (date >= today && date <= retirementOffsetDate);
         }
     }
 }

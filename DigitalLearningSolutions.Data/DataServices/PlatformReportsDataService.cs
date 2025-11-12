@@ -1,10 +1,9 @@
 ﻿namespace DigitalLearningSolutions.Data.DataServices
 {
     using Dapper;
+    using DigitalLearningSolutions.Data.Factories;
     using DigitalLearningSolutions.Data.Models.PlatformReports;
-    using DigitalLearningSolutions.Data.Models.SelfAssessments;
     using DigitalLearningSolutions.Data.Models.TrackingSystem;
-    using Microsoft.Extensions.Logging;
     using System;
     using System.Collections.Generic;
     using System.Data;
@@ -37,9 +36,9 @@
         );
         DateTime? GetStartOfCourseActivity();
     }
-    public class PlatformReportsDataService : IPlatformReportsDataService
+    public class PlatformReportsDataService(IReadOnlyDbConnectionFactory factory) : IPlatformReportsDataService
     {
-        private readonly IDbConnection connection;
+        private readonly IDbConnection connection = factory.CreateConnection();
         private readonly string selectSelfAssessmentActivity = @"SELECT Cast(al.ActivityDate As Date) As ActivityDate, SUM(CAST(al.Enrolled AS Int)) AS Enrolled, SUM(CAST((al.Submitted | al.SignedOff) AS Int)) AS Completed
                                                                     FROM   ReportSelfAssessmentActivityLog AS al WITH (NOLOCK) INNER JOIN
                                                                                      Centres AS ce WITH (NOLOCK) ON al.CentreID = ce.CentreID INNER JOIN
@@ -60,10 +59,6 @@
             return supervised ? " (sa.SupervisorResultsReview = 1 OR SupervisorSelfAssessmentReview = 1)" : " (sa.SupervisorResultsReview = 0 AND SupervisorSelfAssessmentReview = 0)";
         }
 
-        public PlatformReportsDataService(IDbConnection connection)
-        {
-            this.connection = connection;
-        }
         public PlatformUsageSummary GetPlatformUsageSummary()
         {
             return connection.QueryFirstOrDefault<PlatformUsageSummary>(

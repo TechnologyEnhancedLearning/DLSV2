@@ -16,6 +16,8 @@
     {
         //Self Assessments
         string? GetSelfAssessmentNameById(int selfAssessmentId);
+        SelfAssessment? GetSelfAssessmentById(int selfAssessmentId);
+        SelfAssessment GetSelfAssessmentRetirementDateById(int selfAssessmentId);
 
         // CompetencyDataService
         IEnumerable<int> GetCompetencyIdsForSelfAssessment(int selfAssessmentId);
@@ -89,6 +91,7 @@
 
         void SetBookmark(int selfAssessmentId, int delegateUserId, string bookmark);
 
+        void MarkProgressAgreed(int selfAssessmentId, int delegateUserId);
         IEnumerable<CandidateAssessment> GetCandidateAssessments(int delegateUserId, int selfAssessmentId);
 
         // SelfAssessmentSupervisorDataService
@@ -204,6 +207,67 @@
             return name;
         }
 
+        public SelfAssessment? GetSelfAssessmentById(int selfAssessmentId)
+        {
+            return connection.Query<SelfAssessment?>(
+                @"SELECT [ID]
+                      ,[Name]
+                      ,[Description]
+                      ,[IncludesSignposting]
+                      ,[BrandID]
+                      ,[CreatedDate]
+                      ,[CreatedByCentreID]
+                      ,[CreatedByAdminID]
+                      ,[ArchivedDate]
+                      ,[ArchivedByAdminID]
+                      ,[IncludeDevelopment]
+                      ,[ParentSelfAssessmentID]
+                      ,[NRPProfessionalGroupID]
+                      ,[NRPSubGroupID]
+                      ,[NRPRoleID]
+                      ,[PublishStatusID]
+                      ,[UpdatedByAdminID]
+                      ,[National]
+                      ,[Public]
+                      ,[Archived]
+                      ,[LastEdit]
+                      ,[SupervisorSelfAssessmentReview]
+                      ,[SupervisorResultsReview]
+                      ,[RAGResults]
+                      ,[LinearNavigation]
+                      ,[CategoryID]
+                      ,[UseDescriptionExpanders]
+                      ,[ManageOptionalCompetenciesPrompt]
+                      ,[Vocabulary]
+                      ,[SignOffRequestorStatement]
+                      ,[SignOffSupervisorStatement]
+                      ,[QuestionLabel]
+                      ,[DescriptionLabel]
+                      ,[EnforceRoleRequirementsForSignOff]
+                      ,[ReviewerCommentsLabel]
+                      ,[ManageSupervisorsDescription]
+                      ,[IncludeRequirementsFilters]
+                      ,[MinimumOptionalCompetencies]
+                      ,[RetirementDate]
+                      ,[EnrolmentCutoffDate]
+                      ,[RetirementReason]
+                FROM SelfAssessments
+                WHERE ID = @selfAssessmentId",
+                new { selfAssessmentId }
+            ).SingleOrDefault();
+        }
+        public SelfAssessment GetSelfAssessmentRetirementDateById(int selfAssessmentId)
+        {
+            var date = connection.QueryFirstOrDefault<SelfAssessment>(
+                @"SELECT Id,Name,[RetirementDate]
+                        FROM SelfAssessments
+                        WHERE ID = @selfAssessmentId"
+            ,
+                new { selfAssessmentId }
+            );
+            return date;
+        }
+
         public (IEnumerable<SelfAssessmentDelegate>, int) GetSelfAssessmentDelegates(string searchString, int offSet, int itemsPerPage, string sortBy, string sortDirection,
             int? selfAssessmentId, int centreId, bool? isDelegateActive, bool? removed, bool? submitted, bool? signedOff)
         {
@@ -232,7 +296,12 @@
                 COALESCE(ucd.Email, u.PrimaryEmail) AS DelegateEmail,
                 da.Active AS IsDelegateActive,
                 sa.Name AS [Name],
-                MAX(casv.Verified) as SignedOff,
+                CASE 
+					WHEN MAX(sar.[DateTime]) >= MAX(casv.Verified) THEN NULL
+					ELSE (
+							MAX(casv.Verified)
+						)
+					END AS SignedOff,
 				sa.SupervisorSelfAssessmentReview,
 				sa.SupervisorResultsReview";
 
@@ -247,6 +316,8 @@
                 LEFT JOIN dbo.CandidateAssessmentSupervisors AS cas WITH (NOLOCK) ON ca.ID = cas.CandidateAssessmentID
                 LEFT JOIN dbo.CandidateAssessmentSupervisorVerifications AS casv WITH (NOLOCK) ON cas.ID = casv.CandidateAssessmentSupervisorID AND
                 (casv.Verified IS NOT NULL AND casv.SignedOff = 1)
+                LEFT JOIN SelfAssessmentResults AS sar ON ca.SelfAssessmentID = sar.SelfAssessmentID AND
+                        ca.DelegateUserID = sar.DelegateUserID
 
                 WHERE sa.ID = @selfAssessmentId 
                 AND da.CentreID = @centreID AND csa.CentreID = @centreID
@@ -285,7 +356,8 @@
 
             if (signedOff != null)
             {
-                groupBy += (bool)signedOff ? " HAVING MAX(casv.Verified) IS NOT NULL " : " HAVING MAX(casv.Verified) IS NULL ";
+                groupBy += (bool)signedOff ? " HAVING MAX(sar.[DateTime]) <  MAX(casv.Verified) AND MAX(casv.Verified) IS NOT NULL " :
+                        " HAVING MAX(sar.[DateTime]) >= MAX(casv.Verified) OR MAX(casv.Verified) IS NULL ";
             }
 
             string orderBy;

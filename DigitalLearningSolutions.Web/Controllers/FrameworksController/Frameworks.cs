@@ -723,9 +723,9 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
                     model.TabNavLinks = new TabsNavViewModel(FrameworkTab.Details, routeData);
                     break;
                 case "Structure":
-                    model.FrameworkCompetencyGroups = frameworkService.GetFrameworkCompetencyGroups(frameworkId).ToList();
+                    model.FrameworkCompetencyGroups = frameworkService.GetFrameworkCompetencyGroups(frameworkId, null).ToList();
                     model.CompetencyFlags = frameworkService.GetCompetencyFlagsByFrameworkId(frameworkId, null, selected: true);
-                    model.FrameworkCompetencies = frameworkService.GetFrameworkCompetenciesUngrouped(frameworkId);
+                    model.FrameworkCompetencies = frameworkService.GetFrameworkCompetenciesUngrouped(frameworkId, null);
                     model.TabNavLinks = new TabsNavViewModel(FrameworkTab.Structure, routeData);
                     break;
                 case "Comments":
@@ -746,9 +746,9 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             {
                 DetailFramework = detailFramework,
             };
-            model.FrameworkCompetencyGroups = frameworkService.GetFrameworkCompetencyGroups(frameworkId).ToList();
+            model.FrameworkCompetencyGroups = frameworkService.GetFrameworkCompetencyGroups(frameworkId, null).ToList();
             model.CompetencyFlags = frameworkService.GetCompetencyFlagsByFrameworkId(frameworkId, null, selected: true);
-            model.FrameworkCompetencies = frameworkService.GetFrameworkCompetenciesUngrouped(frameworkId);
+            model.FrameworkCompetencies = frameworkService.GetFrameworkCompetenciesUngrouped(frameworkId, null);
             return View("Developer/FrameworkPrintLayout", model);
         }
         [ResponseCache(CacheProfileName = "Never")]

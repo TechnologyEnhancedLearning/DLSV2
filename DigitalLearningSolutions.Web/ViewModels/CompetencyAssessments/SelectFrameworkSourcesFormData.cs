@@ -3,7 +3,7 @@
     using System.ComponentModel.DataAnnotations;
     public class SelectFrameworkSourcesFormData
     {
-        [Required]
+        [Required(ErrorMessage = "Select a framework")]
         public int FrameworkId { get; set; }
         public int CompetencyAssessmentId { get; set; }
         public bool? TaskStatus { get; set; }
