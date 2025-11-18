@@ -72,25 +72,19 @@ if (bfield) wireClearOnInput(bfield);
 if (cfield) wireClearOnInput(cfield);
 if (tfield) wireClearOnInput(tfield);
 
-
 form.addEventListener("submit", (e: Event) => {
-  const fields = [
+  [
     { el: bfield, msg: "Please enter a valid brand." },
     { el: cfield, msg: "Please enter a valid category." },
     { el: tfield, msg: "Please enter a valid topic." }
-  ];
-
-  for (const f of fields) {
-    if (f.el.required) {
-      if (!f.el.value.trim()) {
-        e.preventDefault();
-        f.el.setCustomValidity(f.msg);
-        f.el.reportValidity();
-        f.el.focus();
-        return;
-      } else {
-        f.el.setCustomValidity("");
-      }
+  ].forEach(f => {
+    if (f.el.required && !f.el.value.trim()) {
+      e.preventDefault();
+      f.el.setCustomValidity(f.msg);
+      f.el.reportValidity();
+      f.el.focus();
+    } else {
+      f.el.setCustomValidity("");
     }
-  }
+  });
 });
