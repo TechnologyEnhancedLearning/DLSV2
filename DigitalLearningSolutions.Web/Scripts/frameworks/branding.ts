@@ -50,27 +50,34 @@ function topicChanged() {
   if (style === 'block') {
     tb.value = '';
     tb.required = true;
+    tb.setCustomValidity("");
     tb.focus();
   } else {
+    tb.value = "";
+    tb.setCustomValidity("");
     tb.required = false;
   }
 }
 const form = document.querySelector("form") as HTMLFormElement;
 const bfield = <HTMLInputElement>document.getElementById('brand-field');
 const cfield = <HTMLInputElement>document.getElementById('category-field');
+const tfield = <HTMLInputElement>document.getElementById('topic-field');
 function wireClearOnInput(input: HTMLInputElement) {
   input.addEventListener("input", () => {
     input.setCustomValidity("");
   });
 }
 
-wireClearOnInput(bfield);
-wireClearOnInput(cfield);
+if (bfield) wireClearOnInput(bfield);
+if (cfield) wireClearOnInput(cfield);
+if (tfield) wireClearOnInput(tfield);
+
 
 form.addEventListener("submit", (e: Event) => {
   const fields = [
     { el: bfield, msg: "Please enter a valid brand." },
-    { el: cfield, msg: "Please enter a valid category." }
+    { el: cfield, msg: "Please enter a valid category." },
+    { el: tfield, msg: "Please enter a valid topic." }
   ];
 
   for (const f of fields) {
