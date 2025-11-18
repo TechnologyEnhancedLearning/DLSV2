@@ -10,8 +10,11 @@ function brandChanged() {
   if (style === 'block') {
     tb.value = '';
     tb.required = true;
+    tb.setCustomValidity("");
     tb.focus();
   } else {
+    tb.value = "";
+    tb.setCustomValidity("");
     tb.required = false;
   }
 }
@@ -27,8 +30,11 @@ function categoryChanged() {
   if (style === 'block') {
     tb.value = '';
     tb.required = true;
+    tb.setCustomValidity("");
     tb.focus();
   } else {
+    tb.value = "";
+    tb.setCustomValidity("");
     tb.required = false;
   }
 }
@@ -49,3 +55,35 @@ function topicChanged() {
     tb.required = false;
   }
 }
+const form = document.querySelector("form") as HTMLFormElement;
+const bfield = <HTMLInputElement>document.getElementById('brand-field');
+const cfield = <HTMLInputElement>document.getElementById('category-field');
+function wireClearOnInput(input: HTMLInputElement) {
+  input.addEventListener("input", () => {
+    input.setCustomValidity("");
+  });
+}
+
+wireClearOnInput(bfield);
+wireClearOnInput(cfield);
+
+form.addEventListener("submit", (e: Event) => {
+  const fields = [
+    { el: bfield, msg: "Please enter a valid brand." },
+    { el: cfield, msg: "Please enter a valid category." }
+  ];
+
+  for (const f of fields) {
+    if (f.el.required) {
+      if (!f.el.value.trim()) {
+        e.preventDefault();
+        f.el.setCustomValidity(f.msg);
+        f.el.reportValidity();
+        f.el.focus();
+        return;
+      } else {
+        f.el.setCustomValidity("");
+      }
+    }
+  }
+});
