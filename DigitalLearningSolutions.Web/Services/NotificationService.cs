@@ -159,7 +159,11 @@
                     " Note: This message has been copied to the administrator(s) managing this activity, for their information.";
             }
 
-            const string emailSubjectLine = "Digital Learning Solutions Activity Complete";
+            string courseName = progressCompletionData.CourseName.Length > 30
+                                ? progressCompletionData.CourseName.Substring(0, 30)
+                                : progressCompletionData.CourseName;
+
+            string emailSubjectLine = $"Digital Learning Solutions Activity Complete - {courseName}";
             var delegateNameOrGenericTitle = progress.DelegateFirstName ?? "Digital Learning Solutions Delegate";
             var emailsToCc = GetEmailsToCc(
                 progressCompletionData.AdminId,
