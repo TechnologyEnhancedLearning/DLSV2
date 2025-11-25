@@ -608,6 +608,33 @@
             competencyAssessmentService.RemoveCompetencyFromAssessment(competencyAssessmentId, competencyId);
             return RedirectToAction("ViewSelectedCompetencies", new { competencyAssessmentId });
         }
+
+        [Route("/CompetencyAssessments/{competencyAssessmentId}/CompetencyGroup/Delete/{competencyGroupId}/{competencyCount}/Confirm")]
+        public IActionResult DeleteCompetencyGroupConfirm(int competencyAssessmentId, int competencyGroupId, int competencyCount)
+        {
+            var adminId = GetAdminID();
+            CompetencyAssessmentBase? competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
+            if (competencyAssessmentBase == null)
+            {
+                logger.LogWarning($"Failed to load DeleteCompetencyGroupConfirm page for competencyAssessmentId: {competencyAssessmentId} adminId: {adminId}");
+                return StatusCode(500);
+            }
+            if (competencyAssessmentBase.UserRole < 2)
+            {
+                return StatusCode(403);
+            }
+            var model = new CompetencyGroupDeleteViewModel(competencyAssessmentId, competencyGroupId, competencyCount, competencyAssessmentBase.Vocabulary);
+
+            return View("RemoveCompetencyGroupConfirm", model);
+        }
+
+        public IActionResult DeleteCompetencyGroup(int competencyAssessmentId, int competencyGroupId)
+        {
+            competencyAssessmentService.RemoveCompetencyGroupFromAssessment(competencyAssessmentId, competencyGroupId);
+            return RedirectToAction("ViewSelectedCompetencies", new { competencyAssessmentId });
+        }
+
+
         public IActionResult MoveCompetencyInSelfAssessment(int competencyAssessmentId, int competencyId, string direction)
         {
             var adminId = GetAdminID();
@@ -712,11 +739,11 @@
         [Route("/CompetencyAssessments/{competencyAssessmentId}/Frameworks/{frameworkId}/Make")]
         public IActionResult ConfirmMaKePrimaryFramework(int frameworkId, int competencyAssessmentId)
         {
-                var adminId = GetAdminID();
-                var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
-                var framework = frameworkService.GetFrameworkDetailByFrameworkId(frameworkId, adminId);
-                var model = new ConfirmMakePrimaryFrameworkViewModel(competencyAssessmentBase, framework);
-                return View("ConfirmMaKePrimaryFramework", model);
+            var adminId = GetAdminID();
+            var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
+            var framework = frameworkService.GetFrameworkDetailByFrameworkId(frameworkId, adminId);
+            var model = new ConfirmMakePrimaryFrameworkViewModel(competencyAssessmentBase, framework);
+            return View("ConfirmMaKePrimaryFramework", model);
         }
         [HttpPost]
         [Route("/CompetencyAssessments/{competencyAssessmentId}/Frameworks/{frameworkId}/Make")]

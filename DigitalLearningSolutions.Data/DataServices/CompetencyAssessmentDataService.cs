@@ -80,6 +80,7 @@
         //DELETE DATA
         bool RemoveFrameworkCompetenciesFromAssessment(int competencyAssessmentId, int frameworkId);
         bool RemoveCompetencyFromAssessment(int competencyAssessmentId, int competencyId);
+        bool RemoveCompetencyGroupFromAssessment(int competencyAssessmentId, int competencyGroupId);
         IEnumerable<CompetencyAssessmentCollaboratorDetail> GetCollaboratorsForCompetencyAssessmentId(int competencyAssessmentId);
         int AddCollaboratorToCompetencyAssessment(int competencyAssessmentId, string? userEmail, bool canModify, int? centreID);
         void RemoveCollaboratorFromCompetencyAssessment(int competencyAssessmentId, int id);
@@ -676,7 +677,7 @@
             return connection.Query<Competency>(
                @"SELECT sas.ID AS StructureId, sas.CompetencyID, f.ID AS FrameworkId, f.FrameworkName, cg.ID AS GroupId, cg.Name AS GroupName, c.Name AS CompetencyName, c.Description AS CompetencyDescription, sas.Optional
                     FROM   SelfAssessmentStructure AS sas INNER JOIN
-                                Competencies AS c ON sas.CompetencyID = c.ID INNER JOIN
+                                Competencies AS c ON sas.CompetencyID = c.ID LEFT JOIN
                                 CompetencyGroups AS cg ON sas.CompetencyGroupID = cg.ID INNER JOIN
                                 FrameworkCompetencies ON c.ID = FrameworkCompetencies.CompetencyID INNER JOIN
                                 Frameworks AS f ON FrameworkCompetencies.FrameworkID = f.ID INNER JOIN
@@ -719,6 +720,7 @@
 
         public bool InsertCompetenciesIntoAssessmentFromFramework(int[] selectedCompetencyIds, int frameworkId, int competencyAssessmentId)
         {
+
             var currentMaxOrdering = connection.ExecuteScalar<int>(
                 @"SELECT ISNULL(MAX(Ordering), 0) FROM SelfAssessmentStructure WHERE SelfAssessmentID = @competencyAssessmentId",
                 new { competencyAssessmentId }
@@ -731,7 +733,7 @@
                         ROW_NUMBER() OVER (ORDER BY FCG.Ordering, FC.Ordering) + @currentMaxOrdering,
                         FCG.CompetencyGroupID
                     FROM FrameworkCompetencies AS FC
-                    INNER JOIN FrameworkCompetencyGroups AS FCG ON FC.FrameworkCompetencyGroupID = FCG.ID
+                    LEFT JOIN FrameworkCompetencyGroups AS FCG ON FC.FrameworkCompetencyGroupID = FCG.ID
                     WHERE FC.FrameworkID = @frameworkId
                     AND FC.CompetencyID IN @selectedCompetencyIds AND FC.CompetencyID NOT IN (SELECT CompetencyID FROM SelfAssessmentStructure WHERE SelfAssessmentID = @competencyAssessmentId)",
                new { selectedCompetencyIds, frameworkId, competencyAssessmentId, currentMaxOrdering }
@@ -758,6 +760,24 @@
                 logger.LogWarning(
                     "Not removing competency from assessment as db update failed. " +
                     $"assessmentId: {competencyAssessmentId}, competencyId: {competencyId}"
+                );
+                return false;
+            }
+            return true;
+        }
+
+        public bool RemoveCompetencyGroupFromAssessment(int competencyAssessmentId, int competencyGroupId)
+        {
+            var numberOfAffectedRows = connection.Execute(
+                @"DELETE FROM SelfAssessmentStructure
+                    WHERE SelfAssessmentID = @competencyAssessmentId AND CompetencyGroupId = @competencyGroupId",
+                new { competencyAssessmentId, competencyGroupId }
+            );
+            if (numberOfAffectedRows < 1)
+            {
+                logger.LogWarning(
+                    "Not removing competency from assessment as db update failed. " +
+                    $"assessmentId: {competencyAssessmentId}, competencyGroupId: {competencyGroupId}"
                 );
                 return false;
             }
@@ -879,43 +899,43 @@
 
             return true;
         }
-       
+
         public bool UpdatePrimaryFrameworkCompetencies(int assessmentId, int frameworkId)
         {
             connection.EnsureOpen();
             using (var transaction = connection.BeginTransaction())
             {
-                    var numberOfAffectedRows = connection.Execute(
-                        @"UPDATE SelfAssessmentFrameworks 
+                var numberOfAffectedRows = connection.Execute(
+                    @"UPDATE SelfAssessmentFrameworks 
                   SET IsPrimary = 0  
                   WHERE (SelfAssessmentId = @assessmentId) 
                     AND (RemovedDate IS NULL)",
-                        new { assessmentId },
-                        transaction: transaction
-                    );
+                    new { assessmentId },
+                    transaction: transaction
+                );
 
-                    var numberOfAffectedRow = connection.Execute(
-                        @"UPDATE SelfAssessmentFrameworks 
+                var numberOfAffectedRow = connection.Execute(
+                    @"UPDATE SelfAssessmentFrameworks 
                   SET IsPrimary = 1  
                   WHERE (SelfAssessmentId = @assessmentId) 
                     AND (FrameworkId = @frameworkId) 
                     AND (RemovedDate IS NULL)",
-                        new { assessmentId, frameworkId },
-                        transaction: transaction
+                    new { assessmentId, frameworkId },
+                    transaction: transaction
+                );
+
+                if ((numberOfAffectedRow < 1) || (numberOfAffectedRows < 1))
+                {
+                    logger.LogWarning(
+                        "Not updating SelfAssessmentFrameworks as db update failed. " +
+                        $"assessmentId: {assessmentId}, frameworkId: {frameworkId}"
                     );
+                    transaction.Rollback();
+                    return false;
+                }
 
-                    if ((numberOfAffectedRow < 1) || (numberOfAffectedRows < 1))
-                    {
-                        logger.LogWarning(
-                            "Not updating SelfAssessmentFrameworks as db update failed. " +
-                            $"assessmentId: {assessmentId}, frameworkId: {frameworkId}"
-                        );
-                        transaction.Rollback();
-                        return false;
-                    }
-
-                    transaction.Commit();
-                    return true;
+                transaction.Commit();
+                return true;
             }
         }
         public int? GetSelfAssessmentStructure(int competencyAssessmentId)
