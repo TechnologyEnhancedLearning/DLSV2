@@ -18,13 +18,18 @@
         public string? Owner { get; set; }
         public DateTime? Archived { get; set; }
         public DateTime LastEdit { get; set; }
-        public string? LinkedFrameworks { get; set; }
+        public string LinkedFrameworks
+        {
+            get => linkedFrameworks ?? "None";
+            set => linkedFrameworks = value;
+        }
         public string? NRPProfessionalGroup { get; set; }
         public string? NRPSubGroup { get; set; }
         public string? NRPRole { get; set; }
         public int? CompetencyAssessmentReviewID { get; set; }
         private string? brand;
         private string? category;
+        private string? linkedFrameworks;
         private static string? GetValidOrNull(string? toValidate)
         {
             return toValidate != null && toValidate.ToLower() == "undefined" ? null : toValidate;
