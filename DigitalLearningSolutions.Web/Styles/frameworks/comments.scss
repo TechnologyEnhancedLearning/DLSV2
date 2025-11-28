@@ -1,15 +1,15 @@
-﻿@use "nhse-tel-frontend/packages/core/all" as *;
+﻿@use "nhsuk-frontend/dist/nhsuk/core/all" as *;
 
 .nhsuk-card.comment {
   border-width: medium;
 }
 
 .nhsuk-card.comment.comment-mine {
-  border-color: $color_nhsuk-green;
+  border-color: nhsuk-colour("green");
 }
 
 .nhsuk-card.comment.comment-other {
-  border-color: $color_nhsuk-blue;
+  border-color: nhsuk-colour("blue");
 }
 
 .heading-xxs {
@@ -18,7 +18,7 @@
 
 .heading-light {
   font-weight: 200;
-  color: $color_nhsuk-grey-1;
+  color: nhsuk-colour("grey-1");
 }
 
 .grid-column-ninety {

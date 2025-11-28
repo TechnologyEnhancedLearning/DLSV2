@@ -1,4 +1,3 @@
-import Details from 'nhse-tel-frontend/packages/components/details/details';
 import _ from 'lodash';
 import {
   setUpFilter, filterSearchableElements, IAppliedFilterTag,
@@ -235,8 +234,6 @@ export class SearchSortFilterAndPaginate {
     searchableElements.forEach(
       (searchableElement) => searchableElementsContainer.appendChild(searchableElement.element),
     );
-    // This is required to polyfill the new elements in IE
-    Details();
   }
 
   updateResultCountAndPageNumber(count: number): void {

@@ -26,37 +26,35 @@
     <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
         <div class="nhsuk-width-container">
             <ol class="nhsuk-breadcrumb__list">
-                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Supervisor" asp-action="Index">Supervisor</a></li>
-                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Supervisor" asp-action="MyStaffList">My Staff</a></li>
-                <li class="nhsuk-breadcrumb__item">
+                <li class="nhsuk-breadcrumb__list-item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Supervisor" asp-action="Index">Supervisor</a></li>
+                <li class="nhsuk-breadcrumb__list-item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Supervisor" asp-action="MyStaffList">My Staff</a></li>
+                <li class="nhsuk-breadcrumb__list-item">
                     <a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Supervisor"
                        asp-action="DelegateProfileAssessments"
                        asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]">
                         @Model.SupervisorDelegateDetail.FirstName @Model.SupervisorDelegateDetail.LastName
                     </a>
                 </li>
-                <li class="nhsuk-breadcrumb__item">
+                <li class="nhsuk-breadcrumb__list-item">
                     @(Model.DelegateSelfAssessment.RoleName.Length > 35 ? Model.DelegateSelfAssessment.RoleName.Substring(0, 32) + "..." : Model.DelegateSelfAssessment.RoleName)
                 </li>
             </ol>
         </div>
-        <p class="nhsuk-breadcrumb__back">
-            @if (ViewBag.navigatedFrom)
-            {
-                <a class="nhsuk-breadcrumb__backlink" asp-controller="Supervisor"
-                   asp-action="Index">
-                    Back to Supervisor Dashboard
-                </a>
-            }
-            else
-            {
-                <a class="nhsuk-breadcrumb__backlink" asp-controller="Supervisor"
-                   asp-action="DelegateProfileAssessments"
-                   asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]">
-                    Back to @Model.SupervisorDelegateDetail.FirstName @Model.SupervisorDelegateDetail.LastName
-                </a>
-            }
-        </p>
+        @if (ViewBag.navigatedFrom)
+        {
+            <a class="nhsuk-back-link" asp-controller="Supervisor"
+                asp-action="Index">
+                Back to Supervisor Dashboard
+            </a>
+        }
+        else
+        {
+            <a class="nhsuk-back-link" asp-controller="Supervisor"
+                asp-action="DelegateProfileAssessments"
+                asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]">
+                Back to @Model.SupervisorDelegateDetail.FirstName @Model.SupervisorDelegateDetail.LastName
+            </a>
+        }
     </nav>
 }
 <details class="nhsuk-details nhsuk-expander">

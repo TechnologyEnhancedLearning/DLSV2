@@ -43,7 +43,7 @@
 
                     @if (Model.Options.Count > 0)
                     {
-                        <div class="nhsuk-radios nhsuk-u-margin-bottom-4">
+                        <div class="nhsuk-radios nhsuk-u-margin-bottom-4" data-module="nhsuk-radios">
                             @foreach (var (radio, index) in Model.Radios.Select((r, i) => (r, i)))
                             {
                                 var isBlankOption = radio.Value == string.Empty;

@@ -24,7 +24,7 @@
       <div class="nhsuk-form-group">
         <fieldset class="nhsuk-fieldset" aria-describedby="set-course-content-hint">
 
-          <div class="nhsuk-radios nhsuk-radios--conditional">
+            <div class="nhsuk-radios nhsuk-radios--conditional" data-module="nhsuk-radios">
 
             <div class="nhsuk-radios__item nhsuk-u-margin-bottom-3">
               <input class="nhsuk-radios__input"
@@ -51,7 +51,7 @@
             </div>
 
             <div class="nhsuk-form-group @selectSectionsCss" id="@chooseSectionsId">
-              <div class="nhsuk-checkboxes">
+                <div class="nhsuk-checkboxes" data-module="nhsuk-checkboxes">
                 @foreach (var (sectionModel, sectionIndex) in Model.AvailableSections.Select((s, i) => (s, i)))
                 {
                   <input type="hidden" name="@($"{nameof(Model.AvailableSections)}[{sectionIndex}].{nameof(sectionModel.SectionId)}")" value="@sectionModel.SectionId" />

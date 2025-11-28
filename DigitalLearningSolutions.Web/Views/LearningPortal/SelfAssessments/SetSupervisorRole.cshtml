@@ -7,28 +7,24 @@
     ViewData["SelfAssessmentTitle"] = @Model.SelfAssessmentName;
 }
 @section breadcrumbs {
-    <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="SelfAssessment" asp-route-selfAssessmentId="@Model.SelfAssessmentID">@(Model.SelfAssessmentName) introduction</a></li>
-    <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link" asp-action="ManageSupervisors" asp-route-selfAssessmentId="@Model.SelfAssessmentID">Manage Supervisors menu</a></li>
-    <li class="nhsuk-breadcrumb__item">Add</li>
+    <li class="nhsuk-breadcrumb__list-item"><a class="nhsuk-breadcrumb__link" asp-action="SelfAssessment" asp-route-selfAssessmentId="@Model.SelfAssessmentID">@(Model.SelfAssessmentName) introduction</a></li>
+    <li class="nhsuk-breadcrumb__list-item"><a class="nhsuk-breadcrumb__link" asp-action="ManageSupervisors" asp-route-selfAssessmentId="@Model.SelfAssessmentID">Manage Supervisors menu</a></li>
+    <li class="nhsuk-breadcrumb__list-item">Add</li>
 }
 @section mobilebacklink
     {
     @if (ViewBag.AddNewSupervisor != null)
     {
-        <p class="nhsuk-breadcrumb__back">
-            <a class="nhsuk-breadcrumb__backlink" asp-route-selfAssessmentId="@Model.SelfAssessmentID" asp-action="AddNewSupervisor">
-                Back to Choose a supervisor
-            </a>
-        </p>
+        <a class="nhsuk-back-link" asp-route-selfAssessmentId="@Model.SelfAssessmentID" asp-action="AddNewSupervisor">
+            Back to Choose a supervisor
+        </a>
     }
     else
     {
-        <p class="nhsuk-breadcrumb__back">
-            <a class="nhsuk-breadcrumb__backlink" asp-action="ManageSupervisors"
-       asp-route-selfAssessmentId="@Model.SelfAssessmentID" asp-route-searchString=@TempData["SearchString"]>
-                Back to Manage Supervisors
-            </a>
-        </p>
+        <a class="nhsuk-back-link" asp-action="ManageSupervisors"
+    asp-route-selfAssessmentId="@Model.SelfAssessmentID" asp-route-searchString=@TempData["SearchString"]>
+            Back to Manage Supervisors
+        </a>
     }
 }
 <h1 class="">
@@ -51,7 +47,7 @@
             <input type="hidden" asp-for="SelfAssessmentID" value="@Model.SupervisorDelegateId" />
             <input type="hidden" asp-for="SelfAssessmentName" value="@Model.SelfAssessmentName" />
             <input type="hidden" asp-for="CentreID" value="@Model.CentreID" />
-            <div class="nhsuk-radios">
+            <div class="nhsuk-radios" data-module="nhsuk-radios">
                 @foreach (var role in Model.SelfAssessmentSupervisorRoles)
                 {
                     <div class="nhsuk-radios__item">
@@ -83,7 +79,7 @@
     </div>
 
 </form>
-<div class="nhsuk-back-link">
+<div class="nhsuk-link">
     <a class="nhsuk-back-link__link"
        asp-action="ManageSupervisors"
        asp-route-selfAssessmentId="@ViewContext.RouteData.Values["selfAssessmentId"]">

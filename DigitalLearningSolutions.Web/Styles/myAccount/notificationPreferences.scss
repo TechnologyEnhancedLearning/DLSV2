@@ -1,4 +1,4 @@
-﻿@use "nhse-tel-frontend/packages/core/all" as *;
+﻿@use "nhsuk-frontend/dist/nhsuk/core/all" as *;
 
 .top-spaced-goback {
   margin-top: 32px;
@@ -9,7 +9,7 @@
 }
 
 .preference-row {
-  border-bottom: 1px solid $color_nhsuk-grey-4;
+  border-bottom: 1px solid nhsuk-colour("grey-4");
   margin-top: 24px;
 }
 

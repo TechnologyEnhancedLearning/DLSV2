@@ -50,7 +50,7 @@
                     <p>Select one option</p>
                 </div>
                 <div class="@radioListErrorClass">
-                    <div class="nhsuk-radios nhsuk-radios--conditional">
+                    <div class="nhsuk-radios nhsuk-radios--conditional" data-module="nhsuk-radios">
                 @if (!ViewData.ModelState.IsValid && Model.AddToGroupOption == null)
                 {
                             <span class="nhsuk-error-message" id="radio-list-error">

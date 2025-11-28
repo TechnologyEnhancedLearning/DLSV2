@@ -256,12 +256,12 @@
     "@babel/traverse" "^7.27.1"
     "@babel/types" "^7.27.1"
 
-"@babel/helper-string-parser@^7.27.1":
+"@babel/helper-string-parser@^7.25.9", "@babel/helper-string-parser@^7.27.1":
   version "7.27.1"
   resolved "https://registry.yarnpkg.com/@babel/helper-string-parser/-/helper-string-parser-7.27.1.tgz#54da796097ab19ce67ed9f88b47bb2ec49367687"
   integrity sha512-qMlSxKbpRlAridDExk92nSobyDdpPijUq2DW6oDnUqd0iOGxmQjyqhMIihI9+zv4LPyZdRje2cavWPbCbWm3eA==
 
-"@babel/helper-validator-identifier@^7.27.1":
+"@babel/helper-validator-identifier@^7.25.9", "@babel/helper-validator-identifier@^7.27.1":
   version "7.27.1"
   resolved "https://registry.yarnpkg.com/@babel/helper-validator-identifier/-/helper-validator-identifier-7.27.1.tgz#a7054dcc145a967dd4dc8fee845a57c1316c9df8"
   integrity sha512-D2hP9eA+Sqx1kBZgzxZh0y1trbuU+JoDkiEwqhQ36nodYqJwyEIhPSdMNd7lOm/4io72luTPWH20Yda0xOuUow==
@@ -294,6 +294,13 @@
   integrity sha512-7+Ey1mAgYqFAx2h0RuoxcQT5+MlG3GTV0TQrgr7/ZliKsm/MNDxVVutlWaziMq7wJNAz8MTqz55XLpWvva6StA==
   dependencies:
     "@babel/types" "^7.28.2"
+
+"@babel/parser@^7.20.7":
+  version "7.28.4"
+  resolved "https://registry.yarnpkg.com/@babel/parser/-/parser-7.28.4.tgz#da25d4643532890932cc03f7705fe19637e03fa8"
+  integrity sha512-yZbBqeM6TkpP9du/I2pUZnJsRMGGvOuIrhjzC1AwHwW+6he4mni6Bp/m8ijn0iOuZuPI2BfkCoSRunpyjnrQKg==
+  dependencies:
+    "@babel/types" "^7.28.4"
 
 "@babel/plugin-bugfix-firefox-class-in-computed-class-key@^7.27.1":
   version "7.27.1"
@@ -4903,10 +4910,10 @@ neo-async@^2.6.2:
   resolved "https://registry.yarnpkg.com/neo-async/-/neo-async-2.6.2.tgz#b4aafb93e3aeb2d8174ca53cf163ab7d7308305f"
   integrity sha512-Yd3UES5mWCSqR+qNT93S3UoYUkqAZ9lLg8a7g9rimsWmYGK8cVToA4/sF3RrshdyV3sAGMXVUmpMYOw+dLpOuw==
 
-nhse-tel-frontend@^0.0.2:
-  version "0.0.2"
-  resolved "https://registry.yarnpkg.com/nhse-tel-frontend/-/nhse-tel-frontend-0.0.2.tgz#a2788912435fabe5013f6440bee8d1816a2e299b"
-  integrity sha512-9crniTaODs3uQcRNvmBcAgpS9cwW+34scR3ezGIdCOJ2ikOa+va1t37ZH/QUXgAxk6JIWxoX+Edq+N0PcXgrgA==
+nhsuk-frontend@10.0.0:
+  version "10.0.0"
+  resolved "https://registry.yarnpkg.com/nhsuk-frontend/-/nhsuk-frontend-10.0.0.tgz#dad45e4b52561257c3f69898a5ccfc2b120acac8"
+  integrity sha512-WrvUfYi+FAqcDjQIvtvhx4V6+5nL/K7PvFXp/IwuAQl6F9q+RwxStsr4BBufhSVSfp9vYs7ldegLsO0UtzdJAQ==
 
 nice-try@^1.0.4:
   version "1.0.5"

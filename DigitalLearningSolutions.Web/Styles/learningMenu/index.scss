@@ -1,5 +1,5 @@
-﻿@use "nhse-tel-frontend/packages/core/all" as *;
-@import "nhse-tel-frontend/packages/components/tag/_tag";
+﻿@use "nhsuk-frontend/dist/nhsuk/core/all" as *;
+@import "nhsuk-frontend/dist/nhsuk/components/tag/_tag";
 
 .learning-menu-card {
   border: none;
@@ -14,7 +14,7 @@
 
 .status-tag {
   @extend .nhsuk-tag;
-  @extend .nhsuk-u-font-size-24;
+  @extend .nhsuk-u-font-size-26;
   @extend .nhsuk-u-margin-bottom-3;
 
   &.incomplete {
@@ -63,9 +63,9 @@ hr.thick {
 }
 
 .passed-text {
-  color: $color_nhsuk-green;
+  color: nhsuk-colour("green");
 }
 
 .not-passed-text {
-  @extend .nhsuk-u-secondary-text-color;
+  @extend .nhsuk-u-secondary-text-colour;
 }

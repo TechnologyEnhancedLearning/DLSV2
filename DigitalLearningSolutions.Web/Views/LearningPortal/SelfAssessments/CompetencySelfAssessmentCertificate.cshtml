@@ -47,11 +47,22 @@
         <ol class="nhsuk-breadcrumb__list">
             @if (Model.Vocabulary == "ProfileAssessment")
             {
-                <li class="nhsuk-breadcrumb__item">
+                <li class="nhsuk-breadcrumb__list-item">
                     <a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Supervisor"
                        asp-action="ReviewDelegateSelfAssessment"
                        asp-route-supervisorDelegateId="@Model.LoggedInSupervisorDelegateId"
                        asp-route-candidateAssessmentId="@Model.CompetencySelfAssessmentCertificates.CandidateAssessmentID">
+
+                        &lt; Back
+                    </a>
+                </li>
+            }
+            else
+            {
+                <li class="nhsuk-breadcrumb__list-item">
+                    <a class="nhsuk-breadcrumb__link trigger-loader " asp-controller="LearningPortal"
+                       asp-action="SelfAssessmentOverview" asp-route-vocabulary="@Model.VocabPlural"
+                       asp-route-selfAssessmentId="@Model.CompetencySelfAssessmentCertificates.SelfAssessmentID">
                         &lt; Back
                     </a>
                 </li>

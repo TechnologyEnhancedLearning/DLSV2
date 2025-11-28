@@ -1,4 +1,4 @@
-@use "nhse-tel-frontend/packages/core/all" as *;
+@use "nhsuk-frontend/dist/nhsuk/core/all" as *;
 
 .learning-content-item {
   margin-bottom: 72px;
@@ -47,7 +47,7 @@
 
 .learning-content-item__image-box {
   box-shadow: 0 0 10px 1px rgba(0, 0, 0, 0.05);
-  background: $color_nhsuk-white;
+  background: nhsuk-colour("white");
   border-radius: 4px;
   padding: 8px;
   height: fit-content;
@@ -71,18 +71,18 @@
 
 .see-more-link {
   &:visited {
-    color: $nhsuk-link-visited-color;
+    color: $nhsuk-link-visited-colour;
   }
 
   &:link {
-    color: $nhsuk-link-color;
+    color: $nhsuk-link-colour;
   }
 
   &:hover {
-    color: $nhsuk-link-hover-color;
+    color: $nhsuk-link-hover-colour;
   }
 
   &:active {
-    color: $nhsuk-link-active-color;
+    color: $nhsuk-link-active-colour;
   }
 }

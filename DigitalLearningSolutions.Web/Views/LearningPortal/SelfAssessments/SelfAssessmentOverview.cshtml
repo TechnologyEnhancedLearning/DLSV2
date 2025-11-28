@@ -38,20 +38,18 @@
 <link rel="stylesheet" href="@Url.Content("~/css/learningPortal/selfAssessment.css")" asp-append-version="true">
 <link rel="stylesheet" href="@Url.Content("~/css/learningPortal/selfAssessmentOverview.css")" asp-append-version="true">
 @section breadcrumbs {
-    <li class="nhsuk-breadcrumb__item">
+    <li class="nhsuk-breadcrumb__list-item">
         <a class="nhsuk-breadcrumb__link" asp-action="SelfAssessment" asp-route-selfAssessmentId="@Model.SelfAssessment.Id">@(Model.SelfAssessment.Name) introduction</a>
     </li>
-    <li class="nhsuk-breadcrumb__item">@(Model.VocabPlural()) home</li>
+    <li class="nhsuk-breadcrumb__list-item">@(Model.VocabPlural()) home</li>
 }
 
 @section mobilebacklink
 {
-    <p class="nhsuk-breadcrumb__back">
-        <a class="nhsuk-breadcrumb__backlink" asp-action="SelfAssessment"
-           asp-route-selfAssessmentId="@Model.SelfAssessment.Id">
-            Back to @Model.SelfAssessment.Name
-        </a>
-    </p>
+    <a class="nhsuk-back-link" asp-action="SelfAssessment"
+        asp-route-selfAssessmentId="@Model.SelfAssessment.Id">
+        Back to @Model.SelfAssessment.Name
+    </a>
 }
 <h1>@Model.SelfAssessment.Name - @Model.VocabPlural()</h1>
 <div class="nhsuk-grid-row">

@@ -12,7 +12,7 @@
 @if (ViewBag.FromAddOptionalPage != null)
 {
     @section breadcrumbs {
-    <li class="nhsuk-breadcrumb__item">
+    <li class="nhsuk-breadcrumb__list-item">
         <div style="max-height:10px">
             <vc:back-link asp-controller="LearningPortal" asp-action="AddOptionalCompetencies" asp-all-route-data="@backLinkData" link-text="Go back" />
         </div>
@@ -22,13 +22,13 @@
 else
 {
     @section breadcrumbs {
-    <li class="nhsuk-breadcrumb__item">
+    <li class="nhsuk-breadcrumb__list-item">
         <a class="nhsuk-breadcrumb__link" asp-action="SelfAssessment" asp-route-selfAssessmentId="@Model.SelfAssessment.Id">@(Model.SelfAssessment.Name) introduction</a>
     </li>
-    <li class="nhsuk-breadcrumb__item">
+    <li class="nhsuk-breadcrumb__list-item">
         <a class="nhsuk-breadcrumb__link" asp-action="SelfAssessmentOverview" asp-route-vocabulary="@Model.VocabPlural()" asp-route-selfAssessmentId="@Model.SelfAssessment.Id">@Model.VocabPlural() home</a>
     </li>
-    <li class="nhsuk-breadcrumb__item">Manage optional @Model.VocabPlural()</li>
+    <li class="nhsuk-breadcrumb__list-item">Manage optional @Model.VocabPlural()</li>
     }
 }
 
@@ -37,23 +37,19 @@ else
 {
     @if (ViewBag.FromAddOptionalPage != null)
     {
-        <p class="nhsuk-breadcrumb__back">
-            <a class="nhsuk-breadcrumb__backlink" asp-action="AddOptionalCompetencies"
-               asp-route-vocabulary="@Model.VocabPlural()"
-               asp-route-selfAssessmentId="@Model.SelfAssessment.Id">
-                Back to add optional @Model.VocabPlural().ToLower()?
-            </a>
-        </p>
+        <a class="nhsuk-back-link" asp-action="AddOptionalCompetencies"
+            asp-route-vocabulary="@Model.VocabPlural()"
+            asp-route-selfAssessmentId="@Model.SelfAssessment.Id">
+            Back to add optional @Model.VocabPlural().ToLower()?
+        </a>
     }
     else
     {
-        <p class="nhsuk-breadcrumb__back">
-            <a class="nhsuk-breadcrumb__backlink" asp-action="SelfAssessmentOverview"
-               asp-route-vocabulary="@Model.VocabPlural()"
-               asp-route-selfAssessmentId="@Model.SelfAssessment.Id">
-                Back to @Model.VocabPlural()
-            </a>
-        </p>
+        <a class="nhsuk-back-link" asp-action="SelfAssessmentOverview"
+            asp-route-vocabulary="@Model.VocabPlural()"
+            asp-route-selfAssessmentId="@Model.SelfAssessment.Id">
+            Back to @Model.VocabPlural()
+        </a>
     }
 }
 
@@ -137,7 +133,7 @@ else
                                 <h3>
                                     @competencyGroup.Key
                                 </h3>
-                                <div class="nhsuk-checkboxes">
+                                <div class="nhsuk-checkboxes" data-module="nhsuk-checkboxes">
                                     @foreach (var competency in competencyGroup)
                                     {
                                         <div class="nhsuk-checkboxes__item">
@@ -168,7 +164,7 @@ else
         <button class="nhsuk-button" type="submit">Submit</button>
     </form>
 </div>
-<div class="nhsuk-back-link">
+<div class="nhsuk-link">
     <a class="nhsuk-back-link__link"
        asp-action="SelfAssessmentOverview"
        asp-route-selfAssessmentId="@Model.SelfAssessment.Id" asp-route-vocabulary="@Model.VocabPlural()">

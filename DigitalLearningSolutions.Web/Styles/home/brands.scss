@@ -1,4 +1,4 @@
-﻿@use "nhse-tel-frontend/packages/core/all" as *;
+﻿@use "nhsuk-frontend/dist/nhsuk/core/all" as *;
 @use "../shared/cardWithButtons";
 @use "../shared/searchableElements/searchableElements";
 
@@ -12,7 +12,7 @@
 
 .brands__top-horizontal-dash {
   @include mq($until: tablet) {
-    border-top: 1px solid $nhsuk-border-color;
+    border-top: 1px solid $nhsuk-border-colour;
     margin-top: nhsuk-spacing(3);
   }
 }
@@ -24,8 +24,8 @@
 }
 
 .header-row {
-  border-top: 1px solid $nhsuk-border-color;
-  border-bottom: 1px solid $nhsuk-border-color;
+  border-top: 1px solid $nhsuk-border-colour;
+  border-bottom: 1px solid $nhsuk-border-colour;
   margin-top: nhsuk-spacing(3);
   margin-bottom: nhsuk-spacing(3);
   display: flex;
@@ -44,7 +44,7 @@
 }
 
 .value-row {
-  border-bottom: 1px solid $nhsuk-border-color;
+  border-bottom: 1px solid $nhsuk-border-colour;
   margin-bottom: nhsuk-spacing(3);
   display: flex;
 

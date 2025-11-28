@@ -11,13 +11,11 @@
     <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
         <div class="nhsuk-width-container">
             <ol class="nhsuk-breadcrumb__list">
-                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Centres" asp-action="Index">Centres</a></li>
-                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Centres" asp-route-centreID="@ViewContext.RouteData.Values["centreId"]" asp-action="SelfAssessments">View self assessments</a></li>
+                <li class="nhsuk-breadcrumb__list-item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Centres" asp-action="Index">Centres</a></li>
+                <li class="nhsuk-breadcrumb__list-item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Centres" asp-route-centreID="@ViewContext.RouteData.Values["centreId"]" asp-action="SelfAssessments">View self assessments</a></li>
             </ol>
-            <p class="nhsuk-breadcrumb__back">
-                <a class="nhsuk-breadcrumb__backlink"
+            <a class="nhsuk-back-link"
                    asp-controller="Centres" asp-route-centreID="@ViewContext.RouteData.Values["centreId"]" asp-action="SelfAssessments">Back to view centre self assessments</a>
-            </p>
         </div>
     </nav>
 }
@@ -101,7 +99,7 @@
                         <span class="nhsuk-u-visually-hidden">Error:</span> Required
                     </span>
                 }
-                <div class="nhsuk-radios" id="EnableSelfEnrolment">
+                <div class="nhsuk-radios" data-module="nhsuk-radios" id="EnableSelfEnrolment">
                     <div class="nhsuk-radios__item">
                         <input class="nhsuk-radios__input" id="radio-yes" asp-for="EnableSelfEnrolment" type="radio" value="True">
                         <label class="nhsuk-label nhsuk-radios__label" for="radio-yes">

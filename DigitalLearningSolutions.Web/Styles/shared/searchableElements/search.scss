@@ -1,4 +1,4 @@
-﻿@use "nhse-tel-frontend/packages/core/all" as *;
+﻿@use "nhsuk-frontend/dist/nhsuk/core/all" as *;
 @use "common" as *;
 
 .search-box-container {
@@ -25,11 +25,11 @@
   .nhsuk-icon__search {
     height: 27px;
     width: 27px;
-    fill: $color_nhsuk-white;
+    fill: nhsuk-colour("white");
   }
 
   &:focus:not(:active) .nhsuk-icon__search {
-    fill: $nhsuk-focus-text-color;
+    fill: $nhsuk-focus-text-colour;
   }
 
   #js-styling-hidden-area-while-loading & {

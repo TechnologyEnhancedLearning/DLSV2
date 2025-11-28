@@ -1,4 +1,4 @@
-﻿@use "nhse-tel-frontend/packages/core/all" as *;
+﻿@use "nhsuk-frontend/dist/nhsuk/core/all" as *;
 @use "common" as *;
 
 .pagination-hidden {
@@ -37,14 +37,14 @@
 }
 
 .page-indicator {
-  @include nhsuk-typography-responsive(24);
+  @include nhsuk-font-size(26);
   padding-top: 1px;
 }
 
 button.nhsuk-pagination__link {
   border: none;
   background-color: transparent;
-  color: $nhsuk-link-color;
+  color: $nhsuk-link-colour;
   display: flex;
   width: auto;
   // Since IE is bad at drawing boxes the correct size
@@ -65,11 +65,11 @@ button.nhsuk-pagination__link {
   }
 
   &:hover {
-    color: $nhsuk-link-hover-color;
+    color: $nhsuk-link-hover-colour;
   }
 
   &:active {
-    color: $nhsuk-link-active-color;
+    color: $nhsuk-link-active-colour;
   }
 }
 

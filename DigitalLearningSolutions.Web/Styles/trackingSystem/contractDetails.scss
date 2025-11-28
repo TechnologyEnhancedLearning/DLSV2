@@ -1,14 +1,14 @@
-﻿@use "nhse-tel-frontend/packages/core/all" as *;
+﻿@use "nhsuk-frontend/dist/nhsuk/core/all" as *;
 
 // The colours here are tied to the colour conversion from percentages
 // defined in DisplayColourHelper
 .coloured-card-number {
   &--blue {
-    color: $color_nhsuk-blue;
+    color: nhsuk-colour("blue");
   }
 
   &--green {
-    color: $color_nhsuk-green;
+    color: nhsuk-colour("green");
   }
 
   &--yellow {
@@ -16,10 +16,10 @@
   }
 
   &--red {
-    color: $color_nhsuk-red;
+    color: nhsuk-colour("red");
   }
 
   &--grey {
-    color: $color_nhsuk-grey-1;
+    color: nhsuk-colour("grey-1");
   }
 }

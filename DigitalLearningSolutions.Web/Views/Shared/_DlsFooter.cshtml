@@ -1,39 +1,29 @@
-<footer role="contentinfo">
-    <div class="nhsuk-footer-container">
-        <div class="nhsuk-width-container">
+<footer class="nhsuk-footer" role="contentinfo">
+    <div class="nhsuk-width-container">
+        <div class="nhsuk-footer__meta">
             @await Component.InvokeAsync("DlsFooterBannerText")
             <h2 class="nhsuk-u-visually-hidden">Support links</h2>
-            <div class="nhsuk-footer">
-                <ul class="nhsuk-footer__list">
-                    <li class="nhsuk-footer__list-item">
-                        <a class="nhsuk-footer__list-item-link" target="_blank" asp-controller="LearningSolutions" asp-action="Contact">Contact us <span class="nhsuk-u-visually-hidden">(opens new browser window)</span></a>
-                    </li>
-                    <li class="nhsuk-footer__list-item">
-                        <a class="nhsuk-footer__list-item-link" target="_blank" asp-controller="LearningSolutions" asp-action="Terms">Terms of use <span class="nhsuk-u-visually-hidden">(opens new browser window)</span></a>
-                    </li>
-                </ul>
-                <ul class="nhsuk-footer__list">
-                    <li class="nhsuk-footer__list-item">
-                        <a class="nhsuk-footer__list-item-link" target="_blank" asp-controller="LearningSolutions" asp-action="AcceptableUsePolicy">Acceptable use policy <span class="nhsuk-u-visually-hidden">(opens new browser window)</span></a>
-                    </li>
-                    <li class="nhsuk-footer__list-item">
-                        <a class="nhsuk-footer__list-item-link" target="_blank" asp-controller="CookieConsent" asp-action="CookiePolicy">Cookie policy <span class="nhsuk-u-visually-hidden">(opens new browser window)</span></a>
-                    </li>
-                </ul>
-                <ul class="nhsuk-footer__list">
-                    <li class="nhsuk-footer__list-item">
-                        <a class="nhsuk-footer__list-item-link" target="_blank" asp-controller="LearningSolutions" asp-action="PrivacyNotice">Privacy <span class="nhsuk-u-visually-hidden">(opens new browser window)</span></a>
-                    </li>
-                </ul>
-                <ul class="nhsuk-footer__list">
-                    <li class="nhsuk-footer__list-item">
-                        <a class="nhsuk-footer__list-item-link" target="_blank" asp-controller="LearningSolutions" asp-action="AccessibilityHelp">Accessibility <span class="nhsuk-u-visually-hidden">(opens new browser window)</span></a>
-                    </li>
-                </ul>
-            </div>
-            <div>
-                <p class="nhsuk-footer__copyright">&copy; NHS England @DateTime.Now.Year</p>
-            </div>
+            <ul class="nhsuk-footer__list">
+                <li class="nhsuk-footer__list-item">
+                    <a class="nhsuk-footer__list-item-link" target="_blank" asp-controller="LearningSolutions" asp-action="AccessibilityHelp">Accessibility <span class="nhsuk-u-visually-hidden">(opens new browser window)</span></a>
+                </li>
+                <li class="nhsuk-footer__list-item">
+                    <a class="nhsuk-footer__list-item-link" target="_blank" asp-controller="LearningSolutions" asp-action="Contact">Contact us <span class="nhsuk-u-visually-hidden">(opens new browser window)</span></a>
+                </li>
+                <li class="nhsuk-footer__list-item">
+                     <a class="nhsuk-footer__list-item-link" target="_blank" asp-controller="CookieConsent" asp-action="CookiePolicy">Cookie policy <span class="nhsuk-u-visually-hidden">(opens new browser window)</span></a>
+                </li>
+                <li class="nhsuk-footer__list-item">
+                    <a class="nhsuk-footer__list-item-link" target="_blank" asp-controller="LearningSolutions" asp-action="PrivacyNotice">Privacy <span class="nhsuk-u-visually-hidden">(opens new browser window)</span></a>
+                </li>
+                <li class="nhsuk-footer__list-item">
+                    <a class="nhsuk-footer__list-item-link" target="_blank" asp-controller="LearningSolutions" asp-action="AcceptableUsePolicy">Acceptable use policy <span class="nhsuk-u-visually-hidden">(opens new browser window)</span></a>
+                </li>
+                <li class="nhsuk-footer__list-item">
+                    <a class="nhsuk-footer__list-item-link" target="_blank" asp-controller="LearningSolutions" asp-action="Terms">Terms of use <span class="nhsuk-u-visually-hidden">(opens new browser window)</span></a>
+                </li>
+            </ul>
+            <p class="nhsuk-body-s">&copy; NHS England</p>
         </div>
     </div>
 </footer>

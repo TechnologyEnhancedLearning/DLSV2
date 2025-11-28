@@ -4,10 +4,10 @@
 // Author: Darlan Rod https://github.com/darlanrod
 // Version 1.5.2
 // MIT License
-@use "nhse-tel-frontend/packages/core/settings/colours" as *;
+@use "nhsuk-frontend/dist/nhsuk/core/settings/" as *;
 
-$track-color: $color_nhsuk-grey-3 !default;
-$thumb-color: $color_nhsuk-grey-2 !default;
+$track-color: nhsuk-colour("grey-3") !default;
+$thumb-color: nhsuk-colour("grey-2") !default;
 
 $thumb-radius: 2px !default;
 $thumb-height: 24px !default;
@@ -18,7 +18,7 @@ $thumb-border-color: #eceff1 !default;
 $track-width: 100% !default;
 $track-height: 24px !default;
 $track-border-width: 2px !default;
-$track-border-color: $color_nhsuk-grey-3 !default;
+$track-border-color: nhsuk-colour("grey-3") !default;
 $focus-track-border-width: 4px !default;
 
 $track-radius: 5px !default;
@@ -55,8 +55,8 @@ $track-radius: 5px !default;
   }
 
   &:focus {
-    border: $focus-track-border-width solid $color_nhsuk-black;
-    box-shadow: 0 0 0 4px $nhsuk-focus-color;
+    border: $focus-track-border-width solid nhsuk-colour("black");
+    box-shadow: 0 0 0 4px $nhsuk-focus-colour;
 
     &::-webkit-slider-runnable-track {
       border: none;
@@ -68,7 +68,7 @@ $track-radius: 5px !default;
     }
 
     &::-moz-range-progress {
-      background-color: $color_nhsuk-blue;
+      background-color: nhsuk-colour("blue");
       height: $track-height - ( 2 * $focus-track-border-width);
       border-radius: 3px;
     }
@@ -128,7 +128,7 @@ $track-radius: 5px !default;
     border: $track-border-width solid $track-border-color;
     border-radius: $track-radius;
     box-sizing: content-box;
-    background: $color_nhsuk-blue;
+    background: nhsuk-colour("blue");
   }
 
   &::-ms-fill-upper {
@@ -139,7 +139,7 @@ $track-radius: 5px !default;
   }
 
   &::-moz-range-progress {
-    background-color: $color_nhsuk-blue;
+    background-color: nhsuk-colour("blue");
     height: $track-height - ( 2 * $track-border-width);
     border-radius: 3px;
   }
@@ -148,7 +148,7 @@ $track-radius: 5px !default;
     overflow-x: hidden;
 
     &::-webkit-slider-thumb {
-      box-shadow: -800px 0 0 800px $color_nhsuk-blue;
+      box-shadow: -800px 0 0 800px nhsuk-colour("blue");
     }
 
     .js-enabled & {

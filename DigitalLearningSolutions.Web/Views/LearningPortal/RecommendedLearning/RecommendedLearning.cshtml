@@ -11,7 +11,7 @@
 <link rel="stylesheet" href="@Url.Content("~/css/learningPortal/recommendedLearning.css")" asp-append-version="true">
 
 @section breadcrumbs {
-  <li class="nhsuk-breadcrumb__item">
+  <li class="nhsuk-breadcrumb__list-item">
     <a class="nhsuk-breadcrumb__link trigger-loader"
      asp-controller="LearningPortal"
      asp-action="SelfAssessmentOverview"
@@ -20,10 +20,10 @@
       @Model.SelfAssessment.Name
     </a>
   </li>
-  <li class="nhsuk-breadcrumb__item">
+  <li class="nhsuk-breadcrumb__list-item">
     <a class="nhsuk-breadcrumb__link" asp-action="SelfAssessmentOverview" asp-controller="LearningPortal" asp-route-vocabulary="@Model.VocabPlural()" asp-route-selfAssessmentId="@Model.SelfAssessment.Id">@Model.VocabPlural() home</a>
   </li>
-  <li class="nhsuk-breadcrumb__item">Recommended Learning</li>
+  <li class="nhsuk-breadcrumb__list-item">Recommended Learning</li>
 }
 
   @if (Model.JavascriptSearchSortFilterPaginateEnabled)
