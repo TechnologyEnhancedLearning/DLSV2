@@ -376,7 +376,7 @@
             {
                 numberOfAffectedRows = connection.Execute(
                 @"UPDATE SelfAssessmentFrameworks
-                    SET RemovedDate = NULL, RemovedByAdminId = NULL, AmendedByAdminId = @adminId
+                    SET RemovedDate = NULL, RemovedByAdminId = NULL, AmendedByAdminId = @adminId, IsPrimary = 0
                     WHERE SelfAssessmentId = @selfAssessmentId AND FrameworkId = @frameworkId"
             ,
                 new { adminId, selfAssessmentId, frameworkId }
