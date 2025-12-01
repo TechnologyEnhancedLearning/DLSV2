@@ -27,7 +27,8 @@ namespace DigitalLearningSolutions.Web.Tests.TestHelpers
             bool useDescriptionExpanders = true,
             string vocabulary = "Capability",
             string verificationRoleName = "Supervisor",
-            string signOffRoleName = "Supervisor"
+            string signOffRoleName = "Supervisor",
+            bool includeLearnerDeclarationPrompt = true
         )
         {
             return new CurrentSelfAssessment
@@ -47,6 +48,7 @@ namespace DigitalLearningSolutions.Web.Tests.TestHelpers
                 Vocabulary = vocabulary,
                 VerificationRoleName = verificationRoleName,
                 SignOffRoleName = signOffRoleName,
+                IncludeLearnerDeclarationPrompt = includeLearnerDeclarationPrompt
             };
         }
 
