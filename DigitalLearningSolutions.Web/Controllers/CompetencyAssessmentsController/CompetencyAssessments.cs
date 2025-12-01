@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.CompetencyAssessmentsController
 {
     using DigitalLearningSolutions.Data.Enums;
+    using DigitalLearningSolutions.Data.Extensions;
     using DigitalLearningSolutions.Data.Models.CompetencyAssessments;
     using DigitalLearningSolutions.Data.Models.Frameworks;
     using DigitalLearningSolutions.Data.Models.SelfAssessments;
@@ -815,7 +816,189 @@
             return RedirectToAction("AssessmentWorkingGroup", "CompetencyAssessments", new { competencyAssessmentId, actionName = actionName });
         }
 
+        [Route("/CompetencyAssessments/{competencyAssessmentId}/SupervisorRoles")]
+        public IActionResult SupervisorRoles(int competencyAssessmentId)
+        {
+            if (competencyAssessmentId == 0) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
+            var competencyAssessmentTaskStatus = competencyAssessmentService.GetCompetencyAssessmentTaskStatus(competencyAssessmentId, null);
+            if(competencyAssessmentTaskStatus.SupervisorRolesTaskStatus != null) return RedirectToAction("ManageSupervisionSettings", "CompetencyAssessments",
+                new
+                {
+                    CompetencyAssessmentId = competencyAssessmentId,
+                    ActionName = "SupervisorRoles"
+                }); return RedirectToAction("SupervisedSelfAssessmentSignoff", "CompetencyAssessments", new { competencyAssessmentId });
+        }
+        
+        [Route("/CompetencyAssessments/{competencyAssessmentId}/Supervised")]
+        [Route("/CompetencyAssessments/{competencyAssessmentId}/{actionName}/Supervised")]
+        public IActionResult SupervisedSelfAssessmentSignoff(int competencyAssessmentId, string? actionName)
+        {
+            if (competencyAssessmentId == 0) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
+            if (actionName== "Signoff")
+            {
+              var data = GetManagesupervisionData();
+                data.Signoff.ActionName = actionName; 
+                var models = new SupervisedSelfAssessmentSignoffViewModel(data.Signoff);
+                return View(models);
+            }
+            var adminId = GetAdminID();
+            var baseData = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
+            if (string.IsNullOrEmpty(baseData.CompetencyAssessmentName)) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
+            var model = new SupervisedSelfAssessmentSignoffViewModel(competencyAssessmentId, baseData.CompetencyAssessmentName, actionName);
+            return View("SupervisedSelfAssessmentSignoff", model);
+        }
 
+        [HttpPost]
+        [Route("/CompetencyAssessments/{competencyAssessmentId}/Supervised")]
+        public IActionResult SupervisedSelfAssessmentSignoff(SupervisedSelfAssessmentSignoffViewModel supervisedSelf)
+        {
+            if (supervisedSelf == null) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
+            if (supervisedSelf.ActionName != null)
+            {
+                var data = GetManagesupervisionData();
+                var model = new ManagesupervisionViewModel(data.LearnerDeclaration, data.SupervisorDeclaration, supervisedSelf);
+                SetManagesupervisionData(model);
+            }
+            else
+            {
+                var model = new ManagesupervisionViewModel(supervisedSelf);
+                SetManagesupervisionData(model);
+            }
+           if (supervisedSelf.Supervised == 0) return RedirectToAction("ManageSupervisionSettings", "CompetencyAssessments", new { supervisedSelf.CompetencyAssessmentId });
+           if (supervisedSelf.ActionName != null) return RedirectToAction("SupervisorSignoffDeclaration", "CompetencyAssessments",
+               new
+               {
+                   CompetencyAssessmentId = supervisedSelf.CompetencyAssessmentId,
+                   ActionName = "Supervisor"
+               });
+            return RedirectToAction("SupervisorSignoffDeclaration", "CompetencyAssessments", new { supervisedSelf.CompetencyAssessmentId });
+        }
+
+        [Route("/CompetencyAssessments/{competencyAssessmentId}/SupervisorDeclaration")]
+        [Route("/CompetencyAssessments/{competencyAssessmentId}/{actionName}/SupervisorDeclaration")]
+        public IActionResult SupervisorSignoffDeclaration(int competencyAssessmentId, string? actionName)
+        {
+            if (competencyAssessmentId == 0) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
+            var data = GetManagesupervisionData();
+            if (actionName == "Supervisor")
+            {
+                data.SupervisorDeclaration.ActionName = actionName;
+                var models = new SupervisorSignoffDeclarationViewModel(data.SupervisorDeclaration);
+                return View(models);
+            }
+            var model = new SupervisorSignoffDeclarationViewModel(competencyAssessmentId);
+            model.CompetencyAssessmentName = data.CompetencyAssessmentName;
+            model.DefaultText = this.config.GetSupervisorDefaultText();
+            return View(model);
+        }
+
+        [HttpPost]
+        [Route("/CompetencyAssessments/{competencyAssessmentId}/SupervisorDeclaration")]
+        public IActionResult SupervisorSignoffDeclaration(SupervisorSignoffDeclarationViewModel viewModel)
+        {
+            if (viewModel == null) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
+            if (!ModelState.IsValid || (viewModel.DeclarationValue == 1 && string.IsNullOrEmpty(viewModel.CustomText)))
+            {
+                ModelState.AddModelError(nameof(viewModel.CustomText), "");
+                return View(viewModel);
+            }
+            var data = GetManagesupervisionData();
+            var model = new ManagesupervisionViewModel(data.LearnerDeclaration,viewModel, data.Signoff );
+            SetManagesupervisionData(model);
+            if (viewModel.ActionName != null) return RedirectToAction("LearnerSignoffDeclaration", "CompetencyAssessments",
+                new
+                {
+                    CompetencyAssessmentId = viewModel.CompetencyAssessmentId,
+                    ActionName = "Learner"
+                });
+            return RedirectToAction("LearnerSignoffDeclaration", "CompetencyAssessments", new { viewModel.CompetencyAssessmentId });
+        }
+
+        [Route("/CompetencyAssessments/{competencyAssessmentId}/LearnerDeclaration")]
+        [Route("/CompetencyAssessments/{competencyAssessmentId}/{actionName}/LearnerDeclaration")]
+        public IActionResult LearnerSignoffDeclaration(int competencyAssessmentId, string? actionName)
+        {
+            if (competencyAssessmentId == 0) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
+            var data = GetManagesupervisionData();
+            if (actionName == "Learner")
+            {
+                data.LearnerDeclaration.ActionName = actionName;
+                var models = new LearnerSignoffDeclarationViewModel(data.LearnerDeclaration);
+                return View(models);
+            }
+            var model = new LearnerSignoffDeclarationViewModel(competencyAssessmentId);
+            model.CompetencyAssessmentName = data.CompetencyAssessmentName;
+            model.DefaultText = this.config.GetLearnerDefaultText();
+            return View(model);
+        }
+
+        [HttpPost]
+        [Route("/CompetencyAssessments/{competencyAssessmentId}/LearnerDeclaration")]
+        public IActionResult LearnerSignoffDeclaration(LearnerSignoffDeclarationViewModel viewModel)
+        {
+            if (viewModel == null) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
+            if (!ModelState.IsValid || (viewModel.DeclarationValue  == 1 && string.IsNullOrEmpty(viewModel.CustomText) ))
+            {
+                    ModelState.AddModelError(nameof(viewModel.CustomText), "");
+                return View(viewModel);
+            }
+                var data = GetManagesupervisionData();
+            var model = new ManagesupervisionViewModel(viewModel, data.SupervisorDeclaration, data.Signoff);
+            SetManagesupervisionData(model);
+            return RedirectToAction("ManageSupervisionSettings", "CompetencyAssessments", new { viewModel.CompetencyAssessmentId });
+        }
+
+        [Route("/CompetencyAssessments/{competencyAssessmentId}/SupervisionSettings")]
+        [Route("/CompetencyAssessments/{competencyAssessmentId}/{actionName}/SupervisionSettings")]
+        public IActionResult ManageSupervisionSettings(int competencyAssessmentId, string? actionName)
+        {
+            if (competencyAssessmentId == 0) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
+            if (actionName == "SupervisorRoles")
+            {
+                var adminId = GetAdminID();
+             var baseData =   competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
+                var model = new ManagesupervisionViewModel(competencyAssessmentId, baseData.CompetencyAssessmentName,
+            baseData.SupervisorResultsReview,
+            baseData.SupervisorSelfAssessmentReview,
+            baseData.SignOffSupervisorStatement,
+             baseData.SignOffRequestorStatement,
+             this.config.GetLearnerDefaultText(),
+              this.config.GetSupervisorDefaultText());
+                SetManagesupervisionData(model);
+                return View(model);
+            }
+            var data = GetManagesupervisionData();
+            return View(data);
+          
+        }
+
+        [HttpPost]
+        [Route("/CompetencyAssessments/{competencyAssessmentId}/SupervisionSettings")]
+        [Route("/CompetencyAssessments/{competencyAssessmentId}/{actionName}/SupervisionSettings")]
+        public IActionResult ManageSupervisionSettings(ManagesupervisionViewModel viewModel)
+        {
+            if (viewModel == null) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
+            var data = GetManagesupervisionData();
+            if (!ModelState.IsValid)
+            {
+                var model = new ManagesupervisionViewModel(data.LearnerDeclaration, data.SupervisorDeclaration, data.Signoff);
+                return View("ManageSupervisionSettings", model);
+            }
+            competencyAssessmentService.UpdateSupervisorRolesTaskStatus(data.Signoff.CompetencyAssessmentId, viewModel.TaskCompleteChecked);
+            competencyAssessmentService.UpdateSelfAssessments(data.Signoff.CompetencyAssessmentId,
+                data.Signoff.Supervised,
+                data.Signoff.Signoff,
+                data.Signoff.Confirm,
+                data.SupervisorDeclaration.DeclarationValue,
+                 data.SupervisorDeclaration.CustomText,
+                data.LearnerDeclaration.DeclarationValue,
+                data.LearnerDeclaration.CustomText
+                );
+            multiPageFormService.ClearMultiPageFormData(MultiPageFormDataFeature.AddCustomWebForm("ManagesupervisionDataCWF"), TempData);
+            TempData.Clear();
+            return RedirectToAction("ManageCompetencyAssessment", new { competencyAssessmentId = viewModel.CompetencyAssessmentId });
+          
+        }
         private void SetcompetencyAssessmentFeaturesData(CompetencyAssessmentFeaturesViewModel data)
         {
             multiPageFormService.SetMultiPageFormData(
@@ -828,6 +1011,22 @@
         {
             var data = multiPageFormService.GetMultiPageFormData<CompetencyAssessmentFeaturesViewModel>(
                MultiPageFormDataFeature.AddCustomWebForm("AssessmentFeaturesDataCWF"),
+               TempData
+           ).GetAwaiter().GetResult();
+            return data;
+        }
+        private void SetManagesupervisionData(ManagesupervisionViewModel data)
+        {
+            multiPageFormService.SetMultiPageFormData(
+                 data,
+                 MultiPageFormDataFeature.AddCustomWebForm("ManagesupervisionDataCWF"),
+                 TempData
+             );
+        }
+        private ManagesupervisionViewModel GetManagesupervisionData()
+        {
+            var data = multiPageFormService.GetMultiPageFormData<ManagesupervisionViewModel>(
+               MultiPageFormDataFeature.AddCustomWebForm("ManagesupervisionDataCWF"),
                TempData
            ).GetAwaiter().GetResult();
             return data;

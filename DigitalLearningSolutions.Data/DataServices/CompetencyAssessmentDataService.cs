@@ -71,7 +71,16 @@
            bool workingGroupStatus, bool AllframeworkCompetenciesStatus);
         void UpdateSelfAssessmentFromFramework(int selfAssessmentId, int? frameworkId);
         bool UpdatePrimaryFrameworkCompetencies(int assessmentId, int frameworkId);
-
+        bool UpdateSupervisorRolesTaskStatus(int competencyAssessmentId, bool taskCompleteChecked);
+        bool UpdateSelfAssessments(int competencyAssessmentId,
+                     int? supervised,
+                     int? signoff,
+                     int? confirm,
+                    int? supervisorDeclarationValue,
+                    string? supervisorCustomText,
+                    int? leanerDeclarationValue,
+                    string? leanerCustomText
+                   );
         //INSERT DATA
         int InsertCompetencyAssessment(int adminId, int centreId, string competencyAssessmentName);
         bool InsertSelfAssessmentFramework(int adminId, int selfAssessmentId, int frameworkId);
@@ -94,7 +103,12 @@
                 sa.NRPProfessionalGroupID,
                  sa.NRPSubGroupID,
                  sa.NRPRoleID,
-                 sa.PublishStatusID, sa.Vocabulary, CASE WHEN sa.CreatedByAdminID = @adminId THEN 3 WHEN sac.CanModify = 1 THEN 2 WHEN sac.CanModify = 0 THEN 1 ELSE 0 END AS UserRole";
+                 sa.PublishStatusID, sa.Vocabulary,
+                 CASE WHEN sa.CreatedByAdminID = @adminId THEN 3 WHEN sac.CanModify = 1 THEN 2 WHEN sac.CanModify = 0 THEN 1 ELSE 0 END AS UserRole,
+                 sa.SupervisorResultsReview,
+                 sa.SupervisorSelfAssessmentReview,
+                 sa.SignOffSupervisorStatement,
+                 sa.SignOffRequestorStatement";
 
         private const string SelfAssessmentFields =
             @", sa.CategoryID, sa.CreatedDate,
@@ -879,43 +893,43 @@
 
             return true;
         }
-       
+
         public bool UpdatePrimaryFrameworkCompetencies(int assessmentId, int frameworkId)
         {
             connection.EnsureOpen();
             using (var transaction = connection.BeginTransaction())
             {
-                    var numberOfAffectedRows = connection.Execute(
-                        @"UPDATE SelfAssessmentFrameworks 
+                var numberOfAffectedRows = connection.Execute(
+                    @"UPDATE SelfAssessmentFrameworks 
                   SET IsPrimary = 0  
                   WHERE (SelfAssessmentId = @assessmentId) 
                     AND (RemovedDate IS NULL)",
-                        new { assessmentId },
-                        transaction: transaction
-                    );
+                    new { assessmentId },
+                    transaction: transaction
+                );
 
-                    var numberOfAffectedRow = connection.Execute(
-                        @"UPDATE SelfAssessmentFrameworks 
+                var numberOfAffectedRow = connection.Execute(
+                    @"UPDATE SelfAssessmentFrameworks 
                   SET IsPrimary = 1  
                   WHERE (SelfAssessmentId = @assessmentId) 
                     AND (FrameworkId = @frameworkId) 
                     AND (RemovedDate IS NULL)",
-                        new { assessmentId, frameworkId },
-                        transaction: transaction
+                    new { assessmentId, frameworkId },
+                    transaction: transaction
+                );
+
+                if ((numberOfAffectedRow < 1) || (numberOfAffectedRows < 1))
+                {
+                    logger.LogWarning(
+                        "Not updating SelfAssessmentFrameworks as db update failed. " +
+                        $"assessmentId: {assessmentId}, frameworkId: {frameworkId}"
                     );
+                    transaction.Rollback();
+                    return false;
+                }
 
-                    if ((numberOfAffectedRow < 1) || (numberOfAffectedRows < 1))
-                    {
-                        logger.LogWarning(
-                            "Not updating SelfAssessmentFrameworks as db update failed. " +
-                            $"assessmentId: {assessmentId}, frameworkId: {frameworkId}"
-                        );
-                        transaction.Rollback();
-                        return false;
-                    }
-
-                    transaction.Commit();
-                    return true;
+                transaction.Commit();
+                return true;
             }
         }
         public int? GetSelfAssessmentStructure(int competencyAssessmentId)
@@ -1057,5 +1071,76 @@
                 new { invitedByAdminId, id }
             ).FirstOrDefault();
         }
+        public bool UpdateSupervisorRolesTaskStatus(int competencyAssessmentId, bool taskCompleteChecked)
+        {
+            var numberOfAffectedRows = connection.Execute(
+                        @"  UPDATE SelfAssessmentTaskStatus
+            SET SupervisorRolesTaskStatus = CASE WHEN @taskCompleteChecked = 1 THEN 1 ELSE NULL END
+            WHERE SelfAssessmentId = @competencyAssessmentId",
+                        new { competencyAssessmentId, taskCompleteChecked = taskCompleteChecked ? 1 : 0 }
+                    );
+            if (numberOfAffectedRows < 1)
+            {
+                logger.LogWarning(
+                    "Not updating SupervisorRolesTaskStatus as db update failed. " +
+                    $"competencyAssessmentId: {competencyAssessmentId}, taskCompleteChecked: {taskCompleteChecked}"
+                );
+                return false;
+            }
+            return true;
+        }
+        public bool UpdateSelfAssessments(int competencyAssessmentId,
+            int? supervised,
+            int? signoff,
+            int? confirm,
+            int? supervisorDeclarationValue,
+            string? supervisorCustomText,
+            int? leanerDeclarationValue,
+            string? leanerCustomText
+           )
+        {
+            var sqlQuery = @"
+            IF @supervised = 0
+            BEGIN
+                UPDATE SelfAssessments SET SupervisorResultsReview = 0
+                WHERE ID = @competencyAssessmentId;
+            END
+            ELSE
+            BEGIN
+                UPDATE SelfAssessments
+                SET SupervisorResultsReview = 1,
+                    SupervisorSelfAssessmentReview = @confirm,
+                    SignOffSupervisorStatement = CASE WHEN @supervisorDeclarationValue = 0 THEN NULL ELSE @supervisorCustomText END,
+                    SignOffRequestorStatement = CASE WHEN @leanerDeclarationValue = 0 THEN NULL ELSE @leanerCustomText END
+                WHERE ID = @competencyAssessmentId;
+            END
+        ";
+            var affectedRows = connection.Execute(
+            sqlQuery,
+            new
+            {
+                competencyAssessmentId,
+                supervised, 
+                confirm,
+                supervisorDeclarationValue,
+                supervisorCustomText,
+                leanerDeclarationValue,
+                leanerCustomText
+            }
+        );
+
+            if ((affectedRows < 1))
+            {
+                logger.LogWarning(
+                    "Not updating SelfAssessments  as db update failed. " +
+                    $"competencyAssessmentId: {competencyAssessmentId}, supervised: {supervised}" +
+                    $"signoff: {signoff}, confirm: {confirm}, supervisorDeclarationValue: {supervisorDeclarationValue} " +
+                    $"supervisorCustomText: {supervisorCustomText}, leanerDeclarationValue: {leanerDeclarationValue}, leanerCustomText: {leanerCustomText} "
+                );
+                return false;
+            }
+            return true;
+        }
+        
     }
 }

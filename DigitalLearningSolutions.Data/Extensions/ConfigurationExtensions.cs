@@ -60,6 +60,9 @@
         private const string TableauViewName = "ViewName";
         private const string TableauSiteName = "SiteName";
         private const string TableauAuthApi = "AuthApiPath";
+        private const string SupervisorDefaultText = "SupervisorDefaultText";
+        private const string LearnerDefaultText = "LearnerDefaultText";
+
         public static string GetAppRootPath(this IConfiguration config)
         {
             return config[AppRootPathName]!;
@@ -267,6 +270,14 @@
         public static string GetTableauViewName(this IConfiguration config)
         {
             return config[$"{TableauSectionKey}:{TableauViewName}"]!;
+        }
+        public static string GetSupervisorDefaultText(this IConfiguration config)
+        {
+            return config[SupervisorDefaultText]!;
+        }
+        public static string GetLearnerDefaultText(this IConfiguration config)
+        {
+            return config[LearnerDefaultText]!;
         }
     }
 }

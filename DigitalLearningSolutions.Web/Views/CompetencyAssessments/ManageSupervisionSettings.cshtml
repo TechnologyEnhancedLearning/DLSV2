@@ -1,0 +1,165 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
+@model ManagesupervisionViewModel
+@{
+    var errorHasOccurred = !ViewData.ModelState.IsValid && ViewData.ModelState.ContainsKey(nameof(Model.TaskCompleteChecked));
+    ViewData["Title"] = "Manage supervision sessions";
+}
+<div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full">
+         @if (errorHasOccurred)
+        {
+            <vc:error-summary order-of-property-names="@(new[] { nameof(Model.TaskCompleteChecked) })" />
+        }
+        <h1 class="nhsuk-heading-xl">Manage supervision settings</h1>
+    </div>
+      </div>
+<div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full">
+      <form method="post">
+<dl class="nhsuk-summary-list">
+
+   
+    <div class="nhsuk-summary-list__row">
+        <dt class="nhsuk-summary-list__key">
+            Self assessment is supervised
+        </dt>
+        <dd class="nhsuk-summary-list__value">
+            @Model.Signoff.SupervisedText
+        </dd>
+        <dd class="nhsuk-summary-list__actions">
+            <ul class="nhsuk-summary-list__actions-list left-align-actions">
+                <li class="nhsuk-summary-list__actions-list-item">
+                    <a asp-action="SupervisedSelfAssessmentSignoff" asp-route-actionName="Signoff" asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">
+                        Change<span class="nhsuk-u-visually-hidden"> Self assessment is supervised</span>
+                    </a>
+                </li>
+            </ul>
+        </dd>
+    </div>
+
+    @if (@Model.Signoff.SupervisedText == "Yes")
+    {
+       
+        <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+                Supervisor signs off self assessment
+            </dt>
+            <dd class="nhsuk-summary-list__value">
+                @Model.Signoff.SignoffText
+            </dd>
+          
+        </div>
+
+       @if (@Model.Signoff.SupervisedText == "Yes")
+       {
+        <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+                Supervisor sign off statement
+            </dt>
+            <dd class="nhsuk-summary-list__value">
+                <strong>@Model.SupervisorDeclaration.Declaration</strong>
+
+                
+                <div class="nhsuk-details nhsuk-u-margin-top-2">
+                    <details class="nhsuk-details__text">
+                        <summary class="nhsuk-details__summary">
+                            <span class="nhsuk-details__summary-text">
+                                View declaration text
+                            </span>
+                        </summary>
+                          <div class="nhsuk-body" id="default-declaration-text">
+                                @Html.Raw(@Model.SupervisorDeclaration.DeclarationText)
+                            </div>
+                    </details>
+                </div>
+            </dd>
+            <dd class="nhsuk-summary-list__actions">
+                <ul class="nhsuk-summary-list__actions-list left-align-actions">
+                    <li class="nhsuk-summary-list__actions-list-item">
+                         <a asp-action="SupervisorSignoffDeclaration" asp-route-actionName="Supervisor" asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">
+
+                            Change<span class="nhsuk-u-visually-hidden"> Supervisor sign off statement</span>
+                        </a>
+                    </li>
+                </ul>
+            </dd>
+        </div>
+
+
+        
+        <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+                Learner sign off statement
+            </dt>
+            <dd class="nhsuk-summary-list__value">
+                <strong>@Model.LearnerDeclaration.Declaration</strong>
+
+               
+                <div class="nhsuk-details nhsuk-u-margin-top-2">
+                    <details class="nhsuk-details__text">
+                        <summary class="nhsuk-details__summary">
+                            <span class="nhsuk-details__summary-text">
+                                View declaration text
+                            </span>
+                        </summary>
+                         <div class="nhsuk-body" id="default-declaration-text">
+                                @Html.Raw(@Model.LearnerDeclaration.DeclarationText)
+                            </div>
+                      
+                    </details>
+                </div>
+            </dd>
+            <dd class="nhsuk-summary-list__actions">
+                <ul class="nhsuk-summary-list__actions-list left-align-actions">
+                    <li class="nhsuk-summary-list__actions-list-item">
+                        <a asp-action="LearnerSignoffDeclaration" asp-route-actionName="Learner" asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">
+
+                            Change<span class="nhsuk-u-visually-hidden"> Learner sign off statement</span>
+                        </a>
+                    </li>
+                </ul>
+            </dd>
+        </div>
+        }
+       
+        <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+                Supervisor or nominated supervisor confirms individual assessment results
+            </dt>
+            <dd class="nhsuk-summary-list__value">
+                @Model.Signoff.ConfirmText
+            </dd>
+           
+        </div>
+    }
+    
+</dl>
+     <hr class="nhsuk-section-break nhsuk-section-break--l nhsuk-section-break--visible" />
+            <nhs-form-group>
+                     
+                <div class="nhsuk-checkboxes__item">
+
+                    <input class="nhsuk-checkboxes__input" id="TaskCompleteChecked" name="TaskCompleteChecked" type="checkbox" aria-describedby="Confirm-hint" value="true">
+                    <label class="nhsuk-label nhsuk-checkboxes__label" for="@Model.TaskCompleteChecked">
+                       I confirm that the task has been successfully completed.
+                    </label>
+                </div>
+           </nhs-form-group>
+
+            <input type="hidden" asp-for="@Model.Signoff.CompetencyAssessmentId" />
+                
+
+          
+<div class="nhsuk-u-margin-top-8">
+
+  <button class="nhsuk-button nhsuk-button--primary  nhsuk-u-margin-left-3" type="submit">
+            Save
+        </button>
+        <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-left-3" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.Signoff.CompetencyAssessmentId">
+            
+            Cancel
+        </a>
+ </div>
+ </form>
+  </div>
+   </div> 

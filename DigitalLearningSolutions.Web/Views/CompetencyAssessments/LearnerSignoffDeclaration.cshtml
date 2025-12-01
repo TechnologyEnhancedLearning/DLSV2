@@ -1,0 +1,99 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
+@model LearnerSignoffDeclarationViewModel
+@{
+    var errorHasOccurred = !ViewData.ModelState.IsValid && ViewData.ModelState.ContainsKey(nameof(Model.CustomText));
+    ViewData["Title"] = "Learner sign off declaration";
+}
+
+<div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full">
+        @if (errorHasOccurred)
+        {
+            <vc:error-summary order-of-property-names="@(new[] { nameof(Model.CustomText) })" />
+        }
+<form method="post">
+    <fieldset class="nhsuk-fieldset">
+        <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
+            <h1 class="nhsuk-fieldset__heading">
+                Learner sign off declaration
+            </h1>
+        </legend>
+
+        <p class="nhsuk-hint">
+            This will be displayed to the learner is requesting supervisor signing off of their completed self assessment
+        </p>
+
+        <div class="nhsuk-radios nhsuk-radios--conditional">
+
+            <div class="nhsuk-radios__item">
+                <input class="nhsuk-radios__input" id="declaration-default" name="DeclarationValue" type="radio" value="0"
+                       aria-controls="conditional-declaration-default"
+                       aria-expanded="true"
+                       @(Model.DeclarationValue == 0 ? "checked" : "")>
+                <label class="nhsuk-label nhsuk-radios__label" for="declaration-default">
+                    Default
+                </label>
+
+            </div>
+            <div class="nhsuk-radios__conditional nhsuk-radios__conditional--hidden" id="conditional-declaration-default">
+                <div class="nhsuk-form-group">
+                    <label class="nhsuk-label" for="default-declaration-text">
+                        Declaration text
+                    </label>
+                            <div class="nhsuk-body" id="default-declaration-text">
+                                @Html.Raw(Model.DefaultText)
+                            </div>
+
+                </div>
+            </div>
+            <div class="nhsuk-radios__item">
+                <input class="nhsuk-radios__input" id="declaration-custom" name="DeclarationValue" type="radio" value="1"
+                       aria-controls="conditional-declaration-custom"
+                       aria-expanded="true"
+                       @(Model.DeclarationValue == 1 ? "checked" : "")>
+                <label class="nhsuk-label nhsuk-radios__label" for="declaration-custom">
+                    Custom
+                </label>
+            </div>
+
+            <div class="nhsuk-radios__conditional nhsuk-radios__conditional--hidden" id="conditional-declaration-custom">
+                <div class="nhsuk-form-group">
+                    <label class="nhsuk-label" for="custom-declaration-text">
+                        Declaration text
+                    </label>
+                            <nhs-form-group nhs-validation-for="CustomText">
+
+                    <textarea class="nhsuk-textarea" id="custom-declaration-text" name="CustomText" rows="5" aria-describedby="custom-declaration-hint">@Model.CustomText</textarea>
+                            </nhs-form-group>
+
+                    <span class="nhsuk-hint" id="custom-declaration-hint">
+                        Enter the declaration text
+                    </span>
+                </div>
+            </div>
+
+        </div>
+    </fieldset>
+    <input type="hidden" asp-for="CompetencyAssessmentId" />
+    <input type="hidden" asp-for="CompetencyAssessmentName" />
+
+    <div class="nhsuk-u-margin-top-4">
+        <button class="nhsuk-button" type="submit">
+            Next
+        </button>
+        <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-left-3" asp-action="SupervisorSignoffDeclaration" asp-route-competencyAssessmentId="@Model.CompetencyAssessmentId" asp-route-actionName="Supervisor">
+
+            Back
+        </a>
+        <div class="nhsuk-back-link">
+            <a class="nhsuk-back-link__link" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.CompetencyAssessmentId">
+                <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
+                </svg>
+                Cancel
+            </a>
+        </div>
+    </div>
+</form>
+    </div>
+</div>

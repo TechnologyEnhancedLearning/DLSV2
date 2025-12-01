@@ -19,8 +19,11 @@
         public int? NRPRoleID { get; set; }
         public int PublishStatusID { get; set; }
         public int UserRole { get; set; }
+        public int SupervisorResultsReview { get; set; }
+        public int SupervisorSelfAssessmentReview { get; set; }
+        public string? SignOffRequestorStatement { get; set; }
+        public string? SignOffSupervisorStatement { get; set; }
         public string? Vocabulary { get; set; }
-
     }
 }
 

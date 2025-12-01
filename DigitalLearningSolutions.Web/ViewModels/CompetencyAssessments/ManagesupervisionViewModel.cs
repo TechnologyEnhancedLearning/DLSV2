@@ -1,0 +1,60 @@
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
+{
+    public class ManagesupervisionViewModel
+    {
+        public ManagesupervisionViewModel() { }
+        public ManagesupervisionViewModel(SupervisedSelfAssessmentSignoffViewModel signoff) {
+            Signoff = signoff;
+            CompetencyAssessmentName = signoff.CompetencyAssessmentName;
+        }
+        public ManagesupervisionViewModel(SupervisorSignoffDeclarationViewModel supervisorDeclaration,
+            SupervisedSelfAssessmentSignoffViewModel signoff)
+        {
+            SupervisorDeclaration = supervisorDeclaration;
+            Signoff = signoff;
+        }
+        public ManagesupervisionViewModel(LearnerSignoffDeclarationViewModel learnerDeclaration,
+            SupervisorSignoffDeclarationViewModel supervisorDeclaration,
+            SupervisedSelfAssessmentSignoffViewModel signoff)
+        {
+            LearnerDeclaration = learnerDeclaration;
+            SupervisorDeclaration = supervisorDeclaration;
+            Signoff = signoff;
+        }
+        public ManagesupervisionViewModel(int competencyAssessmentId, string competencyAssessmentName,
+            int supervisorResultsReview,
+            int SupervisorSelfAssessmentReview,
+            string? signOffSupervisorStatement,
+            string? signOffRequestorStatement,
+            string learnerDefaultText,
+             string supervisorDefaultText )
+        {
+            CompetencyAssessmentId = competencyAssessmentId;
+            CompetencyAssessmentName = competencyAssessmentName;
+            Signoff.CompetencyAssessmentId = competencyAssessmentId;
+            Signoff.Supervised = supervisorResultsReview;
+            Signoff.Signoff = supervisorResultsReview;
+            Signoff.Confirm = SupervisorSelfAssessmentReview;
+            SupervisorDeclaration.CompetencyAssessmentName = competencyAssessmentName;
+            SupervisorDeclaration.CompetencyAssessmentId = competencyAssessmentId;
+            SupervisorDeclaration.DeclarationValue = signOffSupervisorStatement == null ? 0 : 1;
+            SupervisorDeclaration.CustomText = signOffSupervisorStatement;
+            SupervisorDeclaration.DefaultText = supervisorDefaultText.Replace("{{CompetencyAssessmentName}}", CompetencyAssessmentName);
+            LearnerDeclaration.DeclarationValue = signOffRequestorStatement == null ? 0 : 1;
+            LearnerDeclaration.CustomText = signOffRequestorStatement;
+            LearnerDeclaration.DefaultText = learnerDefaultText.Replace("{{CompetencyAssessmentName}}", CompetencyAssessmentName);
+            LearnerDeclaration.CompetencyAssessmentName = competencyAssessmentName;
+            LearnerDeclaration.CompetencyAssessmentId = competencyAssessmentId;
+        }
+        public SupervisedSelfAssessmentSignoffViewModel Signoff { get; set; } = new SupervisedSelfAssessmentSignoffViewModel();
+        public SupervisorSignoffDeclarationViewModel SupervisorDeclaration { get; set; } = new SupervisorSignoffDeclarationViewModel();
+        public LearnerSignoffDeclarationViewModel LearnerDeclaration { get; set; } = new LearnerSignoffDeclarationViewModel();
+        [Required]
+        [Range(1, 1, ErrorMessage = "Please indicate your confirmation by ticking the checkbox to show that the task has been completed.")]
+        public bool TaskCompleteChecked { get; set; }
+        public int CompetencyAssessmentId { get; set; }
+        public string CompetencyAssessmentName { get; set; } = string.Empty;
+    }
+}

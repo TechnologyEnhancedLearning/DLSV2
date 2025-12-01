@@ -60,6 +60,16 @@ namespace DigitalLearningSolutions.Web.Services
           bool workingGroupStatus, bool AllframeworkCompetenciesStatus);
         void UpdateSelfAssessmentFromFramework(int selfAssessmentId, int? frameworkId);
         bool UpdatePrimaryFrameworkCompetencies(int assessmentId, int frameworkId);
+        bool UpdateSupervisorRolesTaskStatus(int competencyAssessmentId, bool taskCompleteChecked);
+        bool UpdateSelfAssessments(int competencyAssessmentId,
+                    int? supervised,
+                    int? signoff,
+                    int? confirm,
+                   int? supervisorDeclarationValue,
+                   string? supervisorCustomText,
+                   int? leanerDeclarationValue,
+                   string? leanerCustomText
+                  );
 
         //INSERT DATA
         int InsertCompetencyAssessment(int adminId, int centreId, string competencyAssessmentName, int? frameworkId);
@@ -323,5 +333,23 @@ namespace DigitalLearningSolutions.Web.Services
             return competencyAssessmentDataService.GetCollaboratorNotification(id, invitedByAdminId);
 
         }
+      public  bool UpdateSupervisorRolesTaskStatus(int competencyAssessmentId, bool taskCompleteChecked)
+        {
+            return competencyAssessmentDataService.UpdateSupervisorRolesTaskStatus(competencyAssessmentId, taskCompleteChecked);
+        }
+       public bool UpdateSelfAssessments(int competencyAssessmentId,
+            int? supervised,
+            int? signoff,
+            int? confirm,
+            int? supervisorDeclarationValue,
+            string? supervisorCustomText,
+            int? leanerDeclarationValue,
+            string? leanerCustomText
+                  )
+        {
+            return competencyAssessmentDataService.UpdateSelfAssessments(competencyAssessmentId, supervised, signoff, confirm,
+            supervisorDeclarationValue, supervisorCustomText, leanerDeclarationValue, leanerCustomText);
+        }
+
     }
 }
