@@ -67,10 +67,7 @@
                 );
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
             }
-            if (selfAssessment.IncludeLearnerDeclarationPrompt)
-            {
-                selfAssessmentService.IncrementLaunchCount(selfAssessmentId, delegateUserId);
-            }
+            selfAssessmentService.IncrementLaunchCount(selfAssessmentId, delegateUserId);
             selfAssessmentService.UpdateLastAccessed(selfAssessmentId, delegateUserId);
             var supervisors = selfAssessmentService.GetAllSupervisorsForSelfAssessmentId(
                 selfAssessmentId,
@@ -1906,3 +1903,4 @@
         }
     }
 }
+
