@@ -39,7 +39,6 @@
         IEnumerable<SupervisorDelegateDetail> GetSupervisorDelegateDetailsForAdminIdWithoutRemovedClause(int adminId);
         SupervisorDelegateDetail GetSupervisorDelegateDetailsByIdWithoutRemoveClause(int supervisorDelegateId, int adminId, int delegateUserId);
         //UPDATE DATA
-        bool ConfirmSupervisorDelegateById(int supervisorDelegateId, int candidateId, int adminId);
         bool RemoveSupervisorDelegateById(int supervisorDelegateId, int delegateUserId, int adminId);
         bool UpdateSelfAssessmentResultSupervisorVerifications(int selfAssessmentResultSupervisorVerificationId, string? comments, bool signedOff, int adminId);
         bool UpdateSelfAssessmentResultSupervisorVerificationsEmailSent(int selfAssessmentResultSupervisorVerificationId);
@@ -539,22 +538,6 @@
                 new { CentreID, CategoryID });
         }
 
-        public bool ConfirmSupervisorDelegateById(int supervisorDelegateId, int delegateUserId, int adminId)
-        {
-            var numberOfAffectedRows = connection.Execute(
-         @"UPDATE SupervisorDelegates SET Confirmed = getUTCDate()
-            WHERE ID = @supervisorDelegateId AND Confirmed IS NULL AND Removed IS NULL AND (CandidateID = @candidateId OR SupervisorAdminID = @adminId)",
-        new { supervisorDelegateId, delegateUserId, adminId });
-            if (numberOfAffectedRows < 1)
-            {
-                logger.LogWarning(
-                    $"Not confirming SupervisorDelegate as db update failed. supervisorDelegateId: {supervisorDelegateId}, delegateUserId: {delegateUserId}, adminId: {adminId}"
-                );
-                return false;
-            }
-            return true;
-        }
-
         public bool RemoveSupervisorDelegateById(int supervisorDelegateId, int delegateUserId, int adminId)
         {
 
@@ -846,7 +829,8 @@
             return connection.Query<SelfAssessmentSupervisorRole>(
                $@"SELECT ID, SelfAssessmentID, RoleName, RoleDescription, SelfAssessmentReview, ResultsReview,AllowSupervisorRoleSelection
                   FROM   SelfAssessmentSupervisorRoles
-                  WHERE (SelfAssessmentID = @selfAssessmentId) 
+                  WHERE SelfAssessmentID = @selfAssessmentId OR 
+				            (SelfAssessmentID IS NULL AND NOT EXISTS (SELECT 1 FROM SelfAssessmentSupervisorRoles WHERE SelfAssessmentID = @selfAssessmentId))
                   ORDER BY RoleName", new { selfAssessmentId }
                );
         }
@@ -856,7 +840,9 @@
             return connection.Query<SelfAssessmentSupervisorRole>(
                $@"SELECT ID, SelfAssessmentID, RoleName, RoleDescription, SelfAssessmentReview, ResultsReview
                   FROM   SelfAssessmentSupervisorRoles
-                  WHERE (SelfAssessmentID = @selfAssessmentId) AND (AllowSupervisorRoleSelection = 1)
+                  WHERE (SelfAssessmentID = @selfAssessmentId OR 
+				            (SelfAssessmentID IS NULL AND NOT EXISTS (SELECT 1 FROM SelfAssessmentSupervisorRoles WHERE SelfAssessmentID = @selfAssessmentId)))
+                        AND (AllowSupervisorRoleSelection = 1)
                   ORDER BY RoleName", new { selfAssessmentId }
                );
         }
@@ -865,7 +851,9 @@
             return connection.Query<SelfAssessmentSupervisorRole>(
                $@"SELECT ID, SelfAssessmentID, RoleName, RoleDescription, SelfAssessmentReview, ResultsReview
                   FROM   SelfAssessmentSupervisorRoles
-                  WHERE (SelfAssessmentID = @selfAssessmentId) AND (AllowDelegateNomination = 1)
+                  WHERE (SelfAssessmentID = @selfAssessmentId OR 
+				            (SelfAssessmentID IS NULL AND NOT EXISTS (SELECT 1 FROM SelfAssessmentSupervisorRoles WHERE SelfAssessmentID = @selfAssessmentId)))
+                        AND (AllowDelegateNomination = 1)
                   ORDER BY RoleName", new { selfAssessmentId }
                );
         }
@@ -1017,7 +1005,8 @@
          @"
                 BEGIN TRY
                     BEGIN TRANSACTION
-                        UPDATE CandidateAssessments SET RemovedDate = getUTCDate(), RemovalMethodID = 2
+                        UPDATE CandidateAssessments SET RemovedDate = getUTCDate(), RemovalMethodID = 2,
+                                                        SelfAssessmentProcessAgreed = NULL
                             WHERE ID = @candidateAssessmentId AND RemovedDate IS NULL
 
                         COMMIT TRANSACTION

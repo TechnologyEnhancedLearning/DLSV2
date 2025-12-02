@@ -17,5 +17,6 @@
         public bool IsSelfAssessment { get; set; }
         public int AssessmentVersion { get; set; }
         public int? AssessmentCategoryID { get; set; }
+        public bool ActionConfirmed { get; set; }
     }
 }
