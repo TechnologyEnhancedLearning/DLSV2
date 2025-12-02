@@ -1047,7 +1047,7 @@
             }
             var model = new SupervisorSignoffDeclarationViewModel(competencyAssessmentId);
             model.CompetencyAssessmentName = data.CompetencyAssessmentName;
-            model.DefaultText = this.config.GetSupervisorDefaultText();
+            model.DefaultText = this.config.GetSupervisorDefaultText().Replace("{{CompetencyAssessmentName}}", model.CompetencyAssessmentName); ;
             return View(model);
         }
 
@@ -1063,6 +1063,7 @@
             }
             var data = GetManagesupervisionData();
             var model = new ManagesupervisionViewModel(data.LearnerDeclaration, viewModel, data.Signoff);
+            model.CompetencyAssessmentName = viewModel.CompetencyAssessmentName;
             SetManagesupervisionData(model);
             if (viewModel.ActionName != null) return RedirectToAction("LearnerSignoffDeclaration", "CompetencyAssessments",
                 new
@@ -1087,7 +1088,7 @@
             }
             var model = new LearnerSignoffDeclarationViewModel(competencyAssessmentId);
             model.CompetencyAssessmentName = data.CompetencyAssessmentName;
-            model.DefaultText = this.config.GetLearnerDefaultText();
+            model.DefaultText = this.config.GetLearnerDefaultText().Replace("{{CompetencyAssessmentName}}", model.CompetencyAssessmentName);
             return View(model);
         }
 
@@ -1103,6 +1104,7 @@
             }
             var data = GetManagesupervisionData();
             var model = new ManagesupervisionViewModel(viewModel, data.SupervisorDeclaration, data.Signoff);
+            model.CompetencyAssessmentName = viewModel.CompetencyAssessmentName;
             SetManagesupervisionData(model);
             return RedirectToAction("ManageSupervisionSettings", "CompetencyAssessments", new { viewModel.CompetencyAssessmentId });
         }
@@ -1127,7 +1129,8 @@
                 return View(model);
             }
             var data = GetManagesupervisionData();
-            return View(data);
+            var dataModel = new ManagesupervisionViewModel(competencyAssessmentId, data, this.config.GetLearnerDefaultText(), this.config.GetSupervisorDefaultText());
+            return View(dataModel);
 
         }
 
@@ -1186,7 +1189,10 @@
         {
             var data = multiPageFormService.GetMultiPageFormData<ManagesupervisionViewModel>(
                MultiPageFormDataFeature.AddCustomWebForm("ManagesupervisionDataCWF"),
-
+                TempData
+             ).GetAwaiter().GetResult();
+            return data;
+        }
         private void SetOptionsLabelsData(OptionsLabelsViewModel data)
         {
             multiPageFormService.SetMultiPageFormData(

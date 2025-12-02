@@ -23,9 +23,22 @@ namespace DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
             SupervisorDeclaration = supervisorDeclaration;
             Signoff = signoff;
         }
+        public ManagesupervisionViewModel(int competencyAssessmentId,
+            ManagesupervisionViewModel model,
+            string learnerDefaultText,
+             string supervisorDefaultText)
+        {
+            CompetencyAssessmentId = competencyAssessmentId;
+            CompetencyAssessmentName = model.CompetencyAssessmentName;
+            Signoff = model.Signoff;
+            SupervisorDeclaration = model.SupervisorDeclaration;
+            SupervisorDeclaration.DefaultText = supervisorDefaultText.Replace("{{CompetencyAssessmentName}}", CompetencyAssessmentName);
+            LearnerDeclaration = model.LearnerDeclaration;
+            LearnerDeclaration.DefaultText = learnerDefaultText.Replace("{{CompetencyAssessmentName}}", CompetencyAssessmentName);
+        }
         public ManagesupervisionViewModel(int competencyAssessmentId, string competencyAssessmentName,
-            int supervisorResultsReview,
-            int SupervisorSelfAssessmentReview,
+            bool supervisorResultsReview,
+            bool SupervisorSelfAssessmentReview,
             string? signOffSupervisorStatement,
             string? signOffRequestorStatement,
             string learnerDefaultText,
@@ -34,9 +47,9 @@ namespace DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
             CompetencyAssessmentId = competencyAssessmentId;
             CompetencyAssessmentName = competencyAssessmentName;
             Signoff.CompetencyAssessmentId = competencyAssessmentId;
-            Signoff.Supervised = supervisorResultsReview;
-            Signoff.Signoff = supervisorResultsReview;
-            Signoff.Confirm = SupervisorSelfAssessmentReview;
+            Signoff.Supervised = supervisorResultsReview == true ? 1 : 0;
+            Signoff.Signoff = supervisorResultsReview == true ? 1 : 0;
+            Signoff.Confirm = SupervisorSelfAssessmentReview == true ? 1 : 0;
             SupervisorDeclaration.CompetencyAssessmentName = competencyAssessmentName;
             SupervisorDeclaration.CompetencyAssessmentId = competencyAssessmentId;
             SupervisorDeclaration.DeclarationValue = signOffSupervisorStatement == null ? 0 : 1;

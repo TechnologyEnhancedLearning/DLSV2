@@ -118,9 +118,8 @@
                  sa.SupervisorResultsReview,
                  sa.SupervisorSelfAssessmentReview,
                  sa.SignOffSupervisorStatement,
-                 sa.SignOffRequestorStatement";
-            sa.IncludeLearnerDeclarationPrompt, sa.IncludesSignposting, sa.LinearNavigation, sa.UseDescriptionExpanders, sa.QuestionLabel, sa.ReviewerCommentsLabel,
-                sa.SupervisorSelfAssessmentReview, sa.SupervisorResultsReview ";
+                 sa.SignOffRequestorStatement,
+            sa.IncludeLearnerDeclarationPrompt, sa.IncludesSignposting, sa.LinearNavigation, sa.UseDescriptionExpanders, sa.QuestionLabel, sa.ReviewerCommentsLabel ";
 
         private const string SelfAssessmentFields =
             @", sa.CategoryID, sa.CreatedDate,
@@ -1139,7 +1138,7 @@
                 leanerDeclarationValue,
                 leanerCustomText
             }
-        );
+             );
 
             if ((affectedRows < 1))
             {
@@ -1148,6 +1147,11 @@
                     $"competencyAssessmentId: {competencyAssessmentId}, supervised: {supervised}" +
                     $"signoff: {signoff}, confirm: {confirm}, supervisorDeclarationValue: {supervisorDeclarationValue} " +
                     $"supervisorCustomText: {supervisorCustomText}, leanerDeclarationValue: {leanerDeclarationValue}, leanerCustomText: {leanerCustomText} "
+                    );
+                return false;
+            }
+            return true;
+        }
 
         public bool HasCompetencyWithSignpostedLearning(int competencyAssessmentId)
         {
