@@ -753,7 +753,8 @@
             connection.Execute(
                 @"BEGIN TRY
                     BEGIN TRANSACTION
-                        UPDATE CandidateAssessments SET RemovedDate = GETUTCDATE(), RemovalMethodID = 2
+                        UPDATE CandidateAssessments SET RemovedDate = GETUTCDATE(), RemovalMethodID = 2,
+                                                        SelfAssessmentProcessAgreed = NULL
                             WHERE ID = @candidateAssessmentsId AND RemovedDate IS NULL
 
                         COMMIT TRANSACTION
