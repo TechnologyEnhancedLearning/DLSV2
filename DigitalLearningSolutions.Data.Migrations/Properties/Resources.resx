@@ -529,4 +529,10 @@
   <data name="TD_5552_Alter_SendRetiringSelfAssessmentNotification_Up" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Scripts\TD-5552-Alter_SendRetiringSelfAssessmentNotification_Up.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
   </data>
+  <data name="TD_6437_usp_GetSelfAssessmentReport_Down" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Scripts\TD-6437-usp_GetSelfAssessmentReport_Down.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
+  </data>
+  <data name="TD_6437_usp_GetSelfAssessmentReport_Up" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Scripts\TD-6437-usp_GetSelfAssessmentReport_Up.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
+  </data>
 </root>
