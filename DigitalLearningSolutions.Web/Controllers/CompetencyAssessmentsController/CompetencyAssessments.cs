@@ -317,6 +317,10 @@
         [Route("/CompetencyAssessments/{competencyAssessmentId}/Description/")]
         public IActionResult SaveDescription(EditDescriptionViewModel model)
         {
+            if (string.IsNullOrWhiteSpace(StringHelper.StripHtmlTags(model.Description)))
+            {
+                ModelState.AddModelError(nameof(EditDescriptionViewModel.Description), "Please enter introductory text");
+            }
             if (!ModelState.IsValid)
             {
                 return View("EditDescription", model);
@@ -712,11 +716,11 @@
         [Route("/CompetencyAssessments/{competencyAssessmentId}/Frameworks/{frameworkId}/Make")]
         public IActionResult ConfirmMaKePrimaryFramework(int frameworkId, int competencyAssessmentId)
         {
-                var adminId = GetAdminID();
-                var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
-                var framework = frameworkService.GetFrameworkDetailByFrameworkId(frameworkId, adminId);
-                var model = new ConfirmMakePrimaryFrameworkViewModel(competencyAssessmentBase, framework);
-                return View("ConfirmMaKePrimaryFramework", model);
+            var adminId = GetAdminID();
+            var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
+            var framework = frameworkService.GetFrameworkDetailByFrameworkId(frameworkId, adminId);
+            var model = new ConfirmMakePrimaryFrameworkViewModel(competencyAssessmentBase, framework);
+            return View("ConfirmMaKePrimaryFramework", model);
         }
         [HttpPost]
         [Route("/CompetencyAssessments/{competencyAssessmentId}/Frameworks/{frameworkId}/Make")]
