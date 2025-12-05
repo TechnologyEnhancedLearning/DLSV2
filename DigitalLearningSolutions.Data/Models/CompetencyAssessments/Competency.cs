@@ -1,4 +1,7 @@
-﻿namespace DigitalLearningSolutions.Data.Models.CompetencyAssessments
+﻿using DigitalLearningSolutions.Data.Models.Frameworks;
+using System.Collections.Generic;
+
+namespace DigitalLearningSolutions.Data.Models.CompetencyAssessments
 {
     public class Competency
     {
@@ -12,5 +15,6 @@
         public string? CompetencyDescription { get; set; }
         public bool Optional { get; set; }
         public bool GroupOptionalCompetencies { get; set; }
+        public IEnumerable<CompetencyFlag> CompetencyFlags { get; set; } = [];
     }
 }

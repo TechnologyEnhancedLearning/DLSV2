@@ -8,6 +8,7 @@
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments;
+    using DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments;
     using GDS.MultiPageFormData.Enums;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Rendering;
@@ -652,7 +653,42 @@
             return RedirectToAction("ManageCompetencyAssessment", new { competencyAssessmentId = model.ID });
         }
         [HttpGet]
-        [Route("/CompetencyAssessments/{competencyAssessmentId}/Competencies/Optional")]
+        [Route("/CompetencyAssessments/{competencyAssessmentId}/Competencies/Optional/Manage")]
+        public IActionResult ManageOptionalCompetencies(int competencyAssessmentId)
+        {
+            var adminId = GetAdminID();
+            var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
+            if (competencyAssessmentBase == null)
+            {
+                logger.LogWarning($"Failed to load Optional Competencies page for competencyAssessmentId: {competencyAssessmentId} adminId: {adminId}");
+                return StatusCode(500);
+            }
+            if (competencyAssessmentBase.UserRole < 2)
+            {
+                return StatusCode(403);
+            }
+            var competencies = competencyAssessmentService.GetCompetenciesForCompetencyAssessment(competencyAssessmentId).Where(c => c.Optional == true);
+            var competencyIds = competencies.Select(c => c.CompetencyID).ToArray();
+            var competencyFlags = frameworkService.GetSelectedCompetencyFlagsByCompetecyIds(competencyIds);
+            foreach (var competency in competencies)
+                competency.CompetencyFlags = competencyFlags.Where(f => f.CompetencyId == competency.CompetencyID);
+            var competencyAssessmentTaskStatus = competencyAssessmentService.GetCompetencyAssessmentTaskStatus(competencyAssessmentId, null);
+            var model = new SelectOptionalCompetenciesViewModel(competencyAssessmentBase, competencies, competencyAssessmentTaskStatus.OptionalCompetenciesTaskStatus);
+            return View(model);
+        }
+        [HttpPost]
+        [Route("/CompetencyAssessments/{competencyAssessmentId}/Competencies/Optional/Manage")]
+        public IActionResult ManageOptionalCompetencies(ViewSelectedCompetenciesFormData model)
+        {
+            if (model.TaskStatus == null)
+            {
+                model.TaskStatus = false;
+            }
+            competencyAssessmentService.UpdateOptionalCompetenciesTaskStatus(model.ID, model.TaskStatus.Value, null);
+            return RedirectToAction("ManageCompetencyAssessment", new { competencyAssessmentId = model.ID });
+        }
+        [HttpGet]
+        [Route("/CompetencyAssessments/{competencyAssessmentId}/Competencies/Optional/Select")]
         public IActionResult SelectOptionalCompetencies(int competencyAssessmentId)
         {
             var adminId = GetAdminID();
@@ -667,12 +703,42 @@
                 return StatusCode(403);
             }
             var competencies = competencyAssessmentService.GetCompetenciesForCompetencyAssessment(competencyAssessmentId);
-
+            var competencyIds = competencies.Select(c => c.CompetencyID).ToArray();
+            var competencyFlags = frameworkService.GetSelectedCompetencyFlagsByCompetecyIds(competencyIds);
+            foreach (var competency in competencies)
+                competency.CompetencyFlags = competencyFlags.Where(f => f.CompetencyId == competency.CompetencyID);
             var competencyAssessmentTaskStatus = competencyAssessmentService.GetCompetencyAssessmentTaskStatus(competencyAssessmentId, null);
             var model = new SelectOptionalCompetenciesViewModel(competencyAssessmentBase, competencies, competencyAssessmentTaskStatus.OptionalCompetenciesTaskStatus);
             return View(model);
         }
-
+        [HttpPost]
+        [Route("/CompetencyAssessments/{competencyAssessmentId}/Competencies/Optional/Select")]
+        public IActionResult SelectOptionalCompetencies(SelectOptionalCompetenciesFormData model)
+        {
+            if (!ModelState.IsValid)
+            {
+                var adminId = GetAdminID();
+                var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(model.ID, adminId);
+                if (competencyAssessmentBase == null)
+                {
+                    logger.LogWarning($"Failed to load Optional Competencies page for competencyAssessmentId: {model.ID} adminId: {adminId}");
+                    return StatusCode(500);
+                }
+                if (competencyAssessmentBase.UserRole < 2)
+                {
+                    return StatusCode(403);
+                }
+                var competencies = competencyAssessmentService.GetCompetenciesForCompetencyAssessment(model.ID);
+                var competencyIds = competencies.Select(c => c.CompetencyID).ToArray();
+                var competencyFlags = frameworkService.GetSelectedCompetencyFlagsByCompetecyIds(competencyIds);
+                foreach (var competency in competencies)
+                    competency.CompetencyFlags = competencyFlags.Where(f => f.CompetencyId == competency.CompetencyID);
+                var viewModel = new SelectOptionalCompetenciesViewModel(competencyAssessmentBase, competencies, model.TaskStatus);
+                return View("SelectOptionalCompetencies", viewModel);
+            }
+            competencyAssessmentService.UpdateOptionalCompetenciesInAssessment(model.ID, model.SelectedCompetencyIds ?? [], model.GroupIds ?? []);
+            return RedirectToAction("ManageCompetencyAssessment", new { competencyAssessmentId = model.ID });
+        }
         [Route("/CompetencyAssessments/Framework/{frameworkId}/{competencyAssessmentId}/Features")]
         public IActionResult CompetencyAssessmentFeatures(int competencyAssessmentId, int? frameworkId = null)
         {

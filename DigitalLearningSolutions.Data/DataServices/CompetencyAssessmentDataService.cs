@@ -68,6 +68,7 @@
         public bool UpdateCompetencyAssessmentFeaturesTaskStatus(int id, bool descriptionStatus, bool providerandCategoryStatus, bool vocabularyStatus,
            bool workingGroupStatus, bool AllframeworkCompetenciesStatus);
         void UpdateSelfAssessmentFromFramework(int selfAssessmentId, int? frameworkId);
+        bool UpdateOptionalCompetenciesInAssessment(int selfAssessmentId, int[] selectedStructureIds, int[] groupIds);
 
         //INSERT DATA
         int InsertCompetencyAssessment(int adminId, int centreId, string competencyAssessmentName);
@@ -866,6 +867,11 @@
                new { competencyAssessmentId }
            );
 
+        }
+
+        public bool UpdateOptionalCompetenciesInAssessment(int selfAssessmentId, int[] selectedStructureIds, int[] groupIds)
+        {
+            throw new NotImplementedException();
         }
     }
 }

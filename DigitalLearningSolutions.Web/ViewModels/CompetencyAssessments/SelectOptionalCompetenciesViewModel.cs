@@ -12,8 +12,10 @@
             ID = competencyAssessmentBase.ID;
             TaskStatus = taskStatus;
             CompetencyAssessmentName = competencyAssessmentBase.CompetencyAssessmentName;
+            MinimumOptionalCompetencies = competencyAssessmentBase.MinimumOptionalCompetencies;
+            ManageOptionalCompetenciesPrompt = competencyAssessmentBase.ManageOptionalCompetenciesPrompt;
             UserRole = competencyAssessmentBase.UserRole;
-            Competencies = competencies.Where(c => c.Optional == true);
+            CompetencyGroups = competencies.GroupBy(competency => competency.GroupName);
             VocabularySingular = FrameworkVocabularyHelper.VocabularySingular(competencyAssessmentBase.Vocabulary);
             VocabularyPlural = FrameworkVocabularyHelper.VocabularyPlural(competencyAssessmentBase.Vocabulary);
             SelectedCompetencyIds = competencies.Where(c => c.Optional == true).Select(c => c.CompetencyID).ToArray();
@@ -22,6 +24,6 @@
         public int UserRole { get; set; }
         public string VocabularySingular { get; set; }
         public string VocabularyPlural { get; set; }
-        public IEnumerable<Competency> Competencies { get; set; }
+        public IEnumerable<IGrouping<string, Competency>>? CompetencyGroups { get; set; }
     }
 }

@@ -57,6 +57,7 @@ namespace DigitalLearningSolutions.Web.Services
         bool UpdateCompetencyAssessmentFeaturesTaskStatus(int id, bool descriptionStatus, bool providerandCategoryStatus, bool vocabularyStatus,
           bool workingGroupStatus, bool AllframeworkCompetenciesStatus);
         void UpdateSelfAssessmentFromFramework(int selfAssessmentId, int? frameworkId);
+        bool UpdateOptionalCompetenciesInAssessment(int selfAssessmentId, int[] selectedStructureIds, int[] groupIds);
 
         //INSERT DATA
         int InsertCompetencyAssessment(int adminId, int centreId, string competencyAssessmentName, int? frameworkId);
@@ -290,5 +291,10 @@ namespace DigitalLearningSolutions.Web.Services
         {
             return competencyAssessmentDataService.GetSelfAssessmentStructure(competencyAssessmentId);
         }
+
+        public bool UpdateOptionalCompetenciesInAssessment(int selfAssessmentId, int[] selectedStructureIds, int[] groupIds)
+        {
+            return competencyAssessmentDataService.UpdateOptionalCompetenciesInAssessment(selfAssessmentId, selectedStructureIds, groupIds);
         }
+    }
 }
