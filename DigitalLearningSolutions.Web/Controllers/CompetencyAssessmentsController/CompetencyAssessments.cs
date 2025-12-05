@@ -910,7 +910,7 @@
                         var errModel = new OptionsLabelsViewModel(data);
                         errModel.QuestionLabel = model.QuestionLabel;
                         errModel.QuestionLabelText = model.QuestionLabelText;
-                        model.Error = true;
+                        errModel.Error = true;
                         return View("CompetencyAssessmentOptions", errModel);
                     }
                 }
