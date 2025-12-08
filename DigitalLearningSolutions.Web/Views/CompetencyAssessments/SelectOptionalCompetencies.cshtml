@@ -5,27 +5,27 @@
 <p class="nhsuk-lede-text">
     Optional competencies can be added to the assessment individually or as a group.
 </p>
-
-@foreach (var competencyGroup in Model.CompetencyGroups)
-{
-    @if (competencyGroup.Count() > 1)
+<form method="post" asp-action="SelectOptionalCompetencies">
+    @foreach (var competencyGroup in Model.CompetencyGroups)
     {
-        
+        @if (competencyGroup.Count() > 1)
+        {
+
             <div class="nhsuk-u-margin-bottom-6">
                 <h3>
                     @competencyGroup.Key
                 </h3>
                 <div class="nhsuk-checkboxes">
-                <div class="nhsuk-checkboxes__item">
-                    <input class="nhsuk-checkboxes__input" data-group="@competencyGroup.First().GroupId" id="competency-check-@competencyGroup.First().GroupId" name="GroupIds" checked="@competencyGroup.Any(x => x.GroupOptionalCompetencies)" type="checkbox" value="@competencyGroup.First().GroupId">
-                    <label class="nhsuk-label nhsuk-checkboxes__label" for="competency-check-@competencyGroup.First().GroupId">
-                        <strong>@competencyGroup.Key @Model.VocabularyPlural.ToLower() optional as a group</strong>
-                    </label>
-                </div>
+                    <div class="nhsuk-checkboxes__item">
+                        <input class="nhsuk-checkboxes__input" data-group="@competencyGroup.First().GroupId" id="competency-check-@competencyGroup.First().GroupId" name="GroupIds" checked="@competencyGroup.Any(x => x.GroupOptionalCompetencies)" type="checkbox" value="@competencyGroup.First().GroupId">
+                        <label class="nhsuk-label nhsuk-checkboxes__label" for="competency-check-@competencyGroup.First().GroupId">
+                            <strong>@competencyGroup.Key @Model.VocabularyPlural.ToLower() optional as a group</strong>
+                        </label>
+                    </div>
                     @foreach (var competency in competencyGroup)
                     {
                         <div class="nhsuk-checkboxes__item">
-                            <input class="nhsuk-checkboxes__input" data-group="@competencyGroup.Key" id="competency-check-@competency.StructureId" name="SelectedCompetencyIds" checked="@(Model.SelectedCompetencyIds != null ? Model.SelectedCompetencyIds.Contains((int)competency.StructureId) : false)" type="checkbox" value="@competency.StructureId">
+                            <input class="nhsuk-checkboxes__input" data-group="@competencyGroup.Key" id="competency-check-@competency.StructureId" name="SelectedCompetencyIds" checked="@(Model.SelectedCompetencyIds != null ? Model.SelectedCompetencyIds.Contains((int)competency.CompetencyID) : false)" type="checkbox" value="@competency.StructureId">
                             <label class="nhsuk-label nhsuk-checkboxes__label" for="competency-check-@competency.StructureId">
                                 @foreach (var flag in competency.CompetencyFlags)
                                 {
@@ -41,9 +41,17 @@
                     }
                 </div>
             </div>
-    }
+        }
 
-}
+    }
+    <input type="hidden" asp-for="ID" />
+    <input type="hidden" asp-for="MinimumOptionalCompetencies" />
+    <input type="hidden" asp-for="ManageOptionalCompetenciesPrompt" />
+    <button class="nhsuk-button" type="submit">
+        Save
+    </button>
+</form>
+
 <div class="nhsuk-back-link">
     <a class="nhsuk-back-link__link" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.ID">
         <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">

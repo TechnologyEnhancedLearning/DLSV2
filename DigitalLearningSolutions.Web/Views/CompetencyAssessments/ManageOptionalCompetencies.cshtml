@@ -57,7 +57,7 @@
             <a class="nhsuk-link" asp-route-competencyAssessmentId="@Model.ID" asp-action="SelectOptionalCompetencies">Change<span class="nhsuk-u-visually-hidden"> optional competencies</span></a>
         </dd>
     </div>
-    @if (!Model.SelectedCompetencyIds.Any())
+    @if (Model.SelectedCompetencyIds.Any())
     {
         <div class="nhsuk-summary-list__row">
             <dt class="nhsuk-summary-list__key">

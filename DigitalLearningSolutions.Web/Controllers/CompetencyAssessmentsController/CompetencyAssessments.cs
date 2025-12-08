@@ -736,7 +736,7 @@
                 var viewModel = new SelectOptionalCompetenciesViewModel(competencyAssessmentBase, competencies, model.TaskStatus);
                 return View("SelectOptionalCompetencies", viewModel);
             }
-            competencyAssessmentService.UpdateOptionalCompetenciesInAssessment(model.ID, model.SelectedCompetencyIds ?? [], model.GroupIds ?? []);
+            competencyAssessmentService.UpdateOptionalCompetenciesInAssessment(model.ID, model.GroupIds ?? [], model.SelectedCompetencyIds ?? []);
             return RedirectToAction("ManageCompetencyAssessment", new { competencyAssessmentId = model.ID });
         }
         [Route("/CompetencyAssessments/Framework/{frameworkId}/{competencyAssessmentId}/Features")]

@@ -2,6 +2,7 @@
 {
     using Dapper;
     using DigitalLearningSolutions.Data.Models.CompetencyAssessments;
+    using Microsoft.AspNetCore.Connections;
     using Microsoft.Extensions.Logging;
     using System;
     using System.Collections.Generic;
@@ -68,7 +69,7 @@
         public bool UpdateCompetencyAssessmentFeaturesTaskStatus(int id, bool descriptionStatus, bool providerandCategoryStatus, bool vocabularyStatus,
            bool workingGroupStatus, bool AllframeworkCompetenciesStatus);
         void UpdateSelfAssessmentFromFramework(int selfAssessmentId, int? frameworkId);
-        bool UpdateOptionalCompetenciesInAssessment(int selfAssessmentId, int[] selectedStructureIds, int[] groupIds);
+        bool UpdateOptionalCompetenciesInAssessment(int selfAssessmentId, int[] groupIds, int[] selectedStructureIds);
 
         //INSERT DATA
         int InsertCompetencyAssessment(int adminId, int centreId, string competencyAssessmentName);
@@ -750,7 +751,7 @@
                     new { SelfAssessmentID = competencyAssessmentId, CompetencyID = competencyId, Direction = direction },
                     commandType: CommandType.StoredProcedure
                 );
-            
+
         }
 
         public void MoveCompetencyGroupInSelfAssessment(int competencyAssessmentId, int groupId, string direction)
@@ -814,12 +815,12 @@
 	          WHERE s.ID = @competencyAssessmentId",
                new { competencyAssessmentId }
            );
-            
+
         }
 
-        public void UpdateSelfAssessmentFromFramework( int selfAssessmentId, int? frameworkId)
+        public void UpdateSelfAssessmentFromFramework(int selfAssessmentId, int? frameworkId)
         {
-           
+
             var numberOfAffectedRows = connection.Execute(
                 @"UPDATE s
                     SET 
@@ -833,22 +834,22 @@
                     INNER JOIN AdminUsers AU ON F.OwnerAdminID = AU.AdminID
                     WHERE s.id = @selfAssessmentId;"
             ,
-                new {selfAssessmentId, frameworkId }
+                new { selfAssessmentId, frameworkId }
             );
         }
         public bool InsertSelfAssessmentStructure(int selfAssessmentId, int? frameworkId)
         {
 
-                var numberOfAffectedRows = connection.Execute(
-                @"INSERT INTO SelfAssessmentStructure (SelfAssessmentID, CompetencyID, Ordering, CompetencyGroupID)
+            var numberOfAffectedRows = connection.Execute(
+            @"INSERT INTO SelfAssessmentStructure (SelfAssessmentID, CompetencyID, Ordering, CompetencyGroupID)
                 SELECT s.ID, FC.CompetencyID, ROW_NUMBER() OVER( ORDER BY FCG.Ordering, FC.Ordering ), FCG.CompetencyGroupID
                  FROM FrameworkCompetencies AS FC 
                 INNER JOIN FrameworkCompetencyGroups AS FCG ON FC.FrameworkCompetencyGroupID = FCG.ID INNER JOIN
 				SelfAssessments s ON s.id = @selfAssessmentId
                 WHERE FC.FrameworkID = @frameworkId"
-            ,
-                new { selfAssessmentId, frameworkId }
-            );
+        ,
+            new { selfAssessmentId, frameworkId }
+        );
             if (numberOfAffectedRows < 1)
             {
                 logger.LogWarning(
@@ -869,9 +870,42 @@
 
         }
 
-        public bool UpdateOptionalCompetenciesInAssessment(int selfAssessmentId, int[] selectedStructureIds, int[] groupIds)
+        public bool UpdateOptionalCompetenciesInAssessment(int selfAssessmentId, int[] groupIds, int[] selectedStructureIds)
         {
-            throw new NotImplementedException();
+            const string sql = @"UPDATE sas
+                                 SET 
+                                    Optional =
+                                        CASE 
+                                            WHEN sas.CompetencyGroupID IN @GroupIds THEN 1
+                                            WHEN sas.ID IN @SelectedIds THEN 1
+                                            ELSE 0
+                                        END,
+                                    GroupOptionalCompetencies =
+                                        CASE 
+                                            WHEN sas.CompetencyGroupID IN @GroupIds THEN 1
+                                            ELSE 0
+                                        END
+                                 FROM SelfAssessmentStructure sas
+                                    WHERE sas.SelfAssessmentID = @SelfAssessmentId;";
+
+            var safeGroupIds = (groupIds != null && groupIds.Length > 0)
+                ? groupIds
+                : [-1];
+
+            var safeSelectedIds = (selectedStructureIds != null && selectedStructureIds.Length > 0)
+                ? selectedStructureIds
+                : [-1];
+
+
+            var rows = connection.Execute(sql, new
+            {
+                SelfAssessmentId = selfAssessmentId,
+                GroupIds = safeGroupIds,
+                SelectedIds = safeSelectedIds
+            });
+
+            // Returns true if any rows were updated
+            return rows > 0;
         }
     }
 }
