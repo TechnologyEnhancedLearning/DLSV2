@@ -70,7 +70,8 @@
            bool workingGroupStatus, bool AllframeworkCompetenciesStatus);
         void UpdateSelfAssessmentFromFramework(int selfAssessmentId, int? frameworkId);
         bool UpdateOptionalCompetenciesInAssessment(int selfAssessmentId, int[] groupIds, int[] selectedStructureIds);
-
+        void UpdateMinimumOptionalCompetencies(int selfAssessmentId, int minimumOptionalCompetecies);
+        void UpdateManageOptionalCompetenciesPrompt(int selfAssessmentId, string manageOptionalCompetenciesPrompt);
         //INSERT DATA
         int InsertCompetencyAssessment(int adminId, int centreId, string competencyAssessmentName);
         bool InsertSelfAssessmentFramework(int adminId, int selfAssessmentId, int frameworkId);
@@ -906,6 +907,29 @@
 
             // Returns true if any rows were updated
             return rows > 0;
+        }
+
+        public void UpdateMinimumOptionalCompetencies(int selfAssessmentId, int minimumOptionalCompetecies)
+        {
+            connection.Execute(
+                @"UPDATE SelfAssessments
+                    SET 
+                    [MinimumOptionalCompetencies] = @minimumOptionalCompetecies
+                    WHERE id = @selfAssessmentId AND MinimumOptionalCompetencies <> minimumOptionalCompetecies;"
+            ,
+                new { selfAssessmentId, minimumOptionalCompetecies }
+            );
+        }
+        public void UpdateManageOptionalCompetenciesPrompt(int selfAssessmentId, string manageOptionalCompetenciesPrompt)
+        {
+            connection.Execute(
+                @"UPDATE SelfAssessments
+                    SET 
+                    [ManageOptionalCompetenciesPrompt] = @manageOptionalCompetenciesPrompt
+                    WHERE id = @selfAssessmentId AND MinimumOptionalCompetencies <> minimumOptionalCompetecies;"
+            ,
+                new { selfAssessmentId, manageOptionalCompetenciesPrompt }
+            );
         }
     }
 }

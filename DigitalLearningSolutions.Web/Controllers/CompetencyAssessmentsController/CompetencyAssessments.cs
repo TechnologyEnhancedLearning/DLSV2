@@ -9,6 +9,7 @@
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments;
     using DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments;
+    using DocumentFormat.OpenXml.EMMA;
     using GDS.MultiPageFormData.Enums;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Rendering;
@@ -737,6 +738,32 @@
                 return View("SelectOptionalCompetencies", viewModel);
             }
             competencyAssessmentService.UpdateOptionalCompetenciesInAssessment(model.ID, model.GroupIds ?? [], model.SelectedCompetencyIds ?? []);
+            return RedirectToAction("ManageCompetencyAssessment", new { competencyAssessmentId = model.ID });
+        }
+        [HttpGet]
+        [Route("/CompetencyAssessments/{competencyAssessmentId}/Competencies/Optional/SetMinimum")]
+        public IActionResult SetMinimumOptionalCompetencies(int competencyAssessmentId)
+        {
+            var adminId = GetAdminID();
+            var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
+            var competencies = competencyAssessmentService.GetCompetenciesForCompetencyAssessment(competencyAssessmentId);
+            var competencyAssessmentTaskStatus = competencyAssessmentService.GetCompetencyAssessmentTaskStatus(competencyAssessmentId, null);
+            var viewModel = new SelectOptionalCompetenciesViewModel(competencyAssessmentBase, competencies, competencyAssessmentTaskStatus.OptionalCompetenciesTaskStatus);
+            return View("SetMinimumOptionalCompetencies", viewModel);
+        }
+        [HttpPost]
+        [Route("/CompetencyAssessments/{competencyAssessmentId}/Competencies/Optional/SetMinimum")]
+        public IActionResult SetMinimumOptionalCompetencies(SelectOptionalCompetenciesViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                var adminId = GetAdminID();
+                var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(model.ID, adminId);
+                var competencies = competencyAssessmentService.GetCompetenciesForCompetencyAssessment(model.ID);
+                var viewModel = new SelectOptionalCompetenciesViewModel(competencyAssessmentBase, competencies, model.TaskStatus);
+                return View("SetMinimumOptionalCompetencies", viewModel);
+            }
+            competencyAssessmentService.UpdateMinimumOptionalCompetencies(model.ID, model.MinimumOptionalCompetencies ?? 0);
             return RedirectToAction("ManageCompetencyAssessment", new { competencyAssessmentId = model.ID });
         }
         [Route("/CompetencyAssessments/Framework/{frameworkId}/{competencyAssessmentId}/Features")]

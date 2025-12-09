@@ -1,6 +1,7 @@
 ﻿using DigitalLearningSolutions.Data.DataServices;
 using DigitalLearningSolutions.Data.Models.CompetencyAssessments;
 using System.Collections.Generic;
+using static DigitalLearningSolutions.Web.Helpers.SanitizerHelper;
 
 namespace DigitalLearningSolutions.Web.Services
 {
@@ -58,7 +59,8 @@ namespace DigitalLearningSolutions.Web.Services
           bool workingGroupStatus, bool AllframeworkCompetenciesStatus);
         void UpdateSelfAssessmentFromFramework(int selfAssessmentId, int? frameworkId);
         bool UpdateOptionalCompetenciesInAssessment(int selfAssessmentId, int[] groupIds, int[] selectedStructureIds);
-
+        void UpdateMinimumOptionalCompetencies(int selfAssessmentId, int minimumOptionalCompetecies);
+        void UpdateManageOptionalCompetenciesPrompt(int selfAssessmentId, string manageOptionalCompetenciesPrompt);
         //INSERT DATA
         int InsertCompetencyAssessment(int adminId, int centreId, string competencyAssessmentName, int? frameworkId);
         bool InsertSelfAssessmentFramework(int adminId, int assessmentId, int frameworkId);
@@ -295,6 +297,15 @@ namespace DigitalLearningSolutions.Web.Services
         public bool UpdateOptionalCompetenciesInAssessment(int selfAssessmentId, int[] groupIds, int[] selectedStructureIds)
         {
             return competencyAssessmentDataService.UpdateOptionalCompetenciesInAssessment(selfAssessmentId, groupIds, selectedStructureIds);
+        }
+
+        public void UpdateMinimumOptionalCompetencies(int selfAssessmentId, int minimumOptionalCompetecies)
+        {
+            competencyAssessmentDataService.UpdateMinimumOptionalCompetencies(selfAssessmentId, minimumOptionalCompetecies);
+        }
+        public void UpdateManageOptionalCompetenciesPrompt(int selfAssessmentId, string manageOptionalCompetenciesPrompt)
+        {
+            competencyAssessmentDataService.UpdateManageOptionalCompetenciesPrompt(selfAssessmentId, SanitizeHtmlData(manageOptionalCompetenciesPrompt));
         }
     }
 }
