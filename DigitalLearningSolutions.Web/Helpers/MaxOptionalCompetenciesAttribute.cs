@@ -2,41 +2,35 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 
-public class MaxOptionalCompetenciesAttribute : ValidationAttribute
+public class MaxOptionalCountAttribute : ValidationAttribute
 {
-    private readonly string _selectedIdsProperty;
+    private readonly string _maxProperty;
 
-    public MaxOptionalCompetenciesAttribute(string selectedIdsProperty)
+    public MaxOptionalCountAttribute(string maxProperty)
     {
-        _selectedIdsProperty = selectedIdsProperty;
+        _maxProperty = maxProperty;
     }
 
     protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
     {
-        // Get the integer value (MinimumOptionalCompetencies)
         var number = value as int?;
         if (number == null)
         {
             return ValidationResult.Success;
         }
 
-        // Get the other property (SelectedCompetencyIds)
-        var selectedIdsProperty = validationContext.ObjectType.GetProperty(_selectedIdsProperty);
-        if (selectedIdsProperty == null)
+        // Get the max property value (OptionalCompetenciesCount)
+        var maxProp = validationContext.ObjectType.GetProperty(_maxProperty);
+        if (maxProp == null)
         {
-            return new ValidationResult($"Unknown property {_selectedIdsProperty}");
+            return new ValidationResult($"Unknown property {_maxProperty}");
         }
 
-        var selectedIds = (int[])selectedIdsProperty.GetValue(validationContext.ObjectInstance, null)
-                           ?? Array.Empty<int>();
+        var maxValue = (int)maxProp.GetValue(validationContext.ObjectInstance)!;
 
-        var maxAllowed = selectedIds.Length;
-
-        if (number < 0 || number > maxAllowed)
+        if (number < 0 || number > maxValue)
         {
-            return new ValidationResult(
-                $"Value must be between 0 and {maxAllowed}."
-            );
+            return new ValidationResult($"Must be between 0 and {maxValue}.");
         }
 
         return ValidationResult.Success;

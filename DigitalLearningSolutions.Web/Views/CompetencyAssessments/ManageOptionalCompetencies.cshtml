@@ -21,31 +21,31 @@
         </div>
     </nav>
 }
-<h1>Manage optional competencies</h1>
+<h1>Manage optional @Model.VocabularyPlural.ToLower()</h1>
 <p class="nhsuk-lede-text">
-    Manage optional competencies for the assessment @Model.CompetencyAssessmentName.
-    Optional competencies can be selected for inclusion in a self assessment by a learner if required.
+    Manage optional @Model.VocabularyPlural.ToLower() for the assessment @Model.CompetencyAssessmentName.
+    Optional @Model.VocabularyPlural.ToLower() can be selected for inclusion in a self assessment by a learner if required.
 </p>
 <dl class="nhsuk-summary-list">
     <div class="nhsuk-summary-list__row">
         <dt class="nhsuk-summary-list__key">
-            Optional competencies
+            Optional @Model.VocabularyPlural.ToLower()
         </dt>
         <dd class="nhsuk-summary-list__value">
             @if (!Model.SelectedCompetencyIds.Any())
             {
-                <text>No competencies have been made optional for this self assessment.</text>
+                <text>No @Model.VocabularyPlural.ToLower() have been made optional for this self assessment.</text>
             }
             else
             {
                 <text>
                     @(Model.CompetencyGroups.Count(g =>
                                     g.Any(c => c.GroupOptionalCompetencies)
-                                    )) optional competency groups
+                                    )) optional @Model.VocabularySingular.ToLower() groups
                     <br />
                     @(Model.CompetencyGroups
                                     .Where(g => g.All(c => !c.GroupOptionalCompetencies))
-                                    .Sum(g => g.Count())) individual optional competencies from
+                                    .Sum(g => g.Count())) individual optional @Model.VocabularyPlural.ToLower() from
                     @(Model.CompetencyGroups.Count(g =>
                                     g.All(c => !c.GroupOptionalCompetencies)
                                     )) groups
@@ -54,25 +54,25 @@
             }
         </dd>
         <dd class="nhsuk-summary-list__actions">
-            <a class="nhsuk-link" asp-route-competencyAssessmentId="@Model.ID" asp-action="SelectOptionalCompetencies">Change<span class="nhsuk-u-visually-hidden"> optional competencies</span></a>
+            <a class="nhsuk-link" asp-route-competencyAssessmentId="@Model.ID" asp-action="SelectOptionalCompetencies">Change<span class="nhsuk-u-visually-hidden"> optional @Model.VocabularyPlural.ToLower()</span></a>
         </dd>
     </div>
     @if (Model.SelectedCompetencyIds.Any())
     {
         <div class="nhsuk-summary-list__row">
             <dt class="nhsuk-summary-list__key">
-                Minimum optional competencies
+                Minimum optional @Model.VocabularyPlural.ToLower()
             </dt>
             <dd class="nhsuk-summary-list__value">
                 @(Model.MinimumOptionalCompetencies == null | Model.MinimumOptionalCompetencies == 0 ? "No minimum set" : Model.MinimumOptionalCompetencies.ToString())
             </dd>
             <dd class="nhsuk-summary-list__actions">
-                <a class="nhsuk-link" asp-route-competencyAssessmentId="@Model.ID" asp-action="SetMinimumOptionalCompetencies">Change<span class="nhsuk-u-visually-hidden"> minimum optional competencies</span></a>
+                <a class="nhsuk-link" asp-route-competencyAssessmentId="@Model.ID" asp-action="SetMinimumOptionalCompetencies">Change<span class="nhsuk-u-visually-hidden"> minimum optional @Model.VocabularyPlural.ToLower()</span></a>
             </dd>
         </div>
         <div class="nhsuk-summary-list__row">
             <dt class="nhsuk-summary-list__key">
-                Optional competency learner guidance
+                Optional @Model.VocabularySingular.ToLower() learner guidance
             </dt>
             <dd class="nhsuk-summary-list__value">
                 @Html.Raw(Model.ManageOptionalCompetenciesPrompt == null ? "No guidance text specified" : Model.ManageOptionalCompetenciesPrompt.ToString())
@@ -89,6 +89,7 @@
         <input type="hidden" asp-for="MinimumOptionalCompetencies" />
         <input type="hidden" asp-for="ManageOptionalCompetenciesPrompt" />
         <input type="hidden" asp-for="SelectedCompetencyIds" />
+        <input type="hidden" asp-for="GroupIds" />
         <vc:single-checkbox asp-for="@nameof(Model.TaskStatus)" label="Mark this task as complete" hint-text="You will still be able to make changes after marking this task as complete."></vc:single-checkbox>
     </nhs-form-group>
     <button class="nhsuk-button" type="submit">

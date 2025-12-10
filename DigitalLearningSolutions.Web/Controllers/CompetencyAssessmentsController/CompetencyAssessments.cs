@@ -747,20 +747,19 @@
             var adminId = GetAdminID();
             var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
             var competencies = competencyAssessmentService.GetCompetenciesForCompetencyAssessment(competencyAssessmentId);
-            var competencyAssessmentTaskStatus = competencyAssessmentService.GetCompetencyAssessmentTaskStatus(competencyAssessmentId, null);
-            var viewModel = new SelectOptionalCompetenciesViewModel(competencyAssessmentBase, competencies, competencyAssessmentTaskStatus.OptionalCompetenciesTaskStatus);
+            var viewModel = new SetMinimumOptionalCompetenciesViewModel(competencyAssessmentBase, competencies);
             return View("SetMinimumOptionalCompetencies", viewModel);
         }
         [HttpPost]
         [Route("/CompetencyAssessments/{competencyAssessmentId}/Competencies/Optional/SetMinimum")]
-        public IActionResult SetMinimumOptionalCompetencies(SelectOptionalCompetenciesViewModel model)
+        public IActionResult SetMinimumOptionalCompetencies(SetMinimumOptionalCompetenciesFormData model)
         {
             if (!ModelState.IsValid)
             {
                 var adminId = GetAdminID();
                 var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(model.ID, adminId);
                 var competencies = competencyAssessmentService.GetCompetenciesForCompetencyAssessment(model.ID);
-                var viewModel = new SelectOptionalCompetenciesViewModel(competencyAssessmentBase, competencies, model.TaskStatus);
+                var viewModel = new SetMinimumOptionalCompetenciesViewModel(competencyAssessmentBase, competencies);
                 return View("SetMinimumOptionalCompetencies", viewModel);
             }
             competencyAssessmentService.UpdateMinimumOptionalCompetencies(model.ID, model.MinimumOptionalCompetencies ?? 0);

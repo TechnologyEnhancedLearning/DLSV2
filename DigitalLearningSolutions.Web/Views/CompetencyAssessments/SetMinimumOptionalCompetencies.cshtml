@@ -1,5 +1,5 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
-@model SelectOptionalCompetenciesViewModel;
+@model SetMinimumOptionalCompetenciesViewModel;
 @{
     ViewData["Title"] = "Select Optional Competencies";
     ViewData["Application"] = "Framework Service";
@@ -21,25 +21,24 @@
         </div>
     </nav>
 }
-<h1>Set a minimum number of optional competencies</h1>
+<h1>Set a minimum number of optional @Model.VocabularyPlural.ToLower()</h1>
 
 <p class="nhsuk-lede-text">
-    If appropriate, you can specify a minimum number of optional competencies that a learner must select when completing their self assessment.
+    If required, you can specify a minimum number of optional @Model.VocabularyPlural.ToLower() that a learner must select when completing their @Model.CompetencyAssessmentName self assessment.
 </p>
-<form method="post">
-    <div class="nhsuk-form-group">
+<form method="post" asp-action="SetMinimumOptionalCompetencies">
+    <nhs-form-group nhs-validation-for="MinimumOptionalCompetencies">
         <label class="nhsuk-label" for="minimum-comps-input">
-            Minimum optional competencies
+            Minimum optional @Model.VocabularyPlural.ToLower()
         </label>
         <div id="minimum-comps-input-hint" class="nhsuk-hint">
-            Specify a number between 0 and @Model.SelectedCompetencyIds.Count().
+            Specify a number between 0 and @Model.OptionalCompetenciesCount.
         </div>
         <input class="nhsuk-input nhsuk-input--width-3" id="minimum-comps-input" asp-for="MinimumOptionalCompetencies" aria-describedby="minimum-comps-input-hint" type="number">
-    </div>
+        <span nhs-validation-for="MinimumOptionalCompetencies"></span>
+    </nhs-form-group>
     <input type="hidden" asp-for="ID" />
-    <input type="hidden" asp-for="GroupIds" />
-    <input type="hidden" asp-for="SelectedCompetencyIds" />
-    <input type="hidden" asp-for="ManageOptionalCompetenciesPrompt" />
+    <input type="hidden" asp-for="OptionalCompetenciesCount" />
     <button class="nhsuk-button" type="submit">
         Save
     </button>
