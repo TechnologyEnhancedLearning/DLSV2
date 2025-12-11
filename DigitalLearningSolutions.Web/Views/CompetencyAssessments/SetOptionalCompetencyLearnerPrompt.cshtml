@@ -1,9 +1,10 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
-@model SetMinimumOptionalCompetenciesViewModel;
+@model SetOptionalCompetencyLearnerPromptViewModel;
 @{
-    ViewData["Title"] = "Set Minimum Optional Competencies";
+    ViewData["Title"] = "Set Optional Competencies Learner Prompt";
     ViewData["Application"] = "Framework Service";
 }
+<link rel="stylesheet" href="@Url.Content("~/css/jodit.css")" asp-append-version="true">
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
 @section NavMenuItems {
     <partial name="~/Views/Frameworks/Shared/_NavMenuItems.cshtml" />
@@ -21,24 +22,24 @@
         </div>
     </nav>
 }
-<h1>Set a minimum number of optional @Model.VocabularyPlural.ToLower()</h1>
+<h1>Optional @Model.VocabularyPlural.ToLower() learner prompt</h1>
 
 <p class="nhsuk-lede-text">
-    If required, you can specify a minimum number of optional @Model.VocabularyPlural.ToLower() that a learner must select when completing their @Model.CompetencyAssessmentName self assessment.
+    Provide an optional prompt to help learners choose the right optional @Model.VocabularyPlural.ToLower() to include in their @Model.CompetencyAssessmentName self assessment.
 </p>
-<form method="post" asp-action="SetMinimumOptionalCompetencies">
-    <nhs-form-group nhs-validation-for="MinimumOptionalCompetencies">
-        <label class="nhsuk-label" for="minimum-comps-input">
-            Minimum optional @Model.VocabularyPlural.ToLower()
-        </label>
-        <div id="minimum-comps-input-hint" class="nhsuk-hint">
-            Specify a number between 0 and @Model.OptionalCompetenciesCount.
-        </div>
-        <input class="nhsuk-input nhsuk-input--width-3" id="minimum-comps-input" asp-for="MinimumOptionalCompetencies" aria-describedby="minimum-comps-input-hint" type="number">
-        <span nhs-validation-for="MinimumOptionalCompetencies"></span>
+<form method="post" asp-action="SetOptionalCompetencyLearnerPrompt">
+    <nhs-form-group nhs-validation-for="ManageOptionalCompetenciesPrompt">
+        <vc:text-area asp-for="ManageOptionalCompetenciesPrompt"
+                      character-count="null"
+                      label="Set optional @Model.VocabularyPlural.ToLower()"
+                      rows="5"
+                      css-class="html-editor"
+                      hint-text="This text will be displayed above the optional @Model.VocabularyPlural.ToLower() list to help the learner to choose them."
+                      populate-with-current-value="true"
+                      spell-check="false" />
+        <span nhs-validation-for="ManageOptionalCompetenciesPrompt"></span>
     </nhs-form-group>
     <input type="hidden" asp-for="ID" />
-    <input type="hidden" asp-for="OptionalCompetenciesCount" />
     <button class="nhsuk-button" type="submit">
         Save
     </button>
@@ -52,3 +53,6 @@
         Cancel
     </a>
 </div>
+@section scripts {
+    <script src="@Url.Content("~/js/frameworks/htmleditor.js")" asp-append-version="true"></script>
+}

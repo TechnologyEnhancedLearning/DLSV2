@@ -915,7 +915,7 @@
                 @"UPDATE SelfAssessments
                     SET 
                     [MinimumOptionalCompetencies] = @minimumOptionalCompetecies
-                    WHERE id = @selfAssessmentId AND MinimumOptionalCompetencies <> @minimumOptionalCompetecies;"
+                    WHERE id = @selfAssessmentId AND ISNULL(MinimumOptionalCompetencies, 0) <> @minimumOptionalCompetecies;"
             ,
                 new { selfAssessmentId, minimumOptionalCompetecies }
             );
@@ -926,7 +926,7 @@
                 @"UPDATE SelfAssessments
                     SET 
                     [ManageOptionalCompetenciesPrompt] = @manageOptionalCompetenciesPrompt
-                    WHERE id = @selfAssessmentId AND ManageOptionalCompetenciesPrompt <> @manageOptionalCompetenciesPrompt;"
+                    WHERE id = @selfAssessmentId AND ISNULL(ManageOptionalCompetenciesPrompt, '') <> @manageOptionalCompetenciesPrompt;"
             ,
                 new { selfAssessmentId, manageOptionalCompetenciesPrompt }
             );

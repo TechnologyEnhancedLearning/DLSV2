@@ -72,13 +72,13 @@
         </div>
         <div class="nhsuk-summary-list__row">
             <dt class="nhsuk-summary-list__key">
-                Optional @Model.VocabularySingular.ToLower() learner guidance
+                Optional @Model.VocabularySingular.ToLower() learner prompt
             </dt>
             <dd class="nhsuk-summary-list__value">
-                @Html.Raw(Model.ManageOptionalCompetenciesPrompt == null ? "No guidance text specified" : Model.ManageOptionalCompetenciesPrompt.ToString())
+                @Html.Raw(Model.ManageOptionalCompetenciesPrompt == null ? "No learner prompt specified" : Model.ManageOptionalCompetenciesPrompt.ToString())
             </dd>
             <dd class="nhsuk-summary-list__actions">
-                <a class="nhsuk-link" asp-route-competencyAssessmentId="@Model.ID" asp-action="SetOptionalCompetenciesPrompt">Change<span class="nhsuk-u-visually-hidden"> learner guidance</span></a>
+                <a class="nhsuk-link" asp-route-competencyAssessmentId="@Model.ID" asp-action="SetOptionalCompetencyLearnerPrompt">Change<span class="nhsuk-u-visually-hidden"> learner prompt</span></a>
             </dd>
         </div>
     }

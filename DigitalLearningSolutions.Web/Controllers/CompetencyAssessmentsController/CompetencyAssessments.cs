@@ -738,7 +738,7 @@
                 return View("SelectOptionalCompetencies", viewModel);
             }
             competencyAssessmentService.UpdateOptionalCompetenciesInAssessment(model.ID, model.GroupIds ?? [], model.SelectedCompetencyIds ?? []);
-            return RedirectToAction("ManageCompetencyAssessment", new { competencyAssessmentId = model.ID });
+            return RedirectToAction("ManageOptionalCompetencies", new { competencyAssessmentId = model.ID });
         }
         [HttpGet]
         [Route("/CompetencyAssessments/{competencyAssessmentId}/Competencies/Optional/SetMinimum")]
@@ -763,8 +763,34 @@
                 return View("SetMinimumOptionalCompetencies", viewModel);
             }
             competencyAssessmentService.UpdateMinimumOptionalCompetencies(model.ID, model.MinimumOptionalCompetencies ?? 0);
-            return RedirectToAction("ManageCompetencyAssessment", new { competencyAssessmentId = model.ID });
+            return RedirectToAction("ManageOptionalCompetencies", new { competencyAssessmentId = model.ID });
         }
+        [HttpGet]
+        [Route("/CompetencyAssessments/{competencyAssessmentId}/Competencies/Optional/LearnerPrompt")]
+        public IActionResult SetOptionalCompetencyLearnerPrompt(int competencyAssessmentId)
+        {
+            var adminId = GetAdminID();
+            var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
+            var competencies = competencyAssessmentService.GetCompetenciesForCompetencyAssessment(competencyAssessmentId);
+            var viewModel = new SetOptionalCompetencyLearnerPromptViewModel(competencyAssessmentBase, competencies);
+            return View("SetOptionalCompetencyLearnerPrompt", viewModel);
+        }
+        [HttpPost]
+        [Route("/CompetencyAssessments/{competencyAssessmentId}/Competencies/Optional/LearnerPrompt")]
+        public IActionResult SetOptionalCompetencyLearnerPrompt(SetOptionalCompetencyLearnerPromptFormData model)
+        {
+            if (!ModelState.IsValid)
+            {
+                var adminId = GetAdminID();
+                var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(model.ID, adminId);
+                var competencies = competencyAssessmentService.GetCompetenciesForCompetencyAssessment(model.ID);
+                var viewModel = new SetOptionalCompetencyLearnerPromptViewModel(competencyAssessmentBase, competencies);
+                return View("SetOptionalCompetencyLearnerPrompt", viewModel);
+            }
+            competencyAssessmentService.UpdateManageOptionalCompetenciesPrompt(model.ID, model.ManageOptionalCompetenciesPrompt);
+            return RedirectToAction("ManageOptionalCompetencies", new { competencyAssessmentId = model.ID });
+        }
+
         [Route("/CompetencyAssessments/Framework/{frameworkId}/{competencyAssessmentId}/Features")]
         public IActionResult CompetencyAssessmentFeatures(int competencyAssessmentId, int? frameworkId = null)
         {

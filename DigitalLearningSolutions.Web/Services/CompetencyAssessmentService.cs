@@ -1,7 +1,7 @@
 ﻿using DigitalLearningSolutions.Data.DataServices;
 using DigitalLearningSolutions.Data.Models.CompetencyAssessments;
 using System.Collections.Generic;
-using static DigitalLearningSolutions.Web.Helpers.SanitizerHelper;
+using DigitalLearningSolutions.Web.Helpers;
 
 namespace DigitalLearningSolutions.Web.Services
 {
@@ -305,7 +305,11 @@ namespace DigitalLearningSolutions.Web.Services
         }
         public void UpdateManageOptionalCompetenciesPrompt(int selfAssessmentId, string manageOptionalCompetenciesPrompt)
         {
-            competencyAssessmentDataService.UpdateManageOptionalCompetenciesPrompt(selfAssessmentId, SanitizeHtmlData(manageOptionalCompetenciesPrompt));
+            if (StringHelper.StripHtmlTags(manageOptionalCompetenciesPrompt) == "")
+            {
+                manageOptionalCompetenciesPrompt = null;
+            }
+            competencyAssessmentDataService.UpdateManageOptionalCompetenciesPrompt(selfAssessmentId, SanitizerHelper.SanitizeHtmlData(manageOptionalCompetenciesPrompt));
         }
     }
 }
