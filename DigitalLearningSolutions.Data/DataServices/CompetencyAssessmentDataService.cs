@@ -1204,7 +1204,7 @@
                 new { selfAssessmentId, minimumOptionalCompetecies }
             );
         }
-        public void UpdateManageOptionalCompetenciesPrompt(int selfAssessmentId, string manageOptionalCompetenciesPrompt)
+        public void UpdateManageOptionalCompetenciesPrompt(int selfAssessmentId, string? manageOptionalCompetenciesPrompt)
         {
             connection.Execute(
                 @"UPDATE SelfAssessments

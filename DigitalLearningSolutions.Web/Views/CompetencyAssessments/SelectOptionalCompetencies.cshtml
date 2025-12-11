@@ -27,6 +27,12 @@
     Optional competencies can be added to the assessment individually or as a group.
 </p>
 <form method="post" asp-action="SelectOptionalCompetencies">
+    <fieldset class="nhsuk-fieldset">
+        <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
+            <h2 class="nhsuk-fieldset__heading">
+                Which @Model.VocabularySingular.ToLower() groups and/or @Model.VocabularyPlural.ToLower() should be optional?
+            </h2>
+        </legend>
     @foreach (var competencyGroup in Model.CompetencyGroups)
     {
         @if (competencyGroup.Count() > 1)
@@ -65,6 +71,7 @@
         }
 
     }
+    </fieldset>
     <input type="hidden" asp-for="ID" />
     <input type="hidden" asp-for="MinimumOptionalCompetencies" />
     <input type="hidden" asp-for="ManageOptionalCompetenciesPrompt" />

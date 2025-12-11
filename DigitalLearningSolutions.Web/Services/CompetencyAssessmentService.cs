@@ -71,7 +71,7 @@ namespace DigitalLearningSolutions.Web.Services
         void UpdateSelfAssessmentFromFramework(int selfAssessmentId, int? frameworkId);
         bool UpdateOptionalCompetenciesInAssessment(int selfAssessmentId, int[] groupIds, int[] selectedStructureIds);
         void UpdateMinimumOptionalCompetencies(int selfAssessmentId, int minimumOptionalCompetecies);
-        void UpdateManageOptionalCompetenciesPrompt(int selfAssessmentId, string manageOptionalCompetenciesPrompt);
+        void UpdateManageOptionalCompetenciesPrompt(int selfAssessmentId, string? manageOptionalCompetenciesPrompt);
         bool UpdatePrimaryFrameworkCompetencies(int assessmentId, int frameworkId);
 
         //INSERT DATA
@@ -347,13 +347,14 @@ namespace DigitalLearningSolutions.Web.Services
         {
             competencyAssessmentDataService.UpdateMinimumOptionalCompetencies(selfAssessmentId, minimumOptionalCompetecies);
         }
-        public void UpdateManageOptionalCompetenciesPrompt(int selfAssessmentId, string manageOptionalCompetenciesPrompt)
+        public void UpdateManageOptionalCompetenciesPrompt(int selfAssessmentId, string? manageOptionalCompetenciesPrompt)
         {
+            manageOptionalCompetenciesPrompt = SanitizerHelper.SanitizeHtmlData(manageOptionalCompetenciesPrompt);
             if (StringHelper.StripHtmlTags(manageOptionalCompetenciesPrompt) == "")
             {
                 manageOptionalCompetenciesPrompt = null;
             }
-            competencyAssessmentDataService.UpdateManageOptionalCompetenciesPrompt(selfAssessmentId, SanitizerHelper.SanitizeHtmlData(manageOptionalCompetenciesPrompt));
+            competencyAssessmentDataService.UpdateManageOptionalCompetenciesPrompt(selfAssessmentId, manageOptionalCompetenciesPrompt);
         }
         public IEnumerable<CompetencyAssessmentCollaboratorDetail> GetCollaboratorsForCompetencyAssessmentId(int competencyAssessmentId)
         {
