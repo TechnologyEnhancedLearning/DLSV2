@@ -11,5 +11,6 @@
         public CompetencyAssessment CompetencyAssessment { get; set; }
         public DateTime? CompleteByDate { get; set; }
         public OldDateValidator.ValidationResult? CompleteByValidationResult { get; set; }
+        public bool ActionConfirmed { get; set; }
     }
 }

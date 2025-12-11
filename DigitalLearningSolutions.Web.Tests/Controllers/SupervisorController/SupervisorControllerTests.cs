@@ -188,7 +188,7 @@
                 IsSupervisorResultsReviewed = delegateSelfAssessment.IsSupervisorResultsReviewed,
                 SearchViewModel = search,
                 CandidateAssessmentId = candidateAssessmentId,
-                ExportToExcelHide = delegateSelfAssessment.SupervisorRoleTitle?.Contains("Assessor") ?? false,
+                ExportToExcelHide = delegateSelfAssessment.SupervisorRoleTitle?.Contains("Nominated Supervisor") ?? false,
                 SupervisorSignOffs = supervisorSignOffs,
                 CompetencySummaries = competencySummaries
             };
@@ -211,7 +211,7 @@
             result.Should().BeViewResult()
             .WithViewName("ReviewSelfAssessment")
             .ModelAs<ReviewSelfAssessmentViewModel>()
-            .CompetencyGroups ?.SelectMany(group => group).FirstOrDefault(x => x.Id == 1)?.Optional.Should().Be(true);
+            .CompetencyGroups?.SelectMany(group => group).FirstOrDefault(x => x.Id == 1)?.Optional.Should().Be(true);
             result.Should().BeViewResult()
            .WithViewName("ReviewSelfAssessment")
            .ModelAs<ReviewSelfAssessmentViewModel>()
@@ -250,7 +250,7 @@
                 IsSupervisorResultsReviewed = delegateSelfAssessment.IsSupervisorResultsReviewed,
                 SearchViewModel = searchViewModel,
                 CandidateAssessmentId = candidateAssessmentId,
-                ExportToExcelHide = delegateSelfAssessment.SupervisorRoleTitle?.Contains("Assessor") ?? false,
+                ExportToExcelHide = delegateSelfAssessment.SupervisorRoleTitle?.Contains("Nominated Supervisor") ?? false,
                 SupervisorSignOffs = supervisorSignOffs,
                 CompetencySummaries = competencySummaries
             };

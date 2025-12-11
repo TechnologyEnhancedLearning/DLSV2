@@ -244,6 +244,7 @@
                         saDelegate.LastAccessed = DateHelper.GetLocalDateTime(saDelegate.LastAccessed);
                         saDelegate.SubmittedDate = DateHelper.GetLocalDateTime(saDelegate.SubmittedDate);
                         saDelegate.RemovedDate = DateHelper.GetLocalDateTime(saDelegate.RemovedDate);
+                        saDelegate.SignedOff = saDelegate.SignedOff is null ? null : DateHelper.GetLocalDateTime(saDelegate.SignedOff.Value);
                     }
                 }
 

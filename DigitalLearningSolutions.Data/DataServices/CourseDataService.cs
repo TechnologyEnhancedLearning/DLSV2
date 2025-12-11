@@ -514,7 +514,8 @@ namespace DigitalLearningSolutions.Data.DataServices
                         LEFT OUTER JOIN UserCentreDetails AS UCD ON
                         DA.UserID = UCD.UserID AND
                         DA.CentreID = UCD.CentreID
-                        WHERE (DA.UserID = @delegateUserId)", new { supervisorId, delegateUserId, adminEmail });
+                        WHERE (DA.UserID = @delegateUserId AND DA.CentreID = @centreId)",
+                        new { supervisorId, delegateUserId, adminEmail, centreId });
             }
 
             if (candidateAssessmentId > 0 && supervisorDelegateId > 0 && selfAssessmentSupervisorRoleId > 0)

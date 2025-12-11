@@ -21,6 +21,13 @@
         </div>
     </nav>
 }
+<style>
+    .left-align-actions {
+        white-space: nowrap;
+        display: inline-flex;
+        gap: 1rem;
+    }
+</style>
 
 <h1>Select framework sources for @Model.CompetencyAssessmentName</h1>
 <dl class="nhsuk-summary-list">
@@ -34,9 +41,13 @@
                 @Model.PrimaryFramework.FrameworkName
             </dd>
             <dd class="nhsuk-summary-list__actions">
-                <a asp-action="RemoveFramework" asp-route-frameworkId="@Model.PrimaryFramework.ID" asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">
-                    Remove<span class="nhsuk-u-visually-hidden"> @Model.PrimaryFramework.FrameworkName</span>
-                </a>
+                <ul class="nhsuk-summary-list__actions-list left-align-actions">
+                    <li class="nhsuk-summary-list__actions-list-item">
+                        <a asp-action="RemoveFramework" asp-route-frameworkId="@Model.PrimaryFramework.ID" asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">
+                            Remove<span class="nhsuk-u-visually-hidden"> @Model.PrimaryFramework.FrameworkName</span>
+                        </a>
+                    </li>
+                </ul>
             </dd>
         </div>
     }
@@ -52,9 +63,23 @@
                     @Model.AdditionalFrameworks.ElementAt(i).FrameworkName
                 </dd>
                 <dd class="nhsuk-summary-list__actions">
-                    <a asp-action="RemoveFramework" asp-route-frameworkId="@Model.AdditionalFrameworks.ElementAt(i).ID" asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">
-                        Remove<span class="nhsuk-u-visually-hidden"> @Model.AdditionalFrameworks.ElementAt(i).FrameworkName</span>
-                    </a>
+                    <ul class="nhsuk-summary-list__actions-list nhsuk-summary-list__actions-list--inline left-align-actions">
+                        <li class="nhsuk-summary-list__actions-list-item">
+                            <a asp-action="RemoveFramework"
+                               asp-route-frameworkId="@Model.AdditionalFrameworks.ElementAt(i).ID"
+                               asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">
+                                Remove <span class="nhsuk-u-visually-hidden">@Model.AdditionalFrameworks.ElementAt(i).FrameworkName</span>
+                            </a>
+                        </li>
+                        <li class="nhsuk-summary-list__actions-list-item">
+                            <a asp-action="ConfirmMaKePrimaryFramework"
+                               asp-route-frameworkId="@Model.AdditionalFrameworks.ElementAt(i).ID"
+                               asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">
+                                Make primary <span class="nhsuk-u-visually-hidden">@Model.AdditionalFrameworks.ElementAt(i).FrameworkName</span>
+                            </a>
+                        </li>
+                       
+                    </ul>
                 </dd>
             </div>
         }

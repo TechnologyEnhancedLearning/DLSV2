@@ -17,6 +17,7 @@ namespace DigitalLearningSolutions.Data.Models.SelfAssessments
 
         public DateTime? EnrolmentCutoffDate { get; set; }
         public string? RetirementReason { get; set; }
+        public bool IncludeLearnerDeclarationPrompt { get; set; }
 
     }
 }

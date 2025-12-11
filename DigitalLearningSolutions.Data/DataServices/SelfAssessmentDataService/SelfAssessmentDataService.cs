@@ -296,7 +296,12 @@
                 COALESCE(ucd.Email, u.PrimaryEmail) AS DelegateEmail,
                 da.Active AS IsDelegateActive,
                 sa.Name AS [Name],
-                MAX(casv.Verified) as SignedOff,
+                CASE 
+					WHEN MAX(sar.[DateTime]) >= MAX(casv.Verified) THEN NULL
+					ELSE (
+							MAX(casv.Verified)
+						)
+					END AS SignedOff,
 				sa.SupervisorSelfAssessmentReview,
 				sa.SupervisorResultsReview";
 
@@ -311,6 +316,8 @@
                 LEFT JOIN dbo.CandidateAssessmentSupervisors AS cas WITH (NOLOCK) ON ca.ID = cas.CandidateAssessmentID
                 LEFT JOIN dbo.CandidateAssessmentSupervisorVerifications AS casv WITH (NOLOCK) ON cas.ID = casv.CandidateAssessmentSupervisorID AND
                 (casv.Verified IS NOT NULL AND casv.SignedOff = 1)
+                LEFT JOIN SelfAssessmentResults AS sar ON ca.SelfAssessmentID = sar.SelfAssessmentID AND
+                        ca.DelegateUserID = sar.DelegateUserID
 
                 WHERE sa.ID = @selfAssessmentId 
                 AND da.CentreID = @centreID AND csa.CentreID = @centreID
@@ -349,7 +356,8 @@
 
             if (signedOff != null)
             {
-                groupBy += (bool)signedOff ? " HAVING MAX(casv.Verified) IS NOT NULL " : " HAVING MAX(casv.Verified) IS NULL ";
+                groupBy += (bool)signedOff ? " HAVING MAX(sar.[DateTime]) <  MAX(casv.Verified) AND MAX(casv.Verified) IS NOT NULL " :
+                        " HAVING MAX(sar.[DateTime]) >= MAX(casv.Verified) OR MAX(casv.Verified) IS NULL ";
             }
 
             string orderBy;
@@ -745,7 +753,8 @@
             connection.Execute(
                 @"BEGIN TRY
                     BEGIN TRANSACTION
-                        UPDATE CandidateAssessments SET RemovedDate = GETUTCDATE(), RemovalMethodID = 2
+                        UPDATE CandidateAssessments SET RemovedDate = GETUTCDATE(), RemovalMethodID = 2,
+                                                        SelfAssessmentProcessAgreed = NULL
                             WHERE ID = @candidateAssessmentsId AND RemovedDate IS NULL
 
                         COMMIT TRANSACTION
