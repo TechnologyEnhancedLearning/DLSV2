@@ -163,7 +163,7 @@
                                 ? progressCompletionData.CourseName.Substring(0, 30)
                                 : progressCompletionData.CourseName;
 
-            string emailSubjectLine = $"Digital Learning Solutions Activity Complete - {courseName}";
+            string emailSubjectLine = $"Digital Learning Solutions Activity Complete - {progressCompletionData.CourseName}";
             var delegateNameOrGenericTitle = progress.DelegateFirstName ?? "Digital Learning Solutions Delegate";
             var emailsToCc = GetEmailsToCc(
                 progressCompletionData.AdminId,
