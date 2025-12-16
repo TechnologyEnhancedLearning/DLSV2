@@ -2618,6 +2618,77 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[SendRetiringSelfAssessmentNotification]    Script Date: 18/09/2025 09:03:21 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///-- =============================================
+        ///-- Author:		Auldrin Possa
+        ///-- Create date: 04/08/2015
+        ///-- Description:	Uses DB mail to send notification to delegates on retiring self assessment.
+        ///-- =============================================
+        ///ALTER PROCEDURE [dbo].[SendRetiringSelfAssessmentNotification]
+        ///	@SelfAssessmentId [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_5552_Alter_SendRetiringSelfAssessmentNotification_Down {
+            get {
+                return ResourceManager.GetString("TD_5552_Alter_SendRetiringSelfAssessmentNotification_Down", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[SendRetiringSelfAssessmentNotification]    Script Date: 18/09/2025 09:03:21 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///-- =============================================
+        ///-- Author:		Auldrin Possa
+        ///-- Create date: 04/08/2015
+        ///-- Description:	Uses DB mail to send notification to delegates on retiring self assessment.
+        ///-- =============================================
+        ///ALTER PROCEDURE [dbo].[SendRetiringSelfAssessmentNotification]
+        ///	@SelfAssessmentId [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_5552_Alter_SendRetiringSelfAssessmentNotification_Up {
+            get {
+                return ResourceManager.GetString("TD_5552_Alter_SendRetiringSelfAssessmentNotification_Up", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///
+        ///
+        ///-- =============================================
+        ///-- Author:		Auldrin Possa
+        ///-- Create date: 04/08/2015
+        ///-- Description:	Uses DB mail to send notification to delegates on retiring self assessment.
+        ///-- =============================================
+        ///CREATE PROCEDURE [dbo].[SendRetiringSelfAssessmentNotification]
+        ///	@SelfAssessmentId int,
+        ///	@TestOnly bit
+        ///AS
+        ///BEGIN
+        ///	-- SET NOCOUNT ON added to prevent extra result sets from
+        ///	-- interfering with SELEC [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_5552_SendRetiringNotification {
+            get {
+                return ResourceManager.GetString("TD_5552_SendRetiringNotification", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GetAssessmentResultsByDelegate]    Script Date: 28/08/2025 16:32:01 ******/
         ///SET ANSI_NULLS ON
         ///GO
@@ -2728,68 +2799,6 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         internal static string TD_5638_SnapshotData_UP {
             get {
                 return ResourceManager.GetString("TD_5638_SnapshotData_UP", resourceCulture);
-			}
-		}
-        ///-- Create date: 04/08/2015
-        ///-- Description:	Uses DB mail to send notification to delegates on retiring self assessment.
-		///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[SendRetiringSelfAssessmentNotification]    Script Date: 18/09/2025 09:03:21 ******/
-        ///-- =============================================
-        ///ALTER PROCEDURE [dbo].[SendRetiringSelfAssessmentNotification]
-        ///	@SelfAssessmentId [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string TD_5552_Alter_SendRetiringSelfAssessmentNotification_Down {
-            get {
-                return ResourceManager.GetString("TD_5552_Alter_SendRetiringSelfAssessmentNotification_Down", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[SendRetiringSelfAssessmentNotification]    Script Date: 18/09/2025 09:03:21 ******/
-        ///SET ANSI_NULLS ON
-        ///GO
-        ///
-        ///SET QUOTED_IDENTIFIER ON
-        ///GO
-        ///
-        ///-- =============================================
-        ///-- Author:		Auldrin Possa
-        ///-- Create date: 04/08/2015
-        ///-- Description:	Uses DB mail to send notification to delegates on retiring self assessment.
-        ///-- =============================================
-        ///ALTER PROCEDURE [dbo].[SendRetiringSelfAssessmentNotification]
-        ///	@SelfAssessmentId [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string TD_5552_Alter_SendRetiringSelfAssessmentNotification_Up {
-            get {
-                return ResourceManager.GetString("TD_5552_Alter_SendRetiringSelfAssessmentNotification_Up", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to SET ANSI_NULLS ON
-        ///GO
-        ///
-        ///SET QUOTED_IDENTIFIER ON
-        ///GO
-        ///
-        ///
-        ///
-        ///-- =============================================
-        ///-- Author:		Auldrin Possa
-        ///-- Create date: 04/08/2015
-        ///-- Description:	Uses DB mail to send notification to delegates on retiring self assessment.
-        ///-- =============================================
-        ///CREATE PROCEDURE [dbo].[SendRetiringSelfAssessmentNotification]
-        ///	@SelfAssessmentId int,
-        ///	@TestOnly bit
-        ///AS
-        ///BEGIN
-        ///	-- SET NOCOUNT ON added to prevent extra result sets from
-        ///	-- interfering with SELEC [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string TD_5552_SendRetiringNotification {
-            get {
-                return ResourceManager.GetString("TD_5552_SendRetiringNotification", resourceCulture);
             }
         }
         
@@ -2871,6 +2880,62 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         internal static string TD_5759_CreateOrAlterSelfAssessmentReportSPandTVF_UP {
             get {
                 return ResourceManager.GetString("TD-5759_CreateOrAlterSelfAssessmentReportSPandTVF_UP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[usp_GetSelfAssessmentReport]    Script Date: 01/12/2025 20:54:19 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///ALTER   PROCEDURE [dbo].[usp_GetSelfAssessmentReport]
+        ///    @SelfAssessmentID INT,
+        ///    @CentreID INT
+        ///AS
+        ///BEGIN
+        ///    SET NOCOUNT ON;
+        ///
+        ///    -- Step 1: Materialize the LatestAssessmentResults into a temp table
+        ///    IF OBJECT_ID(&apos;tempdb..#LatestAssessmentResults&apos;) IS NOT NULL
+        ///        DROP TABLE #LatestAssessmentResults;
+        ///
+        ///    SELECT
+        ///      [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_6437_usp_GetSelfAssessmentReport_Down {
+            get {
+                return ResourceManager.GetString("TD_6437_usp_GetSelfAssessmentReport_Down", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[usp_GetSelfAssessmentReport]    Script Date: 01/12/2025 20:54:19 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///ALTER   PROCEDURE [dbo].[usp_GetSelfAssessmentReport]
+        ///    @SelfAssessmentID INT,
+        ///    @CentreID INT
+        ///AS
+        ///BEGIN
+        ///    SET NOCOUNT ON;
+        ///
+        ///    -- Step 1: Materialize the LatestAssessmentResults into a temp table
+        ///    IF OBJECT_ID(&apos;tempdb..#LatestAssessmentResults&apos;) IS NOT NULL
+        ///        DROP TABLE #LatestAssessmentResults;
+        ///
+        ///    SELECT
+        ///      [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_6437_usp_GetSelfAssessmentReport_Up {
+            get {
+                return ResourceManager.GetString("TD_6437_usp_GetSelfAssessmentReport_Up", resourceCulture);
             }
         }
         
