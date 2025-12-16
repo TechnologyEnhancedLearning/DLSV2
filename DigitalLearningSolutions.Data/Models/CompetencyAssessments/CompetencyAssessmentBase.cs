@@ -20,6 +20,8 @@
         public int PublishStatusID { get; set; }
         public int UserRole { get; set; }
         public string? Vocabulary { get; set; }
+        public int? MinimumOptionalCompetencies { get; set; }
+        public string? ManageOptionalCompetenciesPrompt { get; set; }
         public bool IncludeLearnerDeclarationPrompt { get; set; }
         public bool IncludesSignposting { get; set; }
         public bool LinearNavigation { get; set; }
