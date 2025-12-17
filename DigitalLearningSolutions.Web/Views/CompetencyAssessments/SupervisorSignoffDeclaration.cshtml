@@ -62,7 +62,7 @@
                     </label>
                             <nhs-form-group nhs-validation-for="CustomText">
 
-                    <textarea class="nhsuk-textarea" id="custom-declaration-text" name="CustomText" rows="5" aria-describedby="custom-declaration-hint">@Model.CustomText</textarea>
+                    <textarea class="nhsuk-textarea" id="custom-declaration-text" name="CustomText" rows="5" aria-describedby="custom-declaration-hint"> @Html.Raw(Model.CustomText)</textarea>
                     </nhs-form-group>
 
                     <span class="nhsuk-hint" id="custom-declaration-hint">
