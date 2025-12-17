@@ -1180,8 +1180,8 @@
             var data = GetManagesupervisionData();
             if (actionName == "Supervisor")
             {
-                data.SupervisorDeclaration.ActionName = actionName;
                 data.SupervisorDeclaration.DefaultText = this.config.GetSupervisorDefaultText();
+                data.SupervisorDeclaration.ActionName = actionName;
                 var models = new SupervisorSignoffDeclarationViewModel(data.SupervisorDeclaration);
                 return View(models);
             }
@@ -1222,8 +1222,8 @@
             var data = GetManagesupervisionData();
             if (actionName == "Learner")
             {
-                data.LearnerDeclaration.ActionName = actionName;
                 data.LearnerDeclaration.DefaultText = this.config.GetLearnerDefaultText();
+                data.LearnerDeclaration.ActionName = actionName;
                 var models = new LearnerSignoffDeclarationViewModel(data.LearnerDeclaration);
                 return View(models);
             }
