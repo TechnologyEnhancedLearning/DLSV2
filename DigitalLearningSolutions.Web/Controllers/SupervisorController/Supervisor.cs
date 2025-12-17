@@ -12,6 +12,7 @@
     using DigitalLearningSolutions.Web.Extensions;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.ServiceFilter;
+    using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.Common.SearchablePage;
     using DigitalLearningSolutions.Web.ViewModels.Supervisor;
     using GDS.MultiPageFormData.Enums;
@@ -262,16 +263,6 @@
             return string.Empty;
         }
 
-        public IActionResult ConfirmSupervise(int supervisorDelegateId)
-        {
-            var adminId = GetAdminId();
-            if (supervisorService.ConfirmSupervisorDelegateById(supervisorDelegateId, 0, adminId))
-            {
-                frameworkNotificationService.SendSupervisorDelegateConfirmed(supervisorDelegateId, adminId, 0, GetCentreId());
-            }
-
-            return RedirectToAction("MyStaffList");
-        }
         public IActionResult RemoveSupervisorDelegate()
         {
             return RedirectToAction("MyStaffList");
@@ -384,7 +375,7 @@
                 IsSupervisorResultsReviewed = delegateSelfAssessment.IsSupervisorResultsReviewed,
                 SearchViewModel = searchModel,
                 CandidateAssessmentId = candidateAssessmentId,
-                ExportToExcelHide = delegateSelfAssessment.SupervisorRoleTitle?.Contains("Assessor") ?? false,
+                ExportToExcelHide = delegateSelfAssessment.SupervisorRoleTitle?.Contains("Nominated Supervisor") ?? false,
             };
 
             var flags = frameworkService.GetSelectedCompetencyFlagsByCompetecyIds(reviewedCompetencies.Select(c => c.Id).ToArray());
@@ -796,7 +787,7 @@
             );
 
             var retirementDate = selfAssessmentService.GetSelfAssessmentById(selfAssessmentID).RetirementDate;
-            if (CheckRetirementDate(retirementDate))
+            if (SelfAssessmentHelper.CheckRetirementDate(retirementDate))
             {
                 return RedirectToAction("ConfirmRetiringSelfAssessment", "Supervisor", new { supervisorDelegateId });
             }
@@ -817,14 +808,14 @@
                    ).GetAwaiter().GetResult();
 
             var retirementDate = selfAssessmentService.GetSelfAssessmentById((int)sessionEnrolOnRoleProfile.SelfAssessmentID).RetirementDate;
-            if (!CheckRetirementDate((retirementDate)))
+            if (!SelfAssessmentHelper.CheckRetirementDate((retirementDate)))
             {
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 410 });
             }
             var model = new RetiringSelfAssessmentViewModel()
             {
                 SelfAssessmentID = (int)sessionEnrolOnRoleProfile.SelfAssessmentID,
-                SupervisorDelegateID = supervisorDelegateId,
+                RouteID = supervisorDelegateId,
                 RetirementDate = retirementDate,
                 ActionConfirmed = sessionEnrolOnRoleProfile.ActionConfirmed
             };
@@ -853,7 +844,7 @@
                 return RedirectToAction(
                     "EnrolDelegateCompleteBy",
                     "Supervisor",
-                    new { supervisorDelegateId = retiringSelfAssessment.SupervisorDelegateID }
+                    new { supervisorDelegateId = retiringSelfAssessment.RouteID }
                 );
             }
             else
@@ -915,7 +906,7 @@
             {
                 var validationResult = OldDateValidator.ValidateDate(day, month, year);
                 if (!validationResult.DateValid)
-                {
+				{
                     return RedirectToAction("EnrolDelegateCompleteBy", new { supervisorDelegateId, day, month, year });
                 }
                 else
@@ -1045,7 +1036,7 @@
                 MultiPageFormDataFeature.EnrolDelegateOnProfileAssessment,
                 TempData
             );
-
+			
             var retirementDate = selfAssessmentService.GetSelfAssessmentById((int)sessionEnrolOnCompetencyAssessment.SelfAssessmentID).RetirementDate;
             if (CheckRetirementDate(retirementDate) && !sessionEnrolOnCompetencyAssessment.ActionConfirmed)
             {
@@ -1138,7 +1129,11 @@
             {
 
                 var candidateAssessmentId = selfAssessmentService.GetCandidateAssessments(delegateUserId, selfAssessmentId).SingleOrDefault()?.Id;
-                var roleId = supervisorRoles.Where(x => x.SelfAssessmentID == selfAssessmentId).Select(x => x.ID).FirstOrDefault();
+                //var roleId = supervisorRoles.Where(x => x.SelfAssessmentID == selfAssessmentId).Select(x => x.ID).FirstOrDefault();
+                var roleId = supervisorRoles
+                        .Where(x => supervisorRoles.Any(y => y.SelfAssessmentID == selfAssessmentId) ? x.SelfAssessmentID == selfAssessmentId : x.SelfAssessmentID == null)
+                        .Select(x => x.ID)
+                        .FirstOrDefault();
                 if (candidateAssessmentId != null)
                 {
                     var candidateAssessmentSupervisor = supervisorService.GetCandidateAssessmentSupervisor((int)candidateAssessmentId, supervisorDelegateId, roleId);

@@ -16,7 +16,6 @@
         void SendReviewRequest(int id, int invitedByAdminId, bool required, bool reminder, int centreId);
         void SendReviewOutcomeNotification(int reviewId, int centreId);
         void SendSupervisorDelegateInvite(int supervisorDelegateId, int adminId, int centreId);
-        void SendSupervisorDelegateConfirmed(int superviseDelegateId, int adminId, int delegateUserId, int centreId);
         void SendSupervisorResultReviewed(int adminId, int supervisorDelegateId, int candidateAssessmentId, int resultId, int centreId);
         void SendSupervisorEnroledDelegate(int adminId, int supervisorDelegateId, int candidateAssessmentId, DateTime? completeByDate, int centreId);
         void SendReminderDelegateSelfAssessment(int adminId, int supervisorDelegateId, int candidateAssessmentId, int centreId);

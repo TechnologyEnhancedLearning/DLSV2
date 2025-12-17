@@ -59,7 +59,7 @@
         <li class="nhsuk-task-list__item nhsuk-task-list__item--with-link">
             <div class="nhsuk-task-list__name-and-hint" aria-describedby="select-frameworks-status">
                 <a class="nhsuk-link nhsuk-task-list__link" asp-action="SelectFrameworkSources" asp-route-actionName="@(Model.CompetencyAssessmentTaskStatus.FrameworkLinksTaskStatus == null ? "AddFramework" : "Summary" )" asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">
-                    Select competency framework sources
+                    Select (@Model.VocabularySingular) framework sources
                 </a>
             </div>
             <div class="nhsuk-task-list__status" id="select-frameworks-status">
@@ -144,7 +144,7 @@
             @if (Model.CompetencyAssessmentTaskStatus.SelectCompetenciesTaskStatus == null)
             {
                 <div class="nhsuk-task-list__name-and-hint" aria-describedby="optional-competencies-status">
-                    Identify optional @Model.VocabularyPlural.ToLower()
+                    Manage optional @Model.VocabularyPlural.ToLower()
                 </div>
                 <div class="nhsuk-task-list__status nhsuk-task-list__status--cannot-start-yet" id="optional-competencies-status">
                     Cannot start yet
@@ -153,8 +153,8 @@
             else
             {
                 <div class="nhsuk-task-list__name-and-hint" aria-describedby="optional-competencies-status">
-                    <a class="nhsuk-link nhsuk-task-list__link" asp-action="SelectOptionalCompetencies" asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">
-                        Identify optional @Model.VocabularyPlural.ToLower()
+                    <a class="nhsuk-link nhsuk-task-list__link" asp-action="ManageOptionalCompetencies" asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">
+                        Manage optional @Model.VocabularyPlural.ToLower()
                     </a>
                 </div>
                 <div class="nhsuk-task-list__status" id="optional-competencies-status">

@@ -1,6 +1,7 @@
 ﻿using DigitalLearningSolutions.Data.DataServices;
 using DigitalLearningSolutions.Data.Models.CompetencyAssessments;
 using System.Collections.Generic;
+using DigitalLearningSolutions.Web.Helpers;
 
 namespace DigitalLearningSolutions.Web.Services
 {
@@ -68,6 +69,9 @@ namespace DigitalLearningSolutions.Web.Services
         bool UpdateCompetencyAssessmentFeaturesTaskStatus(int id, bool descriptionStatus, bool providerandCategoryStatus, bool vocabularyStatus,
           bool workingGroupStatus, bool AllframeworkCompetenciesStatus);
         void UpdateSelfAssessmentFromFramework(int selfAssessmentId, int? frameworkId);
+        bool UpdateOptionalCompetenciesInAssessment(int selfAssessmentId, int[] groupIds, int[] selectedStructureIds);
+        void UpdateMinimumOptionalCompetencies(int selfAssessmentId, int minimumOptionalCompetecies);
+        void UpdateManageOptionalCompetenciesPrompt(int selfAssessmentId, string? manageOptionalCompetenciesPrompt);
         bool UpdatePrimaryFrameworkCompetencies(int assessmentId, int frameworkId);
         bool UpdateSupervisorRolesTaskStatus(int competencyAssessmentId, bool taskCompleteChecked);
         bool UpdateSelfAssessments(int competencyAssessmentId,
@@ -342,6 +346,25 @@ namespace DigitalLearningSolutions.Web.Services
         public int? GetSelfAssessmentStructure(int competencyAssessmentId)
         {
             return competencyAssessmentDataService.GetSelfAssessmentStructure(competencyAssessmentId);
+        }
+
+        public bool UpdateOptionalCompetenciesInAssessment(int selfAssessmentId, int[] groupIds, int[] selectedStructureIds)
+        {
+            return competencyAssessmentDataService.UpdateOptionalCompetenciesInAssessment(selfAssessmentId, groupIds, selectedStructureIds);
+        }
+
+        public void UpdateMinimumOptionalCompetencies(int selfAssessmentId, int minimumOptionalCompetecies)
+        {
+            competencyAssessmentDataService.UpdateMinimumOptionalCompetencies(selfAssessmentId, minimumOptionalCompetecies);
+        }
+        public void UpdateManageOptionalCompetenciesPrompt(int selfAssessmentId, string? manageOptionalCompetenciesPrompt)
+        {
+            manageOptionalCompetenciesPrompt = SanitizerHelper.SanitizeHtmlData(manageOptionalCompetenciesPrompt);
+            if (StringHelper.StripHtmlTags(manageOptionalCompetenciesPrompt) == "")
+            {
+                manageOptionalCompetenciesPrompt = null;
+            }
+            competencyAssessmentDataService.UpdateManageOptionalCompetenciesPrompt(selfAssessmentId, manageOptionalCompetenciesPrompt);
         }
         public IEnumerable<CompetencyAssessmentCollaboratorDetail> GetCollaboratorsForCompetencyAssessmentId(int competencyAssessmentId)
         {
