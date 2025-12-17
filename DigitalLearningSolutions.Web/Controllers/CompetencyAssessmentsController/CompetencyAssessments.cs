@@ -1181,6 +1181,7 @@
             if (actionName == "Supervisor")
             {
                 data.SupervisorDeclaration.ActionName = actionName;
+                data.SupervisorDeclaration.DefaultText = this.config.GetSupervisorDefaultText();
                 var models = new SupervisorSignoffDeclarationViewModel(data.SupervisorDeclaration);
                 return View(models);
             }
@@ -1222,6 +1223,7 @@
             if (actionName == "Learner")
             {
                 data.LearnerDeclaration.ActionName = actionName;
+                data.LearnerDeclaration.DefaultText = this.config.GetLearnerDefaultText();
                 var models = new LearnerSignoffDeclarationViewModel(data.LearnerDeclaration);
                 return View(models);
             }
