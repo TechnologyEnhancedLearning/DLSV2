@@ -37,6 +37,7 @@
         int[] GetLinkedFrameworkCompetencyIds(int competencyAssessmentId, int frameworkId);
         CompetencyAssessmentFeatures? GetCompetencyAssessmentFeaturesTaskStatus(int competencyAssessmentId);
         int? GetSelfAssessmentStructure(int competencyAssessmentId);
+        IEnumerable<CompetencyWithAssessmentQuestionRoleRequirements> GetCompetencyWithAssessmentQuestionRoleRequirements(int competencyAssessmentId);
 
         //UPDATE DATA
         bool UpdateCompetencyAssessmentName(int competencyAssessmentId, int adminId, string competencyAssessmentName);
@@ -109,6 +110,7 @@
                 sa.NRPSubGroupID,
                 sa.NRPRoleID,
                 sa.PublishStatusID, sa.Vocabulary, CASE WHEN sa.CreatedByAdminID = @adminId THEN 3 WHEN sac.CanModify = 1 THEN 2 WHEN sac.CanModify = 0 THEN 1 ELSE 0 END AS UserRole,
+                sa.EnforceRoleRequirementsForSignOff, sa.IncludeRequirementsFilters,
                 sa.MinimumOptionalCompetencies,
                 sa.ManageOptionalCompetenciesPrompt,
                 sa.IncludeLearnerDeclarationPrompt, sa.IncludesSignposting, sa.LinearNavigation, sa.UseDescriptionExpanders, sa.QuestionLabel, sa.ReviewerCommentsLabel,
@@ -1214,6 +1216,48 @@
             ,
                 new { selfAssessmentId, manageOptionalCompetenciesPrompt }
             );
+        }
+
+        public IEnumerable<CompetencyWithAssessmentQuestionRoleRequirements> GetCompetencyWithAssessmentQuestionRoleRequirements(int competencyAssessmentId)
+        {
+            return connection.Query<CompetencyWithAssessmentQuestionRoleRequirements>(
+                 @"SELECT
+                     sas.CompetencyGroupID,
+                     cg.Name AS GroupName,
+                     sas.CompetencyID,
+                     c.Name AS Competency,
+                     c.Description AS CompetencyDescription,
+                     sas.Optional,
+                 	caq.AssessmentQuestionID,
+                     aq.Question,
+                     aqit.InputTypeName,
+                     caqrr.LevelValue AS ResponseValue,
+                     aql.LevelLabel AS Response,
+                     caqrr.LevelRAG
+                 FROM SelfAssessmentStructure AS sas
+                 INNER JOIN Competencies AS c
+                     ON sas.CompetencyID = c.ID
+                 INNER JOIN CompetencyAssessmentQuestions AS caq
+                     ON c.ID = caq.CompetencyID
+                 INNER JOIN AssessmentQuestions AS aq
+                     ON caq.AssessmentQuestionID = aq.ID
+                 INNER JOIN AssessmentQuestionInputTypes AS aqit
+                     ON aq.AssessmentQuestionInputTypeID = aqit.ID
+                 LEFT JOIN CompetencyGroups AS cg
+                     ON sas.CompetencyGroupID = cg.ID
+                 OUTER APPLY (
+                     SELECT TOP (1) r.*
+                     FROM CompetencyAssessmentQuestionRoleRequirements r
+                     WHERE r.AssessmentQuestionID = aq.ID
+                     ORDER BY r.LevelValue DESC -- or whatever rule is correct
+                 ) caqrr
+                 LEFT JOIN AssessmentQuestionLevels AS aql
+                     ON aql.AssessmentQuestionID = aq.ID
+                    AND aql.LevelValue = caqrr.LevelValue
+                 WHERE (sas.SelfAssessmentID = @competencyAssessmentId)  AND (caq.Required = 1)
+                 ORDER BY sas.Ordering;",
+                 new { competencyAssessmentId }
+             );
         }
     }
 }

@@ -1,7 +1,12 @@
 ﻿using DigitalLearningSolutions.Data.DataServices;
 using DigitalLearningSolutions.Data.Models.CompetencyAssessments;
-using System.Collections.Generic;
 using DigitalLearningSolutions.Web.Helpers;
+using DigitalLearningSolutions.Web.Models;
+using DigitalLearningSolutions.Web.ViewModels.Frameworks;
+using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Reports;
+using DocumentFormat.OpenXml.Drawing.Charts;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace DigitalLearningSolutions.Web.Services
 {
@@ -33,6 +38,7 @@ namespace DigitalLearningSolutions.Web.Services
         int[] GetLinkedFrameworkCompetencyIds(int competencyAssessmentId, int frameworkId);
         CompetencyAssessmentFeatures? GetCompetencyAssessmentFeaturesTaskStatus(int competencyAssessmentId);
         int? GetSelfAssessmentStructure(int competencyAssessmentId);
+        List<GroupedCompetencyWithAssessmentRoleRequirements> GetGroupedCompetencyWithAssessmentRoleRequirements(int competencyAssessmentId);
 
         //UPDATE DATA
         bool UpdateCompetencyAssessmentName(int competencyAssessmentId, int adminId, string competencyAssessmentName);
@@ -328,7 +334,7 @@ namespace DigitalLearningSolutions.Web.Services
         {
             competencyAssessmentDataService.UpdateSelfAssessmentFromFramework(selfAssessmentId, frameworkId);
         }
-       public  bool UpdatePrimaryFrameworkCompetencies(int assessmentId, int frameworkId)
+        public bool UpdatePrimaryFrameworkCompetencies(int assessmentId, int frameworkId)
         {
             return competencyAssessmentDataService.UpdatePrimaryFrameworkCompetencies(assessmentId, frameworkId);
         }
@@ -380,6 +386,66 @@ namespace DigitalLearningSolutions.Web.Services
         public bool UpdateCompetencyAssessmentOptionsTaskStatus(int assessmentId, bool taskStatus)
         {
             return competencyAssessmentDataService.UpdateCompetencyAssessmentOptionsTaskStatus(assessmentId, taskStatus);
+        }
+
+        public List<GroupedCompetencyWithAssessmentRoleRequirements> GetGroupedCompetencyWithAssessmentRoleRequirements(int competencyAssessmentId)
+        {
+            var competencyWithAssessmentQuestionRoleRequirements = competencyAssessmentDataService.GetCompetencyWithAssessmentQuestionRoleRequirements(competencyAssessmentId).ToList();
+            return competencyWithAssessmentQuestionRoleRequirements
+       .GroupBy(x => new
+       {
+           x.CompetencyGroupID,
+           x.GroupName
+       })
+       .Select(group => new GroupedCompetencyWithAssessmentRoleRequirements
+       {
+           CompetencyGroupID = group.Key.CompetencyGroupID ?? 0,
+           GroupName = group.Key.GroupName ?? "Ungrouped",
+
+           Competencies = group
+               .GroupBy(c => new
+               {
+                   c.CompetencyID,
+                   c.Competency,
+                   c.CompetencyDescription,
+                   c.Optional
+               })
+               .Select(comp => new CompetencyModel
+               {
+                   CompetencyID = comp.Key.CompetencyID,
+                   Name = comp.Key.Competency,
+                   Description = comp.Key.CompetencyDescription,
+                   Optional = comp.Key.Optional,
+
+                   Questions = comp
+    .GroupBy(q => new
+    {
+        q.AssessmentQuestionID,
+        q.Question,
+        q.InputTypeName
+    })
+    .Select(q => new AssessmentQuestionModel
+    {
+        AssessmentQuestionID = q.Key.AssessmentQuestionID,
+        Question = q.Key.Question,
+        InputTypeName = q.Key.InputTypeName,
+
+        Responses = q
+            .Where(r => r.ResponseValue.HasValue)
+            .Select(r => new ResponseModel
+            {
+                ResponseValue = r.ResponseValue,
+                ResponseLabel = r.Response,
+                LevelRAG = r.LevelRAG
+            })
+            .DistinctBy(r => r.ResponseValue)
+            .ToList()
+    })
+    .ToList()
+               })
+               .ToList()
+       })
+       .ToList();
         }
     }
 }

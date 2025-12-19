@@ -113,15 +113,9 @@
             if (competencyAssessmentId > 0)
             {
                 competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
-                if (competencyAssessmentBase == null)
-                {
-                    logger.LogWarning($"Failed to load name page for competencyAssessmentId: {competencyAssessmentId} adminId: {adminId}");
-                    return StatusCode(500);
-                }
-                if (competencyAssessmentBase.UserRole < 2)
-                {
-                    return StatusCode(403);
-                }
+                var result = ValidateCompetencyAssessmentAndRole(competencyAssessmentId, adminId, "Competency Assessment Name", competencyAssessmentBase);
+                if (result.StatusCode != 200)
+                    return result;
             }
             else if (frameworkId != null)
             {
@@ -186,15 +180,9 @@
         {
             var adminId = GetAdminID();
             var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
-            if (competencyAssessmentBase == null)
-            {
-                logger.LogWarning($"Failed to load name page for competencyAssessmentId: {competencyAssessmentId} adminId: {adminId}");
-                return StatusCode(500);
-            }
-            if (competencyAssessmentBase.UserRole < 2)
-            {
-                return StatusCode(403);
-            }
+            var result = ValidateCompetencyAssessmentAndRole(competencyAssessmentId, adminId, "Manage Competency Assessment", competencyAssessmentBase);
+            if (result.StatusCode != 200)
+                return result;
             var competencyAssessmentTaskStatus = competencyAssessmentService.GetCompetencyAssessmentTaskStatus(competencyAssessmentId, frameworkId);
             var model = new ManageCompetencyAssessmentViewModel(competencyAssessmentBase, competencyAssessmentTaskStatus);
             return View("ManageCompetencyAssessment", model);
@@ -209,15 +197,9 @@
             if (competencyAssessmentId > 0)
             {
                 competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
-                if (competencyAssessmentBase == null)
-                {
-                    logger.LogWarning($"Failed to load Professional Group page for competencyAssessmentId: {competencyAssessmentId} adminId: {adminId}");
-                    return StatusCode(500);
-                }
-                if (competencyAssessmentBase.UserRole < 2)
-                {
-                    return StatusCode(403);
-                }
+                var result = ValidateCompetencyAssessmentAndRole(competencyAssessmentId, adminId, "National Role Profile Links", competencyAssessmentBase);
+                if (result.StatusCode != 200)
+                    return result;
             }
             else
             {
@@ -238,15 +220,9 @@
             var adminId = GetAdminID();
             var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
             competencyAssessmentService.UpdateRoleProfileLinksTaskStatus(model.ID, model.TaskStatus ?? false);
-            if (competencyAssessmentBase == null)
-            {
-                logger.LogWarning($"Failed to submit role links page for competencyAssessmentId: {competencyAssessmentId} adminId: {adminId}");
-                return StatusCode(500);
-            }
-            if (competencyAssessmentBase.UserRole < 2)
-            {
-                return StatusCode(403);
-            }
+            var result = ValidateCompetencyAssessmentAndRole(competencyAssessmentId, adminId, "Edit National Role Profile Links", competencyAssessmentBase);
+            if (result.StatusCode != 200)
+                return result;
             if (competencyAssessmentBase.NRPProfessionalGroupID != model.ProfessionalGroupId)
             {
                 model.SubGroupId = null;
@@ -301,16 +277,10 @@
         public IActionResult EditDescription(int competencyAssessmentId)
         {
             var adminId = GetAdminID();
-            CompetencyAssessmentBase? competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
-            if (competencyAssessmentBase == null)
-            {
-                logger.LogWarning($"Failed to load description page for competencyAssessmentId: {competencyAssessmentId} adminId: {adminId}");
-                return StatusCode(500);
-            }
-            if (competencyAssessmentBase.UserRole < 2)
-            {
-                return StatusCode(403);
-            }
+            var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
+            var result = ValidateCompetencyAssessmentAndRole(competencyAssessmentId, adminId, "Edit Description", competencyAssessmentBase);
+            if (result.StatusCode != 200)
+                return result;
             var competencyAssessmentTaskStatus = competencyAssessmentService.GetCompetencyAssessmentTaskStatus(competencyAssessmentId, null);
             var model = new EditDescriptionViewModel(competencyAssessmentBase, competencyAssessmentTaskStatus.IntroductoryTextTaskStatus);
             return View(model);
@@ -374,16 +344,10 @@
         public IActionResult EditVocabulary(int competencyAssessmentId)
         {
             var adminId = GetAdminID();
-            CompetencyAssessmentBase? competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
-            if (competencyAssessmentBase == null)
-            {
-                logger.LogWarning($"Failed to load Vocabulary page for competencyAssessmentId: {competencyAssessmentId} adminId: {adminId}");
-                return StatusCode(500);
-            }
-            if (competencyAssessmentBase.UserRole < 2)
-            {
-                return StatusCode(403);
-            }
+            var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
+            var result = ValidateCompetencyAssessmentAndRole(competencyAssessmentId, adminId, "Edit Vocabulary", competencyAssessmentBase);
+            if (result.StatusCode != 200)
+                return result;
             var competencyAssessmentTaskStatus = competencyAssessmentService.GetCompetencyAssessmentTaskStatus(competencyAssessmentId, null);
             var model = new EditVocabularyViewModel(competencyAssessmentBase, competencyAssessmentTaskStatus.VocabularyTaskStatus);
             return View(model);
@@ -412,10 +376,9 @@
                 logger.LogWarning($"Failed to load Vocabulary page for competencyAssessmentId: {competencyAssessmentId} adminId: {adminId}");
                 return StatusCode(500);
             }
-            if (competencyAssessmentBase.UserRole < 2)
-            {
-                return StatusCode(403);
-            }
+            var result = ValidateCompetencyAssessmentAndRole(competencyAssessmentId, adminId, "Select Framework Sources", competencyAssessmentBase);
+            if (result.StatusCode != 200)
+                return result;
             var primaryFrameworkId = competencyAssessmentService.GetPrimaryLinkedFrameworkId(competencyAssessmentId);
             var additionalFrameworks = competencyAssessmentService.GetLinkedFrameworkIds(competencyAssessmentId);
             var competencyAssessmentTaskStatus = competencyAssessmentService.GetCompetencyAssessmentTaskStatus(competencyAssessmentId, null);
@@ -502,15 +465,9 @@
             }
             var adminId = GetAdminID();
             var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
-            if (competencyAssessmentBase == null)
-            {
-                logger.LogWarning($"Failed to load Competencies page for competencyAssessmentId: {competencyAssessmentId} adminId: {adminId}");
-                return StatusCode(500);
-            }
-            if (competencyAssessmentBase.UserRole < 2)
-            {
-                return StatusCode(403);
-            }
+            var result = ValidateCompetencyAssessmentAndRole(competencyAssessmentId, adminId, "View Selected Competencies", competencyAssessmentBase);
+            if (result.StatusCode != 200)
+                return result;
             var competencyAssessmentTaskStatus = competencyAssessmentService.GetCompetencyAssessmentTaskStatus(competencyAssessmentId, null);
             var model = new ViewSelectedCompetenciesViewModel(competencyAssessmentBase, competencies, linkedFrameworks, competencyAssessmentTaskStatus.SelectCompetenciesTaskStatus);
             return View(model);
@@ -525,16 +482,9 @@
             }
             var adminId = GetAdminID();
             var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
-            if (competencyAssessmentBase == null)
-            {
-                logger.LogWarning($"Failed to load Competencies page for competencyAssessmentId: {competencyAssessmentId} adminId: {adminId}");
-                return StatusCode(500);
-            }
-            if (competencyAssessmentBase.UserRole < 2)
-            {
-                return StatusCode(403);
-            }
-
+            var result = ValidateCompetencyAssessmentAndRole(competencyAssessmentId, adminId, "Select Framework Sources", competencyAssessmentBase);
+            if (result.StatusCode != 200)
+                return result;
             var model = new AddCompetenciesSelectFrameworkViewModel(competencyAssessmentBase, linkedFrameworks);
             return View(model);
         }
@@ -562,15 +512,9 @@
         {
             var adminId = GetAdminID();
             var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
-            if (competencyAssessmentBase == null)
-            {
-                logger.LogWarning($"Failed to load Competencies page for competencyAssessmentId: {competencyAssessmentId} adminId: {adminId}");
-                return StatusCode(500);
-            }
-            if (competencyAssessmentBase.UserRole < 2)
-            {
-                return StatusCode(403);
-            }
+            var result = ValidateCompetencyAssessmentAndRole(competencyAssessmentId, adminId, "Add Competencies", competencyAssessmentBase);
+            if (result.StatusCode != 200)
+                return result;
             var framework = frameworkService.GetBaseFrameworkByFrameworkId(frameworkId, adminId);
             var selectedFrameworkCompetencies = competencyAssessmentService.GetLinkedFrameworkCompetencyIds(competencyAssessmentId, frameworkId);
             var groupedCompetencies = frameworkService.GetFrameworkCompetencyGroups(frameworkId, competencyAssessmentId);
@@ -614,15 +558,9 @@
         {
             var adminId = GetAdminID();
             var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
-            if (competencyAssessmentBase == null)
-            {
-                logger.LogWarning($"Failed to load Competencies page for competencyAssessmentId: {competencyAssessmentId} adminId: {adminId}");
-                return StatusCode(500);
-            }
-            if (competencyAssessmentBase.UserRole < 2)
-            {
-                return StatusCode(403);
-            }
+            var result = ValidateCompetencyAssessmentAndRole(competencyAssessmentId, adminId, "Move Competency In Self Assessment", competencyAssessmentBase);
+            if (result.StatusCode != 200)
+                return result;
             competencyAssessmentService.MoveCompetencyInSelfAssessment(competencyAssessmentId, competencyId, direction);
             return new RedirectResult(Url.Action("ViewSelectedCompetencies", new { competencyAssessmentId }) + "#competency-" + competencyId.ToString());
         }
@@ -630,15 +568,9 @@
         {
             var adminId = GetAdminID();
             var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
-            if (competencyAssessmentBase == null)
-            {
-                logger.LogWarning($"Failed to load Competencies page for competencyAssessmentId: {competencyAssessmentId} adminId: {adminId}");
-                return StatusCode(500);
-            }
-            if (competencyAssessmentBase.UserRole < 2)
-            {
-                return StatusCode(403);
-            }
+            var result = ValidateCompetencyAssessmentAndRole(competencyAssessmentId, adminId, "Move Competency Group In Self Assessment", competencyAssessmentBase);
+            if (result.StatusCode != 200)
+                return result;
             competencyAssessmentService.MoveCompetencyGroupInSelfAssessment(competencyAssessmentId, groupId, direction);
             return new RedirectResult(Url.Action("ViewSelectedCompetencies", new { competencyAssessmentId }) + "#group-" + groupId.ToString());
         }
@@ -659,15 +591,9 @@
         {
             var adminId = GetAdminID();
             var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
-            if (competencyAssessmentBase == null)
-            {
-                logger.LogWarning($"Failed to load Optional Competencies page for competencyAssessmentId: {competencyAssessmentId} adminId: {adminId}");
-                return StatusCode(500);
-            }
-            if (competencyAssessmentBase.UserRole < 2)
-            {
-                return StatusCode(403);
-            }
+            var result = ValidateCompetencyAssessmentAndRole(competencyAssessmentId, adminId, "Manage Optional Competencies", competencyAssessmentBase);
+            if (result.StatusCode != 200)
+                return result;
             var competencies = competencyAssessmentService.GetCompetenciesForCompetencyAssessment(competencyAssessmentId).Where(c => c.Optional == true);
             var competencyIds = competencies.Select(c => c.CompetencyID).ToArray();
             var competencyFlags = frameworkService.GetSelectedCompetencyFlagsByCompetecyIds(competencyIds);
@@ -694,15 +620,9 @@
         {
             var adminId = GetAdminID();
             var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
-            if (competencyAssessmentBase == null)
-            {
-                logger.LogWarning($"Failed to load Optional Competencies page for competencyAssessmentId: {competencyAssessmentId} adminId: {adminId}");
-                return StatusCode(500);
-            }
-            if (competencyAssessmentBase.UserRole < 2)
-            {
-                return StatusCode(403);
-            }
+            var result = ValidateCompetencyAssessmentAndRole(competencyAssessmentId, adminId, "Select Optional Competencies", competencyAssessmentBase);
+            if (result.StatusCode != 200)
+                return result;
             var competencies = competencyAssessmentService.GetCompetenciesForCompetencyAssessment(competencyAssessmentId);
             var competencyIds = competencies.Select(c => c.CompetencyID).ToArray();
             var competencyFlags = frameworkService.GetSelectedCompetencyFlagsByCompetecyIds(competencyIds);
@@ -720,15 +640,6 @@
             {
                 var adminId = GetAdminID();
                 var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(model.ID, adminId);
-                if (competencyAssessmentBase == null)
-                {
-                    logger.LogWarning($"Failed to load Optional Competencies page for competencyAssessmentId: {model.ID} adminId: {adminId}");
-                    return StatusCode(500);
-                }
-                if (competencyAssessmentBase.UserRole < 2)
-                {
-                    return StatusCode(403);
-                }
                 var competencies = competencyAssessmentService.GetCompetenciesForCompetencyAssessment(model.ID);
                 var competencyIds = competencies.Select(c => c.CompetencyID).ToArray();
                 var competencyFlags = frameworkService.GetSelectedCompetencyFlagsByCompetecyIds(competencyIds);
@@ -746,6 +657,9 @@
         {
             var adminId = GetAdminID();
             var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
+            var result = ValidateCompetencyAssessmentAndRole(competencyAssessmentId, adminId, "Set Minimum Optional Competencies", competencyAssessmentBase);
+            if (result.StatusCode != 200)
+                return result;
             var competencies = competencyAssessmentService.GetCompetenciesForCompetencyAssessment(competencyAssessmentId);
             var viewModel = new SetMinimumOptionalCompetenciesViewModel(competencyAssessmentBase, competencies);
             return View("SetMinimumOptionalCompetencies", viewModel);
@@ -771,6 +685,9 @@
         {
             var adminId = GetAdminID();
             var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
+            var result = ValidateCompetencyAssessmentAndRole(competencyAssessmentId, adminId, "Set Optional Competency Learner Prompt", competencyAssessmentBase);
+            if (result.StatusCode != 200)
+                return result;
             var competencies = competencyAssessmentService.GetCompetenciesForCompetencyAssessment(competencyAssessmentId);
             var viewModel = new SetOptionalCompetencyLearnerPromptViewModel(competencyAssessmentBase, competencies);
             return View("SetOptionalCompetencyLearnerPrompt", viewModel);
@@ -799,8 +716,9 @@
             var data = GetcompetencyAssessmentFeaturesData();
             if (!string.IsNullOrEmpty(data.CompetencyAssessmentName)) return View(data);
             var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
-            if (competencyAssessmentBase == null) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 500 });
-            if (competencyAssessmentBase.UserRole < 2) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
+            var result = ValidateCompetencyAssessmentAndRole(competencyAssessmentId, adminId, "Competency Assessment Features", competencyAssessmentBase);
+            if (result.StatusCode != 200)
+                return result;
             var baseModel = new CompetencyAssessmentFeaturesViewModel(competencyAssessmentBase.ID,
                 competencyAssessmentBase.CompetencyAssessmentName,
                 competencyAssessmentBase.UserRole,
@@ -851,11 +769,14 @@
         [Route("/CompetencyAssessments/{competencyAssessmentId}/Frameworks/{frameworkId}/Make")]
         public IActionResult ConfirmMaKePrimaryFramework(int frameworkId, int competencyAssessmentId)
         {
-                var adminId = GetAdminID();
-                var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
-                var framework = frameworkService.GetFrameworkDetailByFrameworkId(frameworkId, adminId);
-                var model = new ConfirmMakePrimaryFrameworkViewModel(competencyAssessmentBase, framework);
-                return View("ConfirmMaKePrimaryFramework", model);
+            var adminId = GetAdminID();
+            var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
+            var result = ValidateCompetencyAssessmentAndRole(competencyAssessmentId, adminId, "Confirm MaKe Primary Framework", competencyAssessmentBase);
+            if (result.StatusCode != 200)
+                return result;
+            var framework = frameworkService.GetFrameworkDetailByFrameworkId(frameworkId, adminId);
+            var model = new ConfirmMakePrimaryFrameworkViewModel(competencyAssessmentBase, framework);
+            return View("ConfirmMaKePrimaryFramework", model);
         }
         [HttpPost]
         [Route("/CompetencyAssessments/{competencyAssessmentId}/Frameworks/{frameworkId}/Make")]
@@ -883,9 +804,9 @@
 
             var collaborators = competencyAssessmentService.GetCollaboratorsForCompetencyAssessmentId(competencyAssessmentId);
             var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
-            if (competencyAssessmentBase == null) return StatusCode(404);
-            if (competencyAssessmentBase.UserRole < 2)
-                return StatusCode(403);
+            var result = ValidateCompetencyAssessmentAndRole(competencyAssessmentId, adminId, "Assessment Working Group", competencyAssessmentBase);
+            if (result.StatusCode != 200)
+                return result;
             var taskStatus = competencyAssessmentService.GetCompetencyAssessmentTaskStatus(competencyAssessmentId, null);
             var model = new WorkingGroupCollaboratorsViewModel()
             {
@@ -953,11 +874,11 @@
         {
             var data = new OptionsLabelsViewModel();
             var adminId = GetAdminID();
-            var result = ValidateCompetencyAssessmentAndRole(competencyAssessmentId, adminId, "competency assessment options");
+
+            var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
+            var result = ValidateCompetencyAssessmentAndRole(competencyAssessmentId, adminId, "competency assessment options", competencyAssessmentBase);
             if (result.StatusCode != 200)
                 return result;
-            var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
-
             data.CompetencyAssessmentID = competencyAssessmentId;
             data.Vocabulary = competencyAssessmentBase.Vocabulary;
             data.IncludeLearnerDeclarationPrompt = competencyAssessmentBase.IncludeLearnerDeclarationPrompt;
@@ -1113,6 +1034,18 @@
             return RedirectToAction("AssessmentWorkingGroup", "CompetencyAssessments", new { competencyAssessmentId, actionName = actionName });
         }
 
+        [HttpGet]
+        public IActionResult ManageCompetencyRoleRequirements(int competencyAssessmentId)
+        {
+            var adminId = GetAdminID();
+            var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
+            var result = ValidateCompetencyAssessmentAndRole(competencyAssessmentId, adminId, "Manage Competency Role Requirements", competencyAssessmentBase);
+            if (result.StatusCode != 200)
+                return result;
+            var groupedCompetencyWithAssessmentRoleRequirements = competencyAssessmentService.GetGroupedCompetencyWithAssessmentRoleRequirements(competencyAssessmentId);
+            var model = new ManageCompetencyRoleRequirementsViewModel(competencyAssessmentBase, groupedCompetencyWithAssessmentRoleRequirements);
+            return View("ManageCompetencyRoleRequirements", model);
+        }
 
         private void SetcompetencyAssessmentFeaturesData(CompetencyAssessmentFeaturesViewModel data)
         {
@@ -1158,11 +1091,11 @@
             return step != original;
         }
 
-        private StatusCodeResult ValidateCompetencyAssessmentAndRole(int competencyAssessmentId, int adminId, string pageName)
+        private StatusCodeResult ValidateCompetencyAssessmentAndRole(int competencyAssessmentId, int adminId, string pageName, CompetencyAssessmentBase? competencyAssessmentBase = null)
         {
             if (competencyAssessmentId > 0)
             {
-                var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
+                competencyAssessmentBase ??= competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
                 if (competencyAssessmentBase == null)
                 {
                     logger.LogWarning($"Failed to load {pageName} page for competencyAssessmentId: {competencyAssessmentId} adminId: {adminId}");
