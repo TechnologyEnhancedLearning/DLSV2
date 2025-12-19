@@ -430,26 +430,38 @@
             var competencyAssessmentId = model.CompetencyAssessmentId;
             if (!ModelState.IsValid)
             {
-
                 var frameworks = frameworkService.GetAllFrameworks(adminId);
                 var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
+
                 if (competencyAssessmentBase == null)
                 {
-                    logger.LogWarning($"Failed to load Vocabulary page for competencyAssessmentId: {competencyAssessmentId} adminId: {adminId}");
+                    logger.LogWarning( $"Failed to load Vocabulary page for competencyAssessmentId: {competencyAssessmentId} adminId: {adminId}");
                     return StatusCode(500);
                 }
+
                 if (competencyAssessmentBase.UserRole < 2)
                 {
                     return StatusCode(403);
                 }
+
                 var primaryFrameworkId = competencyAssessmentService.GetPrimaryLinkedFrameworkId(competencyAssessmentId);
                 var additionalFrameworks = competencyAssessmentService.GetLinkedFrameworkIds(competencyAssessmentId);
-                var viewModel = new SelectFrameworkSourcesViewModel(competencyAssessmentBase, frameworks, additionalFrameworks, primaryFrameworkId, model.TaskStatus, model.ActionName);
+
+                var viewModel = new SelectFrameworkSourcesViewModel(
+                    competencyAssessmentBase,
+                    frameworks,
+                    additionalFrameworks,
+                    primaryFrameworkId,
+                    model.TaskStatus,
+                    model.ActionName
+                );
+
                 return View("SelectFrameworkSources", viewModel);
             }
+
             if (actionName == "AddFramework")
             {
-                competencyAssessmentService.InsertSelfAssessmentFramework(adminId, competencyAssessmentId, model.FrameworkId);
+                competencyAssessmentService.InsertSelfAssessmentFramework(adminId, competencyAssessmentId, model.FrameworkId.Value);
                 return RedirectToAction("SelectFrameworkSources", new { competencyAssessmentId, actionName = "Summary" });
             }
             else

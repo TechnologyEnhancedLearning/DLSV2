@@ -137,7 +137,7 @@
                         SelfAssessmentFrameworks saf2
                         INNER JOIN Frameworks f ON f.ID = saf2.FrameworkId
                     WHERE 
-                        saf2.SelfAssessmentId = sa.ID
+                        saf2.SelfAssessmentId = sa.ID AND saf2.RemovedDate IS NULL
                     FOR XML PATH(''), TYPE).value('.', 'NVARCHAR(MAX)'), 1, 2, ''
                 ) AS LinkedFrameworks,
                  (SELECT ProfessionalGroup
