@@ -37,7 +37,6 @@ namespace DigitalLearningSolutions.Web.Services
         SupervisorDelegateDetail GetSupervisorDelegateDetailsByIdWithoutRemoveClause(int supervisorDelegateId, int adminId, int delegateUserId);
 
         //UPDATE DATA
-        bool ConfirmSupervisorDelegateById(int supervisorDelegateId, int candidateId, int adminId);
         bool RemoveSupervisorDelegateById(int supervisorDelegateId, int delegateUserId, int adminId);
         bool UpdateSelfAssessmentResultSupervisorVerifications(int selfAssessmentResultSupervisorVerificationId, string? comments, bool signedOff, int adminId);
         bool UpdateSelfAssessmentResultSupervisorVerificationsEmailSent(int selfAssessmentResultSupervisorVerificationId);
@@ -68,11 +67,6 @@ namespace DigitalLearningSolutions.Web.Services
         public int AddSuperviseDelegate(int? supervisorAdminId, int? delegateUserId, string delegateEmail, string supervisorEmail, int centreId)
         {
             return supervisorDataService.AddSuperviseDelegate(supervisorAdminId, delegateUserId, delegateEmail, supervisorEmail, centreId);
-        }
-
-        public bool ConfirmSupervisorDelegateById(int supervisorDelegateId, int candidateId, int adminId)
-        {
-            return supervisorDataService.ConfirmSupervisorDelegateById(supervisorDelegateId, candidateId, adminId);
         }
 
         public int EnrolDelegateOnAssessment(int delegateUserId, int supervisorDelegateId, int selfAssessmentId, DateTime? completeByDate, int? selfAssessmentSupervisorRoleId, int adminId, int centreId, bool isLoggedInUser)

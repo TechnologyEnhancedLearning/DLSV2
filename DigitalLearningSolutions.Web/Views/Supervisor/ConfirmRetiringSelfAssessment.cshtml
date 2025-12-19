@@ -1,5 +1,5 @@
 ﻿@using DigitalLearningSolutions.Web.Extensions
-@using DigitalLearningSolutions.Web.ViewModels.Supervisor
+@using DigitalLearningSolutions.Web.ViewModels.Common
 @using Microsoft.Extensions.Configuration
 @model RetiringSelfAssessmentViewModel;
 @inject IConfiguration Configuration;
@@ -40,12 +40,12 @@
                 Continue
             </button>
             @Html.HiddenFor(m => m.SelfAssessmentID)
-            @Html.HiddenFor(m => m.SupervisorDelegateID)
+            @Html.HiddenFor(m => m.RouteID)
             @Html.HiddenFor(m => m.RetirementDate)
         </form>
         <div class="nhsuk-back-link">
             <a class="nhsuk-back-link__link" asp-controller="Supervisor"
-               asp-action="DelegateProfileAssessments" asp-route-supervisorDelegateId="@Model.SupervisorDelegateID">
+               asp-action="DelegateProfileAssessments" asp-route-supervisorDelegateId="@Model.RouteID">
                 <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
                     <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
                 </svg>

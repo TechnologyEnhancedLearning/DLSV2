@@ -20,7 +20,16 @@
         public int PublishStatusID { get; set; }
         public int UserRole { get; set; }
         public string? Vocabulary { get; set; }
-
+        public int? MinimumOptionalCompetencies { get; set; }
+        public string? ManageOptionalCompetenciesPrompt { get; set; }
+        public bool IncludeLearnerDeclarationPrompt { get; set; }
+        public bool IncludesSignposting { get; set; }
+        public bool LinearNavigation { get; set; }
+        public bool UseDescriptionExpanders { get; set; }
+        public string? QuestionLabel { get; set; }
+        public string? ReviewerCommentsLabel { get; set; }
+        public bool SupervisorSelfAssessmentReview { get; set; }
+        public bool SupervisorResultsReview { get; set; }
     }
 }
 

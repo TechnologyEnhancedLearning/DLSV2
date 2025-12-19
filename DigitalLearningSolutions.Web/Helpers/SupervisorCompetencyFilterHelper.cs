@@ -28,107 +28,37 @@ namespace DigitalLearningSolutions.Web.Helpers
             }
             return filteredCompetencies;
         }
-
         private static void ApplyResponseStatusFilters(ref IEnumerable<Competency> competencies, IEnumerable<int> filters, string searchText = "")
         {
-            var filteredCompetencies = competencies;
-            var appliedResponseStatusFilters = filters.Where(f => IsResponseStatusFilter(f));
-            if (appliedResponseStatusFilters.Any() || searchText.Length > 0)
+            var appliedFilters = filters.Where(f => IsResponseStatusFilter(f)).ToList();
+            var wordsInSearchText = searchText.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+
+            if (!appliedFilters.Any() && string.IsNullOrWhiteSpace(searchText))
+                return;
+
+            competencies = competencies.Where(c =>
             {
-                var wordsInSearchText = searchText.Split().Where(w => w != string.Empty);
-                filters = appliedResponseStatusFilters;
-                if (filters.Contains((int)SelfAssessmentCompetencyFilter.Verified) && filters.Contains((int)SelfAssessmentCompetencyFilter.Optional))
-                {
-                    filteredCompetencies = from c in competencies
-                                           let searchTextMatchesGroup = wordsInSearchText.All(w => c.CompetencyGroup?.Contains(w, StringComparison.CurrentCultureIgnoreCase) ?? false)
-                                           let searchTextMatchesCompetencyDescription = wordsInSearchText.All(w => c.Description?.Contains(w, StringComparison.CurrentCultureIgnoreCase) ?? false)
-                                           let searchTextMatchesCompetencyName = wordsInSearchText.All(w => c.Name?.Contains(w, StringComparison.CurrentCultureIgnoreCase) ?? false)
-                                           let responseStatusFilterMatchesAnyQuestion =
-                                            (filters.Contains((int)SelfAssessmentCompetencyFilter.Verified) && c.AssessmentQuestions.Any(q => q.Verified.HasValue && q.SignedOff == true) && c.Optional)
-                                           where (wordsInSearchText.Count() == 0 || searchTextMatchesGroup || searchTextMatchesCompetencyDescription || searchTextMatchesCompetencyName)
-                                               && (!appliedResponseStatusFilters.Any() || responseStatusFilterMatchesAnyQuestion)
-                                           select c;
-                }
-                else if (filters.Contains((int)SelfAssessmentCompetencyFilter.ConfirmationRejected) && filters.Contains((int)SelfAssessmentCompetencyFilter.Optional))
-                {
-                    filteredCompetencies = from c in competencies
-                                           let searchTextMatchesGroup = wordsInSearchText.All(w => c.CompetencyGroup?.Contains(w, StringComparison.CurrentCultureIgnoreCase) ?? false)
-                                           let searchTextMatchesCompetencyDescription = wordsInSearchText.All(w => c.Description?.Contains(w, StringComparison.CurrentCultureIgnoreCase) ?? false)
-                                           let searchTextMatchesCompetencyName = wordsInSearchText.All(w => c.Name?.Contains(w, StringComparison.CurrentCultureIgnoreCase) ?? false)
-                                           let responseStatusFilterMatchesAnyQuestion =
-                                            (filters.Contains((int)SelfAssessmentCompetencyFilter.ConfirmationRejected) && c.AssessmentQuestions.Any(q => q.Verified.HasValue && q.SignedOff != true) && c.Optional)
-                                           where (wordsInSearchText.Count() == 0 || searchTextMatchesGroup || searchTextMatchesCompetencyDescription || searchTextMatchesCompetencyName)
-                                               && (!appliedResponseStatusFilters.Any() || responseStatusFilterMatchesAnyQuestion)
-                                           select c;
-                }
-                else if (filters.Contains((int)SelfAssessmentCompetencyFilter.PendingConfirmation) && filters.Contains((int)SelfAssessmentCompetencyFilter.Optional))
-                {
-                    filteredCompetencies = from c in competencies
-                                           let searchTextMatchesGroup = wordsInSearchText.All(w => c.CompetencyGroup?.Contains(w, StringComparison.CurrentCultureIgnoreCase) ?? false)
-                                           let searchTextMatchesCompetencyDescription = wordsInSearchText.All(w => c.Description?.Contains(w, StringComparison.CurrentCultureIgnoreCase) ?? false)
-                                           let searchTextMatchesCompetencyName = wordsInSearchText.All(w => c.Name?.Contains(w, StringComparison.CurrentCultureIgnoreCase) ?? false)
-                                           let responseStatusFilterMatchesAnyQuestion =
-                                            (filters.Contains((int)SelfAssessmentCompetencyFilter.PendingConfirmation) && c.AssessmentQuestions.Any(q => q.ResultId != null && q.Verified == null && q.Requested != null && q.UserIsVerifier == false) && c.Optional)
-                                           where (wordsInSearchText.Count() == 0 || searchTextMatchesGroup || searchTextMatchesCompetencyDescription || searchTextMatchesCompetencyName)
-                                               && (!appliedResponseStatusFilters.Any() || responseStatusFilterMatchesAnyQuestion)
-                                           select c;
-                }
-                else if (filters.Contains((int)SelfAssessmentCompetencyFilter.AwaitingConfirmation) && filters.Contains((int)SelfAssessmentCompetencyFilter.Optional))
-                {
-                    filteredCompetencies = from c in competencies
-                                           let searchTextMatchesGroup = wordsInSearchText.All(w => c.CompetencyGroup?.Contains(w, StringComparison.CurrentCultureIgnoreCase) ?? false)
-                                           let searchTextMatchesCompetencyDescription = wordsInSearchText.All(w => c.Description?.Contains(w, StringComparison.CurrentCultureIgnoreCase) ?? false)
-                                           let searchTextMatchesCompetencyName = wordsInSearchText.All(w => c.Name?.Contains(w, StringComparison.CurrentCultureIgnoreCase) ?? false)
-                                           let responseStatusFilterMatchesAnyQuestion =
-                                            (filters.Contains((int)SelfAssessmentCompetencyFilter.AwaitingConfirmation) && c.AssessmentQuestions.Any(q => q.Verified == null && q.Requested != null && q.UserIsVerifier == true) && c.Optional)
-                                           where (wordsInSearchText.Count() == 0 || searchTextMatchesGroup || searchTextMatchesCompetencyDescription || searchTextMatchesCompetencyName)
-                                               && (!appliedResponseStatusFilters.Any() || responseStatusFilterMatchesAnyQuestion)
-                                           select c;
-                }
-                else if (filters.Contains((int)SelfAssessmentCompetencyFilter.RequiresSelfAssessment) && filters.Contains((int)SelfAssessmentCompetencyFilter.Optional))
-                {
-                    filteredCompetencies = from c in competencies
-                                           let searchTextMatchesGroup = wordsInSearchText.All(w => c.CompetencyGroup?.Contains(w, StringComparison.CurrentCultureIgnoreCase) ?? false)
-                                           let searchTextMatchesCompetencyDescription = wordsInSearchText.All(w => c.Description?.Contains(w, StringComparison.CurrentCultureIgnoreCase) ?? false)
-                                           let searchTextMatchesCompetencyName = wordsInSearchText.All(w => c.Name?.Contains(w, StringComparison.CurrentCultureIgnoreCase) ?? false)
-                                           let responseStatusFilterMatchesAnyQuestion =
-                                            (filters.Contains((int)SelfAssessmentCompetencyFilter.RequiresSelfAssessment) && c.AssessmentQuestions.Any(q => q.ResultId == null) && c.Optional)
-                                           where (wordsInSearchText.Count() == 0 || searchTextMatchesGroup || searchTextMatchesCompetencyDescription || searchTextMatchesCompetencyName)
-                                               && (!appliedResponseStatusFilters.Any() || responseStatusFilterMatchesAnyQuestion)
-                                           select c;
-                }
-                else if (filters.Contains((int)SelfAssessmentCompetencyFilter.SelfAssessed) && filters.Contains((int)SelfAssessmentCompetencyFilter.Optional))
-                {
-                    filteredCompetencies = from c in competencies
-                                           let searchTextMatchesGroup = wordsInSearchText.All(w => c.CompetencyGroup?.Contains(w, StringComparison.CurrentCultureIgnoreCase) ?? false)
-                                           let searchTextMatchesCompetencyDescription = wordsInSearchText.All(w => c.Description?.Contains(w, StringComparison.CurrentCultureIgnoreCase) ?? false)
-                                           let searchTextMatchesCompetencyName = wordsInSearchText.All(w => c.Name?.Contains(w, StringComparison.CurrentCultureIgnoreCase) ?? false)
-                                           let responseStatusFilterMatchesAnyQuestion =
-                                            (filters.Contains((int)SelfAssessmentCompetencyFilter.SelfAssessed) && c.AssessmentQuestions.Any(q => q.ResultId != null && q.Requested == null && q.SignedOff == null) && c.Optional)
-                                           where (wordsInSearchText.Count() == 0 || searchTextMatchesGroup || searchTextMatchesCompetencyDescription || searchTextMatchesCompetencyName)
-                                               && (!appliedResponseStatusFilters.Any() || responseStatusFilterMatchesAnyQuestion)
-                                           select c;
-                }
-                else
-                {
-                    filteredCompetencies = from c in competencies
-                                           let searchTextMatchesGroup = wordsInSearchText.All(w => c.CompetencyGroup?.Contains(w, StringComparison.CurrentCultureIgnoreCase) ?? false)
-                                           let searchTextMatchesCompetencyDescription = wordsInSearchText.All(w => c.Description?.Contains(w, StringComparison.CurrentCultureIgnoreCase) ?? false)
-                                           let searchTextMatchesCompetencyName = wordsInSearchText.All(w => c.Name?.Contains(w, StringComparison.CurrentCultureIgnoreCase) ?? false)
-                                           let responseStatusFilterMatchesAnyQuestion =
-                                              (filters.Contains((int)SelfAssessmentCompetencyFilter.RequiresSelfAssessment) && c.AssessmentQuestions.Any(q => q.ResultId == null))
-                                           || (filters.Contains((int)SelfAssessmentCompetencyFilter.SelfAssessed) && c.AssessmentQuestions.Any(q => q.ResultId != null && q.Requested == null && q.SignedOff == null))
-                                           || (filters.Contains((int)SelfAssessmentCompetencyFilter.PendingConfirmation) && c.AssessmentQuestions.Any(q => q.ResultId != null && q.Verified == null && q.Requested != null && q.UserIsVerifier == false))
-                                           || (filters.Contains((int)SelfAssessmentCompetencyFilter.ConfirmationRejected) && c.AssessmentQuestions.Any(q => q.Verified.HasValue && q.SignedOff != true))
-                                           || (filters.Contains((int)SelfAssessmentCompetencyFilter.AwaitingConfirmation) && c.AssessmentQuestions.Any(q => q.Verified == null && q.Requested != null && q.UserIsVerifier == true))
-                                           || (filters.Contains((int)SelfAssessmentCompetencyFilter.Verified) && c.AssessmentQuestions.Any(q => q.Verified.HasValue && q.SignedOff == true))
-                                           || (filters.Contains((int)SelfAssessmentCompetencyFilter.Optional) && c.Optional)
-                                           where (wordsInSearchText.Count() == 0 || searchTextMatchesGroup || searchTextMatchesCompetencyDescription || searchTextMatchesCompetencyName)
-                                               && (!appliedResponseStatusFilters.Any() || responseStatusFilterMatchesAnyQuestion)
-                                           select c;
-                }
-            }
-            competencies = filteredCompetencies;
+                // Search text match
+                bool searchTextMatches = !wordsInSearchText.Any() ||
+                    wordsInSearchText.All(w =>
+                        (c.CompetencyGroup?.Contains(w, StringComparison.CurrentCultureIgnoreCase) ?? false) ||
+                        (c.Description?.Contains(w, StringComparison.CurrentCultureIgnoreCase) ?? false) ||
+                        (c.Name?.Contains(w, StringComparison.CurrentCultureIgnoreCase) ?? false)
+                    );
+
+                // All filters must match (AND)
+                bool allFiltersMatch = appliedFilters.All(f =>
+                    (f == (int)SelfAssessmentCompetencyFilter.Verified && c.AssessmentQuestions.Any(q => q.Verified.HasValue && q.SignedOff == true)) ||
+                    (f == (int)SelfAssessmentCompetencyFilter.Optional && c.Optional) ||
+                    (f == (int)SelfAssessmentCompetencyFilter.ConfirmationRejected && c.AssessmentQuestions.Any(q => q.Verified.HasValue && q.SignedOff != true)) ||
+                    (f == (int)SelfAssessmentCompetencyFilter.PendingConfirmation && c.AssessmentQuestions.Any(q => q.ResultId != null && q.Verified == null && q.Requested != null && q.UserIsVerifier == false)) ||
+                    (f == (int)SelfAssessmentCompetencyFilter.AwaitingConfirmation && c.AssessmentQuestions.Any(q => q.Verified == null && q.Requested != null && q.UserIsVerifier == true)) ||
+                    (f == (int)SelfAssessmentCompetencyFilter.RequiresSelfAssessment && c.AssessmentQuestions.Any(q => q.ResultId == null)) ||
+                    (f == (int)SelfAssessmentCompetencyFilter.SelfAssessed && c.AssessmentQuestions.Any(q => q.ResultId != null && q.Requested == null && q.SignedOff == null))
+                );
+
+                return searchTextMatches && allFiltersMatch;
+            }).ToList();
         }
 
         private static void ApplyRequirementsFilters(ref IEnumerable<Competency> competencies, IEnumerable<int> filters)

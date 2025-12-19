@@ -3,6 +3,7 @@
     using Dapper;
     using DigitalLearningSolutions.Data.Extensions;
     using DigitalLearningSolutions.Data.Models.CompetencyAssessments;
+    using Microsoft.AspNetCore.Connections;
     using Microsoft.Extensions.Logging;
     using System;
     using System.Collections.Generic;
@@ -59,6 +60,15 @@
         bool UpdateOptionalCompetenciesTaskStatus(int assessmentId, bool taskStatus, bool? previousStatus);
         bool UpdateRoleRequirementsTaskStatus(int assessmentId, bool taskStatus, bool? previousStatus);
         bool UpdateWorkingGroupTaskStatus(int assessmentId, bool taskStatus, bool? previousStatus);
+        bool UpdateCompetencyAssessmentOptions(
+           bool includeLearnerDeclarationPrompt,
+           bool includesSignposting,
+           bool linearNavigation,
+           bool useDescriptionExpanders,
+           string? questionLabelText,
+           string? reviewerCommentsLabelText,
+           int competencyAssessmentId, int adminId);
+        bool UpdateCompetencyAssessmentOptionsTaskStatus(int assessmentId, bool taskStatus);
         void MoveCompetencyInSelfAssessment(int competencyAssessmentId,
             int competencyId,
             string direction
@@ -70,6 +80,9 @@
         public bool UpdateCompetencyAssessmentFeaturesTaskStatus(int id, bool descriptionStatus, bool providerandCategoryStatus, bool vocabularyStatus,
            bool workingGroupStatus, bool AllframeworkCompetenciesStatus);
         void UpdateSelfAssessmentFromFramework(int selfAssessmentId, int? frameworkId);
+        bool UpdateOptionalCompetenciesInAssessment(int selfAssessmentId, int[] groupIds, int[] selectedStructureIds);
+        void UpdateMinimumOptionalCompetencies(int selfAssessmentId, int minimumOptionalCompetecies);
+        void UpdateManageOptionalCompetenciesPrompt(int selfAssessmentId, string manageOptionalCompetenciesPrompt);
         bool UpdatePrimaryFrameworkCompetencies(int assessmentId, int frameworkId);
 
         //INSERT DATA
@@ -85,6 +98,7 @@
         int AddCollaboratorToCompetencyAssessment(int competencyAssessmentId, string? userEmail, bool canModify, int? centreID);
         void RemoveCollaboratorFromCompetencyAssessment(int competencyAssessmentId, int id);
         CompetencyAssessmentCollaboratorNotification? GetCollaboratorNotification(int id, int invitedByAdminId);
+        bool HasCompetencyWithSignpostedLearning(int competencyAssessmentId);
     }
 
     public class CompetencyAssessmentDataService : ICompetencyAssessmentDataService
@@ -93,9 +107,13 @@
                 sa.ParentSelfAssessmentID,
                 sa.[National], sa.[Public], sa.CreatedByAdminID AS OwnerAdminID,
                 sa.NRPProfessionalGroupID,
-                 sa.NRPSubGroupID,
-                 sa.NRPRoleID,
-                 sa.PublishStatusID, sa.Vocabulary, CASE WHEN sa.CreatedByAdminID = @adminId THEN 3 WHEN sac.CanModify = 1 THEN 2 WHEN sac.CanModify = 0 THEN 1 ELSE 0 END AS UserRole";
+                sa.NRPSubGroupID,
+                sa.NRPRoleID,
+                sa.PublishStatusID, sa.Vocabulary, CASE WHEN sa.CreatedByAdminID = @adminId THEN 3 WHEN sac.CanModify = 1 THEN 2 WHEN sac.CanModify = 0 THEN 1 ELSE 0 END AS UserRole,
+                sa.MinimumOptionalCompetencies,
+                sa.ManageOptionalCompetenciesPrompt,
+                sa.IncludeLearnerDeclarationPrompt, sa.IncludesSignposting, sa.LinearNavigation, sa.UseDescriptionExpanders, sa.QuestionLabel, sa.ReviewerCommentsLabel,
+                sa.SupervisorSelfAssessmentReview, sa.SupervisorResultsReview ";
 
         private const string SelfAssessmentFields =
             @", sa.CategoryID, sa.CreatedDate,
@@ -120,7 +138,7 @@
                         SelfAssessmentFrameworks saf2
                         INNER JOIN Frameworks f ON f.ID = saf2.FrameworkId
                     WHERE 
-                        saf2.SelfAssessmentId = sa.ID
+                        saf2.SelfAssessmentId = sa.ID AND saf2.RemovedDate IS NULL
                     FOR XML PATH(''), TYPE).value('.', 'NVARCHAR(MAX)'), 1, 2, ''
                 ) AS LinkedFrameworks,
                  (SELECT ProfessionalGroup
@@ -377,7 +395,7 @@
             {
                 numberOfAffectedRows = connection.Execute(
                 @"UPDATE SelfAssessmentFrameworks
-                    SET RemovedDate = NULL, RemovedByAdminId = NULL, AmendedByAdminId = @adminId
+                    SET RemovedDate = NULL, RemovedByAdminId = NULL, AmendedByAdminId = @adminId, IsPrimary = 0
                     WHERE SelfAssessmentId = @selfAssessmentId AND FrameworkId = @frameworkId"
             ,
                 new { adminId, selfAssessmentId, frameworkId }
@@ -675,7 +693,7 @@
         public IEnumerable<Competency> GetCompetenciesForCompetencyAssessment(int competencyAssessmentId)
         {
             return connection.Query<Competency>(
-               @"SELECT sas.ID AS StructureId, sas.CompetencyID, f.ID AS FrameworkId, f.FrameworkName, cg.ID AS GroupId, cg.Name AS GroupName, c.Name AS CompetencyName, c.Description AS CompetencyDescription, sas.Optional
+               @"SELECT sas.ID AS StructureId, sas.CompetencyID, f.ID AS FrameworkId, f.FrameworkName, cg.ID AS GroupId, cg.Name AS GroupName, c.Name AS CompetencyName, c.Description AS CompetencyDescription, sas.Optional, sas.GroupOptionalCompetencies
                     FROM   SelfAssessmentStructure AS sas INNER JOIN
                                 Competencies AS c ON sas.CompetencyID = c.ID LEFT JOIN
                                 CompetencyGroups AS cg ON sas.CompetencyGroupID = cg.ID INNER JOIN
@@ -1076,6 +1094,146 @@
                 WHERE (sc.ID = @id) AND (sc.IsDeleted=0)",
                 new { invitedByAdminId, id }
             ).FirstOrDefault();
+        }
+
+        public bool HasCompetencyWithSignpostedLearning(int competencyAssessmentId)
+        {
+            int hasSignpostedLearning = connection.QueryFirstOrDefault<int>(
+                @"SELECT count(*) FROM SelfAssessmentStructure sas INNER JOIN 
+			        CompetencyLearningResources clr ON sas.CompetencyID = clr.CompetencyID AND
+			        clr.RemovedDate IS NULL
+		        WHERE sas.SelfAssessmentID = @competencyAssessmentId",
+                new { competencyAssessmentId });
+
+            return hasSignpostedLearning > 0;
+        }
+        public bool UpdateCompetencyAssessmentOptions(
+            bool includeLearnerDeclarationPrompt,
+            bool includesSignposting,
+            bool linearNavigation,
+            bool useDescriptionExpanders,
+            string? questionLabelText,
+            string? reviewerCommentsLabelText,
+            int competencyAssessmentId, int adminId)
+        {
+            if ((adminId < 1) | (competencyAssessmentId < 1))
+            {
+                logger.LogWarning(
+                    $"Not updating role profile name as it failed server side validation. AdminId: {adminId}, competencyAssessmentId: {competencyAssessmentId}"
+                );
+                return false;
+            }
+
+            var numberOfAffectedRows = connection.Execute(
+                @"UPDATE SelfAssessments SET IncludeLearnerDeclarationPrompt = @includeLearnerDeclarationPrompt,
+                    IncludesSignposting = @includesSignposting,
+                    LinearNavigation = @linearNavigation,
+                    UseDescriptionExpanders = @useDescriptionExpanders,
+                    QuestionLabel = @questionLabelText,
+                    ReviewerCommentsLabel = @reviewerCommentsLabelText,
+                    UpdatedByAdminID = @adminId
+                    WHERE ID = @competencyAssessmentId ",
+                new
+                {
+                    includeLearnerDeclarationPrompt,
+                    includesSignposting,
+                    linearNavigation,
+                    useDescriptionExpanders,
+                    questionLabelText,
+                    reviewerCommentsLabelText,
+                    adminId,
+                    competencyAssessmentId
+                }
+            );
+            if (numberOfAffectedRows < 1)
+            {
+                logger.LogWarning(
+                    "Not updating options/labels as db update failed. " +
+                    $"admin id: {adminId}, competencyAssessmentId: {competencyAssessmentId}"
+                );
+                return false;
+            }
+
+            return true;
+        }
+
+        public bool UpdateCompetencyAssessmentOptionsTaskStatus(int assessmentId, bool taskStatus)
+        {
+            var numberOfAffectedRows = connection.Execute(
+               @"UPDATE SelfAssessmentTaskStatus SET SelfAssessmentOptionsTaskStatus = @taskStatus
+                    WHERE SelfAssessmentId = @assessmentId",
+               new { assessmentId, taskStatus }
+           );
+            if (numberOfAffectedRows < 1)
+            {
+                logger.LogWarning(
+                    "Not updating SelfAssessmentOptionsTaskStatus as db update failed. " +
+                    $"assessmentId: {assessmentId}, taskStatus: {taskStatus}"
+                );
+                return false;
+            }
+            return true;
+        }
+
+        public bool UpdateOptionalCompetenciesInAssessment(int selfAssessmentId, int[] groupIds, int[] selectedStructureIds)
+        {
+            const string sql = @"UPDATE sas
+                                 SET 
+                                    Optional =
+                                        CASE 
+                                            WHEN sas.CompetencyGroupID IN @GroupIds THEN 1
+                                            WHEN sas.ID IN @SelectedIds THEN 1
+                                            ELSE 0
+                                        END,
+                                    GroupOptionalCompetencies =
+                                        CASE 
+                                            WHEN sas.CompetencyGroupID IN @GroupIds THEN 1
+                                            ELSE 0
+                                        END
+                                 FROM SelfAssessmentStructure sas
+                                    WHERE sas.SelfAssessmentID = @SelfAssessmentId;";
+
+            var safeGroupIds = (groupIds != null && groupIds.Length > 0)
+                ? groupIds
+                : [-1];
+
+            var safeSelectedIds = (selectedStructureIds != null && selectedStructureIds.Length > 0)
+                ? selectedStructureIds
+                : [-1];
+
+
+            var rows = connection.Execute(sql, new
+            {
+                SelfAssessmentId = selfAssessmentId,
+                GroupIds = safeGroupIds,
+                SelectedIds = safeSelectedIds
+            });
+
+            // Returns true if any rows were updated
+            return rows > 0;
+        }
+
+        public void UpdateMinimumOptionalCompetencies(int selfAssessmentId, int minimumOptionalCompetecies)
+        {
+            connection.Execute(
+                @"UPDATE SelfAssessments
+                    SET 
+                    [MinimumOptionalCompetencies] = @minimumOptionalCompetecies
+                    WHERE id = @selfAssessmentId AND ISNULL(MinimumOptionalCompetencies, 0) <> @minimumOptionalCompetecies;"
+            ,
+                new { selfAssessmentId, minimumOptionalCompetecies }
+            );
+        }
+        public void UpdateManageOptionalCompetenciesPrompt(int selfAssessmentId, string? manageOptionalCompetenciesPrompt)
+        {
+            connection.Execute(
+                @"UPDATE SelfAssessments
+                    SET 
+                    [ManageOptionalCompetenciesPrompt] = @manageOptionalCompetenciesPrompt
+                    WHERE id = @selfAssessmentId AND ISNULL(ManageOptionalCompetenciesPrompt, '') <> @manageOptionalCompetenciesPrompt;"
+            ,
+                new { selfAssessmentId, manageOptionalCompetenciesPrompt }
+            );
         }
     }
 }

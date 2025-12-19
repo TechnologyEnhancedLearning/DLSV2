@@ -1,6 +1,7 @@
 ﻿using DigitalLearningSolutions.Data.DataServices;
 using DigitalLearningSolutions.Data.Models.CompetencyAssessments;
 using System.Collections.Generic;
+using DigitalLearningSolutions.Web.Helpers;
 
 namespace DigitalLearningSolutions.Web.Services
 {
@@ -48,6 +49,15 @@ namespace DigitalLearningSolutions.Web.Services
         bool UpdateOptionalCompetenciesTaskStatus(int assessmentId, bool taskStatus, bool? previousStatus);
         bool UpdateRoleRequirementsTaskStatus(int assessmentId, bool taskStatus, bool? previousStatus);
         bool UpdateWorkingGroupTaskStatus(int assessmentId, bool taskStatus, bool? previousStatus);
+        bool UpdateCompetencyAssessmentOptions(
+            bool includeLearnerDeclarationPrompt,
+            bool includesSignposting,
+            bool linearNavigation,
+            bool useDescriptionExpanders,
+            string? questionLabelText,
+            string? reviewerCommentsLabelText,
+            int competencyAssessmentId, int adminId);
+        bool UpdateCompetencyAssessmentOptionsTaskStatus(int assessmentId, bool taskStatus);
         void MoveCompetencyInSelfAssessment(int competencyAssessmentId,
             int competencyId,
             string direction
@@ -59,6 +69,9 @@ namespace DigitalLearningSolutions.Web.Services
         bool UpdateCompetencyAssessmentFeaturesTaskStatus(int id, bool descriptionStatus, bool providerandCategoryStatus, bool vocabularyStatus,
           bool workingGroupStatus, bool AllframeworkCompetenciesStatus);
         void UpdateSelfAssessmentFromFramework(int selfAssessmentId, int? frameworkId);
+        bool UpdateOptionalCompetenciesInAssessment(int selfAssessmentId, int[] groupIds, int[] selectedStructureIds);
+        void UpdateMinimumOptionalCompetencies(int selfAssessmentId, int minimumOptionalCompetecies);
+        void UpdateManageOptionalCompetenciesPrompt(int selfAssessmentId, string? manageOptionalCompetenciesPrompt);
         bool UpdatePrimaryFrameworkCompetencies(int assessmentId, int frameworkId);
 
         //INSERT DATA
@@ -75,6 +88,7 @@ namespace DigitalLearningSolutions.Web.Services
         int AddCollaboratorToCompetencyAssessment(int competencyAssessmentId, string? userEmail, bool canModify, int? centreID);
         void RemoveCollaboratorFromCompetencyAssessment(int competencyAssessmentId, int id);
         CompetencyAssessmentCollaboratorNotification? GetCollaboratorNotification(int id, int invitedByAdminId);
+        bool HasCompetencyWithSignpostedLearning(int competencyAssessmentId);
     }
     public class CompetencyAssessmentService : ICompetencyAssessmentService
     {
@@ -245,7 +259,24 @@ namespace DigitalLearningSolutions.Web.Services
         {
             return competencyAssessmentDataService.UpdateWorkingGroupTaskStatus(assessmentId, taskStatus, previousStatus);
         }
-
+        public bool UpdateCompetencyAssessmentOptions(
+            bool includeLearnerDeclarationPrompt,
+            bool includesSignposting,
+            bool linearNavigation,
+            bool useDescriptionExpanders,
+            string? questionLabelText,
+            string? reviewerCommentsLabelText,
+            int competencyAssessmentId, int adminId)
+        {
+            return competencyAssessmentDataService.UpdateCompetencyAssessmentOptions(
+            includeLearnerDeclarationPrompt,
+            includesSignposting,
+            linearNavigation,
+            useDescriptionExpanders,
+            questionLabelText,
+            reviewerCommentsLabelText,
+            competencyAssessmentId, adminId);
+        }
         public IEnumerable<Competency> GetCompetenciesForCompetencyAssessment(int competencyAssessmentId)
         {
             return competencyAssessmentDataService.GetCompetenciesForCompetencyAssessment(competencyAssessmentId);
@@ -311,6 +342,25 @@ namespace DigitalLearningSolutions.Web.Services
         {
             return competencyAssessmentDataService.GetSelfAssessmentStructure(competencyAssessmentId);
         }
+
+        public bool UpdateOptionalCompetenciesInAssessment(int selfAssessmentId, int[] groupIds, int[] selectedStructureIds)
+        {
+            return competencyAssessmentDataService.UpdateOptionalCompetenciesInAssessment(selfAssessmentId, groupIds, selectedStructureIds);
+        }
+
+        public void UpdateMinimumOptionalCompetencies(int selfAssessmentId, int minimumOptionalCompetecies)
+        {
+            competencyAssessmentDataService.UpdateMinimumOptionalCompetencies(selfAssessmentId, minimumOptionalCompetecies);
+        }
+        public void UpdateManageOptionalCompetenciesPrompt(int selfAssessmentId, string? manageOptionalCompetenciesPrompt)
+        {
+            manageOptionalCompetenciesPrompt = SanitizerHelper.SanitizeHtmlData(manageOptionalCompetenciesPrompt);
+            if (StringHelper.StripHtmlTags(manageOptionalCompetenciesPrompt) == "")
+            {
+                manageOptionalCompetenciesPrompt = null;
+            }
+            competencyAssessmentDataService.UpdateManageOptionalCompetenciesPrompt(selfAssessmentId, manageOptionalCompetenciesPrompt);
+        }
         public IEnumerable<CompetencyAssessmentCollaboratorDetail> GetCollaboratorsForCompetencyAssessmentId(int competencyAssessmentId)
         {
             return competencyAssessmentDataService.GetCollaboratorsForCompetencyAssessmentId(competencyAssessmentId);
@@ -327,6 +377,14 @@ namespace DigitalLearningSolutions.Web.Services
         {
             return competencyAssessmentDataService.GetCollaboratorNotification(id, invitedByAdminId);
 
+        }
+        public bool HasCompetencyWithSignpostedLearning(int competencyAssessmentId)
+        {
+            return competencyAssessmentDataService.HasCompetencyWithSignpostedLearning(competencyAssessmentId);
+        }
+        public bool UpdateCompetencyAssessmentOptionsTaskStatus(int assessmentId, bool taskStatus)
+        {
+            return competencyAssessmentDataService.UpdateCompetencyAssessmentOptionsTaskStatus(assessmentId, taskStatus);
         }
     }
 }

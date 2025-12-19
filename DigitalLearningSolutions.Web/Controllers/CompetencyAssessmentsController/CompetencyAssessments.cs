@@ -8,6 +8,8 @@
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments;
+    using DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments;
+    using DocumentFormat.OpenXml.EMMA;
     using GDS.MultiPageFormData.Enums;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Rendering;
@@ -428,26 +430,38 @@
             var competencyAssessmentId = model.CompetencyAssessmentId;
             if (!ModelState.IsValid)
             {
-
                 var frameworks = frameworkService.GetAllFrameworks(adminId);
                 var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
+
                 if (competencyAssessmentBase == null)
                 {
-                    logger.LogWarning($"Failed to load Vocabulary page for competencyAssessmentId: {competencyAssessmentId} adminId: {adminId}");
+                    logger.LogWarning( $"Failed to load Vocabulary page for competencyAssessmentId: {competencyAssessmentId} adminId: {adminId}");
                     return StatusCode(500);
                 }
+
                 if (competencyAssessmentBase.UserRole < 2)
                 {
                     return StatusCode(403);
                 }
+
                 var primaryFrameworkId = competencyAssessmentService.GetPrimaryLinkedFrameworkId(competencyAssessmentId);
                 var additionalFrameworks = competencyAssessmentService.GetLinkedFrameworkIds(competencyAssessmentId);
-                var viewModel = new SelectFrameworkSourcesViewModel(competencyAssessmentBase, frameworks, additionalFrameworks, primaryFrameworkId, model.TaskStatus, model.ActionName);
+
+                var viewModel = new SelectFrameworkSourcesViewModel(
+                    competencyAssessmentBase,
+                    frameworks,
+                    additionalFrameworks,
+                    primaryFrameworkId,
+                    model.TaskStatus,
+                    model.ActionName
+                );
+
                 return View("SelectFrameworkSources", viewModel);
             }
+
             if (actionName == "AddFramework")
             {
-                competencyAssessmentService.InsertSelfAssessmentFramework(adminId, competencyAssessmentId, model.FrameworkId);
+                competencyAssessmentService.InsertSelfAssessmentFramework(adminId, competencyAssessmentId, model.FrameworkId.Value);
                 return RedirectToAction("SelectFrameworkSources", new { competencyAssessmentId, actionName = "Summary" });
             }
             else
@@ -678,6 +692,143 @@
             competencyAssessmentService.UpdateSelectCompetenciesTaskStatus(model.ID, model.TaskStatus.Value, null);
             return RedirectToAction("ManageCompetencyAssessment", new { competencyAssessmentId = model.ID });
         }
+        [HttpGet]
+        [Route("/CompetencyAssessments/{competencyAssessmentId}/Competencies/Optional/Manage")]
+        public IActionResult ManageOptionalCompetencies(int competencyAssessmentId)
+        {
+            var adminId = GetAdminID();
+            var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
+            if (competencyAssessmentBase == null)
+            {
+                logger.LogWarning($"Failed to load Optional Competencies page for competencyAssessmentId: {competencyAssessmentId} adminId: {adminId}");
+                return StatusCode(500);
+            }
+            if (competencyAssessmentBase.UserRole < 2)
+            {
+                return StatusCode(403);
+            }
+            var competencies = competencyAssessmentService.GetCompetenciesForCompetencyAssessment(competencyAssessmentId).Where(c => c.Optional == true);
+            var competencyIds = competencies.Select(c => c.CompetencyID).ToArray();
+            var competencyFlags = frameworkService.GetSelectedCompetencyFlagsByCompetecyIds(competencyIds);
+            foreach (var competency in competencies)
+                competency.CompetencyFlags = competencyFlags.Where(f => f.CompetencyId == competency.CompetencyID);
+            var competencyAssessmentTaskStatus = competencyAssessmentService.GetCompetencyAssessmentTaskStatus(competencyAssessmentId, null);
+            var model = new SelectOptionalCompetenciesViewModel(competencyAssessmentBase, competencies, competencyAssessmentTaskStatus.OptionalCompetenciesTaskStatus);
+            return View(model);
+        }
+        [HttpPost]
+        [Route("/CompetencyAssessments/{competencyAssessmentId}/Competencies/Optional/Manage")]
+        public IActionResult ManageOptionalCompetencies(ViewSelectedCompetenciesFormData model)
+        {
+            if (model.TaskStatus == null)
+            {
+                model.TaskStatus = false;
+            }
+            competencyAssessmentService.UpdateOptionalCompetenciesTaskStatus(model.ID, model.TaskStatus.Value, null);
+            return RedirectToAction("ManageCompetencyAssessment", new { competencyAssessmentId = model.ID });
+        }
+        [HttpGet]
+        [Route("/CompetencyAssessments/{competencyAssessmentId}/Competencies/Optional/Select")]
+        public IActionResult SelectOptionalCompetencies(int competencyAssessmentId)
+        {
+            var adminId = GetAdminID();
+            var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
+            if (competencyAssessmentBase == null)
+            {
+                logger.LogWarning($"Failed to load Optional Competencies page for competencyAssessmentId: {competencyAssessmentId} adminId: {adminId}");
+                return StatusCode(500);
+            }
+            if (competencyAssessmentBase.UserRole < 2)
+            {
+                return StatusCode(403);
+            }
+            var competencies = competencyAssessmentService.GetCompetenciesForCompetencyAssessment(competencyAssessmentId);
+            var competencyIds = competencies.Select(c => c.CompetencyID).ToArray();
+            var competencyFlags = frameworkService.GetSelectedCompetencyFlagsByCompetecyIds(competencyIds);
+            foreach (var competency in competencies)
+                competency.CompetencyFlags = competencyFlags.Where(f => f.CompetencyId == competency.CompetencyID);
+            var competencyAssessmentTaskStatus = competencyAssessmentService.GetCompetencyAssessmentTaskStatus(competencyAssessmentId, null);
+            var model = new SelectOptionalCompetenciesViewModel(competencyAssessmentBase, competencies, competencyAssessmentTaskStatus.OptionalCompetenciesTaskStatus);
+            return View(model);
+        }
+        [HttpPost]
+        [Route("/CompetencyAssessments/{competencyAssessmentId}/Competencies/Optional/Select")]
+        public IActionResult SelectOptionalCompetencies(SelectOptionalCompetenciesFormData model)
+        {
+            if (!ModelState.IsValid)
+            {
+                var adminId = GetAdminID();
+                var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(model.ID, adminId);
+                if (competencyAssessmentBase == null)
+                {
+                    logger.LogWarning($"Failed to load Optional Competencies page for competencyAssessmentId: {model.ID} adminId: {adminId}");
+                    return StatusCode(500);
+                }
+                if (competencyAssessmentBase.UserRole < 2)
+                {
+                    return StatusCode(403);
+                }
+                var competencies = competencyAssessmentService.GetCompetenciesForCompetencyAssessment(model.ID);
+                var competencyIds = competencies.Select(c => c.CompetencyID).ToArray();
+                var competencyFlags = frameworkService.GetSelectedCompetencyFlagsByCompetecyIds(competencyIds);
+                foreach (var competency in competencies)
+                    competency.CompetencyFlags = competencyFlags.Where(f => f.CompetencyId == competency.CompetencyID);
+                var viewModel = new SelectOptionalCompetenciesViewModel(competencyAssessmentBase, competencies, model.TaskStatus);
+                return View("SelectOptionalCompetencies", viewModel);
+            }
+            competencyAssessmentService.UpdateOptionalCompetenciesInAssessment(model.ID, model.GroupIds ?? [], model.SelectedCompetencyIds ?? []);
+            return RedirectToAction("ManageOptionalCompetencies", new { competencyAssessmentId = model.ID });
+        }
+        [HttpGet]
+        [Route("/CompetencyAssessments/{competencyAssessmentId}/Competencies/Optional/SetMinimum")]
+        public IActionResult SetMinimumOptionalCompetencies(int competencyAssessmentId)
+        {
+            var adminId = GetAdminID();
+            var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
+            var competencies = competencyAssessmentService.GetCompetenciesForCompetencyAssessment(competencyAssessmentId);
+            var viewModel = new SetMinimumOptionalCompetenciesViewModel(competencyAssessmentBase, competencies);
+            return View("SetMinimumOptionalCompetencies", viewModel);
+        }
+        [HttpPost]
+        [Route("/CompetencyAssessments/{competencyAssessmentId}/Competencies/Optional/SetMinimum")]
+        public IActionResult SetMinimumOptionalCompetencies(SetMinimumOptionalCompetenciesFormData model)
+        {
+            if (!ModelState.IsValid)
+            {
+                var adminId = GetAdminID();
+                var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(model.ID, adminId);
+                var competencies = competencyAssessmentService.GetCompetenciesForCompetencyAssessment(model.ID);
+                var viewModel = new SetMinimumOptionalCompetenciesViewModel(competencyAssessmentBase, competencies);
+                return View("SetMinimumOptionalCompetencies", viewModel);
+            }
+            competencyAssessmentService.UpdateMinimumOptionalCompetencies(model.ID, model.MinimumOptionalCompetencies ?? 0);
+            return RedirectToAction("ManageOptionalCompetencies", new { competencyAssessmentId = model.ID });
+        }
+        [HttpGet]
+        [Route("/CompetencyAssessments/{competencyAssessmentId}/Competencies/Optional/LearnerPrompt")]
+        public IActionResult SetOptionalCompetencyLearnerPrompt(int competencyAssessmentId)
+        {
+            var adminId = GetAdminID();
+            var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
+            var competencies = competencyAssessmentService.GetCompetenciesForCompetencyAssessment(competencyAssessmentId);
+            var viewModel = new SetOptionalCompetencyLearnerPromptViewModel(competencyAssessmentBase, competencies);
+            return View("SetOptionalCompetencyLearnerPrompt", viewModel);
+        }
+        [HttpPost]
+        [Route("/CompetencyAssessments/{competencyAssessmentId}/Competencies/Optional/LearnerPrompt")]
+        public IActionResult SetOptionalCompetencyLearnerPrompt(SetOptionalCompetencyLearnerPromptFormData model)
+        {
+            if (!ModelState.IsValid)
+            {
+                var adminId = GetAdminID();
+                var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(model.ID, adminId);
+                var competencies = competencyAssessmentService.GetCompetenciesForCompetencyAssessment(model.ID);
+                var viewModel = new SetOptionalCompetencyLearnerPromptViewModel(competencyAssessmentBase, competencies);
+                return View("SetOptionalCompetencyLearnerPrompt", viewModel);
+            }
+            competencyAssessmentService.UpdateManageOptionalCompetenciesPrompt(model.ID, model.ManageOptionalCompetenciesPrompt);
+            return RedirectToAction("ManageOptionalCompetencies", new { competencyAssessmentId = model.ID });
+        }
 
         [Route("/CompetencyAssessments/Framework/{frameworkId}/{competencyAssessmentId}/Features")]
         public IActionResult CompetencyAssessmentFeatures(int competencyAssessmentId, int? frameworkId = null)
@@ -836,6 +987,165 @@
             }
         }
 
+        [Route("/CompetencyAssessments/{competencyAssessmentId}/ConfigureOptions")]
+        public IActionResult ConfigureOptions(int competencyAssessmentId)
+        {
+            var data = new OptionsLabelsViewModel();
+            var adminId = GetAdminID();
+            var result = ValidateCompetencyAssessmentAndRole(competencyAssessmentId, adminId, "competency assessment options");
+            if (result.StatusCode != 200)
+                return result;
+            var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
+
+            data.CompetencyAssessmentID = competencyAssessmentId;
+            data.Vocabulary = competencyAssessmentBase.Vocabulary;
+            data.IncludeLearnerDeclarationPrompt = competencyAssessmentBase.IncludeLearnerDeclarationPrompt;
+            data.IncludesSignposting = competencyAssessmentBase.IncludesSignposting;
+            data.LinearNavigation = competencyAssessmentBase.LinearNavigation;
+            data.UseDescriptionExpanders = competencyAssessmentBase.UseDescriptionExpanders;
+            data.QuestionLabel = string.IsNullOrWhiteSpace(competencyAssessmentBase.QuestionLabel) ? false : true;
+            data.QuestionLabelText = competencyAssessmentBase.QuestionLabel?.Trim();
+            data.ReviewerCommentsLabel = string.IsNullOrWhiteSpace(competencyAssessmentBase.ReviewerCommentsLabel) ? false : true;
+            data.ReviewerCommentsLabelText = competencyAssessmentBase.ReviewerCommentsLabel?.Trim();
+            data.IsSupervisionSwitchedOn = competencyAssessmentBase.SupervisorSelfAssessmentReview && competencyAssessmentBase.SupervisorResultsReview;
+            data.IsSignpostedLearning = competencyAssessmentService.HasCompetencyWithSignpostedLearning(competencyAssessmentId);
+
+            var taskStatus = competencyAssessmentService.GetCompetencyAssessmentTaskStatus(competencyAssessmentId, null);
+            data.SelfAssessmentOptionsTaskStatus = taskStatus.SelfAssessmentOptionsTaskStatus;
+
+            SetOptionsLabelsData(data);
+
+            var step = (int)OptionLabel.Declaration;
+            if (taskStatus.SelfAssessmentOptionsTaskStatus != null)
+                step = (int)OptionLabel.Summary;
+
+            ValidateStep(data, ref step);
+            return RedirectToAction("OptionsLabels", "CompetencyAssessments", new { competencyAssessmentId, step });
+        }
+
+        [Route("/CompetencyAssessments/{competencyAssessmentId}/OptionsLabels/{step}")]
+        public IActionResult OptionsLabels(int competencyAssessmentId, int step)
+        {
+            if (step < (int)OptionLabel.Declaration || step > (int)OptionLabel.Summary)
+                return StatusCode(500);
+
+            var adminId = GetAdminID();
+            var result = ValidateCompetencyAssessmentAndRole(competencyAssessmentId, adminId, "competency assessment options");
+            if (result.StatusCode != 200)
+                return result;
+
+            var data = GetOptionsLabelslData();
+
+            if (ValidateStep(data, ref step))
+            {
+                return RedirectToAction("OptionsLabels", "CompetencyAssessments", new { competencyAssessmentId, step });
+            }
+
+            data.CurrentStep = step;
+            var model = new OptionsLabelsViewModel(data);
+
+            return View("CompetencyAssessmentOptions", model);
+        }
+
+        [HttpPost]
+        [Route("/CompetencyAssessments/{competencyAssessmentId}/OptionsLabels/{step}")]
+        public IActionResult OptionsLabels(OptionsLabelsViewModel model)
+        {
+            var adminId = GetAdminID();
+            var data = GetOptionsLabelslData();
+            data.CurrentStep = model.CurrentStep;
+            ModelState.Remove("VocabularySingular");
+            ModelState.Remove("VocabularyPlural");
+
+            if (model.CurrentStep == (int)OptionLabel.Declaration)
+            {
+                data.IncludeLearnerDeclarationPrompt = model.IncludeLearnerDeclarationPrompt;
+            }
+            else if (model.CurrentStep == (int)OptionLabel.Signposting)
+            {
+                data.IncludesSignposting = model.IncludesSignposting;
+            }
+            else if (model.CurrentStep == (int)OptionLabel.LinearNavigation)
+            {
+                data.LinearNavigation = model.LinearNavigation;
+            }
+            else if (model.CurrentStep == (int)OptionLabel.DescriptionExpanders)
+            {
+                data.UseDescriptionExpanders = model.UseDescriptionExpanders;
+            }
+            else if (model.CurrentStep == (int)OptionLabel.QuestionLabels)
+            {
+                data.QuestionLabel = model.QuestionLabel;
+                if (model.QuestionLabel)
+                {
+                    var label = model.QuestionLabelText?.Trim();
+                    if (string.IsNullOrEmpty(label))
+                        ModelState.AddModelError(nameof(model.QuestionLabelText), "Please enter a question label");
+                    else if (label.Length > 50)
+                        ModelState.AddModelError(nameof(model.QuestionLabelText), "Question label must be 50 characters or fewer");
+
+                    if (!ModelState.IsValid)
+                    {
+                        SetOptionsLabelsData(data);
+                        model = new OptionsLabelsViewModel(data);
+                        model.Error = true;
+                        return View("CompetencyAssessmentOptions", model);
+                    }
+                }
+                data.QuestionLabelText = model.QuestionLabel ? model.QuestionLabelText.Trim() : null;
+            }
+            else if (model.CurrentStep == (int)OptionLabel.CommentsLabel)
+            {
+                data.ReviewerCommentsLabel = model.ReviewerCommentsLabel;
+                if (model.ReviewerCommentsLabel)
+                {
+                    var label = model.ReviewerCommentsLabelText?.Trim();
+                    if (string.IsNullOrEmpty(label))
+                        ModelState.AddModelError(nameof(model.ReviewerCommentsLabelText), "Please enter a reviewer comment");
+                    else if (label.Length > 50)
+                        ModelState.AddModelError(nameof(model.ReviewerCommentsLabelText), "Reviewer comment must be 50 characters or fewer");
+
+                    if (!ModelState.IsValid)
+                    {
+                        SetOptionsLabelsData(data);
+                        model = new OptionsLabelsViewModel(data);
+                        model.Error = true;
+                        return View("CompetencyAssessmentOptions", model);
+                    }
+                }
+                data.ReviewerCommentsLabelText = model.ReviewerCommentsLabel ? model.ReviewerCommentsLabelText.Trim() : null;
+            }
+            else if (model.CurrentStep == (int)OptionLabel.Summary)
+            {
+                var isUpdate = competencyAssessmentService.UpdateCompetencyAssessmentOptions(
+                    data.IncludeLearnerDeclarationPrompt,
+                    data.IncludesSignposting,
+                    data.LinearNavigation,
+                    data.UseDescriptionExpanders,
+                    data.QuestionLabel ? data.QuestionLabelText?.Trim() : null,
+                    data.ReviewerCommentsLabel ? data.ReviewerCommentsLabelText?.Trim() : null,
+                    data.CompetencyAssessmentID,
+                    adminId);
+                if (!isUpdate)
+                {
+                    ModelState.AddModelError("", "Update failed. Please try again.");
+                    return View("CompetencyAssessmentOptions", model);
+                }
+                competencyAssessmentService.UpdateCompetencyAssessmentOptionsTaskStatus(model.CompetencyAssessmentID, model.SelfAssessmentOptionsTaskStatus ?? false);
+                return RedirectToAction("ManageCompetencyAssessment", "CompetencyAssessments", new { model.CompetencyAssessmentID });
+            }
+
+            if (data.SelfAssessmentOptionsTaskStatus != null)
+                data.CurrentStep = (int)OptionLabel.Summary;
+            else
+                data.CurrentStep = model.CurrentStep + 1;
+
+            SetOptionsLabelsData(data);
+
+            var newModel = new OptionsLabelsViewModel(data);
+            return RedirectToAction("OptionsLabels", "CompetencyAssessments", new { model.CompetencyAssessmentID, step = newModel.CurrentStep });
+        }
+
         public IActionResult RemoveCollaborator(int competencyAssessmentId, int id, string actionName)
         {
             competencyAssessmentService.RemoveCollaboratorFromCompetencyAssessment(competencyAssessmentId, id);
@@ -858,6 +1168,55 @@
                TempData
            ).GetAwaiter().GetResult();
             return data;
+        }
+
+        private void SetOptionsLabelsData(OptionsLabelsViewModel data)
+        {
+            multiPageFormService.SetMultiPageFormData(
+                 data,
+                 MultiPageFormDataFeature.AddCustomWebForm("OptionsLabelsCWF"),
+                 TempData
+             );
+        }
+
+        private OptionsLabelsViewModel GetOptionsLabelslData()
+        {
+            var data = multiPageFormService.GetMultiPageFormData<OptionsLabelsViewModel>(
+               MultiPageFormDataFeature.AddCustomWebForm("OptionsLabelsCWF"),
+               TempData
+           ).GetAwaiter().GetResult();
+            return data;
+        }
+        private bool ValidateStep(OptionsLabelsViewModel data, ref int step)
+        {
+            int original = step;
+            if (step == (int)OptionLabel.Declaration && !data.IsSupervisionSwitchedOn) step = (int)OptionLabel.Signposting;
+            if (step == (int)OptionLabel.Signposting && !data.IsSignpostedLearning) step = (int)OptionLabel.LinearNavigation;
+            if (step == (int)OptionLabel.CommentsLabel && !data.IsSupervisionSwitchedOn) step = (int)OptionLabel.Summary;
+
+            return step != original;
+        }
+
+        private StatusCodeResult ValidateCompetencyAssessmentAndRole(int competencyAssessmentId, int adminId, string pageName)
+        {
+            if (competencyAssessmentId > 0)
+            {
+                var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
+                if (competencyAssessmentBase == null)
+                {
+                    logger.LogWarning($"Failed to load {pageName} page for competencyAssessmentId: {competencyAssessmentId} adminId: {adminId}");
+                    return StatusCode(500);
+                }
+                if (competencyAssessmentBase.UserRole < 2)
+                {
+                    return StatusCode(403);
+                }
+            }
+            else
+            {
+                return StatusCode(500);
+            }
+            return StatusCode(200);
         }
     }
 }
