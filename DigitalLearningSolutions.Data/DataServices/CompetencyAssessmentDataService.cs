@@ -861,14 +861,29 @@
 
             var numberOfAffectedRows = connection.Execute(
                 @"UPDATE s
-                    SET 
-                    [Description] = COALESCE(F.[Description], 'No description provided'),
-                    BrandID = F.BrandID,
-                    CategoryID = F.CategoryID
-                    FROM SelfAssessments s
-                    INNER JOIN Frameworks F ON F.ID = @frameworkId
-                    INNER JOIN AdminUsers AU ON F.OwnerAdminID = AU.AdminID
-                    WHERE s.id = @selfAssessmentId;"
+SET
+    [Description] = CASE 
+        WHEN sts.IntroductoryTextTaskStatus IS NULL THEN NULL
+        ELSE COALESCE(F.[Description], 'No description provided')
+    END,
+    BrandID = CASE 
+        WHEN sts.BrandingTaskStatus IS NULL THEN s.BrandID
+        ELSE F.BrandID
+    END,
+    CategoryID = CASE 
+        WHEN sts.BrandingTaskStatus IS NULL THEN s.CategoryID
+        ELSE F.CategoryID
+    END,
+    Vocabulary = CASE 
+        WHEN sts.VocabularyTaskStatus IS NULL THEN NULL
+        ELSE F.FrameworkConfig
+    END
+FROM SelfAssessments s
+INNER JOIN Frameworks F ON F.ID = @frameworkId
+INNER JOIN AdminUsers AU ON F.OwnerAdminID = AU.AdminID
+INNER JOIN SelfAssessmentTaskStatus sts ON s.ID = sts.SelfAssessmentId
+WHERE s.ID = @selfAssessmentId;
+;"
             ,
                 new { selfAssessmentId, frameworkId }
             );
