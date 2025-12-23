@@ -1,0 +1,55 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
+@using Microsoft.Extensions.Configuration
+@model CompetencyGroupDeleteViewModel
+@inject IConfiguration Configuration
+
+@{
+    ViewData["Title"] = "Competency Group - Confirm remove";
+    ViewData["Application"] = "Competency Assessment Service";
+    ViewData["HeaderPathName"] = "Competency Assessment Service";
+}
+
+@section NavMenuItems {
+    <partial name="Shared/_NavMenuItems" />
+}
+@section NavBreadcrumbs {
+    <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+        <div class="nhsuk-width-container">
+            <ol class="nhsuk-breadcrumb__list">
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewCompetencyAssessments" asp-route-tabname="Mine">Competency Assessments</a></li>
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.CompetencyAssessmentId">Manage Competency Assessment</a></li>
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewSelectedCompetencies" asp-route-competencyAssessmentId="@Model.CompetencyAssessmentId">Select @Model.VocabularyPlural To Assess</a></li>
+                <li class="nhsuk-breadcrumb__item">Confirm Remove Group</li>
+            </ol>
+            <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.CompetencyAssessmentId">Back to manage competency assessment</a></p>
+        </div>
+    </nav>
+}
+<div>
+    <div class="nhsuk-form-group" id="form-group">
+        <form asp-action="DeleteCompetencyGroup" asp-route-competencyAssessmentId="@Model.CompetencyAssessmentId" asp-route-competencyGroupId="@Model.CompetencyGroupId">
+            <div class="nhsuk-u-reading-width">
+                <h1 id="form-heading" class="nhsuk-fieldset__heading nhsuk-label--l">
+                    Remove Competency Group and @Model.CompetencyCount Competencies
+                </h1>
+                <p>
+                    This action will remove the competency group and the @Model.CompetencyCount competencies it contains. Are you sure you wish to continue?
+                </p>
+                <p>
+                    Are you sure that you wish to proceed?
+                </p>
+            </div>
+            <button class="nhsuk-button delete-button" type="submit">
+                Remove group
+            </button>
+        </form>
+    </div>
+    <div class="nhsuk-back-link">
+        <a class="nhsuk-back-link__link" asp-action="ViewSelectedCompetencies" asp-route-competencyAssessmentId="@Model.CompetencyAssessmentId">
+            <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
+            </svg>
+            Cancel
+        </a>
+    </div>
+</div>
