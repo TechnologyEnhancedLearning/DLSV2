@@ -21,9 +21,9 @@
         </div>
     </nav>
 }
-<h1>Self assessment @Model.VocabularyPlural.ToLower() role requirements</h1>
+<h1>Self assessment @Model.VocabularySingular.ToLower() role requirements</h1>
 <p class="nhsuk-lede-text">
-    Specify whether role requirements will be enforced for the self assessment. When requirements are set, they must be met by the learner before the self assessment can be signed off.
+    Specify whether role requirements will be enforced for the @Model.CompetencyAssessmentName self assessment. When requirements are set, they must be met by the learner before the self assessment can be signed off.
 </p>
 <dl class="nhsuk-summary-list">
     <div class="nhsuk-summary-list__row">
@@ -31,7 +31,7 @@
             Enforce role requirements for self assessment
         </dt>
         <dd class="nhsuk-summary-list__value">
-            @if (!Model.EnforceRoleRequirementsForSignOff)
+            @if (Model.EnforceRoleRequirementsForSignOff)
             {
                 <text>Yes. Enforce role requirements.</text>
             }
@@ -41,15 +41,15 @@
             }
         </dd>
         <dd class="nhsuk-summary-list__actions">
-            <a class="nhsuk-link" asp-route-competencyAssessmentId="@Model.Id" asp-action="SetEnforceRoleRequirementsForSignOff">Change<span class="nhsuk-u-visually-hidden"> role requirements enforcement</span></a>
+            <a class="nhsuk-link" asp-route-competencyAssessmentId="@Model.Id" asp-action="EditEnforceRoleRequirementsForSignOff">Change<span class="nhsuk-u-visually-hidden"> role requirements enforcement</span></a>
         </dd>
-        </div>
+    </div>
     <div class="nhsuk-summary-list__row">
         <dt class="nhsuk-summary-list__key">
             Include requirement status filters
         </dt>
         <dd class="nhsuk-summary-list__value">
-            @if (!Model.IncludeRequirementsFilters)
+            @if (Model.IncludeRequirementsFilters)
             {
                 <text>Yes. Include filters.</text>
             }
@@ -59,17 +59,29 @@
             }
         </dd>
         <dd class="nhsuk-summary-list__actions">
-            <a class="nhsuk-link" asp-route-competencyAssessmentId="@Model.Id" asp-action="SetIncludeRequirementsFilters">Change<span class="nhsuk-u-visually-hidden"> include requirements filters</span></a>
+            <a class="nhsuk-link" asp-route-competencyAssessmentId="@Model.Id" asp-action="EditIncludeRequirementsFilters">Change<span class="nhsuk-u-visually-hidden"> include requirements filters</span></a>
         </dd>
     </div>
     <div class="nhsuk-summary-list__row">
         <dt class="nhsuk-summary-list__key">
-            Competency assessment question role requirements
+            @Model.VocabularySingular role requirements
         </dt>
         <dd class="nhsuk-summary-list__value">
-            @Model.CountCompetencyRequirements competency assessment question role requirements set.
+            @Model.CountCompetencyRequirements @Model.VocabularySingular.ToLower() assessment questions with role requirements set.
         </dd>
         <dd class="nhsuk-summary-list__actions">
             <a class="nhsuk-link" asp-route-competencyAssessmentId="@Model.Id" asp-action="SetCompetencyRoleRequirements">Change<span class="nhsuk-u-visually-hidden"> include requirements filters</span></a>
         </dd>
     </div>
+</dl>
+<form method="post">
+    <nhs-form-group>
+        <input type="hidden" asp-for="Id" />
+        <input type="hidden" asp-for="EnforceRoleRequirementsForSignOff" />
+        <input type="hidden" asp-for="IncludeRequirementsFilters" />
+        <vc:single-checkbox asp-for="@nameof(Model.TaskStatus)" label="Mark this task as complete" hint-text="You will still be able to make changes after marking this task as complete."></vc:single-checkbox>
+    </nhs-form-group>
+    <button class="nhsuk-button" type="submit">
+        Save
+    </button>
+</form>

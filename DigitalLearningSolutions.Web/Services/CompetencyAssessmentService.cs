@@ -55,6 +55,7 @@ namespace DigitalLearningSolutions.Web.Services
         bool UpdateOptionalCompetenciesTaskStatus(int assessmentId, bool taskStatus, bool? previousStatus);
         bool UpdateRoleRequirementsTaskStatus(int assessmentId, bool taskStatus, bool? previousStatus);
         bool UpdateWorkingGroupTaskStatus(int assessmentId, bool taskStatus, bool? previousStatus);
+        bool UpdateCompetencyAssessmentRoleRequirementsTaskStatus(int assessmentId, bool taskStatus, bool? previousStatus);
         bool UpdateCompetencyAssessmentOptions(
             bool includeLearnerDeclarationPrompt,
             bool includesSignposting,
@@ -79,7 +80,7 @@ namespace DigitalLearningSolutions.Web.Services
         void UpdateMinimumOptionalCompetencies(int selfAssessmentId, int minimumOptionalCompetecies);
         void UpdateManageOptionalCompetenciesPrompt(int selfAssessmentId, string? manageOptionalCompetenciesPrompt);
         bool UpdatePrimaryFrameworkCompetencies(int assessmentId, int frameworkId);
-
+        void UpdateRoleRequirementsFlags(int assessmentId, bool enforceRoleRequirementsForSignOff, bool includeRequirementsFilters);
         //INSERT DATA
         int InsertCompetencyAssessment(int adminId, int centreId, string competencyAssessmentName, int? frameworkId);
         bool InsertSelfAssessmentFramework(int adminId, int assessmentId, int frameworkId);
@@ -322,6 +323,10 @@ namespace DigitalLearningSolutions.Web.Services
             return competencyAssessmentDataService.UpdateCompetencyAssessmentFeaturesTaskStatus(id, descriptionStatus, providerandCategoryStatus, vocabularyStatus,
             workingGroupStatus, AllframeworkCompetenciesStatus);
         }
+        public bool UpdateCompetencyAssessmentRoleRequirementsTaskStatus(int assessmentId, bool taskStatus, bool? previousStatus)
+        {
+            return competencyAssessmentDataService.UpdateCompetencyAssessmentRoleRequirementsTaskStatus(assessmentId, taskStatus);
+        }
         public CompetencyAssessmentFeatures? GetCompetencyAssessmentFeaturesTaskStatus(int competencyAssessmentId)
         {
             return competencyAssessmentDataService.GetCompetencyAssessmentFeaturesTaskStatus(competencyAssessmentId);
@@ -446,6 +451,11 @@ namespace DigitalLearningSolutions.Web.Services
                .ToList()
        })
        .ToList();
+        }
+
+        public void UpdateRoleRequirementsFlags(int assessmentId, bool enforceRoleRequirementsForSignOff, bool includeRequirementsFilters)
+        {
+            competencyAssessmentDataService.UpdateRoleRequirementsFlags(assessmentId, enforceRoleRequirementsForSignOff, includeRequirementsFilters);
         }
     }
 }

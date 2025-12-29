@@ -3,7 +3,6 @@
     using Dapper;
     using DigitalLearningSolutions.Data.Extensions;
     using DigitalLearningSolutions.Data.Models.CompetencyAssessments;
-    using Microsoft.AspNetCore.Connections;
     using Microsoft.Extensions.Logging;
     using System;
     using System.Collections.Generic;
@@ -78,14 +77,15 @@
             int groupId,
             string direction
         );
-        public bool UpdateCompetencyAssessmentFeaturesTaskStatus(int id, bool descriptionStatus, bool providerandCategoryStatus, bool vocabularyStatus,
+        bool UpdateCompetencyAssessmentFeaturesTaskStatus(int id, bool descriptionStatus, bool providerandCategoryStatus, bool vocabularyStatus,
            bool workingGroupStatus, bool AllframeworkCompetenciesStatus);
+        bool UpdateCompetencyAssessmentRoleRequirementsTaskStatus(int assessmentId, bool taskStatus);
         void UpdateSelfAssessmentFromFramework(int selfAssessmentId, int? frameworkId);
         bool UpdateOptionalCompetenciesInAssessment(int selfAssessmentId, int[] groupIds, int[] selectedStructureIds);
         void UpdateMinimumOptionalCompetencies(int selfAssessmentId, int minimumOptionalCompetecies);
         void UpdateManageOptionalCompetenciesPrompt(int selfAssessmentId, string manageOptionalCompetenciesPrompt);
         bool UpdatePrimaryFrameworkCompetencies(int assessmentId, int frameworkId);
-
+        void UpdateRoleRequirementsFlags(int assessmentId, bool enforceRoleRequirementsForSignOff, bool includeRequirementsFilters);
         //INSERT DATA
         int InsertCompetencyAssessment(int adminId, int centreId, string competencyAssessmentName);
         bool InsertSelfAssessmentFramework(int adminId, int selfAssessmentId, int frameworkId);
@@ -1257,6 +1257,36 @@
                  WHERE (sas.SelfAssessmentID = @competencyAssessmentId)  AND (caq.Required = 1)
                  ORDER BY sas.Ordering;",
                  new { competencyAssessmentId }
+             );
+        }
+
+        public bool UpdateCompetencyAssessmentRoleRequirementsTaskStatus(int assessmentId, bool taskStatus)
+        {
+            var numberOfAffectedRows = connection.Execute(
+              @"UPDATE SelfAssessmentTaskStatus SET RoleRequirementsTaskStatus = @taskStatus
+                    WHERE SelfAssessmentId = @assessmentId",
+              new { assessmentId, taskStatus }
+          );
+            if (numberOfAffectedRows < 1)
+            {
+                logger.LogWarning(
+                    "Not updating RoleRequirementsTaskStatus as db update failed. " +
+                    $"assessmentId: {assessmentId}, taskStatus: {taskStatus}"
+                );
+                return false;
+            }
+            return true;
+        }
+
+        public void UpdateRoleRequirementsFlags(int assessmentId, bool enforceRoleRequirementsForSignOff, bool includeRequirementsFilters)
+        {
+            connection.Execute(
+                 @"UPDATE SelfAssessments
+                    SET 
+                    [EnforceRoleRequirementsForSignOff] = @enforceRoleRequirementsForSignOff, [IncludeRequirementsFilters] = @includeRequirementsFilters
+                    WHERE id = @assessmentId AND (EnforceRoleRequirementsForSignOff <> @enforceRoleRequirementsForSignOff OR IncludeRequirementsFilters <> @includeRequirementsFilters);"
+             ,
+                 new { assessmentId, enforceRoleRequirementsForSignOff, includeRequirementsFilters }
              );
         }
     }

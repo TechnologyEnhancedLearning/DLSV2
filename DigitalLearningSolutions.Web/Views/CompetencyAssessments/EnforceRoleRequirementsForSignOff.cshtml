@@ -1,0 +1,51 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
+@model EditRoleRequirementsFlagsViewModel;
+@{
+    ViewData["Title"] = "Manage Role Requirements";
+    ViewData["Application"] = "Framework Service";
+}
+<link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
+@section NavMenuItems {
+    <partial name="~/Views/Frameworks/Shared/_NavMenuItems.cshtml" />
+}
+
+@section NavBreadcrumbs {
+    <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+        <div class="nhsuk-width-container">
+            <ol class="nhsuk-breadcrumb__list">
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewCompetencyAssessments" asp-route-tabname="Mine">Competency Assessments</a></li>
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.Id">Manage Competency Assessment</a></li>
+                <li class="nhsuk-breadcrumb__item">Optional Competencies</li>
+            </ol>
+            <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.Id">Back to manage competency assessment</a></p>
+        </div>
+    </nav>
+}
+<h1>Edit role requirement enforcement</h1>
+<form method="post">
+    <nhs-form-group nhs-validation-for="EnforceRoleRequirementsForSignOff">
+        <fieldset class="nhsuk-fieldset" aria-describedby="role-requirements-hint">
+            <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
+                <h2>Do you want to enforce role requirements for the @Model.CompetencyAssessmentName self assessment?</h2>
+            </legend>
+            <div class="nhsuk-hint">
+                When requirements are set, they must be met by the learner before the self assessment can be signed off.
+            </div>
+            <span nhs-validation-for="EnforceRoleRequirementsForSignOff"></span>
+            <div class="nhsuk-radios nhsuk-radios--inline">
+                <div class="nhsuk-radios__item">
+                    <input class="nhsuk-radios__input" id="enforce-yes" name="EnforceRoleRequirementsForSignOff" type="radio" value="true" @(Model.EnforceRoleRequirementsForSignOff ? "checked" : "")>
+                    <label class="nhsuk-radios__label" for="enforce-yes">Yes</label>
+                </div>
+                <div class="nhsuk-radios__item">
+                    <input class="nhsuk-radios__input" id="enforce-no" name="EnforceRoleRequirementsForSignOff" type="radio" value="false" @(!Model.EnforceRoleRequirementsForSignOff ? "checked" : "")>
+                    <label class="nhsuk-radios__label" for="enforce-no">No</label>
+                </div>
+            </div>
+        </fieldset>
+    </nhs-form-group>
+    <input type="hidden" asp-for="Id" />
+    <input type="hidden" asp-for="IncludeRequirementsFilters" />
+    <input type="hidden" asp-for="TaskStatus" />
+    <button class="nhsuk-button nhsuk-button--primary" type="submit">Save changes</button>
+</form>
