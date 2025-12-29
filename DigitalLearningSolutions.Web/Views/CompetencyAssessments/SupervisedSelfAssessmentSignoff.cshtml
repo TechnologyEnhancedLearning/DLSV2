@@ -58,44 +58,47 @@
                                 <label class="nhsuk-label" for="signoff-yes">
                                     Supervisor signs off self assessment?
                                 </label>
+                                    <div class="nhsuk-radios__item">
+                                        <input class="nhsuk-radios__input"
+                                               id="signoff-no"
+                                               name="Signoff"
+                                               type="radio"
+                                               value="0"
+                                               aria-controls="conditional-signoff-yes" aria-expanded="false"
+                                               @(Model.Signoff == 0 ? "checked" : "")>
+                                        <label class="nhsuk-label nhsuk-radios__label" for="signoff-no">
+                                            No
+                                        </label>
+                                    </div>
                                 <div class="nhsuk-radios__item">
-                                    <input class="nhsuk-radios__input" id="signoff-yes" name="Signoff" type="radio" value="1" @(Model.Signoff == 1 ? "checked" : "")>
+                                        <input class="nhsuk-radios__input" id="signoff-yes" name="Signoff" type="radio" value="1" aria-controls="conditional-signoff-yes" aria-expanded="true" @(Model.Signoff == 1 ? "checked" : "")>
                                     <label class="nhsuk-label nhsuk-radios__label" for="signoff-yes">
                                         Yes
                                     </label>
                                 </div>
-                                <div class="nhsuk-radios__item">
-                                    <input class="nhsuk-radios__input"
-                                           id="signoff-no"
-                                           name="Signoff"
-                                           type="radio"
-                                           value="0"
-                                           @(Model.Signoff == 0 ? "checked" : "")>
-                                    <label class="nhsuk-label nhsuk-radios__label" for="signoff-no">
-                                        No
-                                    </label>
-                                </div>
+                                
 
                             </div>
-
+                                <div class="nhsuk-radios__conditional" id="conditional-signoff-yes">
                             <div class="nhsuk-radios nhsuk-u-margin-top-4">
                                 <label class="nhsuk-label" for="confirm-yes">
                                     Supervisor or nominated supervisor confirm individual assessment results?
                                 </label>
-                                <div class="nhsuk-radios__item">
-                                    <input class="nhsuk-radios__input" id="confirm-yes" name="Confirm" type="radio" value="1" @(Model.Confirm == 1 ? "checked" : "")>
-                                    <label class="nhsuk-label nhsuk-radios__label" for="confirm-yes">
-                                        Yes
-                                    </label>
-                                </div>
+                                
                                 <div class="nhsuk-radios__item">
                                     <input class="nhsuk-radios__input" id="confirm-no" name="Confirm" type="radio" value="0" @(Model.Confirm == 0 ? "checked" : "")>
                                     <label class="nhsuk-label nhsuk-radios__label" for="confirm-no">
                                         No
                                     </label>
                                 </div>
+                                        <div class="nhsuk-radios__item">
+                                            <input class="nhsuk-radios__input" id="confirm-yes" name="Confirm" type="radio" value="1" @(Model.Confirm == 1 ? "checked" : "")>
+                                            <label class="nhsuk-label nhsuk-radios__label" for="confirm-yes">
+                                                Yes
+                                            </label>
+                                        </div>
                             </div>
-
+                                </div>
                         </fieldset>
                     </div>
 

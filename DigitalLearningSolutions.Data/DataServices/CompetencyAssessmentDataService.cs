@@ -1090,7 +1090,7 @@
         {
             var numberOfAffectedRows = connection.Execute(
                         @"  UPDATE SelfAssessmentTaskStatus
-            SET SupervisorRolesTaskStatus = CASE WHEN @taskCompleteChecked = 1 THEN 1 ELSE NULL END
+            SET SupervisorRolesTaskStatus = CASE WHEN @taskCompleteChecked = 1 THEN 1 ELSE 0 END
             WHERE SelfAssessmentId = @competencyAssessmentId",
                         new { competencyAssessmentId, taskCompleteChecked = taskCompleteChecked ? 1 : 0 }
                     );
@@ -1115,9 +1115,20 @@
            )
         {
             var sqlQuery = @"
-            IF @supervised = 0
+            IF @supervised = 0 
             BEGIN
-                UPDATE SelfAssessments SET SupervisorResultsReview = 0
+                UPDATE SelfAssessments SET SupervisorResultsReview = 0,
+                SupervisorSelfAssessmentReview = @confirm,
+                    SignOffSupervisorStatement =  NULL,
+                    SignOffRequestorStatement = NULL
+                WHERE ID = @competencyAssessmentId;
+            END
+            ELSE IF @supervised = 1 AND @signoff = 0
+            BEGIN
+                UPDATE SelfAssessments SET SupervisorResultsReview = 0,
+                SupervisorSelfAssessmentReview = @confirm,
+                    SignOffSupervisorStatement =  NULL,
+                    SignOffRequestorStatement = NULL
                 WHERE ID = @competencyAssessmentId;
             END
             ELSE
@@ -1137,6 +1148,7 @@
                 competencyAssessmentId,
                 supervised, 
                 confirm,
+                signoff,
                 supervisorDeclarationValue,
                 supervisorCustomText,
                 leanerDeclarationValue,

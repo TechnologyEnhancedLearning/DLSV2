@@ -4,6 +4,24 @@
     var errorHasOccurred = !ViewData.ModelState.IsValid && ViewData.ModelState.ContainsKey(nameof(Model.TaskCompleteChecked));
     ViewData["Title"] = "Manage supervision sessions";
 }
+@section NavMenuItems {
+    <partial name="~/Views/Frameworks/Shared/_NavMenuItems.cshtml" />
+}
+@section NavBreadcrumbs {
+    <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+        <div class="nhsuk-width-container">
+            <ol class="nhsuk-breadcrumb__list">
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewCompetencyAssessments" asp-route-tabname="Mine">Competency Assessments</a></li>
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.CompetencyAssessmentId">Manage Competency Assessment</a></li>
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="SupervisedSelfAssessmentSignoff" asp-route-competencyAssessmentId="@Model.CompetencyAssessmentId" asp-route-actionName="Signoff">Supervised self assessment and sign off</a></li>
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="SupervisorSignoffDeclaration" asp-route-competencyAssessmentId="@Model.CompetencyAssessmentId" asp-route-actionName="Supervisor">Supervisor sign off declaration</a></li>
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="LearnerSignoffDeclaration" asp-route-actionName="Learner" asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">Learner sign off declaration </a></li>
+                <li class="nhsuk-breadcrumb__item">Manage supervision settings </li>
+            </ol>
+        </div>
+    </nav>
+}
+
 <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-full">
          @if (errorHasOccurred)

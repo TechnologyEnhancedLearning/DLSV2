@@ -64,9 +64,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
         public SupervisedSelfAssessmentSignoffViewModel Signoff { get; set; } = new SupervisedSelfAssessmentSignoffViewModel();
         public SupervisorSignoffDeclarationViewModel SupervisorDeclaration { get; set; } = new SupervisorSignoffDeclarationViewModel();
         public LearnerSignoffDeclarationViewModel LearnerDeclaration { get; set; } = new LearnerSignoffDeclarationViewModel();
-        [Required]
-        [Range(1, 1, ErrorMessage = "Please indicate your confirmation by ticking the checkbox to show that the task has been completed.")]
-        public bool TaskCompleteChecked { get; set; }
+        public bool? TaskCompleteChecked { get; set; }
         public int CompetencyAssessmentId { get; set; }
         public string CompetencyAssessmentName { get; set; } = string.Empty;
     }

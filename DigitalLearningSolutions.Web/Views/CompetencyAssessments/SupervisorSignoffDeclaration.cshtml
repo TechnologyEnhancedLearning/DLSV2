@@ -4,6 +4,23 @@
     var errorHasOccurred = !ViewData.ModelState.IsValid && ViewData.ModelState.ContainsKey(nameof(Model.CustomText));
     ViewData["Title"] = "Supervisor sign off declaration";
 }
+<link rel="stylesheet" href="@Url.Content("~/css/jodit.css")" asp-append-version="true">
+<link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
+@section NavMenuItems {
+    <partial name="~/Views/Frameworks/Shared/_NavMenuItems.cshtml" />
+}
+@section NavBreadcrumbs {
+    <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+        <div class="nhsuk-width-container">
+            <ol class="nhsuk-breadcrumb__list">
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewCompetencyAssessments" asp-route-tabname="Mine">Competency Assessments</a></li>
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.CompetencyAssessmentId">Manage Competency Assessment</a></li>
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="SupervisedSelfAssessmentSignoff" asp-route-competencyAssessmentId="@Model.CompetencyAssessmentId" asp-route-actionName="Signoff">Supervised self assessment and sign off</a></li>
+                <li class="nhsuk-breadcrumb__item">Supervisor sign off declaration</li>
+            </ol>
+        </div>
+    </nav>
+}
 <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-full">
         @if (errorHasOccurred)
@@ -56,19 +73,20 @@
             </div>
 
             <div class="nhsuk-radios__conditional nhsuk-radios__conditional--hidden" id="conditional-declaration-custom">
-                <div class="nhsuk-form-group">
-                    <label class="nhsuk-label" for="custom-declaration-text">
-                        Declaration text
-                    </label>
-                            <nhs-form-group nhs-validation-for="CustomText">
+               
+                                             
+                                <nhs-form-group nhs-validation-for="CustomText">
+                                    <vc:text-area asp-for="CustomText"
+                                                  character-count="null"
+                                                  label="Declaration text"
+                                                  rows="5"
+                                                  css-class="html-editor"
+                                                  hint-text="  Enter the declaration text"
+                                                  populate-with-current-value="true"
+                                                  spell-check="false" />
+                                </nhs-form-group>
+                  
 
-                    <textarea class="nhsuk-textarea" id="custom-declaration-text" name="CustomText" rows="5" aria-describedby="custom-declaration-hint"> @Html.Raw(Model.CustomText)</textarea>
-                    </nhs-form-group>
-
-                    <span class="nhsuk-hint" id="custom-declaration-hint">
-                        Enter the declaration text
-                    </span>
-                </div>
             </div>
 
         </div>
@@ -76,13 +94,14 @@
     <input type="hidden" asp-for="CompetencyAssessmentId" />
     <input type="hidden" asp-for="CompetencyAssessmentName" />
     <div class="nhsuk-u-margin-top-8">
-        <button class="nhsuk-button" type="submit">
-            Next
-        </button>
+      
         <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-left-3" asp-action="SupervisedSelfAssessmentSignoff" asp-route-competencyAssessmentId="@Model.CompetencyAssessmentId" asp-route-actionName="Signoff">
             
             Back
         </a>
+                <button class="nhsuk-button" type="submit">
+                    Next
+                </button>
         <div class="nhsuk-back-link">
             <a class="nhsuk-back-link__link" asp-action="SupervisedSelfAssessmentSignoff" asp-route-competencyAssessmentId="@Model.CompetencyAssessmentId">
                 <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
@@ -95,3 +114,6 @@
 </form>
     </div>
 </div>
+@section scripts {
+    <script src="@Url.Content("~/js/frameworks/htmleditor.js")" asp-append-version="true"></script>
+}

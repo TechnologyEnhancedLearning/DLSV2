@@ -1174,7 +1174,7 @@
                 var model = new ManagesupervisionViewModel(supervisedSelf);
                 SetManagesupervisionData(model);
             }
-            if (supervisedSelf.Supervised == 0) return RedirectToAction("ManageSupervisionSettings", "CompetencyAssessments", new { supervisedSelf.CompetencyAssessmentId });
+            if (supervisedSelf.Supervised == 0 || supervisedSelf.Signoff == 0) return RedirectToAction("ManageSupervisionSettings", "CompetencyAssessments", new { supervisedSelf.CompetencyAssessmentId });
             if (supervisedSelf.ActionName != null) return RedirectToAction("SupervisorSignoffDeclaration", "CompetencyAssessments",
                 new
                 {
@@ -1299,15 +1299,19 @@
                 var model = new ManagesupervisionViewModel(data.LearnerDeclaration, data.SupervisorDeclaration, data.Signoff);
                 return View("ManageSupervisionSettings", model);
             }
-            competencyAssessmentService.UpdateSupervisorRolesTaskStatus(data.Signoff.CompetencyAssessmentId, viewModel.TaskCompleteChecked);
+            var competencyAssessmentTaskStatus = competencyAssessmentService.GetCompetencyAssessmentTaskStatus(data.Signoff.CompetencyAssessmentId, null);
+            if (competencyAssessmentTaskStatus.SupervisorRolesTaskStatus.HasValue)
+            {
+                competencyAssessmentService.UpdateSupervisorRolesTaskStatus(data.Signoff.CompetencyAssessmentId, viewModel.TaskCompleteChecked ?? false);
+            }
             competencyAssessmentService.UpdateSelfAssessments(data.Signoff.CompetencyAssessmentId,
                 data.Signoff.Supervised,
                 data.Signoff.Signoff,
                 data.Signoff.Confirm,
                 data.SupervisorDeclaration.DeclarationValue,
-                 data.SupervisorDeclaration.CustomText,
+                SanitizerHelper.SanitizeHtmlData(data.SupervisorDeclaration.CustomText),
                 data.LearnerDeclaration.DeclarationValue,
-                data.LearnerDeclaration.CustomText
+                SanitizerHelper.SanitizeHtmlData(data.LearnerDeclaration.CustomText)
                 );
             multiPageFormService.ClearMultiPageFormData(MultiPageFormDataFeature.AddCustomWebForm("ManagesupervisionDataCWF"), TempData);
             TempData.Clear();
