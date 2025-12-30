@@ -1,4 +1,6 @@
-﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Shared
+﻿using DigitalLearningSolutions.Data.Models.Centres;
+
+namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Shared
 {
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
@@ -29,7 +31,8 @@
             IsAdmin = delegateUser.IsAdmin;
             IsPasswordSet = delegateUser.IsPasswordSet;
             RegistrationType = delegateUser.RegistrationType;
-
+            CentreEmail = delegateUser.CentreEmail;
+            PrimaryEmail = delegateUser.PrimaryEmail;
             Email = delegateUser.EmailAddress;
             JobGroupId = delegateUser.JobGroupId;
             JobGroup = delegateUser.JobGroupName;
@@ -62,6 +65,8 @@
         public RegistrationType RegistrationType { get; set; }
 
         public string? Email { get; set; }
+        public string? CentreEmail { get; set; }
+        public string? PrimaryEmail { get; set; }
         public int JobGroupId { get; set; }
         public string? JobGroup { get; set; }
         public string? RegistrationDate { get; set; }
