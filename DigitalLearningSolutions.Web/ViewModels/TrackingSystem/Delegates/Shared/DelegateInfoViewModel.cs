@@ -1,6 +1,4 @@
-﻿using DigitalLearningSolutions.Data.Models.Centres;
-
-namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Shared
+﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Shared
 {
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
