@@ -21,31 +21,31 @@
         </div>
     </nav>
 }
-<h1>Edit role requirement enforcement</h1>
+<h1>Edit include role requirements filters</h1>
 <form method="post" asp-action="EditRoleRequirementsFlags">
-    <nhs-form-group nhs-validation-for="EnforceRoleRequirementsForSignOff">
+    <nhs-form-group nhs-validation-for="IncludeRequirementsFilters">
         <fieldset class="nhsuk-fieldset" aria-describedby="role-requirements-hint">
             <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
-                <h2>Do you want to enforce role requirements for the @Model.CompetencyAssessmentName self assessment?</h2>
+                <h2>Do you want to include role requirements filters in the @Model.CompetencyAssessmentName self assessment?</h2>
             </legend>
             <div class="nhsuk-hint">
-                When requirements are set, they must be met by the learner before the self assessment can be signed off.
+                This will allow the learner to filter self assessment competencies based on whether they are meeting the role requirements set.
             </div>
-            <span nhs-validation-for="EnforceRoleRequirementsForSignOff"></span>
+            <span nhs-validation-for="IncludeRequirementsFilters"></span>
             <div class="nhsuk-radios nhsuk-radios--inline">
                 <div class="nhsuk-radios__item">
-                    <input class="nhsuk-radios__input" id="enforce-yes" name="EnforceRoleRequirementsForSignOff" type="radio" value="true" @(Model.EnforceRoleRequirementsForSignOff ? "checked" : "")>
-                    <label class="nhsuk-radios__label" for="enforce-yes">Yes</label>
+                    <input class="nhsuk-radios__input" id="include-yes" name="IncludeRequirementsFilters" type="radio" value="true" @(Model.IncludeRequirementsFilters ? "checked" : "")>
+                    <label class="nhsuk-radios__label" for="include-yes">Yes</label>
                 </div>
                 <div class="nhsuk-radios__item">
-                    <input class="nhsuk-radios__input" id="enforce-no" name="EnforceRoleRequirementsForSignOff" type="radio" value="false" @(!Model.EnforceRoleRequirementsForSignOff ? "checked" : "")>
-                    <label class="nhsuk-radios__label" for="enforce-no">No</label>
+                    <input class="nhsuk-radios__input" id="include-no" name="IncludeRequirementsFilters" type="radio" value="false" @(!Model.IncludeRequirementsFilters ? "checked" : "")>
+                    <label class="nhsuk-radios__label" for="include-no">No</label>
                 </div>
             </div>
         </fieldset>
     </nhs-form-group>
     <input type="hidden" asp-for="Id" />
-    <input type="hidden" asp-for="IncludeRequirementsFilters" />
+    <input type="hidden" asp-for="EnforceRoleRequirementsForSignOff" />
     <input type="hidden" asp-for="TaskStatus" />
     <button class="nhsuk-button nhsuk-button--primary" type="submit">Save changes</button>
 </form>

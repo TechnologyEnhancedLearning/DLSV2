@@ -17,6 +17,7 @@
     using Serilog.Extensions.Hosting;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Threading.Tasks;
 
     public partial class CompetencyAssessmentsController
     {
@@ -1035,6 +1036,7 @@
         }
 
         [HttpGet]
+        [Route("/CompetencyAssessments/{competencyAssessmentId}/RoleRequirements/")]
         public IActionResult ManageCompetencyRoleRequirements(int competencyAssessmentId)
         {
             var adminId = GetAdminID();
@@ -1059,6 +1061,7 @@
             return RedirectToAction("ManageCompetencyAssessment", new { competencyAssessmentId = model.Id });
         }
         [HttpGet]
+        [Route("/CompetencyAssessments/{competencyAssessmentId}/RoleRequirements/Enforce")]
         public IActionResult EditEnforceRoleRequirementsForSignOff(int competencyAssessmentId)
         {
             var adminId = GetAdminID();
@@ -1069,8 +1072,20 @@
             var model = new EditRoleRequirementsFlagsViewModel(competencyAssessmentBase);
             return View("EnforceRoleRequirementsForSignOff", model);
         }
+        [HttpGet]
+        [Route("/CompetencyAssessments/{competencyAssessmentId}/RoleRequirements/IncludeFilters")]
+        public IActionResult EditIncludeRequirementsFilters(int competencyAssessmentId)
+        {
+            var adminId = GetAdminID();
+            var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
+            var result = ValidateCompetencyAssessmentAndRole(competencyAssessmentId, adminId, "Set Enforce Role Requirements For Sign Off", competencyAssessmentBase);
+            if (result.StatusCode != 200)
+                return result;
+            var model = new EditRoleRequirementsFlagsViewModel(competencyAssessmentBase);
+            return View("EditIncludeRequirementsFilters", model);
+        }
         [HttpPost]
-        public IActionResult EditEnforceRoleRequirementsForSignOff(ManageCompetencyRoleRequirementsFormData model)
+        public IActionResult EditRoleRequirementsFlags(ManageCompetencyRoleRequirementsFormData model)
         {
             var adminId = GetAdminID();
             var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(model.Id, adminId);
@@ -1078,8 +1093,23 @@
             if (result.StatusCode != 200)
                 return result;
             competencyAssessmentService.UpdateRoleRequirementsFlags(model.Id, model.EnforceRoleRequirementsForSignOff, model.IncludeRequirementsFilters);
-            return RedirectToAction("ManageCompetencyAssessment", new { competencyAssessmentId = model.Id });
+            return RedirectToAction("ManageCompetencyRoleRequirements", new { competencyAssessmentId = model.Id });
         }
+        [HttpGet]
+        [Route("/CompetencyAssessments/{competencyAssessmentId}/RoleRequirements/Edit")]
+        public IActionResult EditCompetencyRoleRequirements(int competencyAssessmentId)
+        {
+            var adminId = GetAdminID();
+            var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
+            var result = ValidateCompetencyAssessmentAndRole(competencyAssessmentId, adminId, "Manage Competency Role Requirements", competencyAssessmentBase);
+            if (result.StatusCode != 200)
+                return result;
+            var groupedCompetencyWithAssessmentRoleRequirements = competencyAssessmentService.GetGroupedCompetencyWithAssessmentRoleRequirements(competencyAssessmentId);
+            var model = new EditCompetencyRoleRequirementsViewModel(competencyAssessmentBase, groupedCompetencyWithAssessmentRoleRequirements);
+            return View("EditCompetencyRoleRequirements", model);
+        }
+
+
 
         private void SetcompetencyAssessmentFeaturesData(CompetencyAssessmentFeaturesViewModel data)
         {

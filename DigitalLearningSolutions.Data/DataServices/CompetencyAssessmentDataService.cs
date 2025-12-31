@@ -1230,6 +1230,7 @@
                      sas.Optional,
                  	caq.AssessmentQuestionID,
                      aq.Question,
+                     caq.Required,
                      aqit.InputTypeName,
                      caqrr.LevelValue AS ResponseValue,
                      aql.LevelLabel AS Response,
@@ -1254,8 +1255,8 @@
                  LEFT JOIN AssessmentQuestionLevels AS aql
                      ON aql.AssessmentQuestionID = aq.ID
                     AND aql.LevelValue = caqrr.LevelValue
-                 WHERE (sas.SelfAssessmentID = @competencyAssessmentId)  AND (caq.Required = 1)
-                 ORDER BY sas.Ordering;",
+                 WHERE (sas.SelfAssessmentID = @competencyAssessmentId)
+                 ORDER BY sas.Ordering, caq.Ordering;",
                  new { competencyAssessmentId }
              );
         }

@@ -427,7 +427,8 @@ namespace DigitalLearningSolutions.Web.Services
     {
         q.AssessmentQuestionID,
         q.Question,
-        q.InputTypeName
+        q.InputTypeName,
+        q.Required
     })
     .Select(q => new AssessmentQuestionModel
     {

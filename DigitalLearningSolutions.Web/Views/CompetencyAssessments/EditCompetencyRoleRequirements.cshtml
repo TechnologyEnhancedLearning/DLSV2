@@ -1,0 +1,84 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
+@model EditCompetencyRoleRequirementsViewModel;
+@{
+    ViewData["Title"] = "Manage Role Requirements";
+    ViewData["Application"] = "Framework Service";
+}
+<link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
+@section NavMenuItems {
+    <partial name="~/Views/Frameworks/Shared/_NavMenuItems.cshtml" />
+}
+
+@section NavBreadcrumbs {
+    <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+        <div class="nhsuk-width-container">
+            <ol class="nhsuk-breadcrumb__list">
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewCompetencyAssessments" asp-route-tabname="Mine">Competency Assessments</a></li>
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.Id">Manage Competency Assessment</a></li>
+                <li class="nhsuk-breadcrumb__item">Manage Role Requirements</li>
+            </ol>
+            <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.Id">Back to manage competency assessment</a></p>
+        </div>
+    </nav>
+}
+<h1>Edit @Model.VocabularySingular.ToLower() role requirements</h1>
+<p class="nhsuk-lede-text">
+    Manage role requirements @Model.CompetencyAssessmentName @Model.VocabularySingular.ToLower() self assessment questions.
+</p>
+@foreach (var group in Model.GroupedCompetencyWithAssessmentRoleRequirements)
+{
+    <h2>@group.GroupName</h2>
+    <table class="nhsuk-table nhsuk-table--striped">
+        <thead class="nhsuk-table__head">
+            <tr class="nhsuk-table__row">
+                <th class="nhsuk-table__header" scope="col">@Model.VocabularySingular</th>
+                <th class="nhsuk-table__header" scope="col">Assessment Question </th>
+                <th>Role Requirements</th>
+                <th class="nhsuk-table__header" scope="col">Actions</th>
+            </tr>
+        </thead>
+        <tbody class="nhsuk-table__body">
+            @foreach (var competency in group.Competencies)
+            {
+                <tr class="nhsuk-table__row">
+                    <td rowspan="@competency.Questions.Count()" class="nhsuk-table__cell">
+                        <p class="@(!string.IsNullOrWhiteSpace(competency.Description) ? "nhsuk-u-font-weight-bold" : "") nhsuk-u-margin-bottom-0">
+                            @competency.Name
+                        </p>
+                        @if (!string.IsNullOrWhiteSpace(competency.Description))
+                        {
+                            <p class="nhsuk-u-margin-top-2">
+                                @(Html.Raw(competency.Description))
+                            </p>
+                        }
+                    </td>
+                    @await Html.PartialAsync(
+                    "~/Views/CompetencyAssessments/Shared/_RoleRequirementQuestionCells.cshtml",
+                        new RoleRequirementQuestionCellsViewModel
+                        {
+                            AssessmentQuestion = competency.Questions.First(),
+                            AssessmentID = Model.Id,
+                            CompetencyID = competency.CompetencyID,
+                            AssessmentQuestionID = competency.Questions.First().AssessmentQuestionID
+                        }
+                        )
+        </tr>
+        @foreach (var question in competency.Questions.Skip(1))
+                {
+                    <tr class="nhsuk-table__row">
+                        @await Html.PartialAsync(
+                        "~/Views/CompetencyAssessments/Shared/_RoleRequirementQuestionCells.cshtml",
+                        new RoleRequirementQuestionCellsViewModel
+                        {
+                            AssessmentQuestion = question,
+                            AssessmentID = Model.Id,
+                            CompetencyID = competency.CompetencyID,
+                            AssessmentQuestionID = question.AssessmentQuestionID
+                        }
+                        )
+        </tr>
+                }
+            }
+        </tbody>
+    </table>
+}

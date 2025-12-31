@@ -23,6 +23,7 @@ namespace DigitalLearningSolutions.Web.Models
         public int AssessmentQuestionID { get; set; }
         public string? Question { get; set; }
         public string? InputTypeName { get; set; }
+        public bool Required { get; set; }
         public List<ResponseModel> Responses { get; set; } = new();
     }
     public class ResponseModel

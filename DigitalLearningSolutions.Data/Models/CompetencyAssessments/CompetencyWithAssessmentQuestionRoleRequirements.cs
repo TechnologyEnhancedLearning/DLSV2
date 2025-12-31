@@ -17,6 +17,7 @@ namespace DigitalLearningSolutions.Data.Models.CompetencyAssessments
         public int AssessmentQuestionID { get; set; }
         public string? Question { get; set; }
         public string? InputTypeName { get; set; }
+        public bool Required { get; set; }
         public int? ResponseValue { get; set; }
         public string? Response { get; set; }
         public int? LevelRAG { get; set; }
