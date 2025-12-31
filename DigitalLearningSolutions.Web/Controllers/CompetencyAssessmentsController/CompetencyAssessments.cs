@@ -1044,7 +1044,7 @@
             var result = ValidateCompetencyAssessmentAndRole(competencyAssessmentId, adminId, "Manage Competency Role Requirements", competencyAssessmentBase);
             if (result.StatusCode != 200)
                 return result;
-            var groupedCompetencyWithAssessmentRoleRequirements = competencyAssessmentService.GetGroupedCompetencyWithAssessmentRoleRequirements(competencyAssessmentId);
+            var groupedCompetencyWithAssessmentRoleRequirements = competencyAssessmentService.GetGroupedCompetencyWithAssessmentRoleRequirements(competencyAssessmentId, null, null);
             var taskStatus = competencyAssessmentService.GetCompetencyAssessmentTaskStatus(competencyAssessmentId, null);
             var model = new ManageCompetencyRoleRequirementsViewModel(competencyAssessmentBase, groupedCompetencyWithAssessmentRoleRequirements, taskStatus);
             return View("ManageCompetencyRoleRequirements", model);
@@ -1104,12 +1104,24 @@
             var result = ValidateCompetencyAssessmentAndRole(competencyAssessmentId, adminId, "Manage Competency Role Requirements", competencyAssessmentBase);
             if (result.StatusCode != 200)
                 return result;
-            var groupedCompetencyWithAssessmentRoleRequirements = competencyAssessmentService.GetGroupedCompetencyWithAssessmentRoleRequirements(competencyAssessmentId);
+            var groupedCompetencyWithAssessmentRoleRequirements = competencyAssessmentService.GetGroupedCompetencyWithAssessmentRoleRequirements(competencyAssessmentId, null, null);
             var model = new EditCompetencyRoleRequirementsViewModel(competencyAssessmentBase, groupedCompetencyWithAssessmentRoleRequirements);
             return View("EditCompetencyRoleRequirements", model);
         }
-
-
+        [HttpGet]
+        [Route("/CompetencyAssessments/{competencyAssessmentId}/RoleRequirements/Edit/Competency/{competencyId}/Question/{assessmentQuestionId}")]
+        public IActionResult EditQuestionResponseRoleRequirements(int competencyAssessmentId, int competencyId, int assessmentQuestionId)
+        {
+            var adminId = GetAdminID();
+            var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
+            var result = ValidateCompetencyAssessmentAndRole(competencyAssessmentId, adminId, "Edit Competency Role Requirement Question Cells", competencyAssessmentBase);
+            if (result.StatusCode != 200)
+                return result;
+            var assessmentQuestion = competencyAssessmentService.GetGroupedCompetencyWithAssessmentRoleRequirements(competencyAssessmentId, competencyId, assessmentQuestionId);
+            var countAssessmentQuestionInSelfAssessment = competencyAssessmentService.GetCountOfAsssessmentQuestionInCompetencyAssessment(competencyAssessmentId, assessmentQuestionId);
+            var model = new EditQuestionResponseRoleRequirementsViewModel(competencyAssessmentBase, assessmentQuestion, countAssessmentQuestionInSelfAssessment);
+            return View("EditQuestionResponseRoleRequirements", model);
+        }
 
         private void SetcompetencyAssessmentFeaturesData(CompetencyAssessmentFeaturesViewModel data)
         {

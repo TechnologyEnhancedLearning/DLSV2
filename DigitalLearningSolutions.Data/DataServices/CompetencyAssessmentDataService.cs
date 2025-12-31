@@ -36,7 +36,7 @@
         int[] GetLinkedFrameworkCompetencyIds(int competencyAssessmentId, int frameworkId);
         CompetencyAssessmentFeatures? GetCompetencyAssessmentFeaturesTaskStatus(int competencyAssessmentId);
         int? GetSelfAssessmentStructure(int competencyAssessmentId);
-        IEnumerable<CompetencyWithAssessmentQuestionRoleRequirements> GetCompetencyWithAssessmentQuestionRoleRequirements(int competencyAssessmentId);
+        IEnumerable<CompetencyWithAssessmentQuestionRoleRequirements> GetCompetencyWithAssessmentQuestionRoleRequirements(int competencyAssessmentId, int? competencyId, int? assessmentQuestionId);
 
         //UPDATE DATA
         bool UpdateCompetencyAssessmentName(int competencyAssessmentId, int adminId, string competencyAssessmentName);
@@ -86,6 +86,7 @@
         void UpdateManageOptionalCompetenciesPrompt(int selfAssessmentId, string manageOptionalCompetenciesPrompt);
         bool UpdatePrimaryFrameworkCompetencies(int assessmentId, int frameworkId);
         void UpdateRoleRequirementsFlags(int assessmentId, bool enforceRoleRequirementsForSignOff, bool includeRequirementsFilters);
+        int GetCountOfAsssessmentQuestionInCompetencyAssessment(int competencyAssessmentId, int assessmentQuestionId);    
         //INSERT DATA
         int InsertCompetencyAssessment(int adminId, int centreId, string competencyAssessmentName);
         bool InsertSelfAssessmentFramework(int adminId, int selfAssessmentId, int frameworkId);
@@ -1218,46 +1219,51 @@
             );
         }
 
-        public IEnumerable<CompetencyWithAssessmentQuestionRoleRequirements> GetCompetencyWithAssessmentQuestionRoleRequirements(int competencyAssessmentId)
+        public IEnumerable<CompetencyWithAssessmentQuestionRoleRequirements> GetCompetencyWithAssessmentQuestionRoleRequirements(int competencyAssessmentId, int? competencyId, int? assessmentQuestionId)
         {
             return connection.Query<CompetencyWithAssessmentQuestionRoleRequirements>(
                  @"SELECT
-                     sas.CompetencyGroupID,
-                     cg.Name AS GroupName,
-                     sas.CompetencyID,
-                     c.Name AS Competency,
-                     c.Description AS CompetencyDescription,
-                     sas.Optional,
-                 	caq.AssessmentQuestionID,
-                     aq.Question,
-                     caq.Required,
-                     aqit.InputTypeName,
-                     caqrr.LevelValue AS ResponseValue,
-                     aql.LevelLabel AS Response,
-                     caqrr.LevelRAG
-                 FROM SelfAssessmentStructure AS sas
-                 INNER JOIN Competencies AS c
-                     ON sas.CompetencyID = c.ID
-                 INNER JOIN CompetencyAssessmentQuestions AS caq
-                     ON c.ID = caq.CompetencyID
-                 INNER JOIN AssessmentQuestions AS aq
-                     ON caq.AssessmentQuestionID = aq.ID
-                 INNER JOIN AssessmentQuestionInputTypes AS aqit
-                     ON aq.AssessmentQuestionInputTypeID = aqit.ID
-                 LEFT JOIN CompetencyGroups AS cg
-                     ON sas.CompetencyGroupID = cg.ID
-                 OUTER APPLY (
-                     SELECT TOP (1) r.*
-                     FROM CompetencyAssessmentQuestionRoleRequirements r
-                     WHERE r.AssessmentQuestionID = aq.ID
-                     ORDER BY r.LevelValue DESC -- or whatever rule is correct
-                 ) caqrr
-                 LEFT JOIN AssessmentQuestionLevels AS aql
-                     ON aql.AssessmentQuestionID = aq.ID
-                    AND aql.LevelValue = caqrr.LevelValue
-                 WHERE (sas.SelfAssessmentID = @competencyAssessmentId)
-                 ORDER BY sas.Ordering, caq.Ordering;",
-                 new { competencyAssessmentId }
+    sas.CompetencyGroupID,
+    cg.Name AS GroupName,
+    sas.CompetencyID,
+    c.Name AS Competency,
+    c.Description AS CompetencyDescription,
+    sas.Optional,
+    caq.AssessmentQuestionID,
+    aq.Question,
+    caq.Required,
+    aqit.InputTypeName,
+    aql.LevelValue       AS ResponseValue,
+    aql.LevelLabel       AS Response,
+    caqrr.LevelRAG
+FROM SelfAssessmentStructure AS sas
+INNER JOIN Competencies AS c
+    ON sas.CompetencyID = c.ID
+INNER JOIN CompetencyAssessmentQuestions AS caq
+    ON c.ID = caq.CompetencyID
+INNER JOIN AssessmentQuestions AS aq
+    ON caq.AssessmentQuestionID = aq.ID
+INNER JOIN AssessmentQuestionInputTypes AS aqit
+    ON aq.AssessmentQuestionInputTypeID = aqit.ID
+LEFT JOIN CompetencyGroups AS cg
+    ON sas.CompetencyGroupID = cg.ID
+
+INNER JOIN AssessmentQuestionLevels AS aql
+    ON aql.AssessmentQuestionID = aq.ID
+
+LEFT JOIN CompetencyAssessmentQuestionRoleRequirements AS caqrr
+    ON caqrr.AssessmentQuestionID = aq.ID
+   AND caqrr.LevelValue = aql.LevelValue
+
+WHERE sas.SelfAssessmentID = @competencyAssessmentId
+  AND (@competencyId IS NULL OR sas.CompetencyID = @competencyId)
+  AND (@assessmentQuestionId IS NULL OR caq.AssessmentQuestionID = @assessmentQuestionId)
+
+ORDER BY
+    sas.Ordering,
+    caq.Ordering,
+    aql.LevelValue;",
+                 new { competencyAssessmentId, competencyId, assessmentQuestionId }
              );
         }
 
@@ -1289,6 +1295,18 @@
              ,
                  new { assessmentId, enforceRoleRequirementsForSignOff, includeRequirementsFilters }
              );
+        }
+
+        public int GetCountOfAsssessmentQuestionInCompetencyAssessment(int competencyAssessmentId, int assessmentQuestionId)
+        {
+            return connection.QuerySingle<int>(
+               @"SELECT COUNT(1) 
+                    FROM   SelfAssessmentStructure AS sas INNER JOIN
+                                Competencies AS c ON sas.CompetencyID = c.ID INNER JOIN
+                                CompetencyAssessmentQuestions AS caq ON c.ID = caq.CompetencyID
+                    WHERE (sas.SelfAssessmentID = @competencyAssessmentId) AND (caq.AssessmentQuestionID = @assessmentQuestionId)",
+               new { competencyAssessmentId, assessmentQuestionId }
+               );
         }
     }
 }
