@@ -2,7 +2,10 @@
 @model RoleRequirementQuestionCellsViewModel
 
 <td class="nhsuk-table__cell">
-    @Model.AssessmentQuestion.Question
+    @Model.AssessmentQuestion.Question @if (!Model.AssessmentQuestion.Required)
+        {
+        <span>(optional)</span>
+    }
 </td>
 
 <td class="nhsuk-table__cell">
@@ -15,12 +18,12 @@
     {
         <span class="nhsuk-u-font-weight-bold">
             @responsesWithRoleRequirements response@(responsesWithRoleRequirements > 1 ? "s" : "")
-            with role requirements set
+            with role requirements
         </span>
     }
     else
     {
-        <span>No role requirements set</span>
+        <span>No role requirements</span>
     }
 </td>
 

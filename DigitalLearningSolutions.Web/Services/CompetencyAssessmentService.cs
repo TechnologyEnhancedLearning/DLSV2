@@ -396,7 +396,7 @@ namespace DigitalLearningSolutions.Web.Services
         public List<GroupedCompetencyWithAssessmentRoleRequirements> GetGroupedCompetencyWithAssessmentRoleRequirements(int competencyAssessmentId)
         {
             var competencyWithAssessmentQuestionRoleRequirements = competencyAssessmentDataService.GetCompetencyWithAssessmentQuestionRoleRequirements(competencyAssessmentId).ToList();
-            return competencyWithAssessmentQuestionRoleRequirements
+            return [.. competencyWithAssessmentQuestionRoleRequirements
        .GroupBy(x => new
        {
            x.CompetencyGroupID,
@@ -407,7 +407,7 @@ namespace DigitalLearningSolutions.Web.Services
            CompetencyGroupID = group.Key.CompetencyGroupID ?? 0,
            GroupName = group.Key.GroupName ?? "Ungrouped",
 
-           Competencies = group
+           Competencies = [.. group
                .GroupBy(c => new
                {
                    c.CompetencyID,
@@ -422,7 +422,7 @@ namespace DigitalLearningSolutions.Web.Services
                    Description = comp.Key.CompetencyDescription,
                    Optional = comp.Key.Optional,
 
-                   Questions = comp
+                   Questions = [.. comp
     .GroupBy(q => new
     {
         q.AssessmentQuestionID,
@@ -435,8 +435,8 @@ namespace DigitalLearningSolutions.Web.Services
         AssessmentQuestionID = q.Key.AssessmentQuestionID,
         Question = q.Key.Question,
         InputTypeName = q.Key.InputTypeName,
-
-        Responses = q
+        Required = q.Key.Required,
+        Responses = [.. q
             .Where(r => r.ResponseValue.HasValue)
             .Select(r => new ResponseModel
             {
@@ -444,14 +444,10 @@ namespace DigitalLearningSolutions.Web.Services
                 ResponseLabel = r.Response,
                 LevelRAG = r.LevelRAG
             })
-            .DistinctBy(r => r.ResponseValue)
-            .ToList()
-    })
-    .ToList()
-               })
-               .ToList()
-       })
-       .ToList();
+            .DistinctBy(r => r.ResponseValue)]
+    })]
+               })]
+       })];
         }
 
         public void UpdateRoleRequirementsFlags(int assessmentId, bool enforceRoleRequirementsForSignOff, bool includeRequirementsFilters)

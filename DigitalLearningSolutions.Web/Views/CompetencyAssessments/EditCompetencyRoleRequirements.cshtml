@@ -27,7 +27,7 @@
 </p>
 @foreach (var group in Model.GroupedCompetencyWithAssessmentRoleRequirements)
 {
-    <h2>@group.GroupName</h2>
+    <h2><span class="nhsuk-u-visually-hidden">@Model.VocabularySingular group: </span>@group.GroupName</h2>
     <table class="nhsuk-table nhsuk-table--striped">
         <thead class="nhsuk-table__head">
             <tr class="nhsuk-table__row">
