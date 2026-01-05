@@ -26,7 +26,7 @@
     <div class="nhsuk-grid-column-full">
         @if (errorHasOccurred)
         {
-            <vc:error-summary order-of-property-names="@(new[] { nameof(Model.CustomText) })" />
+            <vc:error-summary order-of-property-names="@(new[] { nameof(Model.DeclarationValue), nameof(Model.CustomText) })" />
         }
 <form method="post">
     <fieldset class="nhsuk-fieldset">

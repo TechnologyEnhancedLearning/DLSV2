@@ -1,6 +1,7 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
 @model SupervisedSelfAssessmentSignoffViewModel
 @{
+    var errorHasOccurred = !ViewData.ModelState.IsValid && ViewData.ModelState.ContainsKey(nameof(Model.Supervised));
     ViewData["Title"] = "Supervised self assessment and sign off";
 }
 
@@ -20,6 +21,10 @@
 }
 <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-full">
+        @if (errorHasOccurred)
+        {
+            <vc:error-summary order-of-property-names="@(new[] { nameof(Model.Supervised) })" />
+        }
     <main class="nhsuk-main-wrapper">
 
         <h1 class="nhsuk-heading-xl">Supervised self assessment and sign-off</h1>

@@ -155,18 +155,10 @@
     
 </dl>
      <hr class="nhsuk-section-break nhsuk-section-break--l nhsuk-section-break--visible" />
-            <nhs-form-group>
-                     
-                <div class="nhsuk-checkboxes__item">
-
-                    <input class="nhsuk-checkboxes__input" id="TaskCompleteChecked" name="TaskCompleteChecked" type="checkbox" aria-describedby="Confirm-hint" value="true">
-                    <label class="nhsuk-label nhsuk-checkboxes__label" for="@Model.TaskCompleteChecked">
-                       I confirm that the task has been successfully completed.
-                    </label>
-                </div>
-           </nhs-form-group>
-
-            <input type="hidden" asp-for="@Model.Signoff.CompetencyAssessmentId" />
+      <nhs-form-group>
+        <vc:single-checkbox asp-for="@nameof(Model.TaskCompleteChecked)" label="Mark this task as complete" hint-text="You will still be able to make changes after marking this task as complete."></vc:single-checkbox>
+    </nhs-form-group>
+                       <input type="hidden" asp-for="@Model.Signoff.CompetencyAssessmentId" />
                 
 
           
