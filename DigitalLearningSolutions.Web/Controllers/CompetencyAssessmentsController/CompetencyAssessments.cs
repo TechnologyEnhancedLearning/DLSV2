@@ -1075,7 +1075,6 @@
             }
             else if (model.CurrentStep == (int)OptionLabel.QuestionLabels)
             {
-                data.QuestionLabel = model.QuestionLabel;
                 if (model.QuestionLabel)
                 {
                     var label = model.QuestionLabelText?.Trim();
@@ -1086,17 +1085,18 @@
 
                     if (!ModelState.IsValid)
                     {
-                        SetOptionsLabelsData(data);
-                        model = new OptionsLabelsViewModel(data);
-                        model.Error = true;
-                        return View("CompetencyAssessmentOptions", model);
+                        var errModel = new OptionsLabelsViewModel(data);
+                        errModel.QuestionLabel = model.QuestionLabel;
+                        errModel.QuestionLabelText = model.QuestionLabelText;
+                        errModel.Error = true;
+                        return View("CompetencyAssessmentOptions", errModel);
                     }
                 }
+                data.QuestionLabel = model.QuestionLabel;
                 data.QuestionLabelText = model.QuestionLabel ? model.QuestionLabelText.Trim() : null;
             }
             else if (model.CurrentStep == (int)OptionLabel.CommentsLabel)
             {
-                data.ReviewerCommentsLabel = model.ReviewerCommentsLabel;
                 if (model.ReviewerCommentsLabel)
                 {
                     var label = model.ReviewerCommentsLabelText?.Trim();
@@ -1107,12 +1107,14 @@
 
                     if (!ModelState.IsValid)
                     {
-                        SetOptionsLabelsData(data);
-                        model = new OptionsLabelsViewModel(data);
-                        model.Error = true;
-                        return View("CompetencyAssessmentOptions", model);
+                        var errModel = new OptionsLabelsViewModel(data);
+                        errModel.ReviewerCommentsLabel = model.ReviewerCommentsLabel;
+                        errModel.ReviewerCommentsLabelText = model.ReviewerCommentsLabelText;
+                        errModel.Error = true;
+                        return View("CompetencyAssessmentOptions", errModel);
                     }
                 }
+                data.ReviewerCommentsLabel = model.ReviewerCommentsLabel;
                 data.ReviewerCommentsLabelText = model.ReviewerCommentsLabel ? model.ReviewerCommentsLabelText.Trim() : null;
             }
             else if (model.CurrentStep == (int)OptionLabel.Summary)
