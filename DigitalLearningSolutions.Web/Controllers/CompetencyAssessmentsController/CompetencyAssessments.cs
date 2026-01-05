@@ -319,6 +319,10 @@
         [Route("/CompetencyAssessments/{competencyAssessmentId}/Description/")]
         public IActionResult SaveDescription(EditDescriptionViewModel model)
         {
+            if (string.IsNullOrWhiteSpace(StringHelper.StripHtmlTags(model.Description)))
+            {
+                ModelState.AddModelError(nameof(EditDescriptionViewModel.Description), "Please enter introductory text");
+            }
             if (!ModelState.IsValid)
             {
                 return View("EditDescription", model);
