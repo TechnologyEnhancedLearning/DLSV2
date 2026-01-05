@@ -1300,7 +1300,7 @@
                 return View("ManageSupervisionSettings", model);
             }
             var competencyAssessmentTaskStatus = competencyAssessmentService.GetCompetencyAssessmentTaskStatus(data.Signoff.CompetencyAssessmentId, null);
-            if (competencyAssessmentTaskStatus.SupervisorRolesTaskStatus.HasValue)
+            if (!competencyAssessmentTaskStatus.SupervisorRolesTaskStatus.HasValue)
             {
                 competencyAssessmentService.UpdateSupervisorRolesTaskStatus(data.Signoff.CompetencyAssessmentId, viewModel.TaskCompleteChecked ?? false);
             }

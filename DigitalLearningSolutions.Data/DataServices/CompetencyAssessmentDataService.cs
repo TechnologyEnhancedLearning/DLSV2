@@ -1118,7 +1118,7 @@
             IF @supervised = 0 
             BEGIN
                 UPDATE SelfAssessments SET SupervisorResultsReview = 0,
-                SupervisorSelfAssessmentReview = @confirm,
+                SupervisorSelfAssessmentReview = 0,
                     SignOffSupervisorStatement =  NULL,
                     SignOffRequestorStatement = NULL
                 WHERE ID = @competencyAssessmentId;
@@ -1126,7 +1126,7 @@
             ELSE IF @supervised = 1 AND @signoff = 0
             BEGIN
                 UPDATE SelfAssessments SET SupervisorResultsReview = 0,
-                SupervisorSelfAssessmentReview = @confirm,
+                SupervisorSelfAssessmentReview = 0,
                     SignOffSupervisorStatement =  NULL,
                     SignOffRequestorStatement = NULL
                 WHERE ID = @competencyAssessmentId;

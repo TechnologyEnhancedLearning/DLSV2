@@ -67,8 +67,9 @@
             </dd>
           
         </div>
-
-       @if (@Model.Signoff.SupervisedText == "Yes")
+          @if ( Model.Signoff.SignoffText == "Yes")
+       {
+       @if (@Model.Signoff.SupervisedText == "Yes" )
        {
         <div class="nhsuk-summary-list__row">
             <dt class="nhsuk-summary-list__key">
@@ -149,6 +150,7 @@
             </dd>
            
         </div>
+        }
     }
     
 </dl>
