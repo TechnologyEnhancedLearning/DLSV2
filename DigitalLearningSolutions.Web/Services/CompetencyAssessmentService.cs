@@ -81,6 +81,8 @@ namespace DigitalLearningSolutions.Web.Services
         void UpdateManageOptionalCompetenciesPrompt(int selfAssessmentId, string? manageOptionalCompetenciesPrompt);
         bool UpdatePrimaryFrameworkCompetencies(int assessmentId, int frameworkId);
         void UpdateRoleRequirementsFlags(int assessmentId, bool enforceRoleRequirementsForSignOff, bool includeRequirementsFilters);
+        int UpdateAssessmentQuestionRoleRequirementsForSelfAssessment(int assessmentId, int assessmentQuestionId, Dictionary<int, int?> responseRoleRequirements);
+        int UpdateCompetencyAssessmentQuestionRoleRequirement(int assessmentId, int competencyId, int assessmentQuestionId, Dictionary<int, int?> responseRoleRequirements);
         //INSERT DATA
         int InsertCompetencyAssessment(int adminId, int centreId, string competencyAssessmentName, int? frameworkId);
         bool InsertSelfAssessmentFramework(int adminId, int assessmentId, int frameworkId);
@@ -95,8 +97,7 @@ namespace DigitalLearningSolutions.Web.Services
         void RemoveCollaboratorFromCompetencyAssessment(int competencyAssessmentId, int id);
         CompetencyAssessmentCollaboratorNotification? GetCollaboratorNotification(int id, int invitedByAdminId);
         bool HasCompetencyWithSignpostedLearning(int competencyAssessmentId);
-        
-    }
+       }
     public class CompetencyAssessmentService : ICompetencyAssessmentService
     {
         private readonly ICompetencyAssessmentDataService competencyAssessmentDataService;
@@ -459,6 +460,28 @@ namespace DigitalLearningSolutions.Web.Services
         public int GetCountOfAsssessmentQuestionInCompetencyAssessment(int competencyAssessmentId, int assessmentQuestionId)
         {
             return competencyAssessmentDataService.GetCountOfAsssessmentQuestionInCompetencyAssessment(competencyAssessmentId, assessmentQuestionId);
+        }
+
+        public int UpdateAssessmentQuestionRoleRequirementsForSelfAssessment(int assessmentId, int assessmentQuestionId, Dictionary<int, int?> responseRoleRequirements)
+        {
+            int rowCount = 0;
+            foreach (var responseRoleRequirement in responseRoleRequirements)
+            {
+                competencyAssessmentDataService.DeleteCompetencyAssessmentQuestionRoleRequirement(assessmentId, null, assessmentQuestionId, responseRoleRequirement.Key);
+                rowCount += competencyAssessmentDataService.InsertAssessmentQuestionRoleRequirementForSelfAssessment(assessmentId, assessmentQuestionId, responseRoleRequirement.Key, responseRoleRequirement.Value);
+            }
+            return rowCount;
+        }
+
+        public int UpdateCompetencyAssessmentQuestionRoleRequirement(int assessmentId, int competencyId, int assessmentQuestionId, Dictionary<int, int?> responseRoleRequirements)
+        {
+            int rowCount = 0;
+            foreach (var responseRoleRequirement in responseRoleRequirements)
+            {
+                competencyAssessmentDataService.DeleteCompetencyAssessmentQuestionRoleRequirement(assessmentId, null, assessmentQuestionId, responseRoleRequirement.Key);
+                rowCount += competencyAssessmentDataService.InsertCompetencyAssessmentQuestionRoleRequirement(assessmentId, competencyId, assessmentQuestionId, responseRoleRequirement.Key, responseRoleRequirement.Value);
+            }
+            return rowCount;
         }
     }
 }

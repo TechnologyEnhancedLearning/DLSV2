@@ -64,7 +64,7 @@
         </dd>
     </div>
 </dl>
-<form method="post">
+<form method="post" asp-action="EditQuestionResponseRoleRequirements">
     <h2>Set role requirements for each possible response</h2>
     @foreach (var response in Model.GroupedCompetencyWithAssessmentRoleRequirements.First().Competencies.First().Questions.First().Responses)
     {
@@ -82,7 +82,7 @@
                         <input class="nhsuk-radios__input"
                                id="response-@response.ResponseValue-rag-1"
                                @(response.LevelRAG == 1 ? "checked=checked" : "")
-                               name="response-@response.ResponseValue"
+                               name="ResponseRoleRequirements[@response.ResponseValue]"
                                type="radio"
                                value="1">
                         <label class="nhsuk-label nhsuk-radios__label" for="response-@response.ResponseValue-rag-1">
@@ -94,7 +94,7 @@
                     <div class="nhsuk-radios__item">
                         <input class="nhsuk-radios__input"
                                id="response-@response.ResponseValue-rag-2"
-                               name="response-@response.ResponseValue"
+                               name="ResponseRoleRequirements[@response.ResponseValue]"
                                type="radio"
                                value="2"
                                @(response.LevelRAG == 2 ? "checked=checked" : "")>
@@ -107,7 +107,7 @@
                     <div class="nhsuk-radios__item">
                         <input class="nhsuk-radios__input"
                                id="response-@response.ResponseValue-rag-3"
-                               name="response-@response.ResponseValue"
+                               name="ResponseRoleRequirements[@response.ResponseValue]"
                                type="radio"
                                value="3"
                                @(response.LevelRAG == 3 ? "checked=checked" : "")>
@@ -121,7 +121,7 @@
                     <div class="nhsuk-radios__item">
                         <input class="nhsuk-radios__input"
                                id="response-@response.ResponseValue-rag-null"
-                               name="response-@response.ResponseValue"
+                               name="ResponseRoleRequirements[@response.ResponseValue]"
                                type="radio"
                                value="null"
                                @(response.LevelRAG == null ? "checked=checked" : "")>
@@ -133,16 +133,19 @@
             </fieldset>
         </nhs-form-group>
     }
-        @if(Model.CountAssessmentQuestionInSelfAssessment > 1)
-        {
-          <fieldset class="nhsuk-fieldset">
-                <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--m">
-                    Apply to all?
-                </legend>
-        <vc:single-checkbox asp-for="@nameof(Model.ApplyToAll)" label="Apply role requirements to all @Model.CountAssessmentQuestionInSelfAssessment instances of this assessment question in @Model.CompetencyAssessmentName" hint-text="This will not affect instances that are added to the self assessment later"></vc:single-checkbox>
+    @if (Model.CountAssessmentQuestionInSelfAssessment > 1)
+    {
+        <fieldset class="nhsuk-fieldset">
+            <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--m">
+                Apply to all?
+            </legend>
+            <vc:single-checkbox asp-for="@nameof(Model.ApplyToAll)" label="Apply role requirements to all @Model.CountAssessmentQuestionInSelfAssessment instances of this assessment question in @Model.CompetencyAssessmentName" hint-text="This will not affect instances that are added to the self assessment later"></vc:single-checkbox>
         </fieldset>
-      }
-        <button class="nhsuk-button" type="submit">
+    }
+    <input type="hidden" asp-for="@Model.Id" />
+    <input type="hidden" asp-for="@Model.CompetencyId" />
+    <input type="hidden" asp-for="@Model.AssessmentQuestionId" />
+    <button class="nhsuk-button" type="submit">
         Save
     </button>
 </form>

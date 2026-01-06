@@ -1119,10 +1119,29 @@
                 return result;
             var assessmentQuestion = competencyAssessmentService.GetGroupedCompetencyWithAssessmentRoleRequirements(competencyAssessmentId, competencyId, assessmentQuestionId);
             var countAssessmentQuestionInSelfAssessment = competencyAssessmentService.GetCountOfAsssessmentQuestionInCompetencyAssessment(competencyAssessmentId, assessmentQuestionId);
-            var model = new EditQuestionResponseRoleRequirementsViewModel(competencyAssessmentBase, assessmentQuestion, countAssessmentQuestionInSelfAssessment);
+            var model = new EditQuestionResponseRoleRequirementsViewModel(competencyAssessmentBase, assessmentQuestion, countAssessmentQuestionInSelfAssessment, competencyId, assessmentQuestionId);
             return View("EditQuestionResponseRoleRequirements", model);
         }
-
+        [HttpPost]
+        [Route("/CompetencyAssessments/{competencyAssessmentId}/RoleRequirements/Edit/Competency/{competencyId}/Question/{assessmentQuestionId}")]
+        public IActionResult EditQuestionResponseRoleRequirements(EditQuestionResponseRoleRequirementsFormData model)
+        {
+            var adminId = GetAdminID();
+            var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(model.Id, adminId);
+            var result = ValidateCompetencyAssessmentAndRole(model.Id, adminId, "Edit Competency Role Requirement Question Cells", competencyAssessmentBase);
+            if (result.StatusCode != 200)
+                return result;
+            if(model.ApplyToAll)
+            {
+                competencyAssessmentService.UpdateAssessmentQuestionRoleRequirementsForSelfAssessment(model.Id, model.AssessmentQuestionId, model.ResponseRoleRequirements);
+            }
+            else
+            {
+                competencyAssessmentService.UpdateCompetencyAssessmentQuestionRoleRequirement(model.Id, model.CompetencyId, model.AssessmentQuestionId, model.ResponseRoleRequirements);
+            }
+                
+            return RedirectToAction("EditCompetencyRoleRequirements", new { competencyAssessmentId = model.Id });
+        }
         private void SetcompetencyAssessmentFeaturesData(CompetencyAssessmentFeaturesViewModel data)
         {
             multiPageFormService.SetMultiPageFormData(

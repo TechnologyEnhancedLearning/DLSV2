@@ -10,7 +10,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
         public EditQuestionResponseRoleRequirementsViewModel(
             CompetencyAssessmentBase competencyAssessmentBase,
             List<GroupedCompetencyWithAssessmentRoleRequirements> groupedCompetencyWithAssessmentRoleRequirements,
-            int countAssessmentQuestionInSelfAssessment
+            int countAssessmentQuestionInSelfAssessment, int competencyId, int assessmentQuestionId
             )
         {
             CompetencyAssessmentName = competencyAssessmentBase.CompetencyAssessmentName;
@@ -18,10 +18,11 @@ namespace DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
             VocabularySingular = FrameworkVocabularyHelper.VocabularySingular(competencyAssessmentBase.Vocabulary);
             VocabularyPlural = FrameworkVocabularyHelper.VocabularyPlural(competencyAssessmentBase.Vocabulary);
             Id = competencyAssessmentBase.ID;
+            CompetencyId = competencyId;
+            AssessmentQuestionId = assessmentQuestionId;
             GroupedCompetencyWithAssessmentRoleRequirements = groupedCompetencyWithAssessmentRoleRequirements;
             CountAssessmentQuestionInSelfAssessment = countAssessmentQuestionInSelfAssessment;
         }
-        public int Id { get; set; }
         public string CompetencyAssessmentName { get; set; }
         public int UserRole { get; set; }
         public string VocabularySingular { get; set; }

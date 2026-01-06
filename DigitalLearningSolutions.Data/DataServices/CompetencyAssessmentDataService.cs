@@ -86,12 +86,15 @@
         void UpdateManageOptionalCompetenciesPrompt(int selfAssessmentId, string manageOptionalCompetenciesPrompt);
         bool UpdatePrimaryFrameworkCompetencies(int assessmentId, int frameworkId);
         void UpdateRoleRequirementsFlags(int assessmentId, bool enforceRoleRequirementsForSignOff, bool includeRequirementsFilters);
-        int GetCountOfAsssessmentQuestionInCompetencyAssessment(int competencyAssessmentId, int assessmentQuestionId);    
+        int GetCountOfAsssessmentQuestionInCompetencyAssessment(int competencyAssessmentId, int assessmentQuestionId);
+
         //INSERT DATA
         int InsertCompetencyAssessment(int adminId, int centreId, string competencyAssessmentName);
         bool InsertSelfAssessmentFramework(int adminId, int selfAssessmentId, int frameworkId);
         bool InsertCompetenciesIntoAssessmentFromFramework(int[] selectedCompetencyIds, int frameworkId, int competencyAssessmentId);
         bool InsertSelfAssessmentStructure(int selfAssessmentId, int? frameworkId);
+        int InsertAssessmentQuestionRoleRequirementForSelfAssessment(int assessmentId, int assessmentQuestionId, int levelValue, int? levelRAG);
+        int InsertCompetencyAssessmentQuestionRoleRequirement(int assessmentId, int competencyId, int assessmentQuestionId, int levelValue, int? levelRAG);
         //DELETE DATA
         bool RemoveFrameworkCompetenciesFromAssessment(int competencyAssessmentId, int frameworkId);
         bool RemoveCompetencyFromAssessment(int competencyAssessmentId, int competencyId);
@@ -100,6 +103,7 @@
         void RemoveCollaboratorFromCompetencyAssessment(int competencyAssessmentId, int id);
         CompetencyAssessmentCollaboratorNotification? GetCollaboratorNotification(int id, int invitedByAdminId);
         bool HasCompetencyWithSignpostedLearning(int competencyAssessmentId);
+        bool DeleteCompetencyAssessmentQuestionRoleRequirement(int assessmentId, int? competencyId, int assessmentQuestionId, int levelValue);
     }
 
     public class CompetencyAssessmentDataService : ICompetencyAssessmentDataService
@@ -900,43 +904,43 @@
 
             return true;
         }
-       
+
         public bool UpdatePrimaryFrameworkCompetencies(int assessmentId, int frameworkId)
         {
             connection.EnsureOpen();
             using (var transaction = connection.BeginTransaction())
             {
-                    var numberOfAffectedRows = connection.Execute(
-                        @"UPDATE SelfAssessmentFrameworks 
+                var numberOfAffectedRows = connection.Execute(
+                    @"UPDATE SelfAssessmentFrameworks 
                   SET IsPrimary = 0  
                   WHERE (SelfAssessmentId = @assessmentId) 
                     AND (RemovedDate IS NULL)",
-                        new { assessmentId },
-                        transaction: transaction
-                    );
+                    new { assessmentId },
+                    transaction: transaction
+                );
 
-                    var numberOfAffectedRow = connection.Execute(
-                        @"UPDATE SelfAssessmentFrameworks 
+                var numberOfAffectedRow = connection.Execute(
+                    @"UPDATE SelfAssessmentFrameworks 
                   SET IsPrimary = 1  
                   WHERE (SelfAssessmentId = @assessmentId) 
                     AND (FrameworkId = @frameworkId) 
                     AND (RemovedDate IS NULL)",
-                        new { assessmentId, frameworkId },
-                        transaction: transaction
+                    new { assessmentId, frameworkId },
+                    transaction: transaction
+                );
+
+                if ((numberOfAffectedRow < 1) || (numberOfAffectedRows < 1))
+                {
+                    logger.LogWarning(
+                        "Not updating SelfAssessmentFrameworks as db update failed. " +
+                        $"assessmentId: {assessmentId}, frameworkId: {frameworkId}"
                     );
+                    transaction.Rollback();
+                    return false;
+                }
 
-                    if ((numberOfAffectedRow < 1) || (numberOfAffectedRows < 1))
-                    {
-                        logger.LogWarning(
-                            "Not updating SelfAssessmentFrameworks as db update failed. " +
-                            $"assessmentId: {assessmentId}, frameworkId: {frameworkId}"
-                        );
-                        transaction.Rollback();
-                        return false;
-                    }
-
-                    transaction.Commit();
-                    return true;
+                transaction.Commit();
+                return true;
             }
         }
         public int? GetSelfAssessmentStructure(int competencyAssessmentId)
@@ -1308,5 +1312,56 @@ ORDER BY
                new { competencyAssessmentId, assessmentQuestionId }
                );
         }
+
+        public int InsertAssessmentQuestionRoleRequirementForSelfAssessment(int assessmentId, int assessmentQuestionId, int levelValue, int? levelRAG)
+        {
+            var numberOfAffectedRows = connection.Execute(
+                             @"INSERT INTO CompetencyAssessmentQuestionRoleRequirements
+                                     (SelfAssessmentID, CompetencyID, AssessmentQuestionID, LevelValue, LevelRAG)
+                                        SELECT sas.SelfAssessmentID, sas.CompetencyID, caq.AssessmentQuestionID, @levelValue AS LevelValue, @levelRAG AS LevelRAG
+                                        FROM   SelfAssessmentStructure AS sas INNER JOIN
+                                             CompetencyAssessmentQuestions AS caq ON sas.CompetencyID = caq.CompetencyID
+                                        WHERE (sas.SelfAssessmentID = @assessmentId) AND (caq.AssessmentQuestionID = @assessmentQuestionId);"
+                         ,
+                             new { assessmentId, assessmentQuestionId, levelValue }
+                         );
+            return numberOfAffectedRows;
+        }
+
+        public int InsertCompetencyAssessmentQuestionRoleRequirement(int assessmentId, int competencyId, int assessmentQuestionId, int levelValue, int? levelRAG)
+        {
+            var numberOfAffectedRows = connection.Execute(
+                             @"INSERT INTO dbo.CompetencyAssessmentQuestionRoleRequirements
+                                   (SelfAssessmentID
+                                   ,CompetencyID
+                                   ,AssessmentQuestionID
+                                   ,LevelValue
+                                   ,LevelRAG)
+                                 VALUES
+                                   (@assessmentId
+                                   ,@competencyId
+                                   ,@assessmentQuestionId
+                                   ,@levelValue
+                                   ,@levelRAG);"
+                         ,
+                             new { assessmentId, competencyId, assessmentQuestionId, levelValue }
+                         );
+            return numberOfAffectedRows;
+        }
+
+        public bool DeleteCompetencyAssessmentQuestionRoleRequirement(int assessmentId, int? competencyId, int assessmentQuestionId, int levelValue)
+        {
+            var numberOfAffectedRows = connection.Execute(
+                             @"DELETE FROM CompetencyAssessmentQuestionRoleRequirements
+                                  WHERE SelfAssessmentID = @assessmentId
+                                    AND AssessmentQuestionID = @assessmentQuestionId
+                                    AND LevelValue = @levelValue
+                                    AND (CompetencyID = @competencyId OR @competencyId = NULL);"
+                         ,
+                             new { assessmentId, competencyId, assessmentQuestionId, levelValue }
+                         );
+            return numberOfAffectedRows > 0;
+        }
+
     }
 }
