@@ -38,8 +38,8 @@
         <p class="nhsuk-hint">
             This will be displayed to the supervisor when they are signing off a completed self assessment.
         </p>
-
-        <div class="nhsuk-radios nhsuk-radios--conditional">
+               <div class="nhsuk-form-group @(errorHasOccurred ? "nhsuk-form-group--error" : "")"> 
+                    <div class="nhsuk-radios nhsuk-radios--conditional">
 
             <div class="nhsuk-radios__item">
                 <input class="nhsuk-radios__input" id="declaration-default" name="DeclarationValue" type="radio" value="0"
@@ -52,14 +52,16 @@
                
             </div>
             <div class="nhsuk-radios__conditional nhsuk-radios__conditional--hidden" id="conditional-declaration-default">
-                <div class="nhsuk-form-group">
-                    <label class="nhsuk-label" for="default-declaration-text">
-                        Declaration text
-                    </label>
-                            <div class="nhsuk-body" id="default-declaration-text">
-                                @Html.Raw(Model.DefaultText)
-                            </div>
-                </div>
+                            <nhs-form-group nhs-validation-for="DefaultText">
+                                <vc:text-area asp-for="DefaultText"
+                                              character-count="null"
+                                              label="Declaration text"
+                                              rows="5"
+                                              css-class="html-editor"
+                                              hint-text=""
+                                              populate-with-current-value="true"
+                                              spell-check="false" />
+                            </nhs-form-group>
             </div>
 
             <div class="nhsuk-radios__item">
@@ -73,23 +75,21 @@
             </div>
 
             <div class="nhsuk-radios__conditional nhsuk-radios__conditional--hidden" id="conditional-declaration-custom">
-               
-                                             
-                                <nhs-form-group nhs-validation-for="CustomText">
-                                    <vc:text-area asp-for="CustomText"
-                                                  character-count="null"
-                                                  label="Declaration text"
-                                                  rows="5"
-                                                  css-class="html-editor"
-                                                  hint-text="  Enter the declaration text"
-                                                  populate-with-current-value="true"
-                                                  spell-check="false" />
-                                </nhs-form-group>
+               <nhs-form-group nhs-validation-for="CustomText">
+                 <vc:text-area asp-for="CustomText"
+                 character-count="null"
+                 label="Declaration text"
+                 rows="5"
+                 css-class="html-editor"
+                 hint-text="  Enter the declaration text"
+                 populate-with-current-value="true"
+                  spell-check="false" />
+                 </nhs-form-group>
                   
 
             </div>
-
-        </div>
+         </div> 
+      </div>
     </fieldset>
     <input type="hidden" asp-for="CompetencyAssessmentId" />
     <input type="hidden" asp-for="CompetencyAssessmentName" />

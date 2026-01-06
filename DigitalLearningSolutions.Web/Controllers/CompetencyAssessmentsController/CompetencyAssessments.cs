@@ -1217,15 +1217,14 @@
             if (viewModel.DeclarationValue == null)
             {
                 ModelState.AddModelError(nameof(viewModel.DeclarationValue), "Please select a declaration option");
+                return View(viewModel);
             }
             else if (viewModel.DeclarationValue == 1 && string.IsNullOrWhiteSpace(viewModel.CustomText))
             {
                 ModelState.AddModelError(nameof(viewModel.CustomText), "Please enter the custom declaration text");
-            }
-            if (!ModelState.IsValid)
-            {
                 return View(viewModel);
             }
+           
             var data = GetManagesupervisionData();
             var model = new ManagesupervisionViewModel(data.LearnerDeclaration, viewModel, data.Signoff);
             model.CompetencyAssessmentName = viewModel.CompetencyAssessmentName;
@@ -1266,15 +1265,14 @@
             if (viewModel.DeclarationValue == null)
             {
                 ModelState.AddModelError(nameof(viewModel.DeclarationValue), "Please select a declaration option");
+                return View(viewModel);
             }
             else if (viewModel.DeclarationValue == 1 && string.IsNullOrWhiteSpace(viewModel.CustomText))
             {
                 ModelState.AddModelError(nameof(viewModel.CustomText), "Please enter the custom declaration text");
-            }
-            if (!ModelState.IsValid)
-            {
                 return View(viewModel);
             }
+           
             var data = GetManagesupervisionData();
             var model = new ManagesupervisionViewModel(viewModel, data.SupervisorDeclaration, data.Signoff);
             model.CompetencyAssessmentName = viewModel.CompetencyAssessmentName;

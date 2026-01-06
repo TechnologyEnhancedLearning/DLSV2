@@ -9,7 +9,7 @@
         }
 
         public int CompetencyAssessmentId { get; set; }
-        public string CompetencyAssessmentName { get; set; } = string.Empty;
+        public string? CompetencyAssessmentName { get; set; } 
         public int? DeclarationValue { get; set; }
         public string? ActionName { get; set; }
         public string? CustomText { get; set; }

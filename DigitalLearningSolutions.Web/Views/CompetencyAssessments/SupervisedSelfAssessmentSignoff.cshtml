@@ -29,7 +29,7 @@
 
         <h1 class="nhsuk-heading-xl">Supervised self assessment and sign-off</h1>
         <form method="post">
-            <fieldset class="nhsuk-fieldset">
+                <fieldset class="nhsuk-fieldset" aria-describedby="supervised-error">
                 <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
                     <h1 class="nhsuk-fieldset__heading">
                         Will the self assessment be supervised?
@@ -37,9 +37,11 @@
                 </legend>
 
                 <div class="nhsuk-radios nhsuk-radios--conditional">
-
+                        <div class="nhsuk-form-group @(errorHasOccurred ? "nhsuk-form-group--error" : "")">
                     <div class="nhsuk-radios__item">
-                        <input class="nhsuk-radios__input" id="supervision-no" name="Supervised" type="radio" value="0" aria-controls="conditional-supervision-yes" aria-expanded="false"
+                        <input class="nhsuk-radios__input" id="supervision-no" name="Supervised" type="radio" value="0"
+                        aria-invalid="@(errorHasOccurred.ToString().ToLower())"
+                        aria-controls="conditional-supervision-yes" aria-expanded="false"
                         @(Model.Supervised == 0 ? "checked" : "")>
                         <label class="nhsuk-label nhsuk-radios__label" for="supervision-no">
                             No
@@ -47,13 +49,15 @@
                     </div>
 
                     <div class="nhsuk-radios__item">
-                        <input class="nhsuk-radios__input" id="supervision-yes" name="Supervised" type="radio" value="1" aria-controls="conditional-supervision-yes" aria-expanded="true"
+                        <input class="nhsuk-radios__input" id="supervision-yes" name="Supervised" type="radio" value="1"
+                                   aria-invalid="@(errorHasOccurred.ToString().ToLower())"
+                        aria-controls="conditional-supervision-yes" aria-expanded="true"
                         @(Model.Supervised == 1 ? "checked" : "")>
                         <label class="nhsuk-label nhsuk-radios__label" for="supervision-yes">
                             Yes
                         </label>
                     </div>
-
+                        </div>
                     <div class="nhsuk-radios__conditional" id="conditional-supervision-yes">
 
                         <fieldset class="nhsuk-fieldset">
