@@ -20,7 +20,6 @@
             FirstName = delegateEntity.UserAccount.FirstName;
             LastName = delegateEntity.UserAccount.LastName;
             EmailAddress = delegateEntity.UserCentreDetails?.Email ?? delegateEntity.UserAccount.PrimaryEmail;
-            CentreEmail = delegateEntity.UserCentreDetails?.Email;
             PrimaryEmail = delegateEntity.UserAccount.PrimaryEmail;
             Password = delegateEntity.UserAccount.PasswordHash;
             CandidateNumber = delegateEntity.DelegateAccount.CandidateNumber;
@@ -50,7 +49,7 @@
         public bool IsAdmin => AdminId.HasValue;
         public bool IsYetToBeClaimed => RegistrationConfirmationHash != null;
         public bool IsEmailVerified => EmailVerified != null;
-        public string? CentreEmail { get; set; }
+        public string? Email { get; set; }
         public string? PrimaryEmail { get; set; }
         public RegistrationType RegistrationType => (SelfReg, ExternalReg) switch
         {

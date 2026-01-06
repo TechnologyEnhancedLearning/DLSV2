@@ -29,7 +29,7 @@
             IsAdmin = delegateUser.IsAdmin;
             IsPasswordSet = delegateUser.IsPasswordSet;
             RegistrationType = delegateUser.RegistrationType;
-            CentreEmail = delegateUser.CentreEmail;
+            CentreEmail = delegateUser.Email;
             PrimaryEmail = delegateUser.PrimaryEmail;
             Email = delegateUser.EmailAddress;
             JobGroupId = delegateUser.JobGroupId;
