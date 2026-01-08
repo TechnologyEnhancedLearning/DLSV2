@@ -1257,6 +1257,8 @@ INNER JOIN AssessmentQuestionLevels AS aql
 
 LEFT JOIN CompetencyAssessmentQuestionRoleRequirements AS caqrr
     ON caqrr.AssessmentQuestionID = aq.ID
+    AND caqrr.SelfAssessmentID = sas.SelfAssessmentID
+    AND caqrr.CompetencyID = sas.CompetencyID
    AND caqrr.LevelValue = aql.LevelValue
 
 WHERE sas.SelfAssessmentID = @competencyAssessmentId
@@ -1323,7 +1325,7 @@ ORDER BY
                                              CompetencyAssessmentQuestions AS caq ON sas.CompetencyID = caq.CompetencyID
                                         WHERE (sas.SelfAssessmentID = @assessmentId) AND (caq.AssessmentQuestionID = @assessmentQuestionId);"
                          ,
-                             new { assessmentId, assessmentQuestionId, levelValue }
+                             new { assessmentId, assessmentQuestionId, levelValue, levelRAG }
                          );
             return numberOfAffectedRows;
         }
@@ -1344,7 +1346,7 @@ ORDER BY
                                    ,@levelValue
                                    ,@levelRAG);"
                          ,
-                             new { assessmentId, competencyId, assessmentQuestionId, levelValue }
+                             new { assessmentId, competencyId, assessmentQuestionId, levelValue, levelRAG }
                          );
             return numberOfAffectedRows;
         }
@@ -1356,7 +1358,7 @@ ORDER BY
                                   WHERE SelfAssessmentID = @assessmentId
                                     AND AssessmentQuestionID = @assessmentQuestionId
                                     AND LevelValue = @levelValue
-                                    AND (CompetencyID = @competencyId OR @competencyId = NULL);"
+                                    AND (CompetencyID = @competencyId OR @competencyId IS NULL);"
                          ,
                              new { assessmentId, competencyId, assessmentQuestionId, levelValue }
                          );

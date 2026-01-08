@@ -22,9 +22,11 @@ namespace DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
             IncludeRequirementsFilters = competencyAssessmentBase.IncludeRequirementsFilters;
             Id = competencyAssessmentBase.ID;
             TaskStatus = taskStatus.RoleRequirementsTaskStatus;
-            CountCompetencyRequirements = groupedCompetencyWithAssessmentRoleRequirements.SelectMany(g => g.Competencies)
-    .SelectMany(c => c.Questions)
-    .Count(q => q.Responses.Any());
+            CountCompetencyRequirements =
+    groupedCompetencyWithAssessmentRoleRequirements
+        .SelectMany(g => g.Competencies)
+        .SelectMany(c => c.Questions)
+        .Count(q => q.Responses.Any(r => r.LevelRAG != null));
         }
         public string CompetencyAssessmentName { get; set; }
         public int UserRole { get; set; }

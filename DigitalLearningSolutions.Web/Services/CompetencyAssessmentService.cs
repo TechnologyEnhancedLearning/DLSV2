@@ -468,7 +468,10 @@ namespace DigitalLearningSolutions.Web.Services
             foreach (var responseRoleRequirement in responseRoleRequirements)
             {
                 competencyAssessmentDataService.DeleteCompetencyAssessmentQuestionRoleRequirement(assessmentId, null, assessmentQuestionId, responseRoleRequirement.Key);
-                rowCount += competencyAssessmentDataService.InsertAssessmentQuestionRoleRequirementForSelfAssessment(assessmentId, assessmentQuestionId, responseRoleRequirement.Key, responseRoleRequirement.Value);
+                if (responseRoleRequirement.Value != null)
+                {
+                    rowCount += competencyAssessmentDataService.InsertAssessmentQuestionRoleRequirementForSelfAssessment(assessmentId, assessmentQuestionId, responseRoleRequirement.Key, responseRoleRequirement.Value);
+                }
             }
             return rowCount;
         }
@@ -479,7 +482,10 @@ namespace DigitalLearningSolutions.Web.Services
             foreach (var responseRoleRequirement in responseRoleRequirements)
             {
                 competencyAssessmentDataService.DeleteCompetencyAssessmentQuestionRoleRequirement(assessmentId, null, assessmentQuestionId, responseRoleRequirement.Key);
-                rowCount += competencyAssessmentDataService.InsertCompetencyAssessmentQuestionRoleRequirement(assessmentId, competencyId, assessmentQuestionId, responseRoleRequirement.Key, responseRoleRequirement.Value);
+                if(responseRoleRequirement.Value != null)
+                { 
+                    rowCount += competencyAssessmentDataService.InsertCompetencyAssessmentQuestionRoleRequirement(assessmentId, competencyId, assessmentQuestionId, responseRoleRequirement.Key, responseRoleRequirement.Value);
+                }
             }
             return rowCount;
         }
