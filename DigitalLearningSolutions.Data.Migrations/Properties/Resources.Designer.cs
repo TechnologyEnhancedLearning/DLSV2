@@ -2238,6 +2238,64 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[usp_MoveCompetencyInSelfAssessment]    Script Date: 24/11/2025 10:56:08 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///ALTER   PROCEDURE [dbo].[usp_MoveCompetencyInSelfAssessment]
+        ///    @SelfAssessmentID INT,
+        ///    @CompetencyID INT,
+        ///    @Direction NVARCHAR(10)
+        ///AS
+        ///BEGIN
+        ///    SET NOCOUNT ON;
+        ///
+        ///    DECLARE @GroupID INT, @CurrentOrder INT;
+        ///
+        ///    SELECT 
+        ///        @GroupID = CompetencyGroupID,
+        ///        @CurrentOrder = Ordering
+        ///    FROM SelfAssessment [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_483_Alter_usp_MoveCompetencyInSelfAssessment_Down {
+            get {
+                return ResourceManager.GetString("TD_483_Alter_usp_MoveCompetencyInSelfAssessment_Down", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[usp_MoveCompetencyInSelfAssessment]    Script Date: 24/11/2025 10:56:08 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///ALTER   PROCEDURE [dbo].[usp_MoveCompetencyInSelfAssessment]
+        ///    @SelfAssessmentID INT,
+        ///    @CompetencyID INT,
+        ///    @Direction NVARCHAR(10)
+        ///AS
+        ///BEGIN
+        ///    SET NOCOUNT ON;
+        ///
+        ///    DECLARE @CurrentOrder INT;
+        ///
+        ///    SELECT 
+        ///        @CurrentOrder = Ordering
+        ///    FROM SelfAssessmentStructure
+        ///    WHERE SelfAssessmentID = @SelfAssessme [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_483_Alter_usp_MoveCompetencyInSelfAssessment_Up {
+            get {
+                return ResourceManager.GetString("TD_483_Alter_usp_MoveCompetencyInSelfAssessment_Up", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 
         ///CREATE OR ALTER PROCEDURE usp_RenumberSelfAssessmentStructure
         ///    @SelfAssessmentID INT

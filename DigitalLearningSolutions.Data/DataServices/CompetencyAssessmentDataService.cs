@@ -98,6 +98,7 @@
         //DELETE DATA
         bool RemoveFrameworkCompetenciesFromAssessment(int competencyAssessmentId, int frameworkId);
         bool RemoveCompetencyFromAssessment(int competencyAssessmentId, int competencyId);
+        bool RemoveCompetencyGroupFromAssessment(int competencyAssessmentId, int competencyGroupId);
         IEnumerable<CompetencyAssessmentCollaboratorDetail> GetCollaboratorsForCompetencyAssessmentId(int competencyAssessmentId);
         int AddCollaboratorToCompetencyAssessment(int competencyAssessmentId, string? userEmail, bool canModify, int? centreID);
         void RemoveCollaboratorFromCompetencyAssessment(int competencyAssessmentId, int id);
@@ -144,7 +145,7 @@
                         SelfAssessmentFrameworks saf2
                         INNER JOIN Frameworks f ON f.ID = saf2.FrameworkId
                     WHERE 
-                        saf2.SelfAssessmentId = sa.ID
+                        saf2.SelfAssessmentId = sa.ID AND saf2.RemovedDate IS NULL
                     FOR XML PATH(''), TYPE).value('.', 'NVARCHAR(MAX)'), 1, 2, ''
                 ) AS LinkedFrameworks,
                  (SELECT ProfessionalGroup
@@ -701,7 +702,7 @@
             return connection.Query<Competency>(
                @"SELECT sas.ID AS StructureId, sas.CompetencyID, f.ID AS FrameworkId, f.FrameworkName, cg.ID AS GroupId, cg.Name AS GroupName, c.Name AS CompetencyName, c.Description AS CompetencyDescription, sas.Optional, sas.GroupOptionalCompetencies
                     FROM   SelfAssessmentStructure AS sas INNER JOIN
-                                Competencies AS c ON sas.CompetencyID = c.ID INNER JOIN
+                                Competencies AS c ON sas.CompetencyID = c.ID LEFT JOIN
                                 CompetencyGroups AS cg ON sas.CompetencyGroupID = cg.ID INNER JOIN
                                 FrameworkCompetencies ON c.ID = FrameworkCompetencies.CompetencyID INNER JOIN
                                 Frameworks AS f ON FrameworkCompetencies.FrameworkID = f.ID INNER JOIN
@@ -744,6 +745,7 @@
 
         public bool InsertCompetenciesIntoAssessmentFromFramework(int[] selectedCompetencyIds, int frameworkId, int competencyAssessmentId)
         {
+
             var currentMaxOrdering = connection.ExecuteScalar<int>(
                 @"SELECT ISNULL(MAX(Ordering), 0) FROM SelfAssessmentStructure WHERE SelfAssessmentID = @competencyAssessmentId",
                 new { competencyAssessmentId }
@@ -756,7 +758,7 @@
                         ROW_NUMBER() OVER (ORDER BY FCG.Ordering, FC.Ordering) + @currentMaxOrdering,
                         FCG.CompetencyGroupID
                     FROM FrameworkCompetencies AS FC
-                    INNER JOIN FrameworkCompetencyGroups AS FCG ON FC.FrameworkCompetencyGroupID = FCG.ID
+                    LEFT JOIN FrameworkCompetencyGroups AS FCG ON FC.FrameworkCompetencyGroupID = FCG.ID
                     WHERE FC.FrameworkID = @frameworkId
                     AND FC.CompetencyID IN @selectedCompetencyIds AND FC.CompetencyID NOT IN (SELECT CompetencyID FROM SelfAssessmentStructure WHERE SelfAssessmentID = @competencyAssessmentId)",
                new { selectedCompetencyIds, frameworkId, competencyAssessmentId, currentMaxOrdering }
@@ -783,6 +785,24 @@
                 logger.LogWarning(
                     "Not removing competency from assessment as db update failed. " +
                     $"assessmentId: {competencyAssessmentId}, competencyId: {competencyId}"
+                );
+                return false;
+            }
+            return true;
+        }
+
+        public bool RemoveCompetencyGroupFromAssessment(int competencyAssessmentId, int competencyGroupId)
+        {
+            var numberOfAffectedRows = connection.Execute(
+                @"DELETE FROM SelfAssessmentStructure
+                    WHERE SelfAssessmentID = @competencyAssessmentId AND CompetencyGroupId = @competencyGroupId",
+                new { competencyAssessmentId, competencyGroupId }
+            );
+            if (numberOfAffectedRows < 1)
+            {
+                logger.LogWarning(
+                    "Not removing competency from assessment as db update failed. " +
+                    $"assessmentId: {competencyAssessmentId}, competencyGroupId: {competencyGroupId}"
                 );
                 return false;
             }
@@ -868,14 +888,29 @@
 
             var numberOfAffectedRows = connection.Execute(
                 @"UPDATE s
-                    SET 
-                    [Description] = COALESCE(F.[Description], 'No description provided'),
-                    BrandID = F.BrandID,
-                    CategoryID = F.CategoryID
-                    FROM SelfAssessments s
-                    INNER JOIN Frameworks F ON F.ID = @frameworkId
-                    INNER JOIN AdminUsers AU ON F.OwnerAdminID = AU.AdminID
-                    WHERE s.id = @selfAssessmentId;"
+SET
+    [Description] = CASE 
+        WHEN sts.IntroductoryTextTaskStatus IS NULL THEN NULL
+        ELSE COALESCE(F.[Description], 'No description provided')
+    END,
+    BrandID = CASE 
+        WHEN sts.BrandingTaskStatus IS NULL THEN s.BrandID
+        ELSE F.BrandID
+    END,
+    CategoryID = CASE 
+        WHEN sts.BrandingTaskStatus IS NULL THEN s.CategoryID
+        ELSE F.CategoryID
+    END,
+    Vocabulary = CASE 
+        WHEN sts.VocabularyTaskStatus IS NULL THEN NULL
+        ELSE F.FrameworkConfig
+    END
+FROM SelfAssessments s
+INNER JOIN Frameworks F ON F.ID = @frameworkId
+INNER JOIN AdminUsers AU ON F.OwnerAdminID = AU.AdminID
+INNER JOIN SelfAssessmentTaskStatus sts ON s.ID = sts.SelfAssessmentId
+WHERE s.ID = @selfAssessmentId;
+;"
             ,
                 new { selfAssessmentId, frameworkId }
             );

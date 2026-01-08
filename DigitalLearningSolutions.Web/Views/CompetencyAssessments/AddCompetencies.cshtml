@@ -15,7 +15,7 @@
             <ol class="nhsuk-breadcrumb__list">
                 <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewCompetencyAssessments" asp-route-tabname="Mine">Competency Assessments</a></li>
                 <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.ID">Manage Competency Assessment</a></li>
-                <li class="nhsuk-breadcrumb__item">Select framework sources</li>
+                <li class="nhsuk-breadcrumb__item">Select Framework Sources</li>
             </ol>
             <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.ID">Back to manage competency assessment</a></p>
         </div>
@@ -35,7 +35,7 @@
             {
                 @foreach (var competencyGroup in Model.GroupedCompetencies)
                 {
-                    @if (competencyGroup.FrameworkCompetencies.Count() > 1)
+                    @if (competencyGroup.FrameworkCompetencies.Count() > 0)
                     {
                         <div class="nhsuk-u-margin-bottom-6">
                             <h3>
@@ -92,7 +92,7 @@
                 {
 
                     <div class="nhsuk-checkboxes__item">
-                        <input class="nhsuk-checkboxes__input select-all-checkbox" data-group="0" id="competency-check-0-@competency.CompetencyID" name="IncludedSelfAssessmentStructureIds" checked="@(Model.SelectedCompetencyIds != null ? Model.SelectedCompetencyIds.Contains((int)competency.CompetencyID) : false)" type="checkbox" value="@competency.CompetencyID">
+                        <input class="nhsuk-checkboxes__input select-all-checkbox" data-group="0" id="competency-check-0-@competency.CompetencyID" name="SelectedCompetencyIds" checked="@(Model.SelectedCompetencyIds != null ? Model.SelectedCompetencyIds.Contains((int)competency.CompetencyID) : false)" type="checkbox" value="@competency.CompetencyID">
                         <label class="nhsuk-label nhsuk-checkboxes__label" for="competency-check-0-@competency.CompetencyID">
                             @foreach (var flag in competency.CompetencyFlags)
                             {
