@@ -1099,6 +1099,7 @@
             return View("ManageCompetencyRoleRequirements", model);
         }
         [HttpPost]
+        [Route("/CompetencyAssessments/{competencyAssessmentId}/RoleRequirements/")]
         public IActionResult ManageCompetencyRoleRequirements(ManageCompetencyRoleRequirementsFormData model)
         {
             var adminId = GetAdminID();
