@@ -1,42 +1,42 @@
 ﻿@using DigitalLearningSolutions.Data.Models.SelfAssessments;
 @model AssessmentQuestion
 @{
-  string commentsLinkText = "View notes";
-  if (ViewData["ReviewerCommentsLabel"] != null)
-  {
-    commentsLinkText = ViewData["ReviewerCommentsLabel"].ToString();
-  }
+    string commentsLinkText = "View notes";
+    if (ViewData["ReviewerCommentsLabel"] != null)
+    {
+        commentsLinkText = ViewData["ReviewerCommentsLabel"].ToString();
+    }
 }
 
 <td class="nhsuk-table__cell nhsuk-u-font-size-16">
-  <span class="nhsuk-table-responsive__heading">@ViewData["QuestionLabel"]</span>
-  @Model.Question @if (!Model.Required)
-  {
-    <span>(optional)</span>
-  }
+    <span class="nhsuk-table-responsive__heading">@ViewData["QuestionLabel"]</span>
+    @Model.Question @if (!Model.Required)
+    {
+        <span>(optional)</span>
+    }
 </td>
 <td class="nhsuk-table__cell nhsuk-u-font-size-16">
-  <span class="nhsuk-table-responsive__heading">Self-assessment status</span>
-  <partial name="../../Supervisor/Shared/_AssessmentQuestionResponse" model="Model" />
+    <span class="nhsuk-table-responsive__heading">Self-assessment status</span>
+    <partial name="../../Supervisor/Shared/_AssessmentQuestionResponse" model="Model" />
 </td>
 @if (((CurrentSelfAssessment)ViewData["selfAssessment"])?.IsSupervisorResultsReviewed ?? true)
 {
-  <td class="nhsuk-table__cell nhsuk-u-font-size-16">
-    <span class="nhsuk-table-responsive__heading">Confirmation status </span>
-    <partial name="Shared/_AssessmentQuestionStatusTag" model="Model" />
+    <td class="nhsuk-table__cell nhsuk-u-font-size-16">
+        <span class="nhsuk-table-responsive__heading">Confirmation status </span>
+        <partial name="Shared/_AssessmentQuestionStatusTag" model="Model" />
 
-    @if (Model.SupervisorComments != null)
-    {
-      <div class="nhsuk-grid-row">
-        <div class="nhsuk-grid-column-full">
-          <a class="status-tag"
-         asp-action="SupervisorComments" asp-route-selfAssessmentId="@ViewContext.RouteData.Values["selfAssessmentId"]"
-         asp-route-competencyNumber="@ViewData["competencyNumber"]"
-         asp-route-resultId="@Model.ResultId">
-            @commentsLinkText
-          </a>
-        </div>
-      </div>
-    }
-  </td>
+        @if (Model.SupervisorComments != null)
+        {
+            <div class="nhsuk-grid-row">
+                <div class="nhsuk-grid-column-full">
+                    <a class="status-tag"
+                       asp-action="SupervisorComments" asp-route-selfAssessmentId="@ViewContext.RouteData.Values["selfAssessmentId"]"
+                       asp-route-competencyNumber="@ViewData["competencyNumber"]"
+                       asp-route-resultId="@Model.ResultId">
+                        @commentsLinkText
+                    </a>
+                </div>
+            </div>
+        }
+    </td>
 }

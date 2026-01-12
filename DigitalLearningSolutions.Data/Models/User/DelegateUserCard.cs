@@ -50,6 +50,7 @@
         public bool IsAdmin => AdminId.HasValue;
         public bool IsYetToBeClaimed => RegistrationConfirmationHash != null;
         public bool IsEmailVerified => EmailVerified != null;
+        public string? Email { get; set; }
         public string? CentreEmail { get; set; }
         public string? PrimaryEmail { get; set; }
         public RegistrationType RegistrationType => (SelfReg, ExternalReg) switch
