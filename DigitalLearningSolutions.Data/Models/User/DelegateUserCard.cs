@@ -51,6 +51,7 @@
         public bool IsYetToBeClaimed => RegistrationConfirmationHash != null;
         public bool IsEmailVerified => EmailVerified != null;
         public string? CentreEmail { get; set; }
+        public string? Email { get; set; }
         public string? PrimaryEmail { get; set; }
         public RegistrationType RegistrationType => (SelfReg, ExternalReg) switch
         {
