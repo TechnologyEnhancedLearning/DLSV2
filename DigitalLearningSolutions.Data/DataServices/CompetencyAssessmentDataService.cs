@@ -3,7 +3,6 @@
     using Dapper;
     using DigitalLearningSolutions.Data.Extensions;
     using DigitalLearningSolutions.Data.Models.CompetencyAssessments;
-    using Microsoft.AspNetCore.Connections;
     using Microsoft.Extensions.Logging;
     using System;
     using System.Collections.Generic;
@@ -37,6 +36,7 @@
         int[] GetLinkedFrameworkCompetencyIds(int competencyAssessmentId, int frameworkId);
         CompetencyAssessmentFeatures? GetCompetencyAssessmentFeaturesTaskStatus(int competencyAssessmentId);
         int? GetSelfAssessmentStructure(int competencyAssessmentId);
+        IEnumerable<CompetencyWithAssessmentQuestionRoleRequirements> GetCompetencyWithAssessmentQuestionRoleRequirements(int competencyAssessmentId, int? competencyId, int? assessmentQuestionId);
 
         //UPDATE DATA
         bool UpdateCompetencyAssessmentName(int competencyAssessmentId, int adminId, string competencyAssessmentName);
@@ -77,19 +77,24 @@
             int groupId,
             string direction
         );
-        public bool UpdateCompetencyAssessmentFeaturesTaskStatus(int id, bool descriptionStatus, bool providerandCategoryStatus, bool vocabularyStatus,
+        bool UpdateCompetencyAssessmentFeaturesTaskStatus(int id, bool descriptionStatus, bool providerandCategoryStatus, bool vocabularyStatus,
            bool workingGroupStatus, bool AllframeworkCompetenciesStatus);
+        bool UpdateCompetencyAssessmentRoleRequirementsTaskStatus(int assessmentId, bool taskStatus);
         void UpdateSelfAssessmentFromFramework(int selfAssessmentId, int? frameworkId);
         bool UpdateOptionalCompetenciesInAssessment(int selfAssessmentId, int[] groupIds, int[] selectedStructureIds);
         void UpdateMinimumOptionalCompetencies(int selfAssessmentId, int minimumOptionalCompetecies);
         void UpdateManageOptionalCompetenciesPrompt(int selfAssessmentId, string manageOptionalCompetenciesPrompt);
         bool UpdatePrimaryFrameworkCompetencies(int assessmentId, int frameworkId);
+        void UpdateRoleRequirementsFlags(int assessmentId, bool enforceRoleRequirementsForSignOff, bool includeRequirementsFilters);
+        int GetCountOfAsssessmentQuestionInCompetencyAssessment(int competencyAssessmentId, int assessmentQuestionId);
 
         //INSERT DATA
         int InsertCompetencyAssessment(int adminId, int centreId, string competencyAssessmentName);
         bool InsertSelfAssessmentFramework(int adminId, int selfAssessmentId, int frameworkId);
         bool InsertCompetenciesIntoAssessmentFromFramework(int[] selectedCompetencyIds, int frameworkId, int competencyAssessmentId);
         bool InsertSelfAssessmentStructure(int selfAssessmentId, int? frameworkId);
+        int InsertAssessmentQuestionRoleRequirementForSelfAssessment(int assessmentId, int assessmentQuestionId, int levelValue, int? levelRAG);
+        int InsertCompetencyAssessmentQuestionRoleRequirement(int assessmentId, int competencyId, int assessmentQuestionId, int levelValue, int? levelRAG);
         //DELETE DATA
         bool RemoveFrameworkCompetenciesFromAssessment(int competencyAssessmentId, int frameworkId);
         bool RemoveCompetencyFromAssessment(int competencyAssessmentId, int competencyId);
@@ -99,6 +104,7 @@
         void RemoveCollaboratorFromCompetencyAssessment(int competencyAssessmentId, int id);
         CompetencyAssessmentCollaboratorNotification? GetCollaboratorNotification(int id, int invitedByAdminId);
         bool HasCompetencyWithSignpostedLearning(int competencyAssessmentId);
+        bool DeleteCompetencyAssessmentQuestionRoleRequirement(int assessmentId, int? competencyId, int assessmentQuestionId, int levelValue);
     }
 
     public class CompetencyAssessmentDataService : ICompetencyAssessmentDataService
@@ -110,6 +116,7 @@
                 sa.NRPSubGroupID,
                 sa.NRPRoleID,
                 sa.PublishStatusID, sa.Vocabulary, CASE WHEN sa.CreatedByAdminID = @adminId THEN 3 WHEN sac.CanModify = 1 THEN 2 WHEN sac.CanModify = 0 THEN 1 ELSE 0 END AS UserRole,
+                sa.EnforceRoleRequirementsForSignOff, sa.IncludeRequirementsFilters,
                 sa.MinimumOptionalCompetencies,
                 sa.ManageOptionalCompetenciesPrompt,
                 sa.IncludeLearnerDeclarationPrompt, sa.IncludesSignposting, sa.LinearNavigation, sa.UseDescriptionExpanders, sa.QuestionLabel, sa.ReviewerCommentsLabel,
@@ -1250,5 +1257,148 @@ WHERE s.ID = @selfAssessmentId;
                 new { selfAssessmentId, manageOptionalCompetenciesPrompt }
             );
         }
+
+        public IEnumerable<CompetencyWithAssessmentQuestionRoleRequirements> GetCompetencyWithAssessmentQuestionRoleRequirements(int competencyAssessmentId, int? competencyId, int? assessmentQuestionId)
+        {
+            return connection.Query<CompetencyWithAssessmentQuestionRoleRequirements>(
+                 @"SELECT
+    sas.CompetencyGroupID,
+    cg.Name AS GroupName,
+    sas.CompetencyID,
+    c.Name AS Competency,
+    c.Description AS CompetencyDescription,
+    sas.Optional,
+    caq.AssessmentQuestionID,
+    aq.Question,
+    caq.Required,
+    aqit.InputTypeName,
+    aql.LevelValue       AS ResponseValue,
+    aql.LevelLabel       AS Response,
+    caqrr.LevelRAG
+FROM SelfAssessmentStructure AS sas
+INNER JOIN Competencies AS c
+    ON sas.CompetencyID = c.ID
+INNER JOIN CompetencyAssessmentQuestions AS caq
+    ON c.ID = caq.CompetencyID
+INNER JOIN AssessmentQuestions AS aq
+    ON caq.AssessmentQuestionID = aq.ID
+INNER JOIN AssessmentQuestionInputTypes AS aqit
+    ON aq.AssessmentQuestionInputTypeID = aqit.ID
+LEFT JOIN CompetencyGroups AS cg
+    ON sas.CompetencyGroupID = cg.ID
+
+INNER JOIN AssessmentQuestionLevels AS aql
+    ON aql.AssessmentQuestionID = aq.ID
+
+LEFT JOIN CompetencyAssessmentQuestionRoleRequirements AS caqrr
+    ON caqrr.AssessmentQuestionID = aq.ID
+    AND caqrr.SelfAssessmentID = sas.SelfAssessmentID
+    AND caqrr.CompetencyID = sas.CompetencyID
+   AND caqrr.LevelValue = aql.LevelValue
+
+WHERE sas.SelfAssessmentID = @competencyAssessmentId
+  AND (@competencyId IS NULL OR sas.CompetencyID = @competencyId)
+  AND (@assessmentQuestionId IS NULL OR caq.AssessmentQuestionID = @assessmentQuestionId)
+
+ORDER BY
+    sas.Ordering,
+    caq.Ordering,
+    aql.LevelValue;",
+                 new { competencyAssessmentId, competencyId, assessmentQuestionId }
+             );
+        }
+
+        public bool UpdateCompetencyAssessmentRoleRequirementsTaskStatus(int assessmentId, bool taskStatus)
+        {
+            var numberOfAffectedRows = connection.Execute(
+              @"UPDATE SelfAssessmentTaskStatus SET RoleRequirementsTaskStatus = @taskStatus
+                    WHERE SelfAssessmentId = @assessmentId",
+              new { assessmentId, taskStatus }
+          );
+            if (numberOfAffectedRows < 1)
+            {
+                logger.LogWarning(
+                    "Not updating RoleRequirementsTaskStatus as db update failed. " +
+                    $"assessmentId: {assessmentId}, taskStatus: {taskStatus}"
+                );
+                return false;
+            }
+            return true;
+        }
+
+        public void UpdateRoleRequirementsFlags(int assessmentId, bool enforceRoleRequirementsForSignOff, bool includeRequirementsFilters)
+        {
+            connection.Execute(
+                 @"UPDATE SelfAssessments
+                    SET 
+                    [EnforceRoleRequirementsForSignOff] = @enforceRoleRequirementsForSignOff, [IncludeRequirementsFilters] = @includeRequirementsFilters
+                    WHERE id = @assessmentId AND (EnforceRoleRequirementsForSignOff <> @enforceRoleRequirementsForSignOff OR IncludeRequirementsFilters <> @includeRequirementsFilters);"
+             ,
+                 new { assessmentId, enforceRoleRequirementsForSignOff, includeRequirementsFilters }
+             );
+        }
+
+        public int GetCountOfAsssessmentQuestionInCompetencyAssessment(int competencyAssessmentId, int assessmentQuestionId)
+        {
+            return connection.QuerySingle<int>(
+               @"SELECT COUNT(1) 
+                    FROM   SelfAssessmentStructure AS sas INNER JOIN
+                                Competencies AS c ON sas.CompetencyID = c.ID INNER JOIN
+                                CompetencyAssessmentQuestions AS caq ON c.ID = caq.CompetencyID
+                    WHERE (sas.SelfAssessmentID = @competencyAssessmentId) AND (caq.AssessmentQuestionID = @assessmentQuestionId)",
+               new { competencyAssessmentId, assessmentQuestionId }
+               );
+        }
+
+        public int InsertAssessmentQuestionRoleRequirementForSelfAssessment(int assessmentId, int assessmentQuestionId, int levelValue, int? levelRAG)
+        {
+            var numberOfAffectedRows = connection.Execute(
+                             @"INSERT INTO CompetencyAssessmentQuestionRoleRequirements
+                                     (SelfAssessmentID, CompetencyID, AssessmentQuestionID, LevelValue, LevelRAG)
+                                        SELECT sas.SelfAssessmentID, sas.CompetencyID, caq.AssessmentQuestionID, @levelValue AS LevelValue, @levelRAG AS LevelRAG
+                                        FROM   SelfAssessmentStructure AS sas INNER JOIN
+                                             CompetencyAssessmentQuestions AS caq ON sas.CompetencyID = caq.CompetencyID
+                                        WHERE (sas.SelfAssessmentID = @assessmentId) AND (caq.AssessmentQuestionID = @assessmentQuestionId);"
+                         ,
+                             new { assessmentId, assessmentQuestionId, levelValue, levelRAG }
+                         );
+            return numberOfAffectedRows;
+        }
+
+        public int InsertCompetencyAssessmentQuestionRoleRequirement(int assessmentId, int competencyId, int assessmentQuestionId, int levelValue, int? levelRAG)
+        {
+            var numberOfAffectedRows = connection.Execute(
+                             @"INSERT INTO dbo.CompetencyAssessmentQuestionRoleRequirements
+                                   (SelfAssessmentID
+                                   ,CompetencyID
+                                   ,AssessmentQuestionID
+                                   ,LevelValue
+                                   ,LevelRAG)
+                                 VALUES
+                                   (@assessmentId
+                                   ,@competencyId
+                                   ,@assessmentQuestionId
+                                   ,@levelValue
+                                   ,@levelRAG);"
+                         ,
+                             new { assessmentId, competencyId, assessmentQuestionId, levelValue, levelRAG }
+                         );
+            return numberOfAffectedRows;
+        }
+
+        public bool DeleteCompetencyAssessmentQuestionRoleRequirement(int assessmentId, int? competencyId, int assessmentQuestionId, int levelValue)
+        {
+            var numberOfAffectedRows = connection.Execute(
+                             @"DELETE FROM CompetencyAssessmentQuestionRoleRequirements
+                                  WHERE SelfAssessmentID = @assessmentId
+                                    AND AssessmentQuestionID = @assessmentQuestionId
+                                    AND LevelValue = @levelValue
+                                    AND (CompetencyID = @competencyId OR @competencyId IS NULL);"
+                         ,
+                             new { assessmentId, competencyId, assessmentQuestionId, levelValue }
+                         );
+            return numberOfAffectedRows > 0;
+        }
+
     }
 }
