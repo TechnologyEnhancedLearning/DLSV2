@@ -1,6 +1,7 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
 @model SelectFrameworkSourcesViewModel;
 @{
+    var errorHasOccurred = !ViewData.ModelState.IsValid;
     ViewData["Title"] = "Select Framework Sources";
     ViewData["Application"] = "Framework Service";
 }
@@ -29,6 +30,15 @@
     }
 </style>
 
+<div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full">
+        @if (errorHasOccurred)
+        {
+            <vc:error-summary order-of-property-names="@(new[] { nameof(Model.FrameworkId) })" />
+        }
+
+    </div>
+</div>
 <h1>Select framework sources for @Model.CompetencyAssessmentName</h1>
 <dl class="nhsuk-summary-list">
     @if (Model.PrimaryFramework != null)

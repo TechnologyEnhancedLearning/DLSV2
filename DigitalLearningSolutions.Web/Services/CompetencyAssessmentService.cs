@@ -92,6 +92,7 @@ namespace DigitalLearningSolutions.Web.Services
         //DELETE DATA
         bool RemoveFrameworkCompetenciesFromAssessment(int competencyAssessmentId, int frameworkId);
         bool RemoveCompetencyFromAssessment(int competencyAssessmentId, int competencyId);
+        bool RemoveCompetencyGroupFromAssessment(int competencyAssessmentId, int competencyGroupId);
         IEnumerable<CompetencyAssessmentCollaboratorDetail> GetCollaboratorsForCompetencyAssessmentId(int competencyAssessmentId);
         int AddCollaboratorToCompetencyAssessment(int competencyAssessmentId, string? userEmail, bool canModify, int? centreID);
         void RemoveCollaboratorFromCompetencyAssessment(int competencyAssessmentId, int id);
@@ -308,6 +309,10 @@ namespace DigitalLearningSolutions.Web.Services
         public bool RemoveCompetencyFromAssessment(int competencyAssessmentId, int competencyId)
         {
             return competencyAssessmentDataService.RemoveCompetencyFromAssessment(competencyAssessmentId, competencyId);
+        }
+        public bool RemoveCompetencyGroupFromAssessment(int competencyAssessmentId, int competencyGroupId)
+        {
+            return competencyAssessmentDataService.RemoveCompetencyGroupFromAssessment(competencyAssessmentId, competencyGroupId);
         }
 
         public void MoveCompetencyInSelfAssessment(int competencyAssessmentId, int competencyId, string direction)
