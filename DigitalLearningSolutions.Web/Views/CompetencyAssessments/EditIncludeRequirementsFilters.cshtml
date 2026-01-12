@@ -25,11 +25,11 @@
 <h1>Edit include role requirements filters</h1>
 <form method="post" asp-action="EditRoleRequirementsFlags">
     <nhs-form-group nhs-validation-for="IncludeRequirementsFilters">
-        <fieldset class="nhsuk-fieldset" aria-describedby="role-requirements-hint">
+        <fieldset class="nhsuk-fieldset" aria-describedby="role-requirements-filters-hint">
             <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
                 <h2>Do you want to include role requirements filters in the @Model.CompetencyAssessmentName self assessment?</h2>
             </legend>
-            <div class="nhsuk-hint">
+            <div id="role-requirements-filters-hint" class="nhsuk-hint">
                 This will allow the learner to filter self assessment competencies based on whether they are meeting the role requirements set.
             </div>
             <span nhs-validation-for="IncludeRequirementsFilters"></span>
