@@ -123,9 +123,12 @@
 }
 @if (Model.ActionName == "Summary")
 {
-    <a class="nhsuk-button nhsuk-button--secondary" role="button" asp-action="SelectFrameworkSources" asp-route-actionName="AddFramework" asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">
-        Add framework
-    </a>
+    @if (Model.Frameworks.Any())
+    {
+        <a class="nhsuk-button nhsuk-button--secondary" role="button" asp-action="SelectFrameworkSources" asp-route-actionName="AddFramework" asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">
+            Add framework
+        </a>
+    }
     <form method="post">
         <nhs-form-group>
             <vc:single-checkbox asp-for="@nameof(Model.TaskStatus)" label="Mark this task as complete" hint-text="You will still be able to make changes after marking this task as complete."></vc:single-checkbox>

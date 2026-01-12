@@ -14,7 +14,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
             AssessmentName = competencyAssessmentBase.CompetencyAssessmentName;
             FrameworkName = framework.FrameworkName;
             FrameworkId = framework.ID;
-            Vocabulary = competencyAssessmentBase.Vocabulary;
+            Vocabulary = competencyAssessmentBase.Vocabulary ?? "proficiencies";
         }
         public int CompetencyAssessmentId { get; set; }
         public string? AssessmentName { get; set; }
