@@ -13,6 +13,11 @@ namespace DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
             CompetencyAssessmentName = competencyAssessmentName;
             UserRole = userRole;
             FrameworkId = frameworkId;
+            DescriptionStatus = true;
+            ProviderandCategoryStatus = true;
+            VocabularyStatus = true;
+            WorkingGroupStatus = true;
+
         }
 
         public CompetencyAssessmentFeaturesViewModel(CompetencyAssessmentFeaturesViewModel features)
