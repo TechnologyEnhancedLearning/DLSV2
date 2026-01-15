@@ -403,7 +403,7 @@
 
                 if (competencyAssessmentBase == null)
                 {
-                    logger.LogWarning( $"Failed to load Vocabulary page for competencyAssessmentId: {competencyAssessmentId} adminId: {adminId}");
+                    logger.LogWarning($"Failed to load Vocabulary page for competencyAssessmentId: {competencyAssessmentId} adminId: {adminId}");
                     return StatusCode(500);
                 }
 
@@ -563,7 +563,7 @@
                 competencyAssessmentService.InsertCompetenciesIntoAssessmentFromFramework(model.SelectedCompetencyIds, frameworkId, competencyAssessmentId);
             }
             var competencyAssessmentTaskStatus = competencyAssessmentService.GetCompetencyAssessmentTaskStatus(competencyAssessmentId, null);
-            if (!competencyAssessmentTaskStatus.SelectCompetenciesTaskStatus.Value)
+            if (competencyAssessmentTaskStatus.SelectCompetenciesTaskStatus != true)
             {
                 competencyAssessmentService.UpdateSelectCompetenciesTaskStatus(competencyAssessmentId, false, null);
             }
@@ -1181,7 +1181,7 @@
             var result = ValidateCompetencyAssessmentAndRole(model.Id, adminId, "Edit Competency Role Requirement Question Cells", competencyAssessmentBase);
             if (result.StatusCode != 200)
                 return result;
-            if(model.ApplyToAll)
+            if (model.ApplyToAll)
             {
                 competencyAssessmentService.UpdateAssessmentQuestionRoleRequirementsForSelfAssessment(model.Id, model.AssessmentQuestionId, model.ResponseRoleRequirements);
             }
@@ -1189,7 +1189,7 @@
             {
                 competencyAssessmentService.UpdateCompetencyAssessmentQuestionRoleRequirement(model.Id, model.CompetencyId, model.AssessmentQuestionId, model.ResponseRoleRequirements);
             }
-                
+
             return RedirectToAction("EditCompetencyRoleRequirements", new { competencyAssessmentId = model.Id });
         }
         private void SetcompetencyAssessmentFeaturesData(CompetencyAssessmentFeaturesViewModel data)
