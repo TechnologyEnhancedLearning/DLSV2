@@ -36,6 +36,8 @@
         private const string FirstName = "First name";
         private const string DelegateId = "ID";
         private const string Email = "Email";
+        private const string PrimaryEmail = "PrimaryEmail";
+        private const string CentreEmail = "CentreEmail";
         private const string ProfessionalRegistrationNumber = "Professional Registration Number";
         private const string JobGroup = "Job group";
         private const string RegisteredDate = "Registered";
@@ -331,6 +333,8 @@
                     new DataColumn(FirstName),
                     new DataColumn(DelegateId),
                     new DataColumn(Email),
+                    new DataColumn(PrimaryEmail),
+                    new DataColumn(CentreEmail),
                     new DataColumn(ProfessionalRegistrationNumber),
                     new DataColumn(JobGroup),
                     new DataColumn(RegisteredDate),
@@ -370,6 +374,8 @@
             row[FirstName] = delegateRecord.FirstName;
             row[DelegateId] = delegateRecord.CandidateNumber;
             row[Email] = delegateRecord.EmailAddress;
+            row[CentreEmail] = delegateRecord.Email;
+            row[PrimaryEmail] = delegateRecord.PrimaryEmail;
             row[ProfessionalRegistrationNumber] = PrnHelper.GetPrnDisplayString(
                 delegateRecord.HasBeenPromptedForPrn,
                 delegateRecord.ProfessionalRegistrationNumber
