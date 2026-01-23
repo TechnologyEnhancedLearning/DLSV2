@@ -696,7 +696,7 @@
                 BaseSupervisorDelegates AS (
                     SELECT ID, SupervisorAdminID
                     FROM SupervisorDelegates
-                    WHERE SupervisorAdminID = 10857
+                    WHERE SupervisorAdminID = @adminId
                         AND Removed IS NULL
                 ),
                 ValidCAS AS (
