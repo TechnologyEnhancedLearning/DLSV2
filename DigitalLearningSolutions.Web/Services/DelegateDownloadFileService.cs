@@ -372,7 +372,7 @@
             row[FirstName] = delegateRecord.FirstName;
             row[DelegateId] = delegateRecord.CandidateNumber;
             row[CentreEmail] = delegateRecord.Email;
-            row[PrimaryEmail] = delegateRecord.PrimaryEmail;
+            row[PrimaryEmail] = Guid.TryParse(delegateRecord.PrimaryEmail, out _) ? null : delegateRecord.PrimaryEmail;
             row[ProfessionalRegistrationNumber] = PrnHelper.GetPrnDisplayString(
                 delegateRecord.HasBeenPromptedForPrn,
                 delegateRecord.ProfessionalRegistrationNumber

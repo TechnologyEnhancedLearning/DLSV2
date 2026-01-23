@@ -20,7 +20,7 @@
             FirstName = delegateEntity.UserAccount.FirstName;
             LastName = delegateEntity.UserAccount.LastName;
             EmailAddress = delegateEntity.UserCentreDetails?.Email ?? delegateEntity.UserAccount.PrimaryEmail;
-            PrimaryEmail = delegateEntity.UserAccount.PrimaryEmail;
+            PrimaryEmail = Guid.TryParse(delegateEntity.UserAccount.PrimaryEmail, out _) ? null : delegateEntity.UserAccount.PrimaryEmail;
             Password = delegateEntity.UserAccount.PasswordHash;
             CandidateNumber = delegateEntity.DelegateAccount.CandidateNumber;
             DateRegistered = delegateEntity.DelegateAccount.DateRegistered;
