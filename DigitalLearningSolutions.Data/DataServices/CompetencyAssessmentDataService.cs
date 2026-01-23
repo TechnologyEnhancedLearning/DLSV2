@@ -835,11 +835,21 @@
                @"IF EXISTS (SELECT 1 FROM SelfAssessmentTaskStatus WHERE SelfAssessmentId = @id)
                BEGIN
                UPDATE SelfAssessmentTaskStatus
-               SET IntroductoryTextTaskStatus = CASE WHEN @descriptionStatus = 1 THEN 0 ELSE NULL END,
-                       BrandingTaskStatus         = CASE WHEN @providerandCategoryStatus = 1 THEN 0 ELSE NULL END,
-                       VocabularyTaskStatus       = CASE WHEN @vocabularyStatus = 1 THEN 0 ELSE NULL END,
-                       WorkingGroupTaskStatus     = CASE WHEN @workingGroupStatus = 1 THEN 0 ELSE NULL END,
-                       FrameworkLinksTaskStatus   = CASE WHEN @AllframeworkCompetenciesStatus = 1 THEN 0 ELSE NULL END
+                SET IntroductoryTextTaskStatus =
+                 CASE WHEN @descriptionStatus = 1 AND IntroductoryTextTaskStatus <> 1
+                 THEN 0 ELSE IntroductoryTextTaskStatus END,
+                 BrandingTaskStatus =
+                  CASE WHEN @providerandCategoryStatus = 1 AND BrandingTaskStatus <> 1
+                    THEN 0 ELSE BrandingTaskStatus END,
+                    VocabularyTaskStatus =
+                 CASE WHEN @vocabularyStatus = 1 AND VocabularyTaskStatus <> 1
+                  THEN 0 ELSE VocabularyTaskStatus END,
+                WorkingGroupTaskStatus =
+                 CASE WHEN @workingGroupStatus = 1 AND WorkingGroupTaskStatus <> 1
+                 THEN 0 ELSE WorkingGroupTaskStatus END,
+                 FrameworkLinksTaskStatus =
+                  CASE WHEN @AllframeworkCompetenciesStatus = 1 AND FrameworkLinksTaskStatus <> 1
+                  THEN 0 ELSE FrameworkLinksTaskStatus END
                  WHERE SelfAssessmentId = @id;
                     END
                      ELSE
