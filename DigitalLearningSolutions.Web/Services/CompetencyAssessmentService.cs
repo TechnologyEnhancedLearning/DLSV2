@@ -98,7 +98,7 @@ namespace DigitalLearningSolutions.Web.Services
         void RemoveCollaboratorFromCompetencyAssessment(int competencyAssessmentId, int id);
         CompetencyAssessmentCollaboratorNotification? GetCollaboratorNotification(int id, int invitedByAdminId);
         bool HasCompetencyWithSignpostedLearning(int competencyAssessmentId);
-       }
+    }
     public class CompetencyAssessmentService : ICompetencyAssessmentService
     {
         private readonly ICompetencyAssessmentDataService competencyAssessmentDataService;
@@ -486,9 +486,9 @@ namespace DigitalLearningSolutions.Web.Services
             int rowCount = 0;
             foreach (var responseRoleRequirement in responseRoleRequirements)
             {
-                competencyAssessmentDataService.DeleteCompetencyAssessmentQuestionRoleRequirement(assessmentId, null, assessmentQuestionId, responseRoleRequirement.Key);
-                if(responseRoleRequirement.Value != null)
-                { 
+                competencyAssessmentDataService.DeleteCompetencyAssessmentQuestionRoleRequirement(assessmentId, competencyId, assessmentQuestionId, responseRoleRequirement.Key);
+                if (responseRoleRequirement.Value != null)
+                {
                     rowCount += competencyAssessmentDataService.InsertCompetencyAssessmentQuestionRoleRequirement(assessmentId, competencyId, assessmentQuestionId, responseRoleRequirement.Key, responseRoleRequirement.Value);
                 }
             }
