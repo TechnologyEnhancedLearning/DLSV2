@@ -30,7 +30,7 @@
             IsPasswordSet = delegateUser.IsPasswordSet;
             RegistrationType = delegateUser.RegistrationType;
             CentreEmail = delegateUser.Email;
-            PrimaryEmail = delegateUser.PrimaryEmail;
+            PrimaryEmail = Guid.TryParse(delegateUser.PrimaryEmail, out _) ? null : delegateUser.PrimaryEmail;
             Email = delegateUser.EmailAddress;
             JobGroupId = delegateUser.JobGroupId;
             JobGroup = delegateUser.JobGroupName;
