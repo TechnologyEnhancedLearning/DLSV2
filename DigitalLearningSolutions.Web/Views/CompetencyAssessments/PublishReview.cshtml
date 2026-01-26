@@ -1,0 +1,125 @@
+﻿@using DigitalLearningSolutions.Data.Utilities
+@using DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments;
+@inject IClockUtility ClockUtility
+@model PublishReviewViewModel;
+@{
+  ViewData["Title"] = "Publish review";
+}
+<link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
+@section NavMenuItems {
+  <partial name="Shared/_NavMenuItems" />
+}
+  @section NavBreadcrumbs {
+  <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+    <div class="nhsuk-width-container">
+      <ol class="nhsuk-breadcrumb__list">
+         <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewCompetencyAssessments" asp-route-tabname="Mine">Competency Assessments</a></li>
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.CompetencyAssessmentID">Manage Competency Assessment</a></li>
+                <li class="nhsuk-breadcrumb__item">Publish</li>
+      </ol>
+
+    </div>
+  </nav>
+}
+  <h1>Publish @Model.CompetencyAssessmentName self assesment </h1>
+<p>Please ensure that all of the reviewers who are required to approve the self assesment are listed below.</p>
+<input type="hidden" asp-for="CompetencyAssessmentID" />
+<input type="hidden" asp-for="CompetencyAssessmentName" />
+  @if (Model.SelfAssessmentReviews.Any())
+{
+  <table role="table" class="nhsuk-table-responsive">
+    <caption class="nhsuk-table__caption">Framework review status</caption>
+    <thead role="rowgroup" class="nhsuk-table__head">
+      <tr role="row">
+        <th role="columnheader" class="" scope="col">
+          Reviewer
+        </th>
+        <th role="columnheader" class="" scope="col">
+          Requested
+        </th>
+        <th role="columnheader" class="" scope="col">
+          Status
+        </th>
+        <th role="columnheader" class="" scope="col">
+          Actions
+        </th>
+      </tr>
+    </thead>
+    <tbody class="nhsuk-table__body">
+      @foreach (var review in Model.SelfAssessmentReviews)
+      {
+        <tr role="row" class="nhsuk-table__row">
+          <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
+            <span class="nhsuk-table-responsive__heading">Reviewer </span>@review.UserEmail
+          </td>
+          <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
+            <span class="nhsuk-table-responsive__heading">Requested </span>@(review.ReviewRequested.ToShortDateString() != ClockUtility.UtcNow.ToShortDateString() ? review.ReviewRequested.ToShortDateString() : "Today")
+          </td>
+          <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
+            <span class="nhsuk-table-responsive__heading">Status </span>
+            <partial name="Shared/_ApprovalTag" model="review" />
+          </td>
+          <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
+            <span class="nhsuk-table-responsive__heading">Actions </span>
+           
+            @if (review.ReviewComplete == null)
+            {
+              @if (review.ReviewRequested.ToShortDateString() != ClockUtility.UtcNow.ToShortDateString())
+              {
+                                <a asp-action="ResendRequest" asp-route-reviewId="@review.ID" asp-route-competencyAssessmentId="@review.SelfAssessmentID" asp-route-competencyAssessmentCollaboratorId="@review.SelfAssessmentCollaboratorID">
+                Send reminder
+              </a>
+                                <text>&nbsp;</text>
+              }
+                            <a asp-action="RemoveRequest" asp-route-competencyAssessmentId="@review.SelfAssessmentID" asp-route-reviewId="@review.ID">
+                Remove request
+              </a>
+            }
+            else if (!review.SignedOff)
+            {
+             <a asp-action="RequestReReview" asp-route-frameworkId="@review.SelfAssessmentID" asp-route-reviewId="@review.ID">
+               Request Re-review
+             </a>
+            }
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+}
+<div class="nhsuk-grid-row nhsuk-u-margin-top-3">
+  <div class="nhsuk-grid-column-full">
+    @if (Model.CanPublish && Model.CompetencyAssessmentBase.UserRole > 1)
+    {
+      <div class="nhsuk-warning-callout callout-green">
+        <h3 class="nhsuk-warning-callout__label">
+          <span role="text">
+            Ready to publish
+          </span>
+        </h3>
+                <p>There are no outstanding reviewers whose approval is required before this self assesment can be published.</p>
+                <p>Once published, this self assesment and its @Model.VocabPlural().ToLower() can be discovered by Profile Managers and included in national and local job profiles.</p>
+                <p>Please ensure that all of the reviewers who are required to approve the self assesment are listed above before publishing.</p>
+      </div>
+    }
+    else
+    {
+      <div class="nhsuk-warning-callout">
+        <h3 class="nhsuk-warning-callout__label">
+          <span role="text">
+            Approvals required
+          </span>
+        </h3>
+                <p>There are outstanding reviewers whose approval is required before this self assesment can be published.</p>
+      </div>
+    }
+  </div>
+  <div class="nhsuk-grid-column-full">
+    @if (Model.CanPublish)
+    {
+            <a role="button" asp-action="PublishSelfAssesment" asp-route-competencyAssessmentID="@Model.CompetencyAssessmentID" class="nhsuk-button">Publish self assesment</a>
+    }
+    <a role="button" asp-action="SendForReview" asp-route-competencyAssessmentID="@Model.CompetencyAssessmentID" class="nhsuk-button nhsuk-button--secondary">Invite more reviewers</a>
+  </div>
+</div>
+

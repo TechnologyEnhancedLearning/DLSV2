@@ -51,6 +51,14 @@
                     @(Model.PublishStatusID == 1 ? "Draft" : Model.PublishStatusID == 2 ? "In review" : "Published")
                 </strong>
             </dd>
+            <dd class="nhsuk-summary-list__actions">
+                @if (Model.SelfAssessmentReviewID != null && Model.SelfAssessmentCommentID is null)
+        {
+                    <a asp-action="SubmitReview" asp-route-selfAssessmentReviewId="@Model.SelfAssessmentReviewID" asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">
+                        Submit my review<span class="nhsuk-u-visually-hidden"> review</span>
+                </a>
+        }
+            </dd>
         </div>
     </dl>
 
@@ -207,7 +215,7 @@
         </li>
         <li class="nhsuk-task-list__item">
 
-            @if (Model.CompetencyAssessmentTaskStatus.IntroductoryTextTaskStatus != true ||
+          @*   @if (Model.CompetencyAssessmentTaskStatus.IntroductoryTextTaskStatus != true ||
             Model.CompetencyAssessmentTaskStatus.BrandingTaskStatus != true ||
             Model.CompetencyAssessmentTaskStatus.VocabularyTaskStatus != true ||
             Model.CompetencyAssessmentTaskStatus.WorkingGroupTaskStatus != true ||
@@ -229,16 +237,25 @@
                 </div>
             }
             else
-            {
+            { *@
                 <div class="nhsuk-task-list__name-and-hint" aria-describedby="review-status">
+                @if (Model.PublishStatusID == 1)
+            {
                     <a class="nhsuk-link nhsuk-task-list__link" asp-action="SendForReview" asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">
                         Send for review
                     </a>
+                }
+                else
+                {
+                    <a class="nhsuk-link nhsuk-task-list__link" asp-action="PublishReview" asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">
+                        Review and publish
+                    </a>
+                }
                 </div>
                 <div class="nhsuk-task-list__status" id="review-status">
                     <partial name="Shared/_TaskStatusTag" model="@Model.CompetencyAssessmentTaskStatus.RoleRequirementsTaskStatus" />
                 </div>
-            }
+           @*  } *@
         </li>
     </ul>
 </div>

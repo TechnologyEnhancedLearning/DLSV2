@@ -32,6 +32,9 @@
         public string? ReviewerCommentsLabel { get; set; }
         public bool SupervisorSelfAssessmentReview { get; set; }
         public bool SupervisorResultsReview { get; set; }
+        public int? SelfAssessmentReviewID { get; set; }
+        public int? SelfAssessmentCommentID { get; set; }
+
     }
 }
 
