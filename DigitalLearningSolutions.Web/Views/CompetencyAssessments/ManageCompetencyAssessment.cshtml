@@ -229,7 +229,7 @@
             {
                 <div class="nhsuk-task-list__name-and-hint" aria-describedby="review-status">
                     <div>
-                        Review and publish
+                        Send for review
                     </div>
                 </div>
                 <div class="nhsuk-task-list__status nhsuk-task-list__status--cannot-start-yet" id="review-status">
@@ -237,18 +237,25 @@
                 </div>
             }
             else
-          {
+            { 
                 <div class="nhsuk-task-list__name-and-hint" aria-describedby="review-status">
-               
+                @if (Model.PublishStatusID == 1)
+            {
+                    <a class="nhsuk-link nhsuk-task-list__link" asp-action="SendForReview" asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">
+                            Send for review
+                    </a>
+                }
+                else
+                {
                     <a class="nhsuk-link nhsuk-task-list__link" asp-action="PublishReview" asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">
                         Review and publish
                     </a>
-               
+                }
                 </div>
                 <div class="nhsuk-task-list__status" id="review-status">
                     <partial name="Shared/_TaskStatusTag" model="@Model.CompetencyAssessmentTaskStatus.RoleRequirementsTaskStatus" />
                 </div>
-            } 
+             } 
         </li>
     </ul>
 </div>
