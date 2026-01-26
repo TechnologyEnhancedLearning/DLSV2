@@ -1267,6 +1267,8 @@
             var adminId = GetAdminID();
             var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
             var selfAssessmentReview = competencyAssessmentService.GetCompetencySelfAssessmentReviewById(competencyAssessmentId, selfAssessmentReviewId);
+            var result = ValidateCompetencyAssessmentAndRole(competencyAssessmentId, adminId, "Submit Review", competencyAssessmentBase);
+            if (result.StatusCode != 200) return result;
             if (selfAssessmentReview == null || selfAssessmentReview.SignedOff) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 410 });
             var model = new SubmitReviewViewModel(competencyAssessmentId, competencyAssessmentBase.CompetencyAssessmentName, selfAssessmentReview);
             return View(model);
@@ -1279,6 +1281,8 @@
             var centreId = GetCentreId().GetValueOrDefault();
             var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(submit.CompetencyAssessmentID, adminId);
             int? commentId = null;
+            var result = ValidateCompetencyAssessmentAndRole(submit.CompetencyAssessmentID, adminId, "Submit Review", competencyAssessmentBase);
+            if (result.StatusCode != 200) return result;
             if (string.IsNullOrWhiteSpace(submit.SelfAssessmentReview.Comment) || !submit.SelfAssessmentReview.SignedOff)
                 { 
                 if (string.IsNullOrWhiteSpace(submit.SelfAssessmentReview.Comment))
@@ -1300,8 +1304,7 @@
                 return View(submit);
             }
             commentId = competencyAssessmentService.InsertComment(submit.CompetencyAssessmentID, adminId, submit.SelfAssessmentReview.Comment, null);
-          
-            competencyAssessmentService.UpdateSelfAssessmentReview(submit.CompetencyAssessmentID, submit.SelfAssessmentReview.ID, submit.SelfAssessmentReview.SignedOff, commentId);
+                competencyAssessmentService.UpdateSelfAssessmentReview(submit.CompetencyAssessmentID, submit.SelfAssessmentReview.ID, submit.SelfAssessmentReview.SignedOff, commentId);
             frameworkNotificationService.SendCompetencyAssessmentsReviewOutcomeNotification(submit.SelfAssessmentReview.ID, centreId);
             return RedirectToAction("ManageCompetencyAssessment", new { competencyAssessmentId = submit.CompetencyAssessmentID });
         }
