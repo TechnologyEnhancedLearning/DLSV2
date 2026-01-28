@@ -27,8 +27,10 @@
                 </legend>
                 <div class="nhsuk-checkboxes">
                     <div class="nhsuk-checkboxes__item ">
-                        <input class="nhsuk-checkboxes__input" id="DescriptionStatus" name="DescriptionStatus" type="checkbox" aria-describedby="DescriptionStatus-hint" value="true">
-                        <label class="nhsuk-label nhsuk-checkboxes__label" for="DescriptionStatus">
+                        <input class="nhsuk-checkboxes__input"
+                               asp-for="DescriptionStatus"
+                               type="checkbox"/>
+                               <label class="nhsuk-label nhsuk-checkboxes__label" for="DescriptionStatus">
                             Description
                         </label>
                         <div class="nhsuk-hint nhsuk-checkboxes__hint" id="DescriptionStatus-item-hint">
@@ -38,7 +40,7 @@
                 </div>
                 <div class="nhsuk-checkboxes">
                     <div class="nhsuk-checkboxes__item ">
-                        <input class="nhsuk-checkboxes__input" id="ProviderandCategoryStatus" name="ProviderandCategoryStatus" type="checkbox" aria-describedby="ProviderandCategoryStatus-hint" value="true">
+                        <input class="nhsuk-checkboxes__input" asp-for="ProviderandCategoryStatus" type="checkbox" />
                         <label class="nhsuk-label nhsuk-checkboxes__label" for="ProviderandCategoryStatus">
                             Provider and category
                         </label>
@@ -49,7 +51,7 @@
                 </div>
                 <div class="nhsuk-checkboxes">
                     <div class="nhsuk-checkboxes__item ">
-                        <input class="nhsuk-checkboxes__input" id="VocabularyStatus" name="VocabularyStatus" type="checkbox" aria-describedby="VocabularyStatus-hint" value="true">
+                        <input class="nhsuk-checkboxes__input" asp-for="VocabularyStatus" type="checkbox" />
                         <label class="nhsuk-label nhsuk-checkboxes__label" for="DescriptionStatus">
                             Vocabulary
                         </label>
@@ -61,7 +63,7 @@
 
                 <div class="nhsuk-checkboxes">
                     <div class="nhsuk-checkboxes__item ">
-                        <input class="nhsuk-checkboxes__input" id="WorkingGroupStatus" name="WorkingGroupStatus" type="checkbox" aria-describedby="WorkingGroupStatus-hint" value="true">
+                        <input class="nhsuk-checkboxes__input" asp-for="WorkingGroupStatus" type="checkbox" />
                         <label class="nhsuk-label nhsuk-checkboxes__label" for="WorkingGroupStatus">
                             Working group
                         </label>
@@ -73,7 +75,7 @@
 
                 <div class="nhsuk-checkboxes">
                     <div class="nhsuk-checkboxes__item ">
-                        <input class="nhsuk-checkboxes__input" id="AllframeworkCompetenciesStatus" name="AllframeworkCompetenciesStatus" type="checkbox" aria-describedby="AllframeworkCompetenciesStatus-hint" value="true">
+                        <input class="nhsuk-checkboxes__input" asp-for="AllframeworkCompetenciesStatus" type="checkbox" />
                         <label class="nhsuk-label nhsuk-checkboxes__label" for="AllframeworkCompetenciesStatus">
                             All framework competencies
                         </label>

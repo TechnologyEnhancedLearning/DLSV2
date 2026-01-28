@@ -15,6 +15,10 @@ namespace DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
             FrameworkName = framework.FrameworkName;
             FrameworkId = framework.ID;
             Vocabulary = competencyAssessmentBase.Vocabulary;
+            DescriptionStatus = true;
+            ProviderandCategoryStatus = true;
+            VocabularyStatus = true;
+            WorkingGroupStatus = true;
         }
         public int CompetencyAssessmentId { get; set; }
         public int UserRole { get; set; }
