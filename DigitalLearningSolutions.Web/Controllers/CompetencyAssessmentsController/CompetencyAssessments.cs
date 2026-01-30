@@ -843,7 +843,6 @@
                  model.WorkingGroupStatus,
              model.AllframeworkCompetenciesStatus);
             competencyAssessmentService.InsertIntoSelfAssessmentCollaboratorsFromFrameworkCollaborators(model.CompetencyAssessmentId, model.FrameworkId);
-
             return RedirectToAction("ManageCompetencyAssessment", new { model.CompetencyAssessmentId, model.FrameworkId });
         }
 
