@@ -807,6 +807,7 @@
             data.AllframeworkCompetenciesStatus);
             if (!features) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 500 });
             competencyAssessmentService.UpdateSelfAssessmentFromFramework(data.ID, data.FrameworkId);
+            competencyAssessmentService.InsertIntoSelfAssessmentCollaboratorsFromFrameworkCollaborators(data.ID, data.FrameworkId);
             var insertSelfAssessment = competencyAssessmentService.InsertSelfAssessmentStructure(data.ID, data.FrameworkId);
             if (!insertSelfAssessment) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 500 });
             multiPageFormService.ClearMultiPageFormData(MultiPageFormDataFeature.AddCustomWebForm("AssessmentFeaturesDataCWF"), TempData);
@@ -841,6 +842,8 @@
                 model.VocabularyStatus,
                  model.WorkingGroupStatus,
              model.AllframeworkCompetenciesStatus);
+            competencyAssessmentService.InsertIntoSelfAssessmentCollaboratorsFromFrameworkCollaborators(model.CompetencyAssessmentId, model.FrameworkId);
+
             return RedirectToAction("ManageCompetencyAssessment", new { model.CompetencyAssessmentId, model.FrameworkId });
         }
 
