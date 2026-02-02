@@ -87,7 +87,16 @@
         bool UpdatePrimaryFrameworkCompetencies(int assessmentId, int frameworkId);
         void UpdateRoleRequirementsFlags(int assessmentId, bool enforceRoleRequirementsForSignOff, bool includeRequirementsFilters);
         int GetCountOfAsssessmentQuestionInCompetencyAssessment(int competencyAssessmentId, int assessmentQuestionId);
-
+        bool UpdateSupervisorRolesTaskStatus(int competencyAssessmentId, bool taskCompleteChecked);
+        bool UpdateSelfAssessments(int competencyAssessmentId,
+                     int? supervised,
+                     int? signoff,
+                     int? confirm,
+                    int? supervisorDeclarationValue,
+                    string? supervisorCustomText,
+                    int? leanerDeclarationValue,
+                    string? leanerCustomText
+                   );
         //INSERT DATA
         int InsertCompetencyAssessment(int adminId, int centreId, string competencyAssessmentName);
         bool InsertSelfAssessmentFramework(int adminId, int selfAssessmentId, int frameworkId);
@@ -1409,6 +1418,87 @@ ORDER BY
                          );
             return numberOfAffectedRows > 0;
         }
+        public bool UpdateSupervisorRolesTaskStatus(int competencyAssessmentId, bool taskCompleteChecked)
+        {
+            var numberOfAffectedRows = connection.Execute(
+                        @"  UPDATE SelfAssessmentTaskStatus
+            SET SupervisorRolesTaskStatus = CASE WHEN @taskCompleteChecked = 1 THEN 1 ELSE 0 END
+            WHERE SelfAssessmentId = @competencyAssessmentId",
+                        new { competencyAssessmentId, taskCompleteChecked = taskCompleteChecked ? 1 : 0 }
+                    );
+            if (numberOfAffectedRows < 1)
+            {
+                logger.LogWarning(
+                    "Not updating SupervisorRolesTaskStatus as db update failed. " +
+                    $"competencyAssessmentId: {competencyAssessmentId}, taskCompleteChecked: {taskCompleteChecked}"
+                );
+                return false;
+            }
+            return true;
+        }
+        public bool UpdateSelfAssessments(int competencyAssessmentId,
+            int? supervised,
+            int? signoff,
+            int? confirm,
+            int? supervisorDeclarationValue,
+            string? supervisorCustomText,
+            int? leanerDeclarationValue,
+            string? leanerCustomText
+           )
+        {
+            var sqlQuery = @"
+            IF @supervised = 0 
+            BEGIN
+                UPDATE SelfAssessments SET SupervisorResultsReview = 0,
+                SupervisorSelfAssessmentReview = 0,
+                    SignOffSupervisorStatement =  NULL,
+                    SignOffRequestorStatement = NULL
+                WHERE ID = @competencyAssessmentId;
+            END
+            ELSE IF @supervised = 1 AND @signoff = 0
+            BEGIN
+                UPDATE SelfAssessments SET SupervisorResultsReview = 0,
+                SupervisorSelfAssessmentReview = 0,
+                    SignOffSupervisorStatement =  NULL,
+                    SignOffRequestorStatement = NULL
+                WHERE ID = @competencyAssessmentId;
+            END
+            ELSE
+            BEGIN
+                UPDATE SelfAssessments
+                SET SupervisorResultsReview = 1,
+                    SupervisorSelfAssessmentReview = @confirm,
+                    SignOffSupervisorStatement = CASE WHEN @supervisorDeclarationValue = 0 THEN NULL ELSE @supervisorCustomText END,
+                    SignOffRequestorStatement = CASE WHEN @leanerDeclarationValue = 0 THEN NULL ELSE @leanerCustomText END
+                WHERE ID = @competencyAssessmentId;
+            END
+        ";
+            var affectedRows = connection.Execute(
+            sqlQuery,
+            new
+            {
+                competencyAssessmentId,
+                supervised,
+                confirm,
+                signoff,
+                supervisorDeclarationValue,
+                supervisorCustomText,
+                leanerDeclarationValue,
+                leanerCustomText
+            }
+             );
 
+            if ((affectedRows < 1))
+            {
+                logger.LogWarning(
+                    "Not updating SelfAssessments  as db update failed. " +
+                    $"competencyAssessmentId: {competencyAssessmentId}, supervised: {supervised}" +
+                    $"signoff: {signoff}, confirm: {confirm}, supervisorDeclarationValue: {supervisorDeclarationValue} " +
+                    $"supervisorCustomText: {supervisorCustomText}, leanerDeclarationValue: {leanerDeclarationValue}, leanerCustomText: {leanerCustomText} "
+                    );
+                return false;
+            }
+            return true;
+        }
     }
 }

@@ -32,6 +32,8 @@
         public string? ReviewerCommentsLabel { get; set; }
         public bool SupervisorSelfAssessmentReview { get; set; }
         public bool SupervisorResultsReview { get; set; }
+        public string? SignOffRequestorStatement { get; set; }
+        public string? SignOffSupervisorStatement { get; set; }
     }
 }
 
