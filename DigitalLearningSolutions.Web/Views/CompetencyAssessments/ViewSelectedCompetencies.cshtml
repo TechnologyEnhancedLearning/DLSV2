@@ -3,7 +3,7 @@
 @{
     ViewData["Title"] = "Select Competencies";
     ViewData["Application"] = "Framework Service";
-    var groupCount = Model.Competencies
+    var groupCount = Model.Competencies.Where(c => c.GroupId != 0)
         .GroupBy(c => new { c.FrameworkId, c.FrameworkName, c.GroupId, c.GroupName })
         .Count();
 }
@@ -18,7 +18,7 @@
             <ol class="nhsuk-breadcrumb__list">
                 <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewCompetencyAssessments" asp-route-tabname="Mine">Competency Assessments</a></li>
                 <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.ID">Manage Competency Assessment</a></li>
-                <li class="nhsuk-breadcrumb__item">Select @Model.VocabularyPlural.ToLower() to assess</li>
+                <li class="nhsuk-breadcrumb__item">Select @Model.VocabularyPlural To Assess</li>
             </ol>
             <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.ID">Back to manage competency assessment</a></p>
         </div>
@@ -52,86 +52,141 @@
 @{
     int groupNum = 1;
 }
-@foreach (var group in Model.Competencies
-                           .GroupBy(c => new { c.FrameworkId, c.FrameworkName, c.GroupId, c.GroupName }))
+@if (Model.Competencies.Any())
 {
-    <details id="group-@group.Key.GroupId" class="nhsuk-details nhsuk-expander  nhsuk-u-margin-bottom-3" @(group.Count() == 1 ? "open" : (ViewContext.RouteData.Values.ContainsKey("GroupId") ? (ViewContext.RouteData.Values["GroupId"].Equals(group.Key.GroupId.ToString()) ? "open" : "") : ""))>
-        <summary class="nhsuk-details__summary">
-            <span class="nhsuk-details__summary-text">
+    foreach (var group in Model.Competencies.Where(c => c.GroupId != 0)
+                           .GroupBy(c => new { c.FrameworkId, c.FrameworkName, c.GroupId, c.GroupName }))
+    {
+        <details id="group-@group.Key.GroupId" class="nhsuk-details nhsuk-expander  nhsuk-u-margin-bottom-3" @(groupCount == 1 ? "open" : (ViewContext.RouteData.Values.ContainsKey("GroupId") ? (ViewContext.RouteData.Values["GroupId"].Equals(group.Key.GroupId.ToString()) ? "open" : "") : ""))>
+            <summary class="nhsuk-details__summary">
+                <span class="nhsuk-details__summary-text">
 
-                @group.Key.GroupName (@group.Key.FrameworkName)
-            </span>
-            @if (Model.UserRole > 1)
-            {
-                <div class="nhsuk-grid-row nhsuk-u-margin-top-3">
-                    <div class="nhsuk-grid-column-full">
-                        @if (groupNum > 1)
-                        {
-                            <a class="nhsuk-button nhsuk-button--secondary small-edit-button nhsuk-u-margin-right-1" role="button" asp-action="MoveCompetencyGroupInSelfAssessment" asp-route-direction="up" asp-route-competencyAssessmentId="@(ViewContext.RouteData.Values["competencyAssessmentId"])" asp-route-groupId="@group.Key.GroupId">Move <span class="visually-hidden">@group.Key.GroupName</span>up </a>
-                        }
-                        @if (groupNum < groupCount)
-                        {
-                            <a class="nhsuk-button nhsuk-button--secondary small-edit-button nhsuk-u-margin-right-1" role="button" asp-action="MoveCompetencyGroupInSelfAssessment" asp-route-direction="down" asp-route-competencyAssessmentId="@(ViewContext.RouteData.Values["competencyAssessmentId"])" asp-route-groupId="@group.Key.GroupId">Move <span class="visually-hidden">@group.Key.GroupName</span>down </a>
-                        }
-                        <a class="nhsuk-button nhsuk-button--secondary delete-button small-edit-button nhsuk-u-margin-right-1" role="button" asp-action="CompetencyGroupRemoveConfirm" asp-route-competencyAssessmentId="@(ViewContext.RouteData.Values["competencyAssessmentId"])" asp-route-groupId="@group.Key.GroupId" asp-route-competencyCount="@group.Count()">Remove <span class="visually-hidden">@group.Key.GroupName</span></a>
-                    </div>
-                </div>
-            }
-        </summary>
-        <div class="nhsuk-details__text">
-            @if (group.Any())
-            {
-                int competencyNum = 1;
-                foreach (var competency in group)
+                    @group.Key.GroupName (@group.Key.FrameworkName)
+                </span>
+                @if (Model.UserRole > 1)
                 {
-                    <div id="competency-@competency.CompetencyID" class="nhsuk-card nhsuk-u-margin-bottom-5 nhsuk-u-margin-left-3">
-                        <div class="nhsuk-card__content">
-                            @* <partial name="_CompetencyFlags" model="Model.CompetencyFlags" /> *@
-                            @if (competency.CompetencyDescription != null)
+                    <div class="nhsuk-grid-row nhsuk-u-margin-top-3">
+                        <div class="nhsuk-grid-column-full">
+                            @if (groupNum > 1)
                             {
-                                <p class="nhsuk-lede-text">
-                                    @competency.CompetencyName
-                                </p>
-                                <p class="nhsuk-body">
-                                    @(Html.Raw(competency.CompetencyDescription))
-                                </p>
+                                <a class="nhsuk-button nhsuk-button--secondary small-edit-button nhsuk-u-margin-right-1" role="button" asp-action="MoveCompetencyGroupInSelfAssessment" asp-route-direction="up" asp-route-competencyAssessmentId="@(ViewContext.RouteData.Values["competencyAssessmentId"])" asp-route-groupId="@group.Key.GroupId">Move <span class="visually-hidden">@group.Key.GroupName</span>up </a>
                             }
-                            else
+                            @if (groupNum < groupCount)
                             {
-                                <p class="nhsuk-lede-text">
-                                    @competency.CompetencyName
-                                </p>
+                                <a class="nhsuk-button nhsuk-button--secondary small-edit-button nhsuk-u-margin-right-1" role="button" asp-action="MoveCompetencyGroupInSelfAssessment" asp-route-direction="down" asp-route-competencyAssessmentId="@(ViewContext.RouteData.Values["competencyAssessmentId"])" asp-route-groupId="@group.Key.GroupId">Move <span class="visually-hidden">@group.Key.GroupName</span>down </a>
                             }
+                            <a class="nhsuk-button nhsuk-button--secondary delete-button small-edit-button nhsuk-u-margin-right-1" role="button" asp-action="DeleteCompetencyGroupConfirm" asp-route-competencyAssessmentId="@(ViewContext.RouteData.Values["competencyAssessmentId"])" asp-route-competencyGroupId="@group.Key.GroupId" asp-route-competencyCount="@group.Count()">Remove <span class="visually-hidden">@group.Key.GroupName</span></a>
+                        </div>
+                    </div>
+                }
+            </summary>
+            <div class="nhsuk-details__text">
+                @if (group.Any())
+                {
+                    int competencyNum = 1;
+                    foreach (var competency in group)
+                    {
+                        <div id="competency-@competency.CompetencyID" class="nhsuk-card nhsuk-u-margin-bottom-5 nhsuk-u-margin-left-3">
+                            <div class="nhsuk-card__content">
+                                @if (competency.CompetencyDescription != null)
+                                {
+                                    <p class="nhsuk-lede-text">
+                                        @competency.CompetencyName
+                                    </p>
+                                    <p class="nhsuk-body">
+                                        @(Html.Raw(competency.CompetencyDescription))
+                                    </p>
+                                }
+                                else
+                                {
+                                    <p class="nhsuk-lede-text">
+                                        @competency.CompetencyName
+                                    </p>
+                                }
 
-                            <div class="nhsuk-grid-row">
-                                <div class="nhsuk-grid-column-three-quarters">
-                                    @if (Model.UserRole > 1)
-                                    {
-                                        if (competencyNum > 1)
+                                <div class="nhsuk-grid-row">
+                                    <div class="nhsuk-grid-column-three-quarters">
+                                        @if (Model.UserRole > 1)
                                         {
-                                            <a class="nhsuk-button nhsuk-button--secondary small-edit-button nhsuk-u-margin-right-1" role="button" asp-action="MoveCompetencyInSelfAssessment" asp-route-direction="up" asp-route-competencyAssessmentId="@(ViewContext.RouteData.Values["competencyAssessmentId"])" asp-route-competencyId="@competency.CompetencyID">Move <span class="visually-hidden">@competency.CompetencyName</span>up </a>
+                                            if (competencyNum > 1)
+                                            {
+                                                <a class="nhsuk-button nhsuk-button--secondary small-edit-button nhsuk-u-margin-right-1" role="button" asp-action="MoveCompetencyInSelfAssessment" asp-route-direction="up" asp-route-competencyAssessmentId="@(ViewContext.RouteData.Values["competencyAssessmentId"])" asp-route-competencyId="@competency.CompetencyID">Move <span class="visually-hidden">@competency.CompetencyName</span>up </a>
+                                            }
+                                            if (competencyNum < group.Count())
+                                            {
+                                                <a class="nhsuk-button nhsuk-button--secondary small-edit-button nhsuk-u-margin-right-1" role="button" asp-action="MoveCompetencyInSelfAssessment" asp-route-direction="down" asp-route-competencyAssessmentId="@(ViewContext.RouteData.Values["competencyAssessmentId"])" asp-route-competencyId="@competency.CompetencyID">Move <span class="visually-hidden">@competency.CompetencyName</span>down </a>
+                                            }
+                                            <a class="nhsuk-button nhsuk-button--secondary delete-button small-edit-button nhsuk-u-margin-right-1" role="button" asp-action="DeleteCompetency" asp-route-competencyAssessmentId="@(ViewContext.RouteData.Values["competencyAssessmentId"])" asp-route-competencyId="@competency.CompetencyID">Remove <span class="visually-hidden">@competency.CompetencyName</span></a>
                                         }
-                                        if (competencyNum < group.Count())
-                                        {
-                                            <a class="nhsuk-button nhsuk-button--secondary small-edit-button nhsuk-u-margin-right-1" role="button" asp-action="MoveCompetencyInSelfAssessment" asp-route-direction="down" asp-route-competencyAssessmentId="@(ViewContext.RouteData.Values["competencyAssessmentId"])" asp-route-competencyId="@competency.CompetencyID">Move <span class="visually-hidden">@competency.CompetencyName</span>down </a>
-                                        }
-                                        <a class="nhsuk-button nhsuk-button--secondary delete-button small-edit-button nhsuk-u-margin-right-1" role="button" asp-action="DeleteCompetency" asp-route-competencyAssessmentId="@(ViewContext.RouteData.Values["competencyAssessmentId"])" asp-route-competencyId="@competency.CompetencyID">Remove <span class="visually-hidden">@competency.CompetencyName</span></a>
-                                    }
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    competencyNum++;
+                        competencyNum++;
+                    }
                 }
-            }
-            else
+                else
+                {
+                    <p>No @ViewData["VocabPlural"].ToString().ToLower() in this group.</p>
+                }
+            </div>
+        </details>
+        groupNum++;
+    }
+    foreach (var ungroup in Model.Competencies.Where(c => c.GroupId == 0)
+                                                       .GroupBy(c => new { c.FrameworkId, c.FrameworkName, c.GroupId, c.GroupName }))
+    {
+        @if (ungroup.Any())
+        {
+            int competencyNum = 1;
+            foreach (var competency in ungroup)
             {
-                <p>No @ViewData["VocabPlural"].ToString().ToLower() in this group.</p>
+                <div id="competency-@competency.CompetencyID" class="nhsuk-card nhsuk-u-margin-bottom-5 nhsuk-u-margin-left-3">
+                    <div class="nhsuk-card__content">
+                        @if (competency.CompetencyDescription != null)
+                        {
+                            <p class="nhsuk-lede-text">
+                                @competency.CompetencyName
+                            </p>
+                            <p class="nhsuk-body">
+                                @(Html.Raw(competency.CompetencyDescription))
+                            </p>
+                        }
+                        else
+                        {
+                            <p class="nhsuk-lede-text">
+                                @competency.CompetencyName
+                            </p>
+                        }
+
+                        <div class="nhsuk-grid-row">
+                            <div class="nhsuk-grid-column-three-quarters">
+                                @if (Model.UserRole > 1)
+                                {
+                                    if (competencyNum > 1)
+                                    {
+                                        <a class="nhsuk-button nhsuk-button--secondary small-edit-button nhsuk-u-margin-right-1" role="button" asp-action="MoveCompetencyInSelfAssessment" asp-route-direction="up" asp-route-competencyAssessmentId="@(ViewContext.RouteData.Values["competencyAssessmentId"])" asp-route-competencyId="@competency.CompetencyID">Move <span class="visually-hidden">@competency.CompetencyName</span>up </a>
+                                    }
+                                    if (competencyNum < ungroup.Count())
+                                    {
+                                        <a class="nhsuk-button nhsuk-button--secondary small-edit-button nhsuk-u-margin-right-1" role="button" asp-action="MoveCompetencyInSelfAssessment" asp-route-direction="down" asp-route-competencyAssessmentId="@(ViewContext.RouteData.Values["competencyAssessmentId"])" asp-route-competencyId="@competency.CompetencyID">Move <span class="visually-hidden">@competency.CompetencyName</span>down </a>
+                                    }
+                                    <a class="nhsuk-button nhsuk-button--secondary delete-button small-edit-button nhsuk-u-margin-right-1" role="button" asp-action="DeleteCompetency" asp-route-competencyAssessmentId="@(ViewContext.RouteData.Values["competencyAssessmentId"])" asp-route-competencyId="@competency.CompetencyID">Remove <span class="visually-hidden">@competency.CompetencyName</span></a>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                competencyNum++;
             }
-        </div>
-    </details>
-    groupNum++;
+        }
+    }
 }
+else
+{
+    <p>There are no @Model.VocabularyPlural.ToLower() selected for this competency assessment.</p>
+}
+
 <form method="post">
     <input name="ID" type="hidden" asp-for="ID" />
     <nhs-form-group>

@@ -1,7 +1,12 @@
 ﻿using DigitalLearningSolutions.Data.DataServices;
 using DigitalLearningSolutions.Data.Models.CompetencyAssessments;
-using System.Collections.Generic;
 using DigitalLearningSolutions.Web.Helpers;
+using DigitalLearningSolutions.Web.Models;
+using DigitalLearningSolutions.Web.ViewModels.Frameworks;
+using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Reports;
+using DocumentFormat.OpenXml.Drawing.Charts;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace DigitalLearningSolutions.Web.Services
 {
@@ -33,7 +38,8 @@ namespace DigitalLearningSolutions.Web.Services
         int[] GetLinkedFrameworkCompetencyIds(int competencyAssessmentId, int frameworkId);
         CompetencyAssessmentFeatures? GetCompetencyAssessmentFeaturesTaskStatus(int competencyAssessmentId);
         int? GetSelfAssessmentStructure(int competencyAssessmentId);
-
+        List<GroupedCompetencyWithAssessmentRoleRequirements> GetGroupedCompetencyWithAssessmentRoleRequirements(int competencyAssessmentId, int? competencyId, int? assessmentQuestionId);
+        int GetCountOfAsssessmentQuestionInCompetencyAssessment(int competencyAssessmentId, int assessmentQuestionId);
         //UPDATE DATA
         bool UpdateCompetencyAssessmentName(int competencyAssessmentId, int adminId, string competencyAssessmentName);
         bool UpdateCompetencyRoleProfileLinks(int competencyAssessmentId, int adminId, int? professionalGroupId, int? subGroupId, int? roleId);
@@ -49,6 +55,7 @@ namespace DigitalLearningSolutions.Web.Services
         bool UpdateOptionalCompetenciesTaskStatus(int assessmentId, bool taskStatus, bool? previousStatus);
         bool UpdateRoleRequirementsTaskStatus(int assessmentId, bool taskStatus, bool? previousStatus);
         bool UpdateWorkingGroupTaskStatus(int assessmentId, bool taskStatus, bool? previousStatus);
+        bool UpdateCompetencyAssessmentRoleRequirementsTaskStatus(int assessmentId, bool taskStatus, bool? previousStatus);
         bool UpdateCompetencyAssessmentOptions(
             bool includeLearnerDeclarationPrompt,
             bool includesSignposting,
@@ -84,6 +91,9 @@ namespace DigitalLearningSolutions.Web.Services
                    string? leanerCustomText
                   );
 
+        void UpdateRoleRequirementsFlags(int assessmentId, bool enforceRoleRequirementsForSignOff, bool includeRequirementsFilters);
+        int UpdateAssessmentQuestionRoleRequirementsForSelfAssessment(int assessmentId, int assessmentQuestionId, Dictionary<int, int?> responseRoleRequirements);
+        int UpdateCompetencyAssessmentQuestionRoleRequirement(int assessmentId, int competencyId, int assessmentQuestionId, Dictionary<int, int?> responseRoleRequirements);
         //INSERT DATA
         int InsertCompetencyAssessment(int adminId, int centreId, string competencyAssessmentName, int? frameworkId);
         bool InsertSelfAssessmentFramework(int adminId, int assessmentId, int frameworkId);
@@ -93,6 +103,7 @@ namespace DigitalLearningSolutions.Web.Services
         //DELETE DATA
         bool RemoveFrameworkCompetenciesFromAssessment(int competencyAssessmentId, int frameworkId);
         bool RemoveCompetencyFromAssessment(int competencyAssessmentId, int competencyId);
+        bool RemoveCompetencyGroupFromAssessment(int competencyAssessmentId, int competencyGroupId);
         IEnumerable<CompetencyAssessmentCollaboratorDetail> GetCollaboratorsForCompetencyAssessmentId(int competencyAssessmentId);
         int AddCollaboratorToCompetencyAssessment(int competencyAssessmentId, string? userEmail, bool canModify, int? centreID);
         void RemoveCollaboratorFromCompetencyAssessment(int competencyAssessmentId, int id);
@@ -310,6 +321,10 @@ namespace DigitalLearningSolutions.Web.Services
         {
             return competencyAssessmentDataService.RemoveCompetencyFromAssessment(competencyAssessmentId, competencyId);
         }
+        public bool RemoveCompetencyGroupFromAssessment(int competencyAssessmentId, int competencyGroupId)
+        {
+            return competencyAssessmentDataService.RemoveCompetencyGroupFromAssessment(competencyAssessmentId, competencyGroupId);
+        }
 
         public void MoveCompetencyInSelfAssessment(int competencyAssessmentId, int competencyId, string direction)
         {
@@ -326,6 +341,10 @@ namespace DigitalLearningSolutions.Web.Services
             return competencyAssessmentDataService.UpdateCompetencyAssessmentFeaturesTaskStatus(id, descriptionStatus, providerandCategoryStatus, vocabularyStatus,
             workingGroupStatus, AllframeworkCompetenciesStatus);
         }
+        public bool UpdateCompetencyAssessmentRoleRequirementsTaskStatus(int assessmentId, bool taskStatus, bool? previousStatus)
+        {
+            return competencyAssessmentDataService.UpdateCompetencyAssessmentRoleRequirementsTaskStatus(assessmentId, taskStatus);
+        }
         public CompetencyAssessmentFeatures? GetCompetencyAssessmentFeaturesTaskStatus(int competencyAssessmentId)
         {
             return competencyAssessmentDataService.GetCompetencyAssessmentFeaturesTaskStatus(competencyAssessmentId);
@@ -338,7 +357,7 @@ namespace DigitalLearningSolutions.Web.Services
         {
             competencyAssessmentDataService.UpdateSelfAssessmentFromFramework(selfAssessmentId, frameworkId);
         }
-       public  bool UpdatePrimaryFrameworkCompetencies(int assessmentId, int frameworkId)
+        public bool UpdatePrimaryFrameworkCompetencies(int assessmentId, int frameworkId)
         {
             return competencyAssessmentDataService.UpdatePrimaryFrameworkCompetencies(assessmentId, frameworkId);
         }
@@ -408,6 +427,101 @@ namespace DigitalLearningSolutions.Web.Services
         public bool UpdateCompetencyAssessmentOptionsTaskStatus(int assessmentId, bool taskStatus)
         {
             return competencyAssessmentDataService.UpdateCompetencyAssessmentOptionsTaskStatus(assessmentId, taskStatus);
+        }
+
+        public List<GroupedCompetencyWithAssessmentRoleRequirements> GetGroupedCompetencyWithAssessmentRoleRequirements(int competencyAssessmentId, int? competencyId, int? assessmentQuestionId)
+        {
+            var competencyWithAssessmentQuestionRoleRequirements = competencyAssessmentDataService.GetCompetencyWithAssessmentQuestionRoleRequirements(competencyAssessmentId, competencyId, assessmentQuestionId).ToList();
+            return [.. competencyWithAssessmentQuestionRoleRequirements
+       .GroupBy(x => new
+       {
+           x.CompetencyGroupID,
+           x.GroupName
+       })
+       .Select(group => new GroupedCompetencyWithAssessmentRoleRequirements
+       {
+           CompetencyGroupID = group.Key.CompetencyGroupID ?? 0,
+           GroupName = group.Key.GroupName ?? "Ungrouped",
+
+           Competencies = [.. group
+               .GroupBy(c => new
+               {
+                   c.CompetencyID,
+                   c.Competency,
+                   c.CompetencyDescription,
+                   c.Optional
+               })
+               .Select(comp => new CompetencyModel
+               {
+                   CompetencyID = comp.Key.CompetencyID,
+                   Name = comp.Key.Competency,
+                   Description = comp.Key.CompetencyDescription,
+                   Optional = comp.Key.Optional,
+
+                   Questions = [.. comp
+    .GroupBy(q => new
+    {
+        q.AssessmentQuestionID,
+        q.Question,
+        q.InputTypeName,
+        q.Required
+    })
+    .Select(q => new AssessmentQuestionModel
+    {
+        AssessmentQuestionID = q.Key.AssessmentQuestionID,
+        Question = q.Key.Question,
+        InputTypeName = q.Key.InputTypeName,
+        Required = q.Key.Required,
+        Responses = [.. q
+            .Where(r => r.ResponseValue.HasValue)
+            .Select(r => new ResponseModel
+            {
+                ResponseValue = r.ResponseValue,
+                ResponseLabel = r.Response,
+                LevelRAG = r.LevelRAG
+            })
+            .DistinctBy(r => r.ResponseValue)]
+    })]
+               })]
+       })];
+        }
+
+        public void UpdateRoleRequirementsFlags(int assessmentId, bool enforceRoleRequirementsForSignOff, bool includeRequirementsFilters)
+        {
+            competencyAssessmentDataService.UpdateRoleRequirementsFlags(assessmentId, enforceRoleRequirementsForSignOff, includeRequirementsFilters);
+        }
+
+        public int GetCountOfAsssessmentQuestionInCompetencyAssessment(int competencyAssessmentId, int assessmentQuestionId)
+        {
+            return competencyAssessmentDataService.GetCountOfAsssessmentQuestionInCompetencyAssessment(competencyAssessmentId, assessmentQuestionId);
+        }
+
+        public int UpdateAssessmentQuestionRoleRequirementsForSelfAssessment(int assessmentId, int assessmentQuestionId, Dictionary<int, int?> responseRoleRequirements)
+        {
+            int rowCount = 0;
+            foreach (var responseRoleRequirement in responseRoleRequirements)
+            {
+                competencyAssessmentDataService.DeleteCompetencyAssessmentQuestionRoleRequirement(assessmentId, null, assessmentQuestionId, responseRoleRequirement.Key);
+                if (responseRoleRequirement.Value != null)
+                {
+                    rowCount += competencyAssessmentDataService.InsertAssessmentQuestionRoleRequirementForSelfAssessment(assessmentId, assessmentQuestionId, responseRoleRequirement.Key, responseRoleRequirement.Value);
+                }
+            }
+            return rowCount;
+        }
+
+        public int UpdateCompetencyAssessmentQuestionRoleRequirement(int assessmentId, int competencyId, int assessmentQuestionId, Dictionary<int, int?> responseRoleRequirements)
+        {
+            int rowCount = 0;
+            foreach (var responseRoleRequirement in responseRoleRequirements)
+            {
+                competencyAssessmentDataService.DeleteCompetencyAssessmentQuestionRoleRequirement(assessmentId, competencyId, assessmentQuestionId, responseRoleRequirement.Key);
+                if (responseRoleRequirement.Value != null)
+                {
+                    rowCount += competencyAssessmentDataService.InsertCompetencyAssessmentQuestionRoleRequirement(assessmentId, competencyId, assessmentQuestionId, responseRoleRequirement.Key, responseRoleRequirement.Value);
+                }
+            }
+            return rowCount;
         }
     }
 }

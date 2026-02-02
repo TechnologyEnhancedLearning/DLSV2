@@ -22,6 +22,8 @@
         public string? SignOffRequestorStatement { get; set; }
         public string? SignOffSupervisorStatement { get; set; }
         public string? Vocabulary { get; set; }
+        public bool EnforceRoleRequirementsForSignOff { get; set; }
+        public bool IncludeRequirementsFilters { get; set; }
         public int? MinimumOptionalCompetencies { get; set; }
         public string? ManageOptionalCompetenciesPrompt { get; set; }
         public bool IncludeLearnerDeclarationPrompt { get; set; }

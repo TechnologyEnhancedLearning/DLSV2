@@ -53,7 +53,7 @@ namespace DigitalLearningSolutions.Web.Helpers
                     (f == (int)SelfAssessmentCompetencyFilter.ConfirmationRejected && c.AssessmentQuestions.Any(q => q.Verified.HasValue && q.SignedOff != true)) ||
                     (f == (int)SelfAssessmentCompetencyFilter.PendingConfirmation && c.AssessmentQuestions.Any(q => q.ResultId != null && q.Verified == null && q.Requested != null && q.UserIsVerifier == false)) ||
                     (f == (int)SelfAssessmentCompetencyFilter.AwaitingConfirmation && c.AssessmentQuestions.Any(q => q.Verified == null && q.Requested != null && q.UserIsVerifier == true)) ||
-                    (f == (int)SelfAssessmentCompetencyFilter.RequiresSelfAssessment && c.AssessmentQuestions.Any(q => q.ResultId == null)) ||
+                    (f == (int)SelfAssessmentCompetencyFilter.RequiresSelfAssessment && c.AssessmentQuestions.Any(q => q.ResultId == null || q.Result == null)) ||
                     (f == (int)SelfAssessmentCompetencyFilter.SelfAssessed && c.AssessmentQuestions.Any(q => q.ResultId != null && q.Requested == null && q.SignedOff == null))
                 );
 

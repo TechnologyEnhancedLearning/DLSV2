@@ -168,7 +168,7 @@
             @if (Model.CompetencyAssessmentTaskStatus.SelectCompetenciesTaskStatus == null)
             {
                 <div class="nhsuk-task-list__name-and-hint" aria-describedby="role-requirements-status">
-                    Set @Model.VocabularySingular.ToLower() attainment requirements
+                    Set @Model.VocabularySingular.ToLower() role requirements
                 </div>
                 <div class="nhsuk-task-list__status nhsuk-task-list__status--cannot-start-yet" id="role-requirements-status">
                     Cannot start yet
@@ -177,8 +177,8 @@
             else
             {
                 <div class="nhsuk-task-list__name-and-hint" aria-describedby="role-requirements-status">
-                    <a class="nhsuk-link nhsuk-task-list__link" asp-action="SetRoleRequirements" asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">
-                        Set @Model.VocabularySingular.ToLower() attainment requirements
+                    <a class="nhsuk-link nhsuk-task-list__link" asp-action="ManageCompetencyRoleRequirements" asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">
+                        Set @Model.VocabularySingular.ToLower() role requirements
                     </a>
                 </div>
                 <div class="nhsuk-task-list__status" id="role-requirements-status">

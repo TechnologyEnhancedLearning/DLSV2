@@ -30,11 +30,16 @@
 
                 <div class="nhsuk-summary-list__row details-list-with-button__row">
                     <dt class="nhsuk-summary-list__key ">
-                        Email
+                        Primary email
                     </dt>
-                    <partial name="_SearchableSummaryFieldValue" model=@(Model.DelegateInfo.Email, "email") />
+                    <partial name="_SearchableSummaryFieldValue" model=@(Model.DelegateInfo.PrimaryEmail, "email") />
                 </div>
-
+                <div class="nhsuk-summary-list__row details-list-with-button__row">
+                    <dt class="nhsuk-summary-list__key ">
+                        Centre email
+                    </dt>
+                    <partial name="_SearchableSummaryFieldValue" model=@(Model.DelegateInfo.CentreEmail, "email") />
+                </div>
                 <div class="nhsuk-summary-list__row details-list-with-button__row">
                     <dt class="nhsuk-summary-list__key">
                         ID
