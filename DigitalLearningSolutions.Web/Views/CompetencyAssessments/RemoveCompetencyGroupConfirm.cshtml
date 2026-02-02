@@ -30,10 +30,10 @@
         <form asp-action="DeleteCompetencyGroup" asp-route-competencyAssessmentId="@Model.CompetencyAssessmentId" asp-route-competencyGroupId="@Model.CompetencyGroupId">
             <div class="nhsuk-u-reading-width">
                 <h1 id="form-heading" class="nhsuk-fieldset__heading nhsuk-label--l">
-                    Remove Competency Group and @Model.CompetencyCount Competencies
+                    Remove @Model.VocabularySingular Group and @Model.CompetencyCount @(Model.CompetencyCount > 1 ? Model.VocabularyPlural : Model.VocabularySingular)
                 </h1>
                 <p>
-                    This action will remove the competency group and the @Model.CompetencyCount competencies it contains. Are you sure you wish to continue?
+                    This action will remove the @Model.VocabularySingular.ToLower() group and the @Model.CompetencyCount @(Model.CompetencyCount > 1 ? Model.VocabularyPlural.ToLower() : Model.VocabularySingular.ToLower()) it contains.
                 </p>
                 <p>
                     Are you sure that you wish to proceed?
