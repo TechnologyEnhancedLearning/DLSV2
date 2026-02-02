@@ -83,6 +83,16 @@ namespace DigitalLearningSolutions.Web.Services
         void UpdateRoleRequirementsFlags(int assessmentId, bool enforceRoleRequirementsForSignOff, bool includeRequirementsFilters);
         int UpdateAssessmentQuestionRoleRequirementsForSelfAssessment(int assessmentId, int assessmentQuestionId, Dictionary<int, int?> responseRoleRequirements);
         int UpdateCompetencyAssessmentQuestionRoleRequirement(int assessmentId, int competencyId, int assessmentQuestionId, Dictionary<int, int?> responseRoleRequirements);
+        bool UpdateSupervisorRolesTaskStatus(int competencyAssessmentId, bool taskCompleteChecked);
+        bool UpdateSelfAssessments(int competencyAssessmentId,
+                    int? supervised,
+                    int? signoff,
+                    int? confirm,
+                   int? supervisorDeclarationValue,
+                   string? supervisorCustomText,
+                   int? leanerDeclarationValue,
+                   string? leanerCustomText
+                  );
         //INSERT DATA
         int InsertCompetencyAssessment(int adminId, int centreId, string competencyAssessmentName, int? frameworkId);
         bool InsertSelfAssessmentFramework(int adminId, int assessmentId, int frameworkId);
@@ -493,6 +503,23 @@ namespace DigitalLearningSolutions.Web.Services
                 }
             }
             return rowCount;
+        }
+        public bool UpdateSupervisorRolesTaskStatus(int competencyAssessmentId, bool taskCompleteChecked)
+        {
+            return competencyAssessmentDataService.UpdateSupervisorRolesTaskStatus(competencyAssessmentId, taskCompleteChecked);
+        }
+        public bool UpdateSelfAssessments(int competencyAssessmentId,
+             int? supervised,
+             int? signoff,
+             int? confirm,
+             int? supervisorDeclarationValue,
+             string? supervisorCustomText,
+             int? leanerDeclarationValue,
+             string? leanerCustomText
+                   )
+        {
+            return competencyAssessmentDataService.UpdateSelfAssessments(competencyAssessmentId, supervised, signoff, confirm,
+            supervisorDeclarationValue, supervisorCustomText, leanerDeclarationValue, leanerCustomText);
         }
     }
 }
