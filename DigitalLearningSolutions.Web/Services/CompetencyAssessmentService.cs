@@ -92,6 +92,16 @@ namespace DigitalLearningSolutions.Web.Services
         void ArchiveSelfAssessmentReviewRequest(int reviewId);
         void UpdateSelfAssessmentReview(int selfAssessmentID, int reviewId, bool signedOff, int? commentId);
         void UpdateReviewRequestedDate(int reviewId);
+        bool UpdateSupervisorRolesTaskStatus(int competencyAssessmentId, bool taskCompleteChecked);
+        bool UpdateSelfAssessments(int competencyAssessmentId,
+                    int? supervised,
+                    int? signoff,
+                    int? confirm,
+                   int? supervisorDeclarationValue,
+                   string? supervisorCustomText,
+                   int? leanerDeclarationValue,
+                   string? leanerCustomText
+                  );
         //INSERT DATA
         int InsertCompetencyAssessment(int adminId, int centreId, string competencyAssessmentName, int? frameworkId);
         bool InsertSelfAssessmentFramework(int adminId, int assessmentId, int frameworkId);
@@ -548,6 +558,22 @@ namespace DigitalLearningSolutions.Web.Services
        public  int InsertCompetencySelfAssessmentReReview(int reviewId)
         {
           return competencyAssessmentDataService.InsertCompetencySelfAssessmentReReview(reviewId);
+        public bool UpdateSupervisorRolesTaskStatus(int competencyAssessmentId, bool taskCompleteChecked)
+        {
+            return competencyAssessmentDataService.UpdateSupervisorRolesTaskStatus(competencyAssessmentId, taskCompleteChecked);
+        }
+        public bool UpdateSelfAssessments(int competencyAssessmentId,
+             int? supervised,
+             int? signoff,
+             int? confirm,
+             int? supervisorDeclarationValue,
+             string? supervisorCustomText,
+             int? leanerDeclarationValue,
+             string? leanerCustomText
+                   )
+        {
+            return competencyAssessmentDataService.UpdateSelfAssessments(competencyAssessmentId, supervised, signoff, confirm,
+            supervisorDeclarationValue, supervisorCustomText, leanerDeclarationValue, leanerCustomText);
         }
     }
 }
