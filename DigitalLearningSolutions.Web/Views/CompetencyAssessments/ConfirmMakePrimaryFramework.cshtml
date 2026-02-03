@@ -25,73 +25,79 @@
                 <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--m">
                     Which features of the framework do you want to copy into this @Model.FrameworkName framework?
                 </legend>
-                <div class="nhsuk-checkboxes">
-                    <div class="nhsuk-checkboxes__item ">
+                <div class="nhsuk-checkboxes__item">
+                    <input class="nhsuk-checkboxes__input"
+                           asp-for="DescriptionStatus"
+                           aria-describedby="VocabularyStatus-item-hint"
+                           type="checkbox" />
+                    <label class="nhsuk-label nhsuk-checkboxes__label" for="DescriptionStatus">
+                        Description
+                    </label>
+                    <div class="nhsuk-hint nhsuk-checkboxes__hint" id="DescriptionStatus-item-hint">
+                        The framework description will be copied into the competency assessment description.
+                    </div>
+                </div>
+                <div class="nhsuk-checkboxes__item">
+                    <input class="nhsuk-checkboxes__input"
+                           asp-for="ProviderandCategoryStatus"
+                           aria-describedby="ProviderandCategoryStatus-item-hint"
+                           type="checkbox" />
+                    <label class="nhsuk-label nhsuk-checkboxes__label" for="ProviderandCategoryStatus">
+                        Provider and category
+                    </label>
+                    <div class="nhsuk-hint nhsuk-checkboxes__hint" id="ProviderandCategoryStatus-item-hint">
+                        The framework branding (provider and category) will be copied.
+                    </div>
+                </div>
+                <div class="nhsuk-checkboxes__item">
+                    <input class="nhsuk-checkboxes__input"
+                           asp-for="VocabularyStatus"
+                           aria-describedby="VocabularyStatus-item-hint"
+                           type="checkbox" />
+                    <label class="nhsuk-label nhsuk-checkboxes__label" for="VocabularyStatus">
+                        Vocabulary
+                    </label>
+                    <div class="nhsuk-hint nhsuk-checkboxes__hint" id="VocabularyStatus-item-hint">
+                        The framework vocabulary (such as proficiency, competency, or capability) will be copied.
+                    </div>
+                </div>
+                <div class="nhsuk-checkboxes__item">
+                    <input class="nhsuk-checkboxes__input"
+                           asp-for="WorkingGroupStatus"
+                           aria-describedby="WorkingGroupStatus-item-hint"
+                           type="checkbox" />
+                    <label class="nhsuk-label nhsuk-checkboxes__label" for="WorkingGroupStatus">
+                        Working group
+                    </label>
+                    <div class="nhsuk-hint nhsuk-checkboxes__hint" id="WorkingGroupStatus-item-hint">
+                        Contributors and reviewers from the framework will be copied.
+                    </div>
+                </div>
+                    <div class="nhsuk-checkboxes__item">
                         <input class="nhsuk-checkboxes__input"
-                               asp-for="DescriptionStatus"
-                               type="checkbox"/>
-                               <label class="nhsuk-label nhsuk-checkboxes__label" for="DescriptionStatus">
-                            Description
-                        </label>
-                        <div class="nhsuk-hint nhsuk-checkboxes__hint" id="DescriptionStatus-item-hint">
-                            The framework description will be copied into the competency assessment description.
-                        </div>
-                    </div>
-                </div>
-                <div class="nhsuk-checkboxes">
-                    <div class="nhsuk-checkboxes__item ">
-                        <input class="nhsuk-checkboxes__input" asp-for="ProviderandCategoryStatus" type="checkbox" />
-                        <label class="nhsuk-label nhsuk-checkboxes__label" for="ProviderandCategoryStatus">
-                            Provider and category
-                        </label>
-                        <div class="nhsuk-hint nhsuk-checkboxes__hint" id="ProviderandCategoryStatus-item-hint">
-                            The framework branding (provider and category) will be copied.
-                        </div>
-                    </div>
-                </div>
-                <div class="nhsuk-checkboxes">
-                    <div class="nhsuk-checkboxes__item ">
-                        <input class="nhsuk-checkboxes__input" asp-for="VocabularyStatus" type="checkbox" />
-                        <label class="nhsuk-label nhsuk-checkboxes__label" for="DescriptionStatus">
-                            Vocabulary
-                        </label>
-                        <div class="nhsuk-hint nhsuk-checkboxes__hint" id="VocabularyStatus-item-hint">
-                            The framework vocabulary (such as proficiency, competency, or capability) will be copied.
-                        </div>
-                    </div>
-                </div>
-
-                <div class="nhsuk-checkboxes">
-                    <div class="nhsuk-checkboxes__item ">
-                        <input class="nhsuk-checkboxes__input" asp-for="WorkingGroupStatus" type="checkbox" />
-                        <label class="nhsuk-label nhsuk-checkboxes__label" for="WorkingGroupStatus">
-                            Working group
-                        </label>
-                        <div class="nhsuk-hint nhsuk-checkboxes__hint" id="WorkingGroupStatus-item-hint">
-                            Contributors and reviewers from the framework will be copied.
-                        </div>
-                    </div>
-                </div>
-
-                <div class="nhsuk-checkboxes">
-                    <div class="nhsuk-checkboxes__item ">
-                        <input class="nhsuk-checkboxes__input" asp-for="AllframeworkCompetenciesStatus" type="checkbox" />
+                               asp-for="AllframeworkCompetenciesStatus"
+                               aria-describedby="AllframeworkCompetenciesStatus-item-hint"
+                               type="checkbox" />
                         <label class="nhsuk-label nhsuk-checkboxes__label" for="AllframeworkCompetenciesStatus">
-                            All framework competencies
+                            Working group
                         </label>
                         <div class="nhsuk-hint nhsuk-checkboxes__hint" id="AllframeworkCompetenciesStatus-item-hint">
                             All competencies in the framework will be copied.
                         </div>
                     </div>
-                </div>
             </fieldset>
             <hr class="nhsuk-section-break nhsuk-section-break--l nhsuk-section-break--visible" />
 
             <nhs-form-group>
                 <div class="nhsuk-checkboxes__item">
+                    <input class="nhsuk-checkboxes__input"
+                           id="Confirm"
+                           name="Confirm"
+                           type="checkbox"
+                           aria-describedby="Confirm-hint"
+                           value="true">
 
-                    <input class="nhsuk-checkboxes__input" id="Confirm" name="Confirm" type="checkbox" aria-describedby="Confirm-hint" value="true">
-                    <label class="nhsuk-label nhsuk-checkboxes__label" for="@Model.Confirm">
+                    <label class="nhsuk-label nhsuk-checkboxes__label" for="Confirm">
                         I am sure that I wish to make @Model.FrameworkName the primary framework
                     </label>
                 </div>
