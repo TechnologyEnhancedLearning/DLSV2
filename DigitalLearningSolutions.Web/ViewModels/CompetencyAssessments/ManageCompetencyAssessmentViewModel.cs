@@ -16,6 +16,8 @@ namespace DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
             CompetencyAssessmentTaskStatus = competencyAssessmentTaskStatus;
             VocabularySingular = FrameworkVocabularyHelper.VocabularySingular(competencyAssessmentBase.Vocabulary);
             VocabularyPlural = FrameworkVocabularyHelper.VocabularyPlural(competencyAssessmentBase.Vocabulary);
+            SelfAssessmentReviewID = competencyAssessmentBase.SelfAssessmentReviewID;
+            SelfAssessmentCommentID = competencyAssessmentBase.SelfAssessmentCommentID;
         }
         public string CompetencyAssessmentName { get; set; }
         public int PublishStatusID { get; set; }
@@ -23,5 +25,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
         public string VocabularySingular { get; set; }
         public string VocabularyPlural { get; set; }
         public CompetencyAssessmentTaskStatus CompetencyAssessmentTaskStatus { get; set; }
+        public int? SelfAssessmentReviewID { get; set; }
+        public int? SelfAssessmentCommentID { get; set; }
     }
 }

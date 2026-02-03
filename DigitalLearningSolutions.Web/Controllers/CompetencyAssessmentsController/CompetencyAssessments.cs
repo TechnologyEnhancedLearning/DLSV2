@@ -1405,6 +1405,172 @@
             TempData.Clear();
             return RedirectToAction("ManageCompetencyAssessment", new { competencyAssessmentId = viewModel.CompetencyAssessmentId });
         }
+        [HttpGet]
+        [Route("/CompetencyAssessments/{competencyAssessmentId}/SendForReview")]
+        public IActionResult SendForReview(int competencyAssessmentId)
+        {
+            var adminId = GetAdminID();
+            var collaborators = competencyAssessmentService.GetCollaboratorsForCompetencyAssessmentId(competencyAssessmentId);
+            var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
+            var result = ValidateCompetencyAssessmentAndRole(competencyAssessmentId, adminId, "Send For Review", competencyAssessmentBase);
+            if (result.StatusCode != 200)
+                return result;
+            var model = new SendForReviewViewModel(competencyAssessmentId, competencyAssessmentBase.CompetencyAssessmentName, collaborators, competencyAssessmentBase.PublishStatusID);
+            return View(model);
+        }
+        [HttpPost]
+        [Route("/CompetencyAssessments/{competencyAssessmentId}/SendForReview")]
+        public IActionResult SendForReview(SendForReviewViewModel send)
+        {
+            var adminId = GetAdminID();
+            var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(send.CompetencyAssessmentID, adminId);
+            var result = ValidateCompetencyAssessmentAndRole(send.CompetencyAssessmentID, adminId, "Send For Review", competencyAssessmentBase);
+            if (result.StatusCode != 200)
+                return result;
+            foreach (var collaborator in send.UserChecked)
+            {
+                var required = send.SignOffRequiredChecked.IndexOf(collaborator) != -1;
+                competencyAssessmentService.InsertSelfAssessmentReview(send.CompetencyAssessmentID, collaborator, required);
+                frameworkNotificationService.SendReviewRequestForCompetencyAssessment(collaborator, adminId, required, false, User.GetCentreIdKnownNotNull());
+            }
+            competencyAssessmentService.UpdateCompetencyAssessmentPublishStatus(send.CompetencyAssessmentID, 2, adminId);
+            var taskStatus = competencyAssessmentService.GetCompetencyAssessmentTaskStatus(send.CompetencyAssessmentID, null);
+            if (taskStatus.RoleRequirementsTaskStatus != true)
+            {
+                competencyAssessmentService.UpdateCompetencyAssessmentRoleRequirementsTaskStatus(send.CompetencyAssessmentID, false, null);
+            }
+            return RedirectToAction("ManageCompetencyAssessment", new { competencyAssessmentId = send.CompetencyAssessmentID });
+
+        }
+        [HttpGet]
+        [Route("/CompetencyAssessments/{competencyAssessmentId}/PublishWithoutReview")]
+        public IActionResult PublishWithoutReview(int competencyAssessmentId)
+        {
+            var adminId = GetAdminID();
+            var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
+            var result = ValidateCompetencyAssessmentAndRole(competencyAssessmentId, adminId, "Publish Without Review", competencyAssessmentBase);
+            if (result.StatusCode != 200)
+                return result;
+            var model = new PublishWithoutReviewViewModel(competencyAssessmentId, competencyAssessmentBase.CompetencyAssessmentName);
+            return View(model);
+        }
+        [HttpPost]
+        [Route("/CompetencyAssessments/{competencyAssessmentId}/PublishWithoutReview")]
+        public IActionResult PublishWithoutReview(PublishWithoutReviewViewModel publish)
+        {
+            var adminId = GetAdminID();
+            var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(publish.CompetencyAssessmentID, adminId);
+            var result = ValidateCompetencyAssessmentAndRole(publish.CompetencyAssessmentID, adminId, "Publish Without Review", competencyAssessmentBase);
+            if (result.StatusCode != 200)
+                return result;
+            if (competencyAssessmentBase.PublishStatusID == 3) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 410 });
+            var taskStatus = competencyAssessmentService.GetCompetencyAssessmentTaskStatus(publish.CompetencyAssessmentID, null);
+
+            if (taskStatus.RoleRequirementsTaskStatus != true)
+            {
+                competencyAssessmentService.UpdateCompetencyAssessmentRoleRequirementsTaskStatus(publish.CompetencyAssessmentID, true, null);
+            }
+            competencyAssessmentService.UpdateCompetencyAssessmentPublish(publish.CompetencyAssessmentID, 3, adminId, true, true);
+            return RedirectToAction("ManageCompetencyAssessment", new { competencyAssessmentId = publish.CompetencyAssessmentID });
+        }
+        [HttpGet]
+        [Route("/CompetencyAssessments/{competencyAssessmentId}/{selfAssessmentReviewId}/Review")]
+        public IActionResult SubmitReview(int competencyAssessmentId, int selfAssessmentReviewId)
+        {
+            var adminId = GetAdminID();
+            var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
+            var selfAssessmentReview = competencyAssessmentService.GetCompetencySelfAssessmentReviewById(competencyAssessmentId, selfAssessmentReviewId);
+            var result = ValidateCompetencyAssessmentAndRole(competencyAssessmentId, adminId, "Submit Review", competencyAssessmentBase);
+            if (result.StatusCode != 200) return result;
+            if (selfAssessmentReview == null || selfAssessmentReview.SignedOff) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 410 });
+            var model = new ViewModels.CompetencyAssessments.SubmitReviewViewModel(competencyAssessmentId, competencyAssessmentBase.CompetencyAssessmentName, selfAssessmentReview);
+            return View(model);
+        }
+        [HttpPost]
+        [Route("/CompetencyAssessments/{competencyAssessmentId}/{selfAssessmentReviewId}/Review")]
+        public IActionResult SubmitReview(SubmitReviewViewModel submit)
+        {
+            var adminId = GetAdminID();
+            var centreId = GetCentreId().GetValueOrDefault();
+            var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(submit.CompetencyAssessmentID, adminId);
+            int? commentId = null;
+            var result = ValidateCompetencyAssessmentAndRole(submit.CompetencyAssessmentID, adminId, "Submit Review", competencyAssessmentBase);
+            if (result.StatusCode != 200) return result;
+            if (string.IsNullOrWhiteSpace(submit.SelfAssessmentReview.Comment) || !submit.SelfAssessmentReview.SignedOff)
+            {
+                if (string.IsNullOrWhiteSpace(submit.SelfAssessmentReview.Comment))
+                {
+                    ModelState.AddModelError(
+                        "SelfAssessmentReview.Comment",
+                        "Please enter a comment"
+                    );
+                }
+
+                if (!submit.SelfAssessmentReview.SignedOff)
+                {
+                    ModelState.AddModelError(
+                        "SelfAssessmentReview.SignedOff",
+                        "You must confirm your approval for the self-assessment to be published"
+                    );
+                }
+
+                return View(submit);
+            }
+            commentId = competencyAssessmentService.InsertComment(submit.CompetencyAssessmentID, adminId, submit.SelfAssessmentReview.Comment, null);
+            competencyAssessmentService.UpdateSelfAssessmentReview(submit.CompetencyAssessmentID, submit.SelfAssessmentReview.ID, submit.SelfAssessmentReview.SignedOff, commentId);
+            frameworkNotificationService.SendCompetencyAssessmentsReviewOutcomeNotification(submit.SelfAssessmentReview.ID, centreId);
+            return RedirectToAction("ManageCompetencyAssessment", new { competencyAssessmentId = submit.CompetencyAssessmentID });
+        }
+        [HttpGet]
+        [Route("/CompetencyAssessments/{competencyAssessmentId}/PublishReview")]
+        public IActionResult PublishReview(int competencyAssessmentId)
+        {
+            var adminId = GetAdminID();
+            var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
+            var result = ValidateCompetencyAssessmentAndRole(competencyAssessmentId, adminId, "Publish Without Review", competencyAssessmentBase);
+            if (result.StatusCode != 200)
+                return result;
+            var competencyAssessmentIdReviews = competencyAssessmentService.GetCompetencySelfAssessmentReviews(competencyAssessmentId);
+            var model = new PublishReviewViewModel(competencyAssessmentId, competencyAssessmentBase.CompetencyAssessmentName, competencyAssessmentIdReviews, competencyAssessmentBase);
+            return View(model);
+        }
+        public IActionResult PublishSelfAssesment(int competencyAssessmentId)
+        {
+            var adminId = GetAdminID();
+            var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
+            var result = ValidateCompetencyAssessmentAndRole(competencyAssessmentId, adminId, "Publish Without Review", competencyAssessmentBase);
+            if (result.StatusCode != 200)
+                return result;
+            if (competencyAssessmentBase.PublishStatusID == 3) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 410 });
+            var taskStatus = competencyAssessmentService.GetCompetencyAssessmentTaskStatus(competencyAssessmentId, null);
+            if (taskStatus.RoleRequirementsTaskStatus != true)
+            {
+                competencyAssessmentService.UpdateCompetencyAssessmentRoleRequirementsTaskStatus(competencyAssessmentId, true, null);
+            }
+            competencyAssessmentService.UpdateCompetencyAssessmentPublish(competencyAssessmentId, 3, adminId, true, true);
+            return RedirectToAction("ManageCompetencyAssessment", new { competencyAssessmentId = competencyAssessmentId });
+        }
+        public IActionResult ResendRequest(int reviewId, int competencyAssessmentId, int competencyAssessmentCollaboratorId, bool required)
+        {
+            var adminId = GetAdminID();
+            frameworkNotificationService.SendReviewRequestForCompetencyAssessment(competencyAssessmentCollaboratorId, adminId, required, true, User.GetCentreIdKnownNotNull());
+            competencyAssessmentService.UpdateReviewRequestedDate(reviewId);
+            return RedirectToAction("PublishReview", new { competencyAssessmentId });
+        }
+        public IActionResult RequestReReview(int competencyAssessmentId, int reviewId)
+        {
+            var adminId = GetAdminID();
+            competencyAssessmentService.InsertCompetencySelfAssessmentReview(reviewId);
+            var review = competencyAssessmentService.GetSelfAssessmentReviewNotification(reviewId);
+            if (review == null) return StatusCode(404);
+            frameworkNotificationService.SendReviewRequestForCompetencyAssessment(review.SelfAssessmentCollaboratorID, adminId, review.SignOffRequired, false, User.GetCentreIdKnownNotNull());
+            return RedirectToAction("PublishReview", new { competencyAssessmentId });
+        }
+        public IActionResult RemoveRequest(int competencyAssessmentId, int reviewId)
+        {
+            competencyAssessmentService.ArchiveSelfAssessmentReviewRequest(reviewId);
+            return RedirectToAction("PublishReview", new { competencyAssessmentId });
+        }
         private void SetManagesupervisionData(ManagesupervisionViewModel data)
         {
             multiPageFormService.SetMultiPageFormData(
