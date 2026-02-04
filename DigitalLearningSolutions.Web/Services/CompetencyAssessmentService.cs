@@ -243,7 +243,6 @@ namespace DigitalLearningSolutions.Web.Services
 
         public bool RemoveSelfAssessmentFramework(int assessmentId, int frameworkId, int adminId)
         {
-            UpdateFrameworkLinksTaskStatus(assessmentId, false, true);
             return competencyAssessmentDataService.RemoveSelfAssessmentFramework(assessmentId, frameworkId, adminId);
         }
 
