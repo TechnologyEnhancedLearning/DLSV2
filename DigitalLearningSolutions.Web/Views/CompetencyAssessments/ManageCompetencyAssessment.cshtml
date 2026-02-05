@@ -215,7 +215,7 @@
         </li>
         <li class="nhsuk-task-list__item">
 
-            @* @if (Model.CompetencyAssessmentTaskStatus.IntroductoryTextTaskStatus != true ||
+            @if (Model.CompetencyAssessmentTaskStatus.IntroductoryTextTaskStatus != true ||
             Model.CompetencyAssessmentTaskStatus.BrandingTaskStatus != true ||
             Model.CompetencyAssessmentTaskStatus.VocabularyTaskStatus != true ||
             Model.CompetencyAssessmentTaskStatus.WorkingGroupTaskStatus != true ||
@@ -237,7 +237,7 @@
                 </div>
             }
             else
-            {*@
+            {
                 <div class="nhsuk-task-list__name-and-hint" aria-describedby="review-status">
                     @if (Model.PublishStatusID == 1)
                     {
@@ -255,7 +255,7 @@
                 <div class="nhsuk-task-list__status" id="review-status">
                     <partial name="Shared/_TaskStatusTag" model="@Model.CompetencyAssessmentTaskStatus.ReviewTaskStatus" />
                 </div>
-            @* } *@
+             } 
         </li>
     </ul>
 </div>
