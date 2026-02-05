@@ -912,10 +912,6 @@
                         TempData["CompetencyAssessmentError"] = "User not added,Kindly try again;";
                     }
                 }
-                if (actionName == "CollaboratorReview")
-                {
-                    return RedirectToAction("SendForReview", "CompetencyAssessments", new { model.CompetencyAssessmentID });
-                }
                 return RedirectToAction("AssessmentWorkingGroup", "CompetencyAssessments", new { model.CompetencyAssessmentID, actionName = actionName });
 
             }
