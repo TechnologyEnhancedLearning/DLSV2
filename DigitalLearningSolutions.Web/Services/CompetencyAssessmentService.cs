@@ -40,6 +40,10 @@ namespace DigitalLearningSolutions.Web.Services
         int? GetSelfAssessmentStructure(int competencyAssessmentId);
         List<GroupedCompetencyWithAssessmentRoleRequirements> GetGroupedCompetencyWithAssessmentRoleRequirements(int competencyAssessmentId, int? competencyId, int? assessmentQuestionId);
         int GetCountOfAsssessmentQuestionInCompetencyAssessment(int competencyAssessmentId, int assessmentQuestionId);
+        IEnumerable<SelfAssessmentReview> GetCompetencySelfAssessmentReviews(int competencyAssessmentId);
+        SelfAssessmentReview? GetCompetencySelfAssessmentReviewById(int competencyAssessmentId, int selfAssessmentReviewId);
+        SelfAssessmentReviewOutcomeNotification? GetSelfAssessmentReviewNotification(int reviewId);
+
         //UPDATE DATA
         bool UpdateCompetencyAssessmentName(int competencyAssessmentId, int adminId, string competencyAssessmentName);
         bool UpdateCompetencyRoleProfileLinks(int competencyAssessmentId, int adminId, int? professionalGroupId, int? subGroupId, int? roleId);
@@ -93,6 +97,12 @@ namespace DigitalLearningSolutions.Web.Services
                    int? leanerDeclarationValue,
                    string? leanerCustomText
                   );
+        void UpdateCompetencyAssessmentPublishStatus(int competencyAssessmentId, int status, int adminId);
+        void UpdateCompetencyAssessmentPublish(int competencyAssessmentId, int status, int adminId, bool national, bool pub);
+        void ArchiveSelfAssessmentReviewRequest(int reviewId);
+        void UpdateSelfAssessmentReview(int selfAssessmentID, int reviewId, bool signedOff, int? commentId);
+        void UpdateReviewRequestedDate(int reviewId);
+        bool UpdateCompetencyAssessmentReviewTaskStatus(int assessmentId, bool taskStatus);
         //INSERT DATA
         int InsertCompetencyAssessment(int adminId, int centreId, string competencyAssessmentName, int? frameworkId);
         bool InsertSelfAssessmentFramework(int adminId, int assessmentId, int frameworkId);
@@ -100,6 +110,9 @@ namespace DigitalLearningSolutions.Web.Services
         bool InsertCompetenciesIntoAssessmentFromFramework(int[] selectedCompetencyIds, int frameworkId, int competencyAssessmentId);
         bool InsertSelfAssessmentStructure(int selfAssessmentId, int? frameworkId);
         void InsertIntoSelfAssessmentCollaboratorsFromFrameworkCollaborators(int selfAssessmentId, int? frameworkId);
+        void InsertSelfAssessmentReview(int competencyAssessmentId, int selfAssessmentCollaboratorID, bool required);
+        int InsertComment(int selfAssessmentID, int adminId, string comment, int? replyToCommentId);
+        int InsertCompetencySelfAssessmentReview(int reviewId);
         //DELETE DATA
         bool RemoveFrameworkCompetenciesFromAssessment(int competencyAssessmentId, int frameworkId);
         bool RemoveCompetencyFromAssessment(int competencyAssessmentId, int competencyId);
@@ -524,6 +537,54 @@ namespace DigitalLearningSolutions.Web.Services
         {
             return competencyAssessmentDataService.UpdateSelfAssessments(competencyAssessmentId, supervised, signoff, confirm,
             supervisorDeclarationValue, supervisorCustomText, leanerDeclarationValue, leanerCustomText);
+        }
+        public void UpdateCompetencyAssessmentPublishStatus(int competencyAssessmentId, int status, int adminId)
+        {
+            competencyAssessmentDataService.UpdateCompetencyAssessmentPublishStatus(competencyAssessmentId, status, adminId);
+        }
+        public void InsertSelfAssessmentReview(int competencyAssessmentId, int selfAssessmentCollaboratorID, bool required)
+        {
+            competencyAssessmentDataService.InsertSelfAssessmentReview(competencyAssessmentId, selfAssessmentCollaboratorID, required);
+        }
+        public void UpdateCompetencyAssessmentPublish(int competencyAssessmentId, int status, int adminId, bool national, bool pub)
+        {
+            competencyAssessmentDataService.UpdateCompetencyAssessmentPublish(competencyAssessmentId, status, adminId, national, pub);
+        }
+        public IEnumerable<SelfAssessmentReview> GetCompetencySelfAssessmentReviews(int competencyAssessmentId)
+        {
+            return competencyAssessmentDataService.GetCompetencySelfAssessmentReviews(competencyAssessmentId);
+        }
+        public void ArchiveSelfAssessmentReviewRequest(int reviewId)
+        {
+            competencyAssessmentDataService.ArchiveSelfAssessmentReviewRequest(reviewId);
+        }
+        public void UpdateSelfAssessmentReview(int selfAssessmentID, int reviewId, bool signedOff, int? commentId)
+        {
+            competencyAssessmentDataService.UpdateSelfAssessmentReview(selfAssessmentID, reviewId, signedOff, commentId);
+        }
+        public int InsertComment(int selfAssessmentID, int adminId, string comment, int? replyToCommentId)
+        {
+            return competencyAssessmentDataService.InsertComment(selfAssessmentID, adminId, comment, replyToCommentId);
+        }
+        public SelfAssessmentReview? GetCompetencySelfAssessmentReviewById(int competencyAssessmentId, int selfAssessmentReviewId)
+        {
+            return competencyAssessmentDataService.GetCompetencySelfAssessmentReviewById(competencyAssessmentId, selfAssessmentReviewId);
+        }
+        public SelfAssessmentReviewOutcomeNotification? GetSelfAssessmentReviewNotification(int reviewId)
+        {
+            return competencyAssessmentDataService.GetSelfAssessmentReviewNotification(reviewId);
+        }
+        public void UpdateReviewRequestedDate(int reviewId)
+        {
+            competencyAssessmentDataService.UpdateReviewRequestedDate(reviewId);
+        }
+        public int InsertCompetencySelfAssessmentReview(int reviewId)
+        {
+            return competencyAssessmentDataService.InsertCompetencySelfAssessmentReview(reviewId);
+        }
+       public  bool UpdateCompetencyAssessmentReviewTaskStatus(int assessmentId, bool taskStatus)
+        {
+           return competencyAssessmentDataService.UpdateCompetencyAssessmentReviewTaskStatus(assessmentId, taskStatus);
         }
     }
 }
