@@ -1441,6 +1441,7 @@ ORDER BY
                     AND fc.IsDeleted = 0;",
                 new { selfAssessmentId, frameworkId }
             );
+        }
         public bool UpdateSupervisorRolesTaskStatus(int competencyAssessmentId, bool taskCompleteChecked)
         {
             var numberOfAffectedRows = connection.Execute(
