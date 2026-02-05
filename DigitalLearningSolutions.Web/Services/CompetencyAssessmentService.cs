@@ -99,6 +99,7 @@ namespace DigitalLearningSolutions.Web.Services
         int GetCompetencyCountByFrameworkId(int competencyAssessmentId, int frameworkId);
         bool InsertCompetenciesIntoAssessmentFromFramework(int[] selectedCompetencyIds, int frameworkId, int competencyAssessmentId);
         bool InsertSelfAssessmentStructure(int selfAssessmentId, int? frameworkId);
+        void InsertIntoSelfAssessmentCollaboratorsFromFrameworkCollaborators(int selfAssessmentId, int? frameworkId);
         //DELETE DATA
         bool RemoveFrameworkCompetenciesFromAssessment(int competencyAssessmentId, int frameworkId);
         bool RemoveCompetencyFromAssessment(int competencyAssessmentId, int competencyId);
@@ -243,7 +244,6 @@ namespace DigitalLearningSolutions.Web.Services
 
         public bool RemoveSelfAssessmentFramework(int assessmentId, int frameworkId, int adminId)
         {
-            UpdateFrameworkLinksTaskStatus(assessmentId, false, true);
             return competencyAssessmentDataService.RemoveSelfAssessmentFramework(assessmentId, frameworkId, adminId);
         }
 
@@ -504,6 +504,10 @@ namespace DigitalLearningSolutions.Web.Services
             }
             return rowCount;
         }
+       public  void InsertIntoSelfAssessmentCollaboratorsFromFrameworkCollaborators(int selfAssessmentId, int? frameworkId)
+       {
+         competencyAssessmentDataService.InsertIntoSelfAssessmentCollaboratorsFromFrameworkCollaborators(selfAssessmentId, frameworkId);
+       }
         public bool UpdateSupervisorRolesTaskStatus(int competencyAssessmentId, bool taskCompleteChecked)
         {
             return competencyAssessmentDataService.UpdateSupervisorRolesTaskStatus(competencyAssessmentId, taskCompleteChecked);
