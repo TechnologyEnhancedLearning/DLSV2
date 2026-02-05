@@ -842,6 +842,7 @@
                 model.VocabularyStatus,
                  model.WorkingGroupStatus,
              model.AllframeworkCompetenciesStatus);
+            competencyAssessmentService.UpdateSelfAssessmentFromFramework(model.CompetencyAssessmentId, model.FrameworkId);
             return RedirectToAction("ManageCompetencyAssessment", new { model.CompetencyAssessmentId, model.FrameworkId });
         }
 
