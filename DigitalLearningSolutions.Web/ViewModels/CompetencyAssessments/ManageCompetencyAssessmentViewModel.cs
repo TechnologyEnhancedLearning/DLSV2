@@ -7,13 +7,15 @@ namespace DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
     {
         public ManageCompetencyAssessmentViewModel(
             CompetencyAssessmentBase competencyAssessmentBase,
-            CompetencyAssessmentTaskStatus competencyAssessmentTaskStatus
+            CompetencyAssessmentTaskStatus competencyAssessmentTaskStatus,
+            bool hasCompetencies
             )
         {
             CompetencyAssessmentName = competencyAssessmentBase.CompetencyAssessmentName;
             PublishStatusID = competencyAssessmentBase.PublishStatusID;
             UserRole = competencyAssessmentBase.UserRole;
             CompetencyAssessmentTaskStatus = competencyAssessmentTaskStatus;
+            HasCompetencies = hasCompetencies;
             VocabularySingular = FrameworkVocabularyHelper.VocabularySingular(competencyAssessmentBase.Vocabulary);
             VocabularyPlural = FrameworkVocabularyHelper.VocabularyPlural(competencyAssessmentBase.Vocabulary);
         }
@@ -23,5 +25,6 @@ namespace DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
         public string VocabularySingular { get; set; }
         public string VocabularyPlural { get; set; }
         public CompetencyAssessmentTaskStatus CompetencyAssessmentTaskStatus { get; set; }
+        public bool HasCompetencies { get; set; }
     }
 }

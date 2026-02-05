@@ -122,7 +122,7 @@ namespace DigitalLearningSolutions.Data.DataServices
             int customisationId, int centreId, bool? isDelegateActive, bool? isProgressLocked, bool? removed, bool? hasCompleted, string? answer1, string? answer2, string? answer3);
 
         int EnrolOnActivitySelfAssessment(int selfAssessmentId, int candidateId, int supervisorId, string adminEmail,
-            int selfAssessmentSupervisorRoleId, DateTime? completeByDate, int delegateUserId, int centreId, int? enrolledByAdminId);
+            int selfAssessmentSupervisorRoleId, DateTime? completeByDate, int delegateUserId, int centreId, int? enrolledByAdminId, bool isNonReportable = false);
 
         bool IsCourseCompleted(int candidateId, int customisationId);
         bool IsCourseCompleted(int candidateId, int customisationId, int progressID);
@@ -443,7 +443,7 @@ namespace DigitalLearningSolutions.Data.DataServices
         }
 
         public int EnrolOnActivitySelfAssessment(int selfAssessmentId, int candidateId, int supervisorId, string adminEmail,
-            int selfAssessmentSupervisorRoleId, DateTime? completeByDate, int delegateUserId, int centreId, int? enrolledByAdminId)
+            int selfAssessmentSupervisorRoleId, DateTime? completeByDate, int delegateUserId, int centreId, int? enrolledByAdminId, bool isNonReportable = false)
         {
             IClockUtility clockUtility = new ClockUtility();
             DateTime startedDate = clockUtility.UtcNow;
@@ -473,7 +473,8 @@ namespace DigitalLearningSolutions.Data.DataServices
                            ,[CompleteByDate]
                            ,[CentreID]
                             ,[EnrolmentMethodId]
-                           ,[EnrolledByAdminId])
+                           ,[EnrolledByAdminId]
+                           ,[NonReportable])
                     OUTPUT INSERTED.Id
                      VALUES
                            (@DelegateUserID,
@@ -483,8 +484,9 @@ namespace DigitalLearningSolutions.Data.DataServices
                            @completeByDateDynamic,
                            @centreId,
                            @enrolmentMethodId,
-                           @enrolledByAdminId);",
-                    new { delegateUserId, selfAssessmentId, startedDate, lastAccessed, completeByDateDynamic, centreId, enrolmentMethodId, enrolledByAdminId }
+                           @enrolledByAdminId,
+                           @isNonReportable);",
+                    new { delegateUserId, selfAssessmentId, startedDate, lastAccessed, completeByDateDynamic, centreId, enrolmentMethodId, enrolledByAdminId, isNonReportable }
                 );
             }
 
