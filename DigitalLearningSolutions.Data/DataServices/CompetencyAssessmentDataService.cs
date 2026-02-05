@@ -104,6 +104,8 @@
         bool InsertSelfAssessmentStructure(int selfAssessmentId, int? frameworkId);
         int InsertAssessmentQuestionRoleRequirementForSelfAssessment(int assessmentId, int assessmentQuestionId, int levelValue, int? levelRAG);
         int InsertCompetencyAssessmentQuestionRoleRequirement(int assessmentId, int competencyId, int assessmentQuestionId, int levelValue, int? levelRAG);
+        void InsertIntoSelfAssessmentCollaboratorsFromFrameworkCollaborators(int selfAssessmentId, int? frameworkId);
+
         //DELETE DATA
         bool RemoveFrameworkCompetenciesFromAssessment(int competencyAssessmentId, int frameworkId);
         bool RemoveCompetencyFromAssessment(int competencyAssessmentId, int competencyId);
@@ -907,30 +909,28 @@
 
             var numberOfAffectedRows = connection.Execute(
                 @"UPDATE s
-SET
-    [Description] = CASE 
-        WHEN sts.IntroductoryTextTaskStatus IS NULL THEN NULL
-        ELSE COALESCE(F.[Description], 'No description provided')
-    END,
-    BrandID = CASE 
-        WHEN sts.BrandingTaskStatus IS NULL THEN s.BrandID
-        ELSE F.BrandID
-    END,
-    CategoryID = CASE 
-        WHEN sts.BrandingTaskStatus IS NULL THEN s.CategoryID
-        ELSE F.CategoryID
-    END,
-    Vocabulary = CASE 
-        WHEN sts.VocabularyTaskStatus IS NULL THEN NULL
-        ELSE F.FrameworkConfig
-    END
-FROM SelfAssessments s
-INNER JOIN Frameworks F ON F.ID = @frameworkId
-INNER JOIN AdminUsers AU ON F.OwnerAdminID = AU.AdminID
-INNER JOIN SelfAssessmentTaskStatus sts ON s.ID = sts.SelfAssessmentId
-WHERE s.ID = @selfAssessmentId;
-;"
-            ,
+                    SET
+                    [Description] = CASE 
+                    WHEN sts.IntroductoryTextTaskStatus IS NULL THEN NULL
+                    ELSE COALESCE(F.[Description], 'No description provided')
+                    END,
+                    BrandID = CASE 
+                    WHEN sts.BrandingTaskStatus IS NULL THEN s.BrandID
+                    ELSE F.BrandID
+                    END,
+                    CategoryID = CASE 
+                    WHEN sts.BrandingTaskStatus IS NULL THEN s.CategoryID
+                    ELSE F.CategoryID
+                    END,
+                    Vocabulary = CASE 
+                    WHEN sts.VocabularyTaskStatus IS NULL THEN NULL
+                    ELSE F.FrameworkConfig
+                    END
+                    FROM SelfAssessments s
+                    INNER JOIN Frameworks F ON F.ID = @frameworkId
+                    INNER JOIN AdminUsers AU ON F.OwnerAdminID = AU.AdminID
+                    INNER JOIN SelfAssessmentTaskStatus sts ON s.ID = sts.SelfAssessmentId
+                    WHERE s.ID = @selfAssessmentId;",
                 new { selfAssessmentId, frameworkId }
             );
         }
@@ -1417,6 +1417,30 @@ ORDER BY
                              new { assessmentId, competencyId, assessmentQuestionId, levelValue }
                          );
             return numberOfAffectedRows > 0;
+        }
+        public void InsertIntoSelfAssessmentCollaboratorsFromFrameworkCollaborators(int selfAssessmentId, int? frameworkId)
+        {
+            var numberOfAffectedRows = connection.Execute(
+                @"INSERT INTO [dbo].[SelfAssessmentCollaborators]
+                  (
+                    [SelfAssessmentID],
+                    [UserEmail],
+                    [AdminID],
+                    [CanModify],
+                    [IsDeleted])
+                    SELECT
+                    @selfAssessmentID,
+                    fc.UserEmail,
+                    fc.AdminID,
+                    fc.CanModify,
+                    fc.IsDeleted
+                    FROM FrameworkCollaborators fc
+                    INNER JOIN AdminUsers au
+                    ON fc.AdminID = au.AdminID
+                    WHERE fc.FrameworkID = @frameworkId
+                    AND fc.IsDeleted = 0;",
+                new { selfAssessmentId, frameworkId }
+            );
         }
         public bool UpdateSupervisorRolesTaskStatus(int competencyAssessmentId, bool taskCompleteChecked)
         {
