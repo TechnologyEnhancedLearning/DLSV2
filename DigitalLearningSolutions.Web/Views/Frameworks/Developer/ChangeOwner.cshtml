@@ -1,0 +1,20 @@
+﻿@model DigitalLearningSolutions.Web.ViewModels.Frameworks.ChangeOwnerViewModel
+@{
+    ViewData["Title"] = "Change Framework Owner";
+}
+@* <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
+@section NavMenuItems {
+    <partial name="Shared/_NavMenuItems" />
+} *@
+
+<h1>Change Owner for @Model.FrameworkName</h1>
+
+<form method="post">
+    <div class="nhsuk-form-group">
+        <label class="nhsuk-label" asp-for="NewOwnerEmail">New Owner Email</label>
+        <input class="nhsuk-input" asp-for="NewOwnerEmail" />
+        <span asp-validation-for="NewOwnerEmail" class="nhsuk-error-message"></span>
+    </div>
+    <button class="nhsuk-button" type="submit">Submit</button>
+    <a class="nhsuk-button nhsuk-button--secondary" asp-action="AddCollaborators" asp-route-actionname="Edit" asp-route-frameworkId="@Model.FrameworkId">Cancel</a>
+</form>
