@@ -809,8 +809,9 @@
             if (!features) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 500 });
             competencyAssessmentService.UpdateSelfAssessmentFromFramework(data.ID, data.FrameworkId);
             competencyAssessmentService.InsertIntoSelfAssessmentCollaboratorsFromFrameworkCollaborators(data.ID, data.FrameworkId);
-            var insertSelfAssessment = competencyAssessmentService.InsertSelfAssessmentStructure(data.ID, data.FrameworkId);
-            if (!insertSelfAssessment) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 500 });
+            var insertSelfAssessmentGroupedCompetencies = competencyAssessmentService.InsertSelfAssessmentGroupedCompetencies(data.ID, data.FrameworkId);
+            var insertSelfAssessmentUngroupedCompetencies = competencyAssessmentService.InsertSelfAssessmentUngroupedCompetencies(data.ID, data.FrameworkId);
+            if (!insertSelfAssessmentGroupedCompetencies) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 500 });
             multiPageFormService.ClearMultiPageFormData(MultiPageFormDataFeature.AddCustomWebForm("AssessmentFeaturesDataCWF"), TempData);
             TempData.Clear();
             return RedirectToAction("ManageCompetencyAssessment", new { competencyAssessmentId = competency.ID, competency.FrameworkId });
