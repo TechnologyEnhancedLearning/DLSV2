@@ -1445,9 +1445,9 @@
             }
             competencyAssessmentService.UpdateCompetencyAssessmentPublishStatus(send.CompetencyAssessmentID, 2, adminId);
             var taskStatus = competencyAssessmentService.GetCompetencyAssessmentTaskStatus(send.CompetencyAssessmentID, null);
-            if (taskStatus.RoleRequirementsTaskStatus != true)
+            if (taskStatus.ReviewTaskStatus != true)
             {
-                competencyAssessmentService.UpdateCompetencyAssessmentRoleRequirementsTaskStatus(send.CompetencyAssessmentID, false, null);
+                competencyAssessmentService.UpdateCompetencyAssessmentReviewTaskStatus(send.CompetencyAssessmentID, false);
             }
             return RedirectToAction("ManageCompetencyAssessment", new { competencyAssessmentId = send.CompetencyAssessmentID });
 
