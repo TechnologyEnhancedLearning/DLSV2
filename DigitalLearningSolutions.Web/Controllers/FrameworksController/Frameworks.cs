@@ -779,9 +779,11 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         [Route("/Frameworks/ChangeOwner/{frameworkId}")]
         public IActionResult ChangeOwner(int frameworkId)
         {
+            var adminId = GetAdminId();
             var framework = frameworkService.GetBaseFrameworkByFrameworkId(frameworkId, GetAdminId());
             if (framework == null) return StatusCode(404);
-
+            if (framework.OwnerAdminID != adminId)
+                return StatusCode(403);
             var model = new ChangeOwnerViewModel
             {
                 FrameworkId = frameworkId,
