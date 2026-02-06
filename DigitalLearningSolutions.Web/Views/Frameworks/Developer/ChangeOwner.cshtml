@@ -1,20 +1,47 @@
-﻿@model DigitalLearningSolutions.Web.ViewModels.Frameworks.ChangeOwnerViewModel
+﻿@using DigitalLearningSolutions.Web.ViewModels.Frameworks
+@model ChangeOwnerViewModel
 @{
-    ViewData["Title"] = "Change Framework Owner";
+    var errorHasOccurred = !ViewData.ModelState.IsValid;
+    ViewData["Title"] = errorHasOccurred ? "Error: Change Framework Owner" : "Change Framework Owner";
 }
-@* <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
+<link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
 @section NavMenuItems {
     <partial name="Shared/_NavMenuItems" />
-} *@
+}
 
-<h1>Change Owner for @Model.FrameworkName</h1>
+<div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full">
+        @if (errorHasOccurred)
+        {
+            <vc:error-summary order-of-property-names="@(new[] { nameof(Model.NewOwnerEmail) })" />
+        }
 
-<form method="post">
-    <div class="nhsuk-form-group">
-        <label class="nhsuk-label" asp-for="NewOwnerEmail">New Owner Email</label>
-        <input class="nhsuk-input" asp-for="NewOwnerEmail" />
-        <span asp-validation-for="NewOwnerEmail" class="nhsuk-error-message"></span>
+        <h1 class="nhsuk-heading-xl">Change Owner for @Model.FrameworkName</h1>
+        <div class="nhsuk-warning-callout">
+            <h2 class="nhsuk-warning-callout__label">
+                <span role="text">
+                    <span class="nhsuk-u-visually-hidden">Important: </span>
+                    Transfer of ownership
+                </span>
+            </h2>
+            <div>
+                <p>Changing the owner will affect your access.</p>
+                <p>Once ownership is transferred, you will no longer be able to edit this framework.</p>
+            </div>
+        </div>
+        <form class="nhsuk-u-margin-bottom-3" method="post" asp-action="ChangeOwner">
+            <vc:text-input asp-for="@nameof(Model.NewOwnerEmail)"
+                           label="New Owner Email"
+                           populate-with-current-value="false"
+                           type="email"
+                           spell-check="false"
+                           autocomplete="off"
+                           hint-text="Provide email address for the new owner for this framework"
+                           css-class="nhsuk-u-width-one-half"
+                           required="true" />
+
+            <button class="nhsuk-button" type="submit">Change Owner</button>
+            <a class="nhsuk-button nhsuk-button--secondary" asp-action="AddCollaborators" asp-route-actionname="Edit" asp-route-frameworkId="@Model.FrameworkId">Cancel</a>
+        </form>
     </div>
-    <button class="nhsuk-button" type="submit">Submit</button>
-    <a class="nhsuk-button nhsuk-button--secondary" asp-action="AddCollaborators" asp-route-actionname="Edit" asp-route-frameworkId="@Model.FrameworkId">Cancel</a>
-</form>
+</div>

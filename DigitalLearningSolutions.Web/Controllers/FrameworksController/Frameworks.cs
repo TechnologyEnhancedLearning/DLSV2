@@ -794,10 +794,10 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         [Route("/Frameworks/ChangeOwner/{frameworkId}")]
         public IActionResult ChangeOwner(int frameworkId, ChangeOwnerViewModel model)
         {
+            var framework = frameworkService.GetBaseFrameworkByFrameworkId(frameworkId, GetAdminId());
+            model.FrameworkName = framework.FrameworkName;
             if (!ModelState.IsValid)
             {
-                var framework = frameworkService.GetBaseFrameworkByFrameworkId(frameworkId, GetAdminId());
-                model.FrameworkName = framework.FrameworkName;
                 return View("Developer/ChangeOwner", model);
             }
 

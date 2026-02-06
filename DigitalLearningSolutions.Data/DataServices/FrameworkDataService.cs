@@ -2556,10 +2556,10 @@ WHERE (RP.CreatedByAdminID = @adminId) OR
         public void ChangeFrameworkOwner(int frameworkId, string newOwnerEmail, int updatedByAdminId)
         {
             // Find the AdminID for the new owner
-            var newOwnerAdminId = connection.QuerySingleOrDefault<int?>(
+            var newOwnerAdminId = connection.Query<int?>(
                 @"SELECT AdminID FROM AdminUsers WHERE Email = @newOwnerEmail AND Active = 1",
                 new { newOwnerEmail }
-            );
+            ).FirstOrDefault(); ;
             if (newOwnerAdminId == null)
             {
                 throw new Exception("No active admin user found with that email.");
