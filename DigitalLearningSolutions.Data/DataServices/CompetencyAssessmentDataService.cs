@@ -90,7 +90,6 @@
         bool UpdateSupervisorRolesTaskStatus(int competencyAssessmentId, bool taskCompleteChecked);
         bool UpdateSelfAssessments(int competencyAssessmentId,
                      int? supervised,
-                     int? signoff,
                      int? confirm,
                     int? supervisorDeclarationValue,
                     string? supervisorCustomText,
@@ -1462,7 +1461,6 @@ ORDER BY
         }
         public bool UpdateSelfAssessments(int competencyAssessmentId,
             int? supervised,
-            int? signoff,
             int? confirm,
             int? supervisorDeclarationValue,
             string? supervisorCustomText,
@@ -1472,14 +1470,6 @@ ORDER BY
         {
             var sqlQuery = @"
             IF @supervised = 0 
-            BEGIN
-                UPDATE SelfAssessments SET SupervisorResultsReview = 0,
-                SupervisorSelfAssessmentReview = 0,
-                    SignOffSupervisorStatement =  NULL,
-                    SignOffRequestorStatement = NULL
-                WHERE ID = @competencyAssessmentId;
-            END
-            ELSE IF @supervised = 1 AND @signoff = 0
             BEGIN
                 UPDATE SelfAssessments SET SupervisorResultsReview = 0,
                 SupervisorSelfAssessmentReview = 0,
@@ -1504,7 +1494,6 @@ ORDER BY
                 competencyAssessmentId,
                 supervised,
                 confirm,
-                signoff,
                 supervisorDeclarationValue,
                 supervisorCustomText,
                 leanerDeclarationValue,
@@ -1517,7 +1506,7 @@ ORDER BY
                 logger.LogWarning(
                     "Not updating SelfAssessments  as db update failed. " +
                     $"competencyAssessmentId: {competencyAssessmentId}, supervised: {supervised}" +
-                    $"signoff: {signoff}, confirm: {confirm}, supervisorDeclarationValue: {supervisorDeclarationValue} " +
+                    $"confirm: {confirm}, supervisorDeclarationValue: {supervisorDeclarationValue} " +
                     $"supervisorCustomText: {supervisorCustomText}, leanerDeclarationValue: {leanerDeclarationValue}, leanerCustomText: {leanerCustomText} "
                     );
                 return false;
