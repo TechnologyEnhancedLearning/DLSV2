@@ -8,5 +8,6 @@
         public string? SupervisorEmail { get; set; }
         public int? SelfAssessmentSupervisorRoleId { get; set; }
         public int? CentreID { get; set; }
+        public bool NonReportable { get; set; }
     }
 }
