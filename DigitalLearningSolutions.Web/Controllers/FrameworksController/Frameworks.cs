@@ -782,8 +782,13 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             var adminId = GetAdminId();
             var framework = frameworkService.GetBaseFrameworkByFrameworkId(frameworkId, GetAdminId());
             if (framework == null) return StatusCode(404);
-            if (framework.OwnerAdminID != adminId)
+
+            var userId = frameworkService.GetUserIdFromAdminId(adminId);
+            if (userId == null) return StatusCode(403);
+            var userAdminIds = frameworkService.GetAdminIdsForUserId(userId.Value);
+            if (!userAdminIds.Contains(framework.OwnerAdminID))
                 return StatusCode(403);
+
             var model = new ChangeOwnerViewModel
             {
                 FrameworkId = frameworkId,
@@ -798,6 +803,16 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         {
             var framework = frameworkService.GetBaseFrameworkByFrameworkId(frameworkId, GetAdminId());
             model.FrameworkName = framework.FrameworkName;
+
+            var adminId = GetAdminId();
+            var userId = frameworkService.GetUserIdFromAdminId(adminId);
+            if (userId == null) return StatusCode(403);
+            var newOwnerPrimaryEmail = frameworkService.GetPrimaryEmailFromUserId(userId);
+            if (newOwnerPrimaryEmail== model.NewOwnerEmail)
+            {
+                ModelState.AddModelError(nameof(model.NewOwnerEmail), "The new owner email address cannot be the same as the current owner's email address.");
+                return View("Developer/ChangeOwner", model);
+            }
             if (!ModelState.IsValid)
             {
                 return View("Developer/ChangeOwner", model);
@@ -806,7 +821,6 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             try
             {
                 frameworkService.ChangeFrameworkOwner(frameworkId, model.NewOwnerEmail, GetAdminId());
-                //return RedirectToAction("AddCollaborators", new { actionname = "Edit", frameworkId });
                 return RedirectToAction("ViewFramework", new { tabname = "Details", frameworkId });
             }
             catch (Exception ex)
