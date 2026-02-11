@@ -270,9 +270,7 @@
         void UpdateFrameworkCompetencyFrameworkCompetencyGroup(int? competencyGroupId, int frameworkCompetencyGroupId, int adminId);
 
         void ChangeFrameworkOwner(int frameworkId, string newOwnerEmail, int updatedByAdminId);
-        int? GetUserIdFromAdminId(int adminId);
         IEnumerable<int> GetAdminIdsForUserId(int userId);
-        string GetPrimaryEmailFromUserId(int? userId);
 
     }
 
@@ -2595,24 +2593,10 @@ WHERE (RP.CreatedByAdminID = @adminId) OR
                 }
             }
         }
-        public int? GetUserIdFromAdminId(int adminId)
-        {
-            return connection.QueryFirstOrDefault<int?>(
-                @"SELECT UserID FROM AdminAccounts WHERE ID = @adminId",
-                new { adminId }
-            );
-        }
         public IEnumerable<int> GetAdminIdsForUserId(int userId)
         {
             return connection.Query<int>(
                 @"SELECT ID FROM AdminAccounts WHERE UserID = @userId",
-                new { userId }
-            );
-        }
-        public string GetPrimaryEmailFromUserId(int? userId)
-        {
-            return connection.QuerySingle<string>(
-                @"SELECT PrimaryEmail FROM Users WHERE ID = @userId",
                 new { userId }
             );
         }

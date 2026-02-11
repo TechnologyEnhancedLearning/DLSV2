@@ -779,13 +779,11 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         [Route("/Frameworks/ChangeOwner/{frameworkId}")]
         public IActionResult ChangeOwner(int frameworkId)
         {
-            var adminId = GetAdminId();
             var framework = frameworkService.GetBaseFrameworkByFrameworkId(frameworkId, GetAdminId());
             if (framework == null) return StatusCode(404);
 
-            var userId = frameworkService.GetUserIdFromAdminId(adminId);
-            if (userId == null) return StatusCode(403);
-            var userAdminIds = frameworkService.GetAdminIdsForUserId(userId.Value);
+            var userId = User.GetUserIdKnownNotNull();
+            var userAdminIds = frameworkService.GetAdminIdsForUserId(userId);
             if (!userAdminIds.Contains(framework.OwnerAdminID))
                 return StatusCode(403);
 
@@ -804,11 +802,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             var framework = frameworkService.GetBaseFrameworkByFrameworkId(frameworkId, GetAdminId());
             model.FrameworkName = framework.FrameworkName;
 
-            var adminId = GetAdminId();
-            var userId = frameworkService.GetUserIdFromAdminId(adminId);
-            if (userId == null) return StatusCode(403);
-            var newOwnerPrimaryEmail = frameworkService.GetPrimaryEmailFromUserId(userId);
-            if (newOwnerPrimaryEmail== model.NewOwnerEmail)
+            if (User.GetUserPrimaryEmail() == model.NewOwnerEmail)
             {
                 ModelState.AddModelError(nameof(model.NewOwnerEmail), "The new owner email address cannot be the same as the current owner's email address.");
                 return View("Developer/ChangeOwner", model);

@@ -264,9 +264,7 @@ namespace DigitalLearningSolutions.Web.Services
         void UpdateFrameworkCompetencyFrameworkCompetencyGroup(int? competencyGroupId, int frameworkCompetencyGroupId, int adminId);
 
         void ChangeFrameworkOwner(int frameworkId, string newOwnerEmail, int updatedByAdminId);
-        int? GetUserIdFromAdminId(int adminId);
         IEnumerable<int> GetAdminIdsForUserId(int userId);
-        string GetPrimaryEmailFromUserId(int? userId);
     }
     public class FrameworkService : IFrameworkService
     {
@@ -744,18 +742,10 @@ namespace DigitalLearningSolutions.Web.Services
         {
             frameworkDataService.ChangeFrameworkOwner(frameworkId, newOwnerEmail, updatedByAdminId);
         }
-        public int? GetUserIdFromAdminId(int adminId)
-        {
-            return frameworkDataService.GetUserIdFromAdminId(adminId);
-        }
 
         public IEnumerable<int> GetAdminIdsForUserId(int userId)
         {
             return frameworkDataService.GetAdminIdsForUserId(userId);
-        }
-        public string GetPrimaryEmailFromUserId(int? userId)
-        {
-            return frameworkDataService.GetPrimaryEmailFromUserId(userId);
         }
     }
 }
