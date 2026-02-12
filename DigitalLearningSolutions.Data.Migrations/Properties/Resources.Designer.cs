@@ -2756,8 +2756,6 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///
         ///-- =============================================
         ///-- Author:		Auldrin Possa
-        ///-- Create date: 04/08/2015
-        ///-- Description:	Uses DB mail to send notification to delegates on retiring self assessment.
         ///-- Create date: 30/11/2023
         ///-- Description:	Returns assessment results for a delegate
         ///-- =============================================
@@ -2994,6 +2992,56 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         internal static string TD_6437_usp_GetSelfAssessmentReport_Up {
             get {
                 return ResourceManager.GetString("TD_6437_usp_GetSelfAssessmentReport_Up", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  View [dbo].[AdminUsers]    Script Date: 09/02/2026 15:48:13 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///-- =============================================
+        ///-- Author:		
+        ///-- Modified date: 02/06/2023
+        ///-- Description:	Return the admin user details
+        ///-- =============================================
+        ///
+        ///ALTER VIEW [dbo].[AdminUsers] AS
+        ///SELECT dbo.AdminAccounts.ID                    AS AdminID,
+        ///       null                                    AS Login,
+        ///       dbo.Users.Passwor [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_6866_AlterViewAdminUsersAddAdminUserId_Down {
+            get {
+                return ResourceManager.GetString("TD_6866_AlterViewAdminUsersAddAdminUserId_Down", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  View [dbo].[AdminUsers]    Script Date: 09/02/2026 15:48:13 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///-- =============================================
+        ///-- Author:		
+        ///-- Modified date: 02/06/2023
+        ///-- Description:	Return the admin user details
+        ///-- =============================================
+        ///
+        ///ALTER VIEW [dbo].[AdminUsers] AS
+        ///SELECT dbo.AdminAccounts.ID                    AS AdminID,
+        ///       dbo.AdminAccounts.UserID				   AS AdminUserID,
+        ///       null                 [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_6866_AlterViewAdminUsersAddAdminUserId_Up {
+            get {
+                return ResourceManager.GetString("TD_6866_AlterViewAdminUsersAddAdminUserId_Up", resourceCulture);
             }
         }
         
