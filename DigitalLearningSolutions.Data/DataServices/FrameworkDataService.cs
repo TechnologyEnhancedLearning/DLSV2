@@ -270,6 +270,8 @@
         void UpdateFrameworkCompetencyFrameworkCompetencyGroup(int? competencyGroupId, int frameworkCompetencyGroupId, int adminId);
 
         void ChangeFrameworkOwner(int frameworkId, string newOwnerEmail, int updatedByAdminId);
+        IEnumerable<int> GetAdminIdsForUserId(int userId);
+
     }
 
     public class FrameworkDataService : IFrameworkDataService
@@ -2590,6 +2592,13 @@ WHERE (RP.CreatedByAdminID = @adminId) OR
                     throw new Exception("Failed to update framework owner.");
                 }
             }
+        }
+        public IEnumerable<int> GetAdminIdsForUserId(int userId)
+        {
+            return connection.Query<int>(
+                @"SELECT ID FROM AdminAccounts WHERE UserID = @userId",
+                new { userId }
+            );
         }
     }
 }
