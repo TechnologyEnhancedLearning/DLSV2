@@ -47,7 +47,6 @@
                 CompetencyAssessmentName = competencyAssessmentName;
                 Signoff.CompetencyAssessmentId = competencyAssessmentId;
                 Signoff.Supervised = supervisorResultsReview == true ? 1 : 0;
-                Signoff.Signoff = supervisorResultsReview == true ? 1 : 0;
                 Signoff.Confirm = SupervisorSelfAssessmentReview == true ? 1 : 0;
                 SupervisorDeclaration.CompetencyAssessmentName = competencyAssessmentName;
                 SupervisorDeclaration.CompetencyAssessmentId = competencyAssessmentId;
