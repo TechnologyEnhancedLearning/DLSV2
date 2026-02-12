@@ -185,8 +185,10 @@
             var result = ValidateCompetencyAssessmentAndRole(competencyAssessmentId, adminId, "Manage Competency Assessment", competencyAssessmentBase);
             if (result.StatusCode != 200)
                 return result;
+
+            bool hasCompetencies = competencyAssessmentService.GetCompetenciesForCompetencyAssessment(competencyAssessmentId).Any();
             var competencyAssessmentTaskStatus = competencyAssessmentService.GetCompetencyAssessmentTaskStatus(competencyAssessmentId, frameworkId);
-            var model = new ManageCompetencyAssessmentViewModel(competencyAssessmentBase, competencyAssessmentTaskStatus);
+            var model = new ManageCompetencyAssessmentViewModel(competencyAssessmentBase, competencyAssessmentTaskStatus, hasCompetencies);
             return View("ManageCompetencyAssessment", model);
         }
 
@@ -1408,6 +1410,81 @@
             TempData.Clear();
             return RedirectToAction("ManageCompetencyAssessment", new { competencyAssessmentId = viewModel.CompetencyAssessmentId });
         }
+
+        [Route("/CompetencyAssessments/{competencyAssessmentId}/Preview")]
+        public IActionResult CompetencyAssessmentPreview(int competencyAssessmentId = 0)
+        {
+            var adminId = GetAdminID();
+            var userId = (int)User.GetUserId();
+            var centreId = (int)GetCentreId();
+            var candidateId = User.GetCandidateIdKnownNotNull();
+            var competencyAssessmentBase = new CompetencyAssessmentBase();
+
+            if (competencyAssessmentId <= 0)
+            {
+                return StatusCode(500);
+            }
+            competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
+            var result = ValidateCompetencyAssessmentAndRole(competencyAssessmentId, adminId, "Competency Assessment Name", competencyAssessmentBase);
+            if (result.StatusCode != 200)
+                return result;
+
+            if (selfAssessmentService.CanDelegateAccessSelfAssessment(userId, competencyAssessmentId, centreId))
+            {
+                return RedirectToAction("SelfAssessment", "LearningPortal", new { selfAssessmentId = competencyAssessmentId });
+            }
+            else
+            {
+                return RedirectToAction("PreviewConfirm", new { competencyAssessmentId });
+            }
+        }
+
+        [Route("/CompetencyAssessments/{competencyAssessmentId}/Preview/Confirm")]
+        public IActionResult PreviewConfirm(int competencyAssessmentId)
+        {
+            if (competencyAssessmentId <= 0)
+            {
+                return StatusCode(500);
+            }
+
+            var adminId = GetAdminID();
+            var userId = (int)User.GetUserId();
+            var centreId = (int)GetCentreId();
+            var centreName = centresService.GetCentreName(centreId);
+            var competencyAssessmentBase = new CompetencyAssessmentBase();
+
+            competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
+            var result = ValidateCompetencyAssessmentAndRole(competencyAssessmentId, adminId, "Competency Assessment Preview Confirm", competencyAssessmentBase);
+            if (result.StatusCode != 200)
+                return result;
+
+            if (selfAssessmentService.CanDelegateAccessSelfAssessment(userId, competencyAssessmentId, centreId))
+            {
+                return StatusCode(500);
+            }
+
+            var model = new CompetencyAssessmentPreviewViewModel(competencyAssessmentId, centreId, centreName);
+
+            return View("CompetencyAssessmentPreviewConfirm", model);
+        }
+
+        [HttpPost]
+        [Route("/CompetencyAssessments/{competencyAssessmentId}/Preview/Confirm")]
+        public IActionResult PreviewConfirm(CompetencyAssessmentPreviewViewModel model)
+        {
+            var adminId = GetAdminID();
+            var userId = User.GetUserIdKnownNotNull();
+            var centreId = (int)GetCentreId();
+            var userEmail = User.GetUserPrimaryEmail();
+            var candidateId = User.GetCandidateIdKnownNotNull();
+
+            centreSelfAssessmentsService.InsertCentreSelfAssessment(centreId, model.CompetencyAssessmentId, false);
+
+            enrolService.EnrolOnActivitySelfAssessment(model.CompetencyAssessmentId, candidateId, 0, userEmail, 0, null, userId, centreId, adminId, true);
+
+            return RedirectToAction("SelfAssessment", "LearningPortal", new { selfAssessmentId = model.CompetencyAssessmentId });
+        }
+
         private void SetManagesupervisionData(ManagesupervisionViewModel data)
         {
             multiPageFormService.SetMultiPageFormData(
