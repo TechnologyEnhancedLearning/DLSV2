@@ -101,7 +101,8 @@
         int InsertCompetencyAssessment(int adminId, int centreId, string competencyAssessmentName);
         bool InsertSelfAssessmentFramework(int adminId, int selfAssessmentId, int frameworkId);
         bool InsertCompetenciesIntoAssessmentFromFramework(int[] selectedCompetencyIds, int frameworkId, int competencyAssessmentId);
-        bool InsertSelfAssessmentStructure(int selfAssessmentId, int? frameworkId);
+        bool InsertSelfAssessmentGroupedCompetencies(int selfAssessmentId, int? frameworkId);
+        bool InsertSelfAssessmentUngroupedCompetencies(int selfAssessmentId, int? frameworkId);
         int InsertAssessmentQuestionRoleRequirementForSelfAssessment(int assessmentId, int assessmentQuestionId, int levelValue, int? levelRAG);
         int InsertCompetencyAssessmentQuestionRoleRequirement(int assessmentId, int competencyId, int assessmentQuestionId, int levelValue, int? levelRAG);
         void InsertIntoSelfAssessmentCollaboratorsFromFrameworkCollaborators(int selfAssessmentId, int? frameworkId);
@@ -860,13 +861,17 @@
                  THEN 0 ELSE WorkingGroupTaskStatus END,
                  FrameworkLinksTaskStatus =
                   CASE WHEN @AllframeworkCompetenciesStatus = 1 AND FrameworkLinksTaskStatus <> 1
-                  THEN 0 ELSE FrameworkLinksTaskStatus END
+                  THEN 0 ELSE FrameworkLinksTaskStatus END,
+                 SelectCompetenciesTaskStatus =
+                  CASE WHEN @AllframeworkCompetenciesStatus = 1 AND SelectCompetenciesTaskStatus <> 1
+                  THEN 0 ELSE SelectCompetenciesTaskStatus END
                  WHERE SelfAssessmentId = @id;
                     END
                      ELSE
                     BEGIN
                  INSERT INTO SelfAssessmentTaskStatus
-                 (SelfAssessmentId, IntroductoryTextTaskStatus, BrandingTaskStatus, VocabularyTaskStatus, WorkingGroupTaskStatus, FrameworkLinksTaskStatus)
+                 (SelfAssessmentId, IntroductoryTextTaskStatus, BrandingTaskStatus, VocabularyTaskStatus, WorkingGroupTaskStatus,
+                FrameworkLinksTaskStatus,SelectCompetenciesTaskStatus)
                  VALUES
                  (
                        @id,
@@ -874,6 +879,7 @@
                     CASE WHEN @providerandCategoryStatus = 1 THEN 0 ELSE NULL END,
                     CASE WHEN @vocabularyStatus = 1 THEN 0 ELSE NULL END,
                     CASE WHEN @workingGroupStatus = 1 THEN 0 ELSE NULL END,
+                    CASE WHEN @AllframeworkCompetenciesStatus = 1 THEN 0 ELSE NULL END,
                     CASE WHEN @AllframeworkCompetenciesStatus = 1 THEN 0 ELSE NULL END
                         );
                         END",
@@ -934,7 +940,7 @@
                 new { selfAssessmentId, frameworkId }
             );
         }
-        public bool InsertSelfAssessmentStructure(int selfAssessmentId, int? frameworkId)
+        public bool InsertSelfAssessmentGroupedCompetencies(int selfAssessmentId, int? frameworkId)
         {
 
             var numberOfAffectedRows = connection.Execute(
@@ -944,6 +950,30 @@
                 INNER JOIN FrameworkCompetencyGroups AS FCG ON FC.FrameworkCompetencyGroupID = FCG.ID INNER JOIN
 				SelfAssessments s ON s.id = @selfAssessmentId
                 WHERE FC.FrameworkID = @frameworkId"
+        ,
+            new { selfAssessmentId, frameworkId }
+        );
+            if (numberOfAffectedRows < 1)
+            {
+                logger.LogWarning(
+                "Not inserting SelfAssessmentStructure record as db insert failed. " +
+                    $"selfAssessmentId: {selfAssessmentId}, frameworkId: {frameworkId}"
+                );
+                return false;
+            }
+
+            return true;
+        }
+        public bool InsertSelfAssessmentUngroupedCompetencies(int selfAssessmentId, int? frameworkId)
+        {
+
+            var numberOfAffectedRows = connection.Execute(
+            @"INSERT INTO SelfAssessmentStructure (SelfAssessmentID, CompetencyID, Ordering)
+            SELECT s.ID, FC.CompetencyID,  FC.Ordering 
+            FROM FrameworkCompetencies AS fc               
+            INNER JOIN SelfAssessments s ON s.id = @selfAssessmentId      
+            WHERE fc.FrameworkID = @frameworkId            
+            AND fc.FrameworkCompetencyGroupID IS NULL "
         ,
             new { selfAssessmentId, frameworkId }
         );

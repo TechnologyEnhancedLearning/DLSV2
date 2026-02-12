@@ -98,7 +98,8 @@ namespace DigitalLearningSolutions.Web.Services
         bool InsertSelfAssessmentFramework(int adminId, int assessmentId, int frameworkId);
         int GetCompetencyCountByFrameworkId(int competencyAssessmentId, int frameworkId);
         bool InsertCompetenciesIntoAssessmentFromFramework(int[] selectedCompetencyIds, int frameworkId, int competencyAssessmentId);
-        bool InsertSelfAssessmentStructure(int selfAssessmentId, int? frameworkId);
+        bool InsertSelfAssessmentUngroupedCompetencies(int selfAssessmentId, int? frameworkId);
+        bool InsertSelfAssessmentGroupedCompetencies(int selfAssessmentId, int? frameworkId);
         void InsertIntoSelfAssessmentCollaboratorsFromFrameworkCollaborators(int selfAssessmentId, int? frameworkId);
         //DELETE DATA
         bool RemoveFrameworkCompetenciesFromAssessment(int competencyAssessmentId, int frameworkId);
@@ -348,9 +349,13 @@ namespace DigitalLearningSolutions.Web.Services
         {
             return competencyAssessmentDataService.GetCompetencyAssessmentFeaturesTaskStatus(competencyAssessmentId);
         }
-        public bool InsertSelfAssessmentStructure(int selfAssessmentId, int? frameworkId)
+        public bool InsertSelfAssessmentGroupedCompetencies(int selfAssessmentId, int? frameworkId)
         {
-            return competencyAssessmentDataService.InsertSelfAssessmentStructure(selfAssessmentId, frameworkId);
+            return competencyAssessmentDataService.InsertSelfAssessmentGroupedCompetencies(selfAssessmentId, frameworkId);
+        }
+        public bool InsertSelfAssessmentUngroupedCompetencies(int selfAssessmentId, int? frameworkId)
+        {
+            return competencyAssessmentDataService.InsertSelfAssessmentUngroupedCompetencies(selfAssessmentId, frameworkId);
         }
         public void UpdateSelfAssessmentFromFramework(int selfAssessmentId, int? frameworkId)
         {
