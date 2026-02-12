@@ -734,11 +734,12 @@
             f.TopicID,
             f.CreatedDate,
             f.PublishStatusID,
-            f.UpdatedByAdminID
+            f.UpdatedByAdminID,
+            saf.IsPrimary
                     FROM   SelfAssessmentFrameworks saf INNER JOIN
                                 Frameworks AS f ON saf.FrameworkId = f.ID
                     WHERE (saf.SelfAssessmentId = @competencyAssessmentId) AND (saf.RemovedDate IS NULL)
-                    ORDER BY f.FrameworkName", new { competencyAssessmentId }
+                    ORDER BY saf.ID", new { competencyAssessmentId }
             );
         }
 
