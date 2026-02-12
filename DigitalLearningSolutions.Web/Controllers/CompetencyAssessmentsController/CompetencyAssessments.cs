@@ -762,7 +762,6 @@
         [Route("/CompetencyAssessments/Framework/{frameworkId}/{competencyAssessmentId}/Features")]
         public IActionResult CompetencyAssessmentFeatures(int competencyAssessmentId, int? frameworkId = null)
         {
-
             var adminId = GetAdminID();
             var data = GetcompetencyAssessmentFeaturesData();
             if (!string.IsNullOrEmpty(data.CompetencyAssessmentName)) return View(data);
@@ -1202,7 +1201,11 @@
         [Route("/CompetencyAssessments/{competencyAssessmentId}/SupervisorRoles")]
         public IActionResult SupervisorRoles(int competencyAssessmentId)
         {
-            if (competencyAssessmentId == 0) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
+            var adminId = GetAdminID();
+            var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
+            var result = ValidateCompetencyAssessmentAndRole(competencyAssessmentId, adminId, "Supervisor Roles", competencyAssessmentBase);
+            if (result.StatusCode != 200)
+                return result;
             var competencyAssessmentTaskStatus = competencyAssessmentService.GetCompetencyAssessmentTaskStatus(competencyAssessmentId, null);
             if (competencyAssessmentTaskStatus.SupervisorRolesTaskStatus != null) return RedirectToAction("ManageSupervisionSettings", "CompetencyAssessments",
                 new
@@ -1216,8 +1219,6 @@
         [Route("/CompetencyAssessments/{competencyAssessmentId}/{actionName}/Supervised")]
         public IActionResult SupervisedSelfAssessmentSignoff(int competencyAssessmentId, string? actionName)
         {
-            if (competencyAssessmentId == 0) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
-
             if (actionName == "Signoff")
             {
                 var data = GetManagesupervisionData();
@@ -1227,7 +1228,9 @@
             }
             var adminId = GetAdminID();
             var baseData = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
-            if (string.IsNullOrEmpty(baseData.CompetencyAssessmentName)) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
+            var result = ValidateCompetencyAssessmentAndRole(competencyAssessmentId, adminId, "Supervised Self Assessment Signoff", baseData);
+            if (result.StatusCode != 200)
+                return result;
             var model = new SupervisedSelfAssessmentSignoffViewModel(competencyAssessmentId, baseData.CompetencyAssessmentName, actionName);
             return View("SupervisedSelfAssessmentSignoff", model);
         }
@@ -1242,32 +1245,50 @@
                 ModelState.AddModelError(nameof(supervisedSelf.Supervised), "Please select a Supervised self assessment option");
                 return View(supervisedSelf);
             }
-            if (supervisedSelf.ActionName != null)
+            if (supervisedSelf.Confirm == null && supervisedSelf.SupervisedText == "Yes")
+            {
+                ModelState.AddModelError(nameof(supervisedSelf.Confirm), "Please select a Supervisor or nominated supervisor confirm individual assessment option");
+                return View(supervisedSelf);
+            }
+            if (supervisedSelf.SupervisedText == "No")
+            {
+                var model = new ManagesupervisionViewModel(supervisedSelf);
+                SetManagesupervisionData(model);
+                var competencyAssessmentTaskStatus = competencyAssessmentService.GetCompetencyAssessmentTaskStatus(supervisedSelf.CompetencyAssessmentId, null);
+                competencyAssessmentService.UpdateSupervisorRolesTaskStatus(supervisedSelf.CompetencyAssessmentId, competencyAssessmentTaskStatus.SupervisorRolesTaskStatus ?? false);
+                return RedirectToAction("ManageSupervisionSettings", "CompetencyAssessments", new { supervisedSelf.CompetencyAssessmentId });
+            }
+            else if (supervisedSelf.ActionName != null)
             {
                 var data = GetManagesupervisionData();
                 var model = new ManagesupervisionViewModel(data.LearnerDeclaration, data.SupervisorDeclaration, supervisedSelf);
                 SetManagesupervisionData(model);
-            }
-            else
-            {
-                var model = new ManagesupervisionViewModel(supervisedSelf);
-                SetManagesupervisionData(model);
-            }
-            if (supervisedSelf.Supervised == 0 || supervisedSelf.Signoff == 0) return RedirectToAction("ManageSupervisionSettings", "CompetencyAssessments", new { supervisedSelf.CompetencyAssessmentId });
-            if (supervisedSelf.ActionName != null) return RedirectToAction("SupervisorSignoffDeclaration", "CompetencyAssessments",
+                return RedirectToAction("SupervisorSignoffDeclaration", "CompetencyAssessments",
                 new
                 {
                     CompetencyAssessmentId = supervisedSelf.CompetencyAssessmentId,
                     ActionName = "Supervisor"
                 });
-            return RedirectToAction("SupervisorSignoffDeclaration", "CompetencyAssessments", new { supervisedSelf.CompetencyAssessmentId });
+            }
+            else
+            {
+                var model = new ManagesupervisionViewModel(supervisedSelf);
+                SetManagesupervisionData(model);
+                var competencyAssessmentTaskStatus = competencyAssessmentService.GetCompetencyAssessmentTaskStatus(supervisedSelf.CompetencyAssessmentId, null);
+                competencyAssessmentService.UpdateSupervisorRolesTaskStatus(supervisedSelf.CompetencyAssessmentId, competencyAssessmentTaskStatus.SupervisorRolesTaskStatus ?? false);
+                return RedirectToAction("SupervisorSignoffDeclaration", "CompetencyAssessments", new { supervisedSelf.CompetencyAssessmentId });
+            }
         }
 
         [Route("/CompetencyAssessments/{competencyAssessmentId}/SupervisorDeclaration")]
         [Route("/CompetencyAssessments/{competencyAssessmentId}/{actionName}/SupervisorDeclaration")]
         public IActionResult SupervisorSignoffDeclaration(int competencyAssessmentId, string? actionName)
         {
-            if (competencyAssessmentId == 0) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
+            var adminId = GetAdminID();
+            var baseData = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
+            var result = ValidateCompetencyAssessmentAndRole(competencyAssessmentId, adminId, "Supervisor Signoff Declaration", baseData);
+            if (result.StatusCode != 200)
+                return result;
             var data = GetManagesupervisionData();
             if (actionName == "Supervisor")
             {
@@ -1278,6 +1299,7 @@
             }
             var model = new SupervisorSignoffDeclarationViewModel(competencyAssessmentId);
             model.CompetencyAssessmentName = data.CompetencyAssessmentName;
+            model.CompetencyAssessmentId = competencyAssessmentId;
             model.DefaultText = this.config.GetSupervisorDefaultText().Replace("{{CompetencyAssessmentName}}", model.CompetencyAssessmentName); ;
             return View(model);
         }
@@ -1315,7 +1337,11 @@
         [Route("/CompetencyAssessments/{competencyAssessmentId}/{actionName}/LearnerDeclaration")]
         public IActionResult LearnerSignoffDeclaration(int competencyAssessmentId, string? actionName)
         {
-            if (competencyAssessmentId == 0) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
+            var adminId = GetAdminID();
+            var baseData = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
+            var result = ValidateCompetencyAssessmentAndRole(competencyAssessmentId, adminId, "Learner Signoff Declaration", baseData);
+            if (result.StatusCode != 200)
+                return result;
             var data = GetManagesupervisionData();
             if (actionName == "Learner")
             {
@@ -1326,6 +1352,7 @@
             }
             var model = new LearnerSignoffDeclarationViewModel(competencyAssessmentId);
             model.CompetencyAssessmentName = data.CompetencyAssessmentName;
+            model.CompetencyAssessmentId  = competencyAssessmentId;
             model.DefaultText = this.config.GetLearnerDefaultText().Replace("{{CompetencyAssessmentName}}", model.CompetencyAssessmentName);
             return View(model);
         }
@@ -1357,13 +1384,15 @@
         [Route("/CompetencyAssessments/{competencyAssessmentId}/{actionName}/SupervisionSettings")]
         public IActionResult ManageSupervisionSettings(int competencyAssessmentId, string? actionName)
         {
-            if (competencyAssessmentId == 0) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
+            var adminId = GetAdminID();
+            var baseData = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
+            var result = ValidateCompetencyAssessmentAndRole(competencyAssessmentId, adminId, "Supervisor Signoff Declaration", baseData);
+            if (result.StatusCode != 200)
+                return result;
             var competencyAssessmentTaskStatus = competencyAssessmentService.GetCompetencyAssessmentTaskStatus(competencyAssessmentId, null);
             if (actionName == "SupervisorRoles")
             {
-                var adminId = GetAdminID();
-                var baseData = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
-                var model = new ManagesupervisionViewModel(competencyAssessmentId, baseData.CompetencyAssessmentName,
+             var model = new ManagesupervisionViewModel(competencyAssessmentId, baseData.CompetencyAssessmentName,
             baseData.SupervisorResultsReview,
             baseData.SupervisorSelfAssessmentReview,
             baseData.SignOffSupervisorStatement,
@@ -1394,13 +1423,9 @@
                 return View("ManageSupervisionSettings", model);
             }
             var competencyAssessmentTaskStatus = competencyAssessmentService.GetCompetencyAssessmentTaskStatus(data.Signoff.CompetencyAssessmentId, null);
-            if (!competencyAssessmentTaskStatus.SupervisorRolesTaskStatus.HasValue)
-            {
-                competencyAssessmentService.UpdateSupervisorRolesTaskStatus(data.Signoff.CompetencyAssessmentId, viewModel.TaskCompleteChecked ?? false);
-            }
+            competencyAssessmentService.UpdateSupervisorRolesTaskStatus(data.Signoff.CompetencyAssessmentId, viewModel.TaskCompleteChecked ?? false);
             competencyAssessmentService.UpdateSelfAssessments(data.Signoff.CompetencyAssessmentId,
                 data.Signoff.Supervised,
-                data.Signoff.Signoff,
                 data.Signoff.Confirm,
                 data.SupervisorDeclaration.DeclarationValue,
                 SanitizerHelper.SanitizeHtmlData(data.SupervisorDeclaration.CustomText),

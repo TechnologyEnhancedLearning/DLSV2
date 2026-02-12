@@ -86,7 +86,6 @@ namespace DigitalLearningSolutions.Web.Services
         bool UpdateSupervisorRolesTaskStatus(int competencyAssessmentId, bool taskCompleteChecked);
         bool UpdateSelfAssessments(int competencyAssessmentId,
                     int? supervised,
-                    int? signoff,
                     int? confirm,
                    int? supervisorDeclarationValue,
                    string? supervisorCustomText,
@@ -519,7 +518,6 @@ namespace DigitalLearningSolutions.Web.Services
         }
         public bool UpdateSelfAssessments(int competencyAssessmentId,
              int? supervised,
-             int? signoff,
              int? confirm,
              int? supervisorDeclarationValue,
              string? supervisorCustomText,
@@ -527,7 +525,7 @@ namespace DigitalLearningSolutions.Web.Services
              string? leanerCustomText
                    )
         {
-            return competencyAssessmentDataService.UpdateSelfAssessments(competencyAssessmentId, supervised, signoff, confirm,
+            return competencyAssessmentDataService.UpdateSelfAssessments(competencyAssessmentId, supervised, confirm,
             supervisorDeclarationValue, supervisorCustomText, leanerDeclarationValue, leanerCustomText);
         }
     }

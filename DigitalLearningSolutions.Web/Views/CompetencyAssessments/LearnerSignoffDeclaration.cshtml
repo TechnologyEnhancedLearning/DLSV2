@@ -53,16 +53,7 @@
 
                         </div>
                         <div class="nhsuk-radios__conditional nhsuk-radios__conditional--hidden" id="conditional-declaration-default">
-                            <nhs-form-group nhs-validation-for="DefaultText">
-                                <vc:text-area asp-for="DefaultText"
-                                              character-count="null"
-                                              label="Declaration text"
-                                              rows="5"
-                                              css-class="html-editor"
-                                              hint-text=""
-                                              populate-with-current-value="true"
-                                              spell-check="false" />
-                            </nhs-form-group>
+                            @Html.Raw(@Model.DefaultText)
                         </div>
                         <div class="nhsuk-radios__item">
                             <input class="nhsuk-radios__input" id="declaration-custom" name="DeclarationValue" type="radio" value="1"

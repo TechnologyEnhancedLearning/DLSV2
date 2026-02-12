@@ -54,23 +54,8 @@
                         </ul>
                     </dd>
                 </div>
-
                 @if (@Model.Signoff.SupervisedText == "Yes")
-                {
-
-                    <div class="nhsuk-summary-list__row">
-                        <dt class="nhsuk-summary-list__key">
-                            Supervisor signs off self assessment
-                        </dt>
-                        <dd class="nhsuk-summary-list__value">
-                            @Model.Signoff.SignoffText
-                        </dd>
-
-                    </div>
-                    @if (Model.Signoff.SignoffText == "Yes")
-                    {
-                        @if (@Model.Signoff.SupervisedText == "Yes")
-                        {
+                  {
                             <div class="nhsuk-summary-list__row">
                                 <dt class="nhsuk-summary-list__key">
                                     Supervisor sign off statement
@@ -103,9 +88,6 @@
                                     </ul>
                                 </dd>
                             </div>
-
-
-
                             <div class="nhsuk-summary-list__row">
                                 <dt class="nhsuk-summary-list__key">
                                     Learner sign off statement
@@ -139,8 +121,6 @@
                                     </ul>
                                 </dd>
                             </div>
-                        }
-
                         <div class="nhsuk-summary-list__row">
                             <dt class="nhsuk-summary-list__key">
                                 Supervisor or nominated supervisor confirms individual assessment results
@@ -150,11 +130,10 @@
                             </dd>
 
                         </div>
-                    }
-                }
+            }
 
             </dl>
-            <hr class="nhsuk-section-break nhsuk-section-break--l nhsuk-section-break--visible" />
+         
             <nhs-form-group>
                 <vc:single-checkbox asp-for="@nameof(Model.TaskCompleteChecked)" label="Mark this task as complete" hint-text="You will still be able to make changes after marking this task as complete."></vc:single-checkbox>
             </nhs-form-group>
@@ -164,10 +143,10 @@
 
             <div class="nhsuk-u-margin-top-8">
 
-                <button class="nhsuk-button nhsuk-button--primary  nhsuk-u-margin-left-3" type="submit">
+                <button class="nhsuk-button nhsuk-button--primary" type="submit">
                     Save
                 </button>
-                <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-left-3" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.Signoff.CompetencyAssessmentId">
+                <a class="nhsuk-button nhsuk-button--secondary" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.Signoff.CompetencyAssessmentId">
 
                     Cancel
                 </a>
