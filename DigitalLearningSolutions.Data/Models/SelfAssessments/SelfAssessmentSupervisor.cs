@@ -9,6 +9,7 @@ namespace DigitalLearningSolutions.Data.Models.SelfAssessments
         public int ID { get; set; }
         public int SupervisorDelegateID { get; set; }
         public int? SupervisorAdminID { get; set; }
+        public int? SupervisorAdminUserID { get; set; }
         public string SupervisorName { get; set; } = string.Empty;
         public string SupervisorEmail { get; set; } = string.Empty;
         public DateTime NotificationSent { get; set; }
@@ -20,5 +21,5 @@ namespace DigitalLearningSolutions.Data.Models.SelfAssessments
         public string CentreName { get; set; } = string.Empty;
         public bool AllowDelegateNomination { get; set; }
         public bool AllowSupervisorRoleSelection { get; set; }
-}
+    }
 }

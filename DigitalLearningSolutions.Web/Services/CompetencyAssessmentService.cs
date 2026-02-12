@@ -90,7 +90,6 @@ namespace DigitalLearningSolutions.Web.Services
         bool UpdateSupervisorRolesTaskStatus(int competencyAssessmentId, bool taskCompleteChecked);
         bool UpdateSelfAssessments(int competencyAssessmentId,
                     int? supervised,
-                    int? signoff,
                     int? confirm,
                    int? supervisorDeclarationValue,
                    string? supervisorCustomText,
@@ -108,7 +107,8 @@ namespace DigitalLearningSolutions.Web.Services
         bool InsertSelfAssessmentFramework(int adminId, int assessmentId, int frameworkId);
         int GetCompetencyCountByFrameworkId(int competencyAssessmentId, int frameworkId);
         bool InsertCompetenciesIntoAssessmentFromFramework(int[] selectedCompetencyIds, int frameworkId, int competencyAssessmentId);
-        bool InsertSelfAssessmentStructure(int selfAssessmentId, int? frameworkId);
+        bool InsertSelfAssessmentUngroupedCompetencies(int selfAssessmentId, int? frameworkId);
+        bool InsertSelfAssessmentGroupedCompetencies(int selfAssessmentId, int? frameworkId);
         void InsertIntoSelfAssessmentCollaboratorsFromFrameworkCollaborators(int selfAssessmentId, int? frameworkId);
         void InsertSelfAssessmentReview(int competencyAssessmentId, int selfAssessmentCollaboratorID, bool required);
         int InsertComment(int selfAssessmentID, int adminId, string comment, int? replyToCommentId);
@@ -361,9 +361,13 @@ namespace DigitalLearningSolutions.Web.Services
         {
             return competencyAssessmentDataService.GetCompetencyAssessmentFeaturesTaskStatus(competencyAssessmentId);
         }
-        public bool InsertSelfAssessmentStructure(int selfAssessmentId, int? frameworkId)
+        public bool InsertSelfAssessmentGroupedCompetencies(int selfAssessmentId, int? frameworkId)
         {
-            return competencyAssessmentDataService.InsertSelfAssessmentStructure(selfAssessmentId, frameworkId);
+            return competencyAssessmentDataService.InsertSelfAssessmentGroupedCompetencies(selfAssessmentId, frameworkId);
+        }
+        public bool InsertSelfAssessmentUngroupedCompetencies(int selfAssessmentId, int? frameworkId)
+        {
+            return competencyAssessmentDataService.InsertSelfAssessmentUngroupedCompetencies(selfAssessmentId, frameworkId);
         }
         public void UpdateSelfAssessmentFromFramework(int selfAssessmentId, int? frameworkId)
         {
@@ -527,7 +531,6 @@ namespace DigitalLearningSolutions.Web.Services
         }
         public bool UpdateSelfAssessments(int competencyAssessmentId,
              int? supervised,
-             int? signoff,
              int? confirm,
              int? supervisorDeclarationValue,
              string? supervisorCustomText,
@@ -535,7 +538,7 @@ namespace DigitalLearningSolutions.Web.Services
              string? leanerCustomText
                    )
         {
-            return competencyAssessmentDataService.UpdateSelfAssessments(competencyAssessmentId, supervised, signoff, confirm,
+            return competencyAssessmentDataService.UpdateSelfAssessments(competencyAssessmentId, supervised, confirm,
             supervisorDeclarationValue, supervisorCustomText, leanerDeclarationValue, leanerCustomText);
         }
         public void UpdateCompetencyAssessmentPublishStatus(int competencyAssessmentId, int status, int adminId)

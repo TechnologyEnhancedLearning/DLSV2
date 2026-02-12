@@ -1,7 +1,7 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
 @model SupervisedSelfAssessmentSignoffViewModel
 @{
-    var errorHasOccurred = !ViewData.ModelState.IsValid && ViewData.ModelState.ContainsKey(nameof(Model.Supervised));
+    var errorHasOccurred = !ViewData.ModelState.IsValid;
     ViewData["Title"] = "Supervised self assessment and sign off";
 }
 
@@ -23,7 +23,7 @@
     <div class="nhsuk-grid-column-full">
         @if (errorHasOccurred)
         {
-            <vc:error-summary order-of-property-names="@(new[] { nameof(Model.Supervised) })" />
+            <vc:error-summary order-of-property-names="@(new[] { nameof(Model.Supervised), nameof(Model.Confirm) })" />
         }
         <main class="nhsuk-main-wrapper">
 
@@ -36,8 +36,15 @@
                         </h1>
                     </legend>
 
-                    <div class="nhsuk-radios nhsuk-radios--conditional">
-                        <div class="nhsuk-form-group @(errorHasOccurred ? "nhsuk-form-group--error" : "")">
+                    <div class="nhsuk-radios nhsuk-radios--conditional"> 
+                         <div class="nhsuk-form-group">
+                            @if (ViewData.ModelState.ContainsKey("Supervised"))
+                            {
+                                <span class="nhsuk-error-message" id="Supervised-error">
+                                    <span class="nhsuk-u-visually-hidden">Error:</span>
+                                    @ViewData.ModelState[nameof(Model.Supervised)]?.Errors.FirstOrDefault()?.ErrorMessage
+                                </span>
+                            }
                             <div class="nhsuk-radios__item">
                                 <input class="nhsuk-radios__input" id="supervision-no" name="Supervised" type="radio" value="0"
                                        aria-invalid="@(errorHasOccurred.ToString().ToLower())"
@@ -59,37 +66,14 @@
                             </div>
                         </div>
                         <div class="nhsuk-radios__conditional" id="conditional-supervision-yes">
-
-                            <fieldset class="nhsuk-fieldset">
-
-
-                                <div class="nhsuk-radios">
-                                    <label class="nhsuk-label" for="signoff-yes">
-                                        Supervisor signs off self assessment?
-                                    </label>
-                                    <div class="nhsuk-radios__item">
-                                        <input class="nhsuk-radios__input"
-                                               id="signoff-no"
-                                               name="Signoff"
-                                               type="radio"
-                                               value="0"
-                                               aria-controls="conditional-signoff-yes" aria-expanded="false"
-                                               @(Model.Signoff == 0 ? "checked" : "")>
-                                        <label class="nhsuk-label nhsuk-radios__label" for="signoff-no">
-                                            No
-                                        </label>
-                                    </div>
-                                    <div class="nhsuk-radios__item">
-                                        <input class="nhsuk-radios__input" id="signoff-yes" name="Signoff" type="radio" value="1" aria-controls="conditional-signoff-yes" aria-expanded="true" @(Model.Signoff == 1 ? "checked" : "")>
-                                        <label class="nhsuk-label nhsuk-radios__label" for="signoff-yes">
-                                            Yes
-                                        </label>
-                                    </div>
-
-
-                                </div>
-                                <div class="nhsuk-radios__conditional" id="conditional-signoff-yes">
-                                    <div class="nhsuk-radios nhsuk-u-margin-top-4">
+                                <div class="nhsuk-form-group">
+                                   @if (ViewData.ModelState.ContainsKey("Supervised"))
+                            {
+                                <span class="nhsuk-error-message" id="Supervised-error">
+                                    <span class="nhsuk-u-visually-hidden">Error:</span>
+                                        @ViewData.ModelState[nameof(Model.Confirm)]?.Errors.FirstOrDefault()?.ErrorMessage
+                                </span>
+                            }
                                         <label class="nhsuk-label" for="confirm-yes">
                                             Supervisor or nominated supervisor confirm individual assessment results?
                                         </label>
@@ -107,11 +91,9 @@
                                             </label>
                                         </div>
                                     </div>
-                                </div>
-                            </fieldset>
-                        </div>
+                         </div>
 
-                    </div>
+                   </div> 
                 </fieldset>
                 <input type="hidden" asp-for="CompetencyAssessmentId" />
                 <input type="hidden" asp-for="CompetencyAssessmentName" />
