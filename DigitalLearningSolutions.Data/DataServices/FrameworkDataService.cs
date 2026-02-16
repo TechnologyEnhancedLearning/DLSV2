@@ -5,6 +5,7 @@
     using System.Data;
     using System.Linq;
     using Dapper;
+    using DigitalLearningSolutions.Data.Extensions;
     using DigitalLearningSolutions.Data.Models.Common;
     using DigitalLearningSolutions.Data.Models.Email;
     using DigitalLearningSolutions.Data.Models.Frameworks;
@@ -267,6 +268,10 @@
 
         void DeleteCompetencyLearningResource(int competencyLearningResourceId, int adminId);
         void UpdateFrameworkCompetencyFrameworkCompetencyGroup(int? competencyGroupId, int frameworkCompetencyGroupId, int adminId);
+
+        void ChangeFrameworkOwner(int frameworkId, string newOwnerEmail, int updatedByAdminId);
+        IEnumerable<int> GetAdminIdsForUserId(int userId);
+
     }
 
     public class FrameworkDataService : IFrameworkDataService
@@ -2563,6 +2568,52 @@ WHERE (RP.CreatedByAdminID = @adminId) OR
                     $"frameworkCompetencyGroupId: {frameworkCompetencyGroupId}, competencyGroupId: {competencyGroupId}."
                 );
             }
+        }
+
+        public void ChangeFrameworkOwner(int frameworkId, string newOwnerEmail, int updatedByAdminId)
+        {
+            // Find the AdminID for the new owner
+            var newOwnerAdminId = connection.Query<int?>(
+                @"SELECT AdminID FROM AdminUsers WHERE Email = @newOwnerEmail AND Active = 1",
+                new { newOwnerEmail }
+            ).FirstOrDefault(); ;
+            if (newOwnerAdminId == null)
+            {
+                throw new Exception("No active admin user found with that email.");
+            }
+
+            // Update the owner
+            connection.EnsureOpen();
+            using var transaction = connection.BeginTransaction();
+            {
+                var rows = connection.Execute(
+                @"UPDATE Frameworks SET OwnerAdminID = @newOwnerAdminId, UpdatedByAdminID = @updatedByAdminId WHERE ID = @frameworkId",
+                new { frameworkId, newOwnerAdminId, updatedByAdminId }
+                , transaction
+            );
+                connection.Execute(
+                @"UPDATE FrameworkCollaborators
+                  SET IsDeleted = 1
+                  WHERE FrameworkID = @frameworkId
+                  AND AdminID = @newOwnerAdminId
+                  AND IsDeleted = 0;",
+            new { frameworkId, newOwnerAdminId },
+            transaction
+        );
+                transaction.Commit();
+
+                if (rows < 1)
+                {
+                    throw new Exception("Failed to update framework owner.");
+                }
+            }
+        }
+        public IEnumerable<int> GetAdminIdsForUserId(int userId)
+        {
+            return connection.Query<int>(
+                @"SELECT ID FROM AdminAccounts WHERE UserID = @userId",
+                new { userId }
+            );
         }
     }
 }
