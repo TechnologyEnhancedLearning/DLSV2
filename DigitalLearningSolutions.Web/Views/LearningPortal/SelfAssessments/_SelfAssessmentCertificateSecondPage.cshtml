@@ -23,12 +23,12 @@
             </p>
         </div>
         <div class="activity">
-            <p><b>Number of confirmed responses</b></p> <p>
+            <p><b>Responses confirmed by nominated supervisor</b></p> <p>
                 @Model.ConfirmedResponses
             </p>
         </div>
         <div class="activity">
-            <p><b>Individual @Model.VocabPlural.ToLower() signed off by</b></p><ul>
+            <p><b>Nominated supervisors</b></p><ul>
                 @foreach (var accessor in Model.Accessors)
                 {
                     <p>
