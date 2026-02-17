@@ -81,6 +81,7 @@
         </tbody>
     </table>
 </div>
+<input type="hidden" asp-for="ActionName" />
 <form method="post">
     <label class="nhsuk-label nhsuk-u-margin-top-6" for="add-user-hint">
         <h2>Add a user to the working group</h2>
@@ -111,9 +112,17 @@
     </button>
     <vc:single-checkbox asp-for="@nameof(Model.CompetencyAssessmentTaskStatus)" label="Mark this task as complete" hint-text="You will still be able to make changes after marking this task as complete."></vc:single-checkbox>
     <div class=" nhsuk-u-margin-top-6">
-        <button class="nhsuk-button" asp-route-actionName="Summary" asp-route-competencyAssessmentId="@Model.CompetencyAssessmentID" asp-route-taskStatus="@Model.CompetencyAssessmentTaskStatus">
-            Done
-        </button>
+        @if (Model.ActionName == "CollaboratorReview")
+        {
+            <a class="nhsuk-button" asp-action="SendForReview" asp-route-actionName="CollaboratorReview" asp-route-competencyAssessmentId="@Model.CompetencyAssessmentID">
+                Done
+            </a>
+        }
+        else
+        {
+            <button class="nhsuk-button" asp-route-actionName="Summary" asp-route-competencyAssessmentId="@Model.CompetencyAssessmentID" asp-route-taskStatus="@Model.CompetencyAssessmentTaskStatus">
+                Done
+            </button>
+        }
     </div>
 </form>
-

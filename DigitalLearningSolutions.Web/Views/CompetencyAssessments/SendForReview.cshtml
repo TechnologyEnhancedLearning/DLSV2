@@ -1,0 +1,113 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments;
+@model SendForReviewViewModel;
+@{
+    var errorHasOccurred = !ViewData.ModelState.IsValid;
+    ViewData["Title"] = "Send for review";
+}
+@section NavMenuItems {
+    <partial name="Shared/_NavMenuItems" />
+}
+@section NavBreadcrumbs {
+    <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+        <div class="nhsuk-width-container">
+            <ol class="nhsuk-breadcrumb__list">
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewCompetencyAssessments" asp-route-tabname="Mine">Competency Assessments</a></li>
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.CompetencyAssessmentID">Manage Competency Assessment</a></li>
+                <li class="nhsuk-breadcrumb__item">Send for Review</li>
+            </ol>
+
+        </div>
+    </nav>
+}
+<h1>Send for review</h1>
+<h2>Who should review this self assessment?</h2>
+@if (errorHasOccurred)
+{
+    <vc:error-summary order-of-property-names="@(new[] { nameof(Model.UserChecked) })" />
+}
+<form method="post">
+    <table class="nhsuk-table-responsive">
+        <caption class="nhsuk-table__caption">
+            Select working group members who need to review the self assessment "@Model.CompetencyAssessmentName" before it is published.
+            If sign-off is required form a user before the self assessment is published, ensure that sign-off required column is checked.
+        </caption>
+        <thead role="rowgroup" class="nhsuk-table__head">
+            <tr role="row">
+
+                <th role="columnheader" class="" scope="col">
+                    User
+                </th>
+                <th role="columnheader" class="" scope="col">
+                    Role
+                </th>
+                <th role="columnheader" class="" scope="col">
+                    Sign-off Required
+                </th>
+            </tr>
+        </thead>
+
+        <tbody class="nhsuk-table__body">
+            @foreach (var collaborator in Model.Collaborators)
+            {
+                <tr role="row" class="nhsuk-table__row collaborator-row">
+                    <td role="cell" class="nhsuk-table__cell">
+
+                        <span class="nhsuk-table-responsive__heading">User </span>
+                        <div class="nhsuk-checkboxes__item">
+                            <input class="nhsuk-checkboxes__input"
+                                   id="user-check-@collaborator.ID"
+                                   name="UserChecked" type="checkbox"
+                                   value="@collaborator.ID"
+                                   @(collaborator.SelfAssessmentReviewID.HasValue ? "checked" : "")>
+                            <label class="nhsuk-label nhsuk-checkboxes__label" for="user-check-@collaborator.ID">
+                                @collaborator.UserEmail @(collaborator.UserActive == true ? "" : "(inactive)")
+                            </label>
+                        </div>
+                    </td>
+                    <td role="cell" class="nhsuk-table__cell">
+                        <span class="nhsuk-table-responsive__heading">Role </span>
+                        <span class="framework-collaborator-role">
+                            <partial name="Shared/_RoleTag" model="collaborator" />
+                        </span>
+                    </td>
+                    <td role="cell" class="nhsuk-table__cell">
+                        <span class="nhsuk-table-responsive__heading">Sign-off Required </span>
+                        <div class="nhsuk-checkboxes__item">
+                            <input class="nhsuk-checkboxes__input"
+                                   id="sign-off-required-check-@collaborator.ID"
+                                   name="SignOffRequiredChecked"
+                                   type="checkbox"
+                                   value="@collaborator.ID"
+                                   @(collaborator.SignOffRequired == true ? "checked" : "")>
+                            <label class="nhsuk-label nhsuk-checkboxes__label" for="sign-off-required-@collaborator.ID">
+                                Required
+                            </label>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <input type="hidden" asp-for="CompetencyAssessmentID" />
+    <input type="hidden" asp-for="PublishStatusID" />
+    <input type="hidden" asp-for="CompetencyAssessmentName" />
+
+    <div class="nhsuk-grid-row nhsuk-u-margin-top-4">
+        <div class="nhsuk-grid-column-full">
+            <button class="nhsuk-button" type="submit">Submit</button>
+            <a class="nhsuk-button nhsuk-button--secondary" role="button" asp-action="AssessmentWorkingGroup" asp-route-competencyAssessmentId="@Model.CompetencyAssessmentID" asp-route-actionName="CollaboratorReview">Manage working group</a>
+            <a class="nhsuk-button nhsuk-button--secondary" role="button" asp-action="PublishWithoutReview" asp-route-competencyAssessmentId="@Model.CompetencyAssessmentID">Skip and publish without review</a>
+        </div>
+    </div>
+
+</form>
+
+
+<div class="nhsuk-back-link">
+    <a class="nhsuk-back-link__link" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.CompetencyAssessmentID">
+        <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
+        </svg>
+        Cancel
+    </a>
+</div>

@@ -20,6 +20,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
     using DigitalLearningSolutions.Web.ViewModels.Common;
     using System.Net;
     using DigitalLearningSolutions.Web.ServiceFilter;
+    using System;
 
     public partial class FrameworksController
     {
@@ -772,6 +773,55 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
             var newFramework = frameworkService.CreateFramework(detailFramework, adminId);
             TempData.Clear();
             return RedirectToAction("AddCollaborators", "Frameworks", new { actionName = "New", frameworkId = newFramework.ID });
+        }
+
+        [HttpGet]
+        [Route("/Frameworks/ChangeOwner/{frameworkId}")]
+        public IActionResult ChangeOwner(int frameworkId)
+        {
+            var framework = frameworkService.GetBaseFrameworkByFrameworkId(frameworkId, GetAdminId());
+            if (framework == null) return StatusCode(404);
+
+            var userId = User.GetUserIdKnownNotNull();
+            var userAdminIds = frameworkService.GetAdminIdsForUserId(userId);
+            if (!userAdminIds.Contains(framework.OwnerAdminID))
+                return StatusCode(403);
+
+            var model = new ChangeOwnerViewModel
+            {
+                FrameworkId = frameworkId,
+                FrameworkName = framework.FrameworkName
+            };
+            return View("Developer/ChangeOwner", model);
+        }
+
+        [HttpPost]
+        [Route("/Frameworks/ChangeOwner/{frameworkId}")]
+        public IActionResult ChangeOwner(int frameworkId, ChangeOwnerViewModel model)
+        {
+            var framework = frameworkService.GetBaseFrameworkByFrameworkId(frameworkId, GetAdminId());
+            model.FrameworkName = framework.FrameworkName;
+
+            if (User.GetUserPrimaryEmail() == model.NewOwnerEmail)
+            {
+                ModelState.AddModelError(nameof(model.NewOwnerEmail), "The new owner email address cannot be the same as the current owner's email address.");
+                return View("Developer/ChangeOwner", model);
+            }
+            if (!ModelState.IsValid)
+            {
+                return View("Developer/ChangeOwner", model);
+            }
+
+            try
+            {
+                frameworkService.ChangeFrameworkOwner(frameworkId, model.NewOwnerEmail, GetAdminId());
+                return RedirectToAction("ViewFramework", new { tabname = "Details", frameworkId });
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(nameof(model.NewOwnerEmail), ex.Message);
+                return View("Developer/ChangeOwner", model);
+            }
         }
     }
 }

@@ -262,6 +262,9 @@ namespace DigitalLearningSolutions.Web.Services
 
         void DeleteCompetencyLearningResource(int competencyLearningResourceId, int adminId);
         void UpdateFrameworkCompetencyFrameworkCompetencyGroup(int? competencyGroupId, int frameworkCompetencyGroupId, int adminId);
+
+        void ChangeFrameworkOwner(int frameworkId, string newOwnerEmail, int updatedByAdminId);
+        IEnumerable<int> GetAdminIdsForUserId(int userId);
     }
     public class FrameworkService : IFrameworkService
     {
@@ -734,6 +737,15 @@ namespace DigitalLearningSolutions.Web.Services
         public void UpdateFrameworkCompetencyFrameworkCompetencyGroup(int? competencyGroupId, int frameworkCompetencyGroupId, int adminId)
         {
             frameworkDataService.UpdateFrameworkCompetencyFrameworkCompetencyGroup(competencyGroupId, frameworkCompetencyGroupId, adminId);
+        }
+        public void ChangeFrameworkOwner(int frameworkId, string newOwnerEmail, int updatedByAdminId)
+        {
+            frameworkDataService.ChangeFrameworkOwner(frameworkId, newOwnerEmail, updatedByAdminId);
+        }
+
+        public IEnumerable<int> GetAdminIdsForUserId(int userId)
+        {
+            return frameworkDataService.GetAdminIdsForUserId(userId);
         }
     }
 }

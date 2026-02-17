@@ -11,5 +11,7 @@
         public bool? CompetencyAssessmentTaskStatus { get; set; }
         public string? UserEmail { get; set; }
         public bool Error { get; set; }
+        public string? ActionName { get; set; }
+
     }
 }

@@ -34,6 +34,8 @@
         public bool SupervisorResultsReview { get; set; }
         public string? SignOffRequestorStatement { get; set; }
         public string? SignOffSupervisorStatement { get; set; }
+        public int? SelfAssessmentReviewID { get; set; }
+        public int? SelfAssessmentCommentID { get; set; }
     }
 }
 
