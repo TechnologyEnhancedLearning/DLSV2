@@ -4,5 +4,6 @@
     public class LinkedFramework : BaseFramework
     {
         public int AssessmentFrameworkCompetencyCount { get; set; } = 0;
+        public bool IsPrimary { get; set; }
     }
 }
