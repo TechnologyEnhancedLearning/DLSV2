@@ -37,7 +37,9 @@
         CompetencyAssessmentFeatures? GetCompetencyAssessmentFeaturesTaskStatus(int competencyAssessmentId);
         int? GetSelfAssessmentStructure(int competencyAssessmentId);
         IEnumerable<CompetencyWithAssessmentQuestionRoleRequirements> GetCompetencyWithAssessmentQuestionRoleRequirements(int competencyAssessmentId, int? competencyId, int? assessmentQuestionId);
-
+        IEnumerable<SelfAssessmentReview> GetCompetencySelfAssessmentReviews(int competencyAssessmentId);
+        SelfAssessmentReview? GetCompetencySelfAssessmentReviewById(int competencyAssessmentId, int selfAssessmentReviewId);
+        SelfAssessmentReviewOutcomeNotification? GetSelfAssessmentReviewNotification(int reviewId);
         //UPDATE DATA
         bool UpdateCompetencyAssessmentName(int competencyAssessmentId, int adminId, string competencyAssessmentName);
 
@@ -96,6 +98,12 @@
                     int? leanerDeclarationValue,
                     string? leanerCustomText
                    );
+        void UpdateCompetencyAssessmentPublishStatus(int competencyAssessmentId, int status, int adminId);
+        void UpdateCompetencyAssessmentPublish(int competencyAssessmentId, int status, int adminId, bool national, bool pub);
+        void ArchiveSelfAssessmentReviewRequest(int reviewId);
+        void UpdateSelfAssessmentReview(int selfAssessmentID, int reviewId, bool signedOff, int? commentId);
+        void UpdateReviewRequestedDate(int reviewId);
+        bool UpdateCompetencyAssessmentReviewTaskStatus(int assessmentId, bool taskStatus);
         //INSERT DATA
         int InsertCompetencyAssessment(int adminId, int centreId, string competencyAssessmentName);
         bool InsertSelfAssessmentFramework(int adminId, int selfAssessmentId, int frameworkId);
@@ -105,6 +113,9 @@
         int InsertAssessmentQuestionRoleRequirementForSelfAssessment(int assessmentId, int assessmentQuestionId, int levelValue, int? levelRAG);
         int InsertCompetencyAssessmentQuestionRoleRequirement(int assessmentId, int competencyId, int assessmentQuestionId, int levelValue, int? levelRAG);
         void InsertIntoSelfAssessmentCollaboratorsFromFrameworkCollaborators(int selfAssessmentId, int? frameworkId);
+        void InsertSelfAssessmentReview(int competencyAssessmentId, int selfAssessmentCollaboratorID, bool required);
+        int InsertComment(int selfAssessmentID, int adminId, string comment, int? replyToCommentId);
+        int InsertCompetencySelfAssessmentReview(int reviewId);
 
         //DELETE DATA
         bool RemoveFrameworkCompetenciesFromAssessment(int competencyAssessmentId, int frameworkId);
@@ -131,7 +142,8 @@
                 sa.MinimumOptionalCompetencies,
                 sa.ManageOptionalCompetenciesPrompt,
                 sa.IncludeLearnerDeclarationPrompt, sa.IncludesSignposting, sa.LinearNavigation, sa.UseDescriptionExpanders, sa.QuestionLabel, sa.ReviewerCommentsLabel,
-                sa.SupervisorSelfAssessmentReview, sa.SupervisorResultsReview ";
+                sa.SupervisorSelfAssessmentReview, sa.SupervisorResultsReview, sar.ID AS SelfAssessmentReviewID,
+                sar.SelfAssessmentCommentID";
 
         private const string SelfAssessmentFields =
             @", sa.CategoryID, sa.CreatedDate,
@@ -213,7 +225,7 @@
         {
             return connection.Query<CompetencyAssessmentBase>(
                 $@"SELECT {SelfAssessmentBaseFields}
-                      FROM {SelfAssessmentBaseTables}
+                      FROM {SelfAssessmentBaseTables} {SelfAssessmentTables}
                       WHERE (sa.ID = @competencyAssessmentId)",
                 new { competencyAssessmentId, adminId }
             ).FirstOrDefault();
@@ -1043,23 +1055,28 @@
                         1 AS CanModify,
                         au.Email AS UserEmail,
                         au.Active AS UserActive,
-                        'Owner' AS CompetencyAssessmentRole
+                        'Owner' AS CompetencyAssessmentRole,
+						0 AS SelfAssessmentReviewID,
+						0 AS SignOffRequired
                     FROM SelfAssessments AS sa
                     INNER JOIN AdminUsers AS au ON sa.CreatedByAdminID = au.AdminID
                     WHERE (sa.ID = @competencyAssessmentId)
                     UNION ALL
                     SELECT
-                        ID,
-                        SelfAssessmentID,
+                        sc.ID,
+                        sc.SelfAssessmentID,
                         sc.AdminID,
                         CanModify,
                         UserEmail,
                         au.Active AS UserActive,
-                        CASE WHEN CanModify = 1 THEN 'Contributor' ELSE 'Reviewer' END AS CompetencyAssessmentRole
+                        CASE WHEN CanModify = 1 THEN 'Contributor' ELSE 'Reviewer' END AS CompetencyAssessmentRole,
+                        sr.ID AS SelfAssessmentReviewID,
+					   sr.SignOffRequired
                     FROM SelfAssessmentCollaborators sc
                     INNER JOIN AdminUsers AS au ON sc.AdminID = au.AdminID
                         AND sc.IsDeleted = 0
-                    WHERE (SelfAssessmentID = @competencyAssessmentId)",
+                      LEFT OUTER JOIN SelfAssessmentReviews sr ON sr.SelfAssessmentCollaboratorID = sc.ID AND sr.Archived IS NULL
+                    WHERE (sc.SelfAssessmentID = @competencyAssessmentId)",
                 new { competencyAssessmentId }
             );
         }
@@ -1539,6 +1556,225 @@ ORDER BY
                     $"confirm: {confirm}, supervisorDeclarationValue: {supervisorDeclarationValue} " +
                     $"supervisorCustomText: {supervisorCustomText}, leanerDeclarationValue: {leanerDeclarationValue}, leanerCustomText: {leanerCustomText} "
                     );
+                return false;
+            }
+            return true;
+        }
+        public void UpdateCompetencyAssessmentPublishStatus(int competencyAssessmentId, int status, int adminId)
+        {
+            connection.Execute(
+                 @"UPDATE SelfAssessments
+                    SET 
+                    [PublishStatusID] = @status,
+                    UpdatedByAdminID = @adminId
+                    WHERE id = @competencyAssessmentId;"
+             ,
+                 new { competencyAssessmentId, status, adminId }
+             );
+        }
+        public void UpdateCompetencyAssessmentPublish(int competencyAssessmentId, int status, int adminId, bool national, bool pub)
+        {
+            connection.Execute(
+                 @"UPDATE SelfAssessments
+                    SET 
+                    [PublishStatusID] = @status,
+                    UpdatedByAdminID = @adminId,
+					[National]  = @national,
+					[Public] = @pub
+                    WHERE id = @competencyAssessmentId;"
+             ,
+                 new { competencyAssessmentId, status, adminId, national, pub }
+             );
+        }
+        public void InsertSelfAssessmentReview(int competencyAssessmentId, int selfAssessmentCollaboratorID, bool required)
+        {
+            var exists = (int?)connection.ExecuteScalar(
+                @"SELECT COUNT(*)
+                    FROM SelfAssessmentReviews
+                    WHERE SelfAssessmentID = @competencyAssessmentId
+                    AND SelfAssessmentCollaboratorID = @selfAssessmentCollaboratorID AND Archived IS NULL",
+                new { competencyAssessmentId, selfAssessmentCollaboratorID }
+            );
+            if (exists == 0)
+            {
+                connection.Query(
+                    @"INSERT INTO SelfAssessmentReviews
+                    (SelfAssessmentID, SelfAssessmentCollaboratorID, SignOffRequired)
+                    VALUES
+                    (@competencyAssessmentId, @selfAssessmentCollaboratorID, @required)",
+                    new { competencyAssessmentId, selfAssessmentCollaboratorID, required }
+                );
+            }
+        }
+        public IEnumerable<SelfAssessmentReview> GetCompetencySelfAssessmentReviews(int competencyAssessmentId)
+        {
+            return connection.Query<SelfAssessmentReview>(
+                @"SELECT SR.ID, SR.SelfAssessmentID, SR.SelfAssessmentCollaboratorID, SC.UserEmail,
+					CAST(CASE WHEN SC.AdminID IS NULL THEN 0 ELSE 1 END AS bit) AS IsRegistered,
+					SR.ReviewRequested, SR.ReviewComplete, SR.SignedOff, SR.SelfAssessmentCommentID, SC1.Comments AS Comment, SR.SignOffRequired
+                    FROM   SelfAssessmentReviews AS SR INNER JOIN
+                         SelfAssessmentCollaborators AS SC ON SR.SelfAssessmentCollaboratorID = SC.ID LEFT OUTER JOIN
+                         SelfAssessmentComments AS SC1 ON SR.SelfAssessmentCommentID = SC1.ID
+                    WHERE SR.SelfAssessmentID = @competencyAssessmentId AND SR.Archived IS NULL  AND (SC.IsDeleted = 0)",
+                new { competencyAssessmentId }
+            );
+        }
+
+        public SelfAssessmentReview? GetCompetencySelfAssessmentReviewById(int competencyAssessmentId, int selfAssessmentReviewId)
+        {
+            return connection.Query<SelfAssessmentReview?>(
+                @"SELECT SR.ID, SR.SelfAssessmentID, SR.SelfAssessmentCollaboratorID, SC.UserEmail,
+					CAST(CASE WHEN SC.AdminID IS NULL THEN 0 ELSE 1 END AS bit) AS IsRegistered,
+					SR.ReviewRequested, SR.ReviewComplete, SR.SignedOff, SR.SelfAssessmentCommentID, SC1.Comments AS Comment, SR.SignOffRequired
+                    FROM   SelfAssessmentReviews AS SR INNER JOIN
+                         SelfAssessmentCollaborators AS SC ON SR.SelfAssessmentCollaboratorID = SC.ID LEFT OUTER JOIN
+                         SelfAssessmentComments AS SC1 ON SR.SelfAssessmentCommentID = SC1.ID
+                    WHERE SR.SelfAssessmentID = @competencyAssessmentId AND SR.ID = @selfAssessmentReviewId AND SR.Archived IS NULL  AND (SC.IsDeleted = 0)",
+                new { competencyAssessmentId, selfAssessmentReviewId }
+            ).FirstOrDefault();
+        }
+        public void ArchiveSelfAssessmentReviewRequest(int reviewId)
+        {
+            var numberOfAffectedRows = connection.Execute(
+                @"UPDATE SelfAssessmentReviews
+                    SET Archived = GETUTCDATE()
+                    WHERE ID = @reviewId",
+                new { reviewId }
+            );
+            if (numberOfAffectedRows < 1)
+            {
+                logger.LogWarning(
+                    "Not archiving framework review as db update failed. " +
+                    $"reviewId: {reviewId}."
+                );
+            }
+        }
+        public void UpdateSelfAssessmentReview(int selfAssessmentID, int reviewId, bool signedOff, int? commentId)
+        {
+            var numberOfAffectedRows = connection.Execute(
+                @"UPDATE SelfAssessmentReviews
+                    SET ReviewComplete = GETUTCDATE(), SelfAssessmentCommentID = @commentId, SignedOff = @signedOff
+                    WHERE ID = @reviewId AND SelfAssessmentID = @selfAssessmentID",
+                new { reviewId, commentId, signedOff, selfAssessmentID }
+            );
+            if (numberOfAffectedRows < 1)
+            {
+                logger.LogWarning(
+                    "Not submitting selfAssessment review as db update failed. " +
+                    $"commentId: {commentId}, frameworkId: {selfAssessmentID}, reviewId: {reviewId}, signedOff: {signedOff} ."
+                );
+            }
+        }
+        public int InsertComment(int selfAssessmentID, int adminId, string comment, int? replyToCommentId)
+        {
+            if ((selfAssessmentID < 1) | (adminId < 1) | (comment == null))
+            {
+                logger.LogWarning(
+                    $"Not inserting selfAssessment comment as it failed server side validation. AdminId: {adminId}, selfAssessmentID: {selfAssessmentID}, comment: {comment}"
+                );
+            }
+
+            var commentId = connection.ExecuteScalar<int>(
+                @"INSERT INTO SelfAssessmentComments
+                     (AdminID
+           ,ReplyToSelfAssessmentCommentID
+           ,Comments
+           ,SelfAssessmentID)
+                      VALUES (@adminId, @replyToCommentId, @comment, @selfAssessmentID);
+                      SELECT CAST(SCOPE_IDENTITY() as int)",
+                new { adminId, replyToCommentId, comment, selfAssessmentID }
+            );
+            if (commentId < 1)
+            {
+                logger.LogWarning(
+                    "Not inserting selfAssessment comment as db insert failed. " +
+                    $"AdminId: {adminId}, selfAssessmentID: {selfAssessmentID}, comment: {comment}."
+                );
+            }
+
+            return commentId;
+        }
+        public SelfAssessmentReviewOutcomeNotification? GetSelfAssessmentReviewNotification(int reviewId)
+        {
+            return connection.Query<SelfAssessmentReviewOutcomeNotification>(
+                @"SELECT
+                 sr.ID,
+                 sr.SelfAssessmentID,
+                 sr.SelfAssessmentCollaboratorID,
+                 sc.UserEmail,
+                 CAST(CASE WHEN sc.AdminID IS NULL THEN 0 ELSE 1 END AS bit) AS IsRegistered,
+                 sr.ReviewRequested,
+                 sr.ReviewComplete,
+                 sr.SignedOff,
+                 sr.SelfAssessmentCommentID,
+                 sc1.Comments AS Comment,
+                 sr.SignOffRequired,
+                 AU.Forename AS ReviewerFirstName,
+                 AU.Surname AS ReviewerLastName,
+                 AU.Active AS ReviewerActive,
+                 AU1.Forename AS OwnerFirstName,
+                 AU1.Email AS OwnerEmail,
+                 s.Name AS SelfAssessmentName
+             FROM SelfAssessmentReviews AS sr
+             INNER JOIN SelfAssessmentCollaborators AS sc ON sr.SelfAssessmentCollaboratorID = sc.ID  AND sc.IsDeleted = 0
+             INNER JOIN AdminUsers AS AU ON sc.AdminID = AU.AdminID
+             INNER JOIN SelfAssessments AS s ON sr.SelfAssessmentID = s.ID
+             INNER JOIN AdminUsers AS AU1 ON s.CreatedByAdminID = AU1.AdminID
+             LEFT OUTER JOIN SelfAssessmentComments AS sc1 ON sr.SelfAssessmentCommentID = sc1.ID
+             WHERE (sr.ID = @reviewId) AND (sr.ReviewComplete IS NOT NULL)",
+                new { reviewId }
+            ).FirstOrDefault();
+        }
+        public void UpdateReviewRequestedDate(int reviewId)
+        {
+            var numberOfAffectedRows = connection.Execute(
+                @"UPDATE SelfAssessmentReviews
+                    SET ReviewRequested = GETUTCDATE()
+                    WHERE ID = @reviewId",
+                new { reviewId }
+            );
+            if (numberOfAffectedRows < 1)
+            {
+                logger.LogWarning(
+                    "Not updating selfAssessment review requested date as db update failed. " +
+                    $"reviewId: {reviewId}."
+                );
+            }
+        }
+        public int InsertCompetencySelfAssessmentReview(int reviewId)
+        {
+            ArchiveSelfAssessmentReviewRequest(reviewId);
+            var id = connection.QuerySingle<int>(
+                @"INSERT INTO SelfAssessmentReviews
+                    (SelfAssessmentID, SelfAssessmentCollaboratorID, SignOffRequired)
+                      OUTPUT INSERTED.ID
+                      SELECT sr1.SelfAssessmentID, sr1.SelfAssessmentCollaboratorID, sr1.SignOffRequired FROM SelfAssessmentReviews AS sr1 WHERE sr1.ID = @reviewId",
+                new { reviewId }
+            );
+            if (id < 1)
+            {
+                logger.LogWarning(
+                    "Not inserting assessment question as db update failed. " +
+                    $"reviewId: {reviewId}"
+                );
+                return 0;
+            }
+
+            return id;
+        }
+        public bool UpdateCompetencyAssessmentReviewTaskStatus(int assessmentId, bool taskStatus)
+        {
+            var numberOfAffectedRows = connection.Execute(
+              @"UPDATE SelfAssessmentTaskStatus SET ReviewTaskStatus = @taskStatus
+                    WHERE SelfAssessmentId = @assessmentId",
+              new { assessmentId, taskStatus }
+          );
+            if (numberOfAffectedRows < 1)
+            {
+                logger.LogWarning(
+                    "Not updating ReviewTaskStatus as db update failed. " +
+                    $"assessmentId: {assessmentId}, taskStatus: {taskStatus}"
+                );
                 return false;
             }
             return true;
