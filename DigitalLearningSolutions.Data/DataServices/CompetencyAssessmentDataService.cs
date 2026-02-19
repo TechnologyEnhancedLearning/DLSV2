@@ -308,7 +308,7 @@
         {
             return connection.Query<CompetencyAssessmentBase>(
                 $@"SELECT {SelfAssessmentBaseFields}
-                      FROM {SelfAssessmentBaseTables}
+                      FROM {SelfAssessmentBaseTables} {SelfAssessmentTables}
                       WHERE (sa.Name = @competencyAssessmentName)",
                 new { competencyAssessmentName, adminId }
             ).FirstOrDefault();
