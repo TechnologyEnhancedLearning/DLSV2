@@ -48,7 +48,7 @@
 {
     <p class="nhsuk-breadcrumb__back">
         <a class="nhsuk-breadcrumb__backlink" asp-action="SelfAssessment"
-           asp-route-selfAssessmentId="@Model.SelfAssessment.Id">
+        asp-route-selfAssessmentId="@Model.SelfAssessment.Id">
             Back to @Model.SelfAssessment.Name
         </a>
     </p>
@@ -56,6 +56,24 @@
 <h1>@Model.SelfAssessment.Name - @Model.VocabPlural()</h1>
 <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-full">
+        @if (@Model.SelfAssessment.RetirementDate!=null)
+        {
+            <div class="nhsuk-warning-callout">
+                <h2 class="nhsuk-warning-callout__label">
+                <span role="text">
+                    <span class="nhsuk-u-visually-hidden">Important: </span>
+                    New version available
+                </span>
+            </h2>
+            <div>
+                <p>A new version of this assessment is now available. As you’re already begun, you can choose what works best for you.</p>
+                <ul>
+                    <li>Continue with this version: Keep going with your current journey. Your progress will stay saved as usual.</li>
+                    <li>Start the new version: Move to the updated version if you prefer. If you switch to the newer version, you will start from the beginning (0% progress), but your progress in the current version will still be kept on your record.</li>
+                </ul>
+            </div>
+        </div>
+        }
         @if (Model.SelfAssessment.NonReportable)
         {
             <partial name="_NonReportableSelfAssessment" />
