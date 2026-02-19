@@ -812,8 +812,7 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
             return connection.Query<SelfAssessmentSupervisorRole>(
                $@"SELECT ID, SelfAssessmentID, RoleName, RoleDescription, SelfAssessmentReview, ResultsReview,AllowSupervisorRoleSelection
                   FROM   SelfAssessmentSupervisorRoles
-                  WHERE SelfAssessmentID = @selfAssessmentId OR 
-				            (SelfAssessmentID IS NULL AND NOT EXISTS (SELECT 1 FROM SelfAssessmentSupervisorRoles WHERE SelfAssessmentID = @selfAssessmentId))
+                  WHERE (SelfAssessmentID = @selfAssessmentId) 
                   ORDER BY RoleName", new { selfAssessmentId }
                );
         }
@@ -823,9 +822,7 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
             return connection.Query<SelfAssessmentSupervisorRole>(
                $@"SELECT ID, SelfAssessmentID, RoleName, RoleDescription, SelfAssessmentReview, ResultsReview
                   FROM   SelfAssessmentSupervisorRoles
-                  WHERE (SelfAssessmentID = @selfAssessmentId OR 
-				            (SelfAssessmentID IS NULL AND NOT EXISTS (SELECT 1 FROM SelfAssessmentSupervisorRoles WHERE SelfAssessmentID = @selfAssessmentId)))
-                        AND (AllowSupervisorRoleSelection = 1)
+                 WHERE (SelfAssessmentID = @selfAssessmentId) AND (AllowSupervisorRoleSelection = 1)
                   ORDER BY RoleName", new { selfAssessmentId }
                );
         }
@@ -834,9 +831,7 @@ ORDER BY casv.Requested DESC) AS SignedOff,";
             return connection.Query<SelfAssessmentSupervisorRole>(
                $@"SELECT ID, SelfAssessmentID, RoleName, RoleDescription, SelfAssessmentReview, ResultsReview
                   FROM   SelfAssessmentSupervisorRoles
-                  WHERE (SelfAssessmentID = @selfAssessmentId OR 
-				            (SelfAssessmentID IS NULL AND NOT EXISTS (SELECT 1 FROM SelfAssessmentSupervisorRoles WHERE SelfAssessmentID = @selfAssessmentId)))
-                        AND (AllowDelegateNomination = 1)
+                  WHERE (SelfAssessmentID = @selfAssessmentId) AND (AllowDelegateNomination = 1)
                   ORDER BY RoleName", new { selfAssessmentId }
                );
         }
