@@ -1488,7 +1488,8 @@ ORDER BY
                     ON fc.AdminID = au.AdminID
                     WHERE fc.FrameworkID = @frameworkId
                     AND fc.IsDeleted = 0
-                    AND fc.AdminID NOT IN (SELECT AdminID FROM SelfAssessmentCollaborators WHERE SelfAssessmentID = @selfAssessmentId AND IsDeleted = 0);",
+                    AND fc.AdminID NOT IN (SELECT AdminID FROM SelfAssessmentCollaborators WHERE SelfAssessmentID = @selfAssessmentId AND IsDeleted = 0)
+                    AND fc.AdminID NOT IN (SELECT CreatedByAdminId FROM SelfAssessmentFrameworks WHERE SelfAssessmentId = @selfAssessmentId AND FrameworkID = @frameworkId AND RemovedDate IS NULL);",
                 new { selfAssessmentId, frameworkId }
             );
         }
