@@ -13,9 +13,12 @@
             <ol class="nhsuk-breadcrumb__list">
                 <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewCompetencyAssessments" asp-route-tabname="Mine">Competency Assessments</a></li>
                 <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.CompetencyAssessmentId">Manage Competency Assessment</a></li>
-                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="SupervisedSelfAssessmentSignoff" asp-route-competencyAssessmentId="@Model.CompetencyAssessmentId" asp-route-actionName="Signoff">Supervised self assessment and sign off</a></li>
-                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="SupervisorSignoffDeclaration" asp-route-competencyAssessmentId="@Model.CompetencyAssessmentId" asp-route-actionName="Supervisor">Supervisor sign off declaration</a></li>
-                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="LearnerSignoffDeclaration" asp-route-actionName="Learner" asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">Learner sign off declaration </a></li>
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="SupervisedSelfAssessmentSignoff" asp-route-competencyAssessmentId="@Model.CompetencyAssessmentId" asp-route-actionName="Signoff">Supervisor roles</a></li>
+                @if (@Model.Signoff.SignoffText == "Yes")
+                {
+                    <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="SupervisorSignoffDeclaration" asp-route-competencyAssessmentId="@Model.CompetencyAssessmentId" asp-route-actionName="Supervisor">Supervisor sign off declaration</a></li>
+                    <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="LearnerSignoffDeclaration" asp-route-actionName="Learner" asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">Learner sign off declaration </a></li>
+                }
                 <li class="nhsuk-breadcrumb__item">Manage supervision settings </li>
             </ol>
         </div>
@@ -39,101 +42,101 @@
 
                 <div class="nhsuk-summary-list__row">
                     <dt class="nhsuk-summary-list__key">
-                        Self assessment is supervised
+                        Supervisor signs off self assessment
                     </dt>
                     <dd class="nhsuk-summary-list__value">
-                        @Model.Signoff.SupervisedText
+                        @Model.Signoff.SignoffText
                     </dd>
                     <dd class="nhsuk-summary-list__actions">
                         <ul class="nhsuk-summary-list__actions-list left-align-actions">
                             <li class="nhsuk-summary-list__actions-list-item">
                                 <a asp-action="SupervisedSelfAssessmentSignoff" asp-route-actionName="Signoff" asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">
-                                    Change<span class="nhsuk-u-visually-hidden"> Self assessment is supervised</span>
+                                    Change<span class="nhsuk-u-visually-hidden"> Supervisor signs off self assessment</span>
                                 </a>
                             </li>
                         </ul>
                     </dd>
                 </div>
-                @if (@Model.Signoff.SupervisedText == "Yes")
-                  {
-                            <div class="nhsuk-summary-list__row">
-                                <dt class="nhsuk-summary-list__key">
-                                    Supervisor sign off statement
-                                </dt>
-                                <dd class="nhsuk-summary-list__value">
-                                    <strong>@Model.SupervisorDeclaration.Declaration</strong>
+                @if (@Model.Signoff.SignoffText == "Yes")
+                {
+                    <div class="nhsuk-summary-list__row">
+                        <dt class="nhsuk-summary-list__key">
+                            Supervisor sign off statement
+                        </dt>
+                        <dd class="nhsuk-summary-list__value">
+                            <strong>@Model.SupervisorDeclaration.Declaration</strong>
 
 
-                                    <div class="nhsuk-details nhsuk-u-margin-top-2">
-                                        <details class="nhsuk-details__text">
-                                            <summary class="nhsuk-details__summary">
-                                                <span class="nhsuk-details__summary-text">
-                                                    View declaration text
-                                                </span>
-                                            </summary>
-                                            <div class="nhsuk-body" id="default-declaration-text">
-                                                @Html.Raw(@Model.SupervisorDeclaration.DeclarationText)
-                                            </div>
-                                        </details>
+                            <div class="nhsuk-details nhsuk-u-margin-top-2">
+                                <details class="nhsuk-details__text">
+                                    <summary class="nhsuk-details__summary">
+                                        <span class="nhsuk-details__summary-text">
+                                            View declaration text
+                                        </span>
+                                    </summary>
+                                    <div class="nhsuk-body" id="default-declaration-text">
+                                        @Html.Raw(@Model.SupervisorDeclaration.DeclarationText)
                                     </div>
-                                </dd>
-                                <dd class="nhsuk-summary-list__actions">
-                                    <ul class="nhsuk-summary-list__actions-list left-align-actions">
-                                        <li class="nhsuk-summary-list__actions-list-item">
-                                            <a asp-action="SupervisorSignoffDeclaration" asp-route-actionName="Supervisor" asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">
-
-                                                Change<span class="nhsuk-u-visually-hidden"> Supervisor sign off statement</span>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </dd>
+                                </details>
                             </div>
-                            <div class="nhsuk-summary-list__row">
-                                <dt class="nhsuk-summary-list__key">
-                                    Learner sign off statement
-                                </dt>
-                                <dd class="nhsuk-summary-list__value">
-                                    <strong>@Model.LearnerDeclaration.Declaration</strong>
+                        </dd>
+                        <dd class="nhsuk-summary-list__actions">
+                            <ul class="nhsuk-summary-list__actions-list left-align-actions">
+                                <li class="nhsuk-summary-list__actions-list-item">
+                                    <a asp-action="SupervisorSignoffDeclaration" asp-route-actionName="Supervisor" asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">
+
+                                        Change<span class="nhsuk-u-visually-hidden"> Supervisor sign off statement</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </dd>
+                    </div>
+                    <div class="nhsuk-summary-list__row">
+                        <dt class="nhsuk-summary-list__key">
+                            Learner sign off statement
+                        </dt>
+                        <dd class="nhsuk-summary-list__value">
+                            <strong>@Model.LearnerDeclaration.Declaration</strong>
 
 
-                                    <div class="nhsuk-details nhsuk-u-margin-top-2">
-                                        <details class="nhsuk-details__text">
-                                            <summary class="nhsuk-details__summary">
-                                                <span class="nhsuk-details__summary-text">
-                                                    View declaration text
-                                                </span>
-                                            </summary>
-                                            <div class="nhsuk-body" id="default-declaration-text">
-                                                @Html.Raw(@Model.LearnerDeclaration.DeclarationText)
-                                            </div>
-
-                                        </details>
+                            <div class="nhsuk-details nhsuk-u-margin-top-2">
+                                <details class="nhsuk-details__text">
+                                    <summary class="nhsuk-details__summary">
+                                        <span class="nhsuk-details__summary-text">
+                                            View declaration text
+                                        </span>
+                                    </summary>
+                                    <div class="nhsuk-body" id="default-declaration-text">
+                                        @Html.Raw(@Model.LearnerDeclaration.DeclarationText)
                                     </div>
-                                </dd>
-                                <dd class="nhsuk-summary-list__actions">
-                                    <ul class="nhsuk-summary-list__actions-list left-align-actions">
-                                        <li class="nhsuk-summary-list__actions-list-item">
-                                            <a asp-action="LearnerSignoffDeclaration" asp-route-actionName="Learner" asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">
 
-                                                Change<span class="nhsuk-u-visually-hidden"> Learner sign off statement</span>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </dd>
+                                </details>
                             </div>
-                        <div class="nhsuk-summary-list__row">
-                            <dt class="nhsuk-summary-list__key">
-                                Supervisor or nominated supervisor confirms individual assessment results
-                            </dt>
-                            <dd class="nhsuk-summary-list__value">
-                                @Model.Signoff.ConfirmText
-                            </dd>
+                        </dd>
+                        <dd class="nhsuk-summary-list__actions">
+                            <ul class="nhsuk-summary-list__actions-list left-align-actions">
+                                <li class="nhsuk-summary-list__actions-list-item">
+                                    <a asp-action="LearnerSignoffDeclaration" asp-route-actionName="Learner" asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">
 
-                        </div>
-            }
+                                        Change<span class="nhsuk-u-visually-hidden"> Learner sign off statement</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </dd>
+                    </div>
+                    <div class="nhsuk-summary-list__row">
+                        <dt class="nhsuk-summary-list__key">
+                            Supervisor or nominated supervisor confirms individual assessment results
+                        </dt>
+                        <dd class="nhsuk-summary-list__value">
+                            @Model.Signoff.ConfirmText
+                        </dd>
+
+                    </div>
+                }
 
             </dl>
-         
+
             <nhs-form-group>
                 <vc:single-checkbox asp-for="@nameof(Model.TaskCompleteChecked)" label="Mark this task as complete" hint-text="You will still be able to make changes after marking this task as complete."></vc:single-checkbox>
             </nhs-form-group>
@@ -153,4 +156,4 @@
             </div>
         </form>
     </div>
-</div> 
+</div>

@@ -89,7 +89,7 @@ namespace DigitalLearningSolutions.Web.Services
         int UpdateCompetencyAssessmentQuestionRoleRequirement(int assessmentId, int competencyId, int assessmentQuestionId, Dictionary<int, int?> responseRoleRequirements);
         bool UpdateSupervisorRolesTaskStatus(int competencyAssessmentId, bool taskCompleteChecked);
         bool UpdateSelfAssessments(int competencyAssessmentId,
-                    int? supervised,
+                    int? signoff,
                     int? confirm,
                    int? supervisorDeclarationValue,
                    string? supervisorCustomText,
@@ -521,16 +521,16 @@ namespace DigitalLearningSolutions.Web.Services
             }
             return rowCount;
         }
-       public  void InsertIntoSelfAssessmentCollaboratorsFromFrameworkCollaborators(int selfAssessmentId, int? frameworkId)
-       {
-         competencyAssessmentDataService.InsertIntoSelfAssessmentCollaboratorsFromFrameworkCollaborators(selfAssessmentId, frameworkId);
-       }
+        public void InsertIntoSelfAssessmentCollaboratorsFromFrameworkCollaborators(int selfAssessmentId, int? frameworkId)
+        {
+            competencyAssessmentDataService.InsertIntoSelfAssessmentCollaboratorsFromFrameworkCollaborators(selfAssessmentId, frameworkId);
+        }
         public bool UpdateSupervisorRolesTaskStatus(int competencyAssessmentId, bool taskCompleteChecked)
         {
             return competencyAssessmentDataService.UpdateSupervisorRolesTaskStatus(competencyAssessmentId, taskCompleteChecked);
         }
         public bool UpdateSelfAssessments(int competencyAssessmentId,
-             int? supervised,
+             int? signoff,
              int? confirm,
              int? supervisorDeclarationValue,
              string? supervisorCustomText,
@@ -538,7 +538,7 @@ namespace DigitalLearningSolutions.Web.Services
              string? leanerCustomText
                    )
         {
-            return competencyAssessmentDataService.UpdateSelfAssessments(competencyAssessmentId, supervised, confirm,
+            return competencyAssessmentDataService.UpdateSelfAssessments(competencyAssessmentId, signoff, confirm,
             supervisorDeclarationValue, supervisorCustomText, leanerDeclarationValue, leanerCustomText);
         }
         public void UpdateCompetencyAssessmentPublishStatus(int competencyAssessmentId, int status, int adminId)
