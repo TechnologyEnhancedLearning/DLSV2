@@ -845,8 +845,17 @@
                 model.VocabularyStatus,
                  model.WorkingGroupStatus,
              model.AllframeworkCompetenciesStatus);
-            competencyAssessmentService.InsertIntoSelfAssessmentCollaboratorsFromFrameworkCollaborators(model.CompetencyAssessmentId, model.FrameworkId);
+
+            if (model.WorkingGroupStatus)
+                competencyAssessmentService.InsertIntoSelfAssessmentCollaboratorsFromFrameworkCollaborators(model.CompetencyAssessmentId, model.FrameworkId);
+
             competencyAssessmentService.UpdateSelfAssessmentFromFramework(model.CompetencyAssessmentId, model.FrameworkId);
+
+            if (model.AllframeworkCompetenciesStatus)
+            {
+                var insertSelfAssessmentGroupedCompetencies = competencyAssessmentService.InsertSelfAssessmentGroupedCompetencies(model.CompetencyAssessmentId, model.FrameworkId);
+                var insertSelfAssessmentUngroupedCompetencies = competencyAssessmentService.InsertSelfAssessmentUngroupedCompetencies(model.CompetencyAssessmentId, model.FrameworkId);
+            }
             return RedirectToAction("ManageCompetencyAssessment", new { model.CompetencyAssessmentId, model.FrameworkId });
         }
 
@@ -1462,7 +1471,7 @@
             TempData.Clear();
             return RedirectToAction("ManageCompetencyAssessment", new { competencyAssessmentId = viewModel.CompetencyAssessmentId });
         }
-   [HttpGet]
+        [HttpGet]
         [Route("/CompetencyAssessments/{competencyAssessmentId}/SendForReview")]
         public IActionResult SendForReview(int competencyAssessmentId)
         {
@@ -1528,7 +1537,7 @@
                 return result;
             if (competencyAssessmentBase.PublishStatusID == 3) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 410 });
             var taskStatus = competencyAssessmentService.GetCompetencyAssessmentTaskStatus(publish.CompetencyAssessmentID, null);
-             competencyAssessmentService.UpdateCompetencyAssessmentReviewTaskStatus(publish.CompetencyAssessmentID, true);
+            competencyAssessmentService.UpdateCompetencyAssessmentReviewTaskStatus(publish.CompetencyAssessmentID, true);
             competencyAssessmentService.UpdateCompetencyAssessmentPublish(publish.CompetencyAssessmentID, 3, adminId, true, true);
             return RedirectToAction("ManageCompetencyAssessment", new { competencyAssessmentId = publish.CompetencyAssessmentID });
         }
@@ -1602,7 +1611,7 @@
                 return result;
             if (competencyAssessmentBase.PublishStatusID == 3) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 410 });
             var taskStatus = competencyAssessmentService.GetCompetencyAssessmentTaskStatus(competencyAssessmentId, null);
-           competencyAssessmentService.UpdateCompetencyAssessmentReviewTaskStatus(competencyAssessmentId, true);
+            competencyAssessmentService.UpdateCompetencyAssessmentReviewTaskStatus(competencyAssessmentId, true);
             competencyAssessmentService.UpdateCompetencyAssessmentPublish(competencyAssessmentId, 3, adminId, true, true);
             return RedirectToAction("ManageCompetencyAssessment", new { competencyAssessmentId = competencyAssessmentId });
         }
