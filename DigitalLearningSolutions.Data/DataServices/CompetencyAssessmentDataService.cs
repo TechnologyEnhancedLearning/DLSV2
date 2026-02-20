@@ -857,44 +857,44 @@
         {
             var numberOfAffectedRows = connection.Execute(
                @"IF EXISTS (SELECT 1 FROM SelfAssessmentTaskStatus WHERE SelfAssessmentId = @id)
-               BEGIN
-               UPDATE SelfAssessmentTaskStatus
-                SET IntroductoryTextTaskStatus =
-                 CASE WHEN @descriptionStatus = 1 AND IntroductoryTextTaskStatus <> 1
-                 THEN 0 ELSE IntroductoryTextTaskStatus END,
-                 BrandingTaskStatus =
-                  CASE WHEN @providerandCategoryStatus = 1 AND BrandingTaskStatus <> 1
-                    THEN 0 ELSE BrandingTaskStatus END,
-                    VocabularyTaskStatus =
-                 CASE WHEN @vocabularyStatus = 1 AND VocabularyTaskStatus <> 1
-                  THEN 0 ELSE VocabularyTaskStatus END,
-                WorkingGroupTaskStatus =
-                 CASE WHEN @workingGroupStatus = 1 AND WorkingGroupTaskStatus <> 1
-                 THEN 0 ELSE WorkingGroupTaskStatus END,
-                 FrameworkLinksTaskStatus =
-                  CASE WHEN @AllframeworkCompetenciesStatus = 1 AND FrameworkLinksTaskStatus <> 1
-                  THEN 0 ELSE FrameworkLinksTaskStatus END,
-                 SelectCompetenciesTaskStatus =
-                  CASE WHEN @AllframeworkCompetenciesStatus = 1 AND SelectCompetenciesTaskStatus <> 1
-                  THEN 0 ELSE SelectCompetenciesTaskStatus END
-                 WHERE SelfAssessmentId = @id;
-                    END
-                     ELSE
                     BEGIN
-                 INSERT INTO SelfAssessmentTaskStatus
-                 (SelfAssessmentId, IntroductoryTextTaskStatus, BrandingTaskStatus, VocabularyTaskStatus, WorkingGroupTaskStatus,
-                FrameworkLinksTaskStatus,SelectCompetenciesTaskStatus)
-                 VALUES
-                 (
-                       @id,
-                    CASE WHEN @descriptionStatus = 1 THEN 0 ELSE NULL END,
-                    CASE WHEN @providerandCategoryStatus = 1 THEN 0 ELSE NULL END,
-                    CASE WHEN @vocabularyStatus = 1 THEN 0 ELSE NULL END,
-                    CASE WHEN @workingGroupStatus = 1 THEN 0 ELSE NULL END,
-                    CASE WHEN @AllframeworkCompetenciesStatus = 1 THEN 0 ELSE NULL END,
-                    CASE WHEN @AllframeworkCompetenciesStatus = 1 THEN 0 ELSE NULL END
+                        UPDATE SelfAssessmentTaskStatus
+                        SET IntroductoryTextTaskStatus =
+                            CASE WHEN @descriptionStatus = 1 AND (IntroductoryTextTaskStatus IS NULL OR IntroductoryTextTaskStatus <> 1)
+                            THEN 0 ELSE IntroductoryTextTaskStatus END,
+                        BrandingTaskStatus =
+                            CASE WHEN @providerandCategoryStatus = 1 AND (BrandingTaskStatus IS NULL OR BrandingTaskStatus <> 1)
+                            THEN 0 ELSE BrandingTaskStatus END,
+                        VocabularyTaskStatus =
+                            CASE WHEN @vocabularyStatus = 1 AND (VocabularyTaskStatus IS NULL OR VocabularyTaskStatus <> 1)
+                            THEN 0 ELSE VocabularyTaskStatus END,
+                        WorkingGroupTaskStatus =
+                            CASE WHEN @workingGroupStatus = 1 AND (WorkingGroupTaskStatus IS NULL OR WorkingGroupTaskStatus <> 1)
+                            THEN 0 ELSE WorkingGroupTaskStatus END,
+                        FrameworkLinksTaskStatus =
+                            CASE WHEN @AllframeworkCompetenciesStatus = 1 AND (FrameworkLinksTaskStatus IS NULL OR FrameworkLinksTaskStatus <> 1)
+                            THEN 0 ELSE FrameworkLinksTaskStatus END,
+                        SelectCompetenciesTaskStatus =
+                            CASE WHEN @AllframeworkCompetenciesStatus = 1 AND (SelectCompetenciesTaskStatus IS NULL OR SelectCompetenciesTaskStatus <> 1)
+                            THEN 0 ELSE SelectCompetenciesTaskStatus END
+                        WHERE SelfAssessmentId = @id;
+                    END
+                ELSE
+                    BEGIN
+                        INSERT INTO SelfAssessmentTaskStatus
+                            (SelfAssessmentId, IntroductoryTextTaskStatus, BrandingTaskStatus, VocabularyTaskStatus, WorkingGroupTaskStatus,
+                            FrameworkLinksTaskStatus,SelectCompetenciesTaskStatus)
+                        VALUES
+                        (
+                            @id,
+                            CASE WHEN @descriptionStatus = 1 THEN 0 ELSE NULL END,
+                            CASE WHEN @providerandCategoryStatus = 1 THEN 0 ELSE NULL END,
+                            CASE WHEN @vocabularyStatus = 1 THEN 0 ELSE NULL END,
+                            CASE WHEN @workingGroupStatus = 1 THEN 0 ELSE NULL END,
+                            CASE WHEN @AllframeworkCompetenciesStatus = 1 THEN 0 ELSE NULL END,
+                            CASE WHEN @AllframeworkCompetenciesStatus = 1 THEN 0 ELSE NULL END
                         );
-                        END",
+                    END",
                new { id, descriptionStatus, providerandCategoryStatus, vocabularyStatus, workingGroupStatus, AllframeworkCompetenciesStatus }
            );
             if (numberOfAffectedRows < 1)
@@ -961,7 +961,8 @@
                  FROM FrameworkCompetencies AS FC 
                 INNER JOIN FrameworkCompetencyGroups AS FCG ON FC.FrameworkCompetencyGroupID = FCG.ID INNER JOIN
 				SelfAssessments s ON s.id = @selfAssessmentId
-                WHERE FC.FrameworkID = @frameworkId"
+                WHERE FC.FrameworkID = @frameworkId
+                AND FC.CompetencyID NOT IN (SELECT CompetencyID FROM SelfAssessmentStructure WHERE SelfAssessmentID = @selfAssessmentId)"
         ,
             new { selfAssessmentId, frameworkId }
         );
@@ -985,7 +986,8 @@
             FROM FrameworkCompetencies AS fc               
             INNER JOIN SelfAssessments s ON s.id = @selfAssessmentId      
             WHERE fc.FrameworkID = @frameworkId            
-            AND fc.FrameworkCompetencyGroupID IS NULL "
+            AND fc.FrameworkCompetencyGroupID IS NULL
+            AND FC.CompetencyID NOT IN (SELECT CompetencyID FROM SelfAssessmentStructure WHERE SelfAssessmentID = @selfAssessmentId)"
         ,
             new { selfAssessmentId, frameworkId }
         );
@@ -1485,7 +1487,8 @@ ORDER BY
                     INNER JOIN AdminUsers au
                     ON fc.AdminID = au.AdminID
                     WHERE fc.FrameworkID = @frameworkId
-                    AND fc.IsDeleted = 0;",
+                    AND fc.IsDeleted = 0
+                    AND fc.AdminID NOT IN (SELECT AdminID FROM SelfAssessmentCollaborators WHERE SelfAssessmentID = @selfAssessmentId AND IsDeleted = 0);",
                 new { selfAssessmentId, frameworkId }
             );
         }
