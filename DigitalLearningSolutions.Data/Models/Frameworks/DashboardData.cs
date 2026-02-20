@@ -4,7 +4,7 @@
     {
         public int FrameworksCount { get; set; }
         public int MyFrameworksCount { get; set; }
-        public int RoleProfileCount { get; set; }
-        public int MyRoleProfileCount { get; set; }
+        public int CompetencyAssessmentCount { get; set; }
+        public int MyCompetencyAssessmentCount { get; set; }
     }
 }

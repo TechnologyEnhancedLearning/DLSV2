@@ -67,7 +67,6 @@
                 );
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
             }
-
             selfAssessmentService.IncrementLaunchCount(selfAssessmentId, delegateUserId);
             selfAssessmentService.UpdateLastAccessed(selfAssessmentId, delegateUserId);
             var supervisors = selfAssessmentService.GetAllSupervisorsForSelfAssessmentId(
@@ -75,7 +74,7 @@
                 delegateUserId
             ).ToList();
             var model = new SelfAssessmentDescriptionViewModel(selfAssessment, supervisors);
-            
+
             return View("SelfAssessments/SelfAssessmentDescription", model);
         }
 
@@ -119,7 +118,7 @@
                 );
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
             }
-            
+
             selfAssessmentService.MarkProgressAgreed(selfAssessmentId, delegateUserId);
             return RedirectToAction("SelfAssessment", new { selfAssessmentId });
 
@@ -675,6 +674,11 @@
                     .GetOtherSupervisorsForCandidate(selfAssessmentId, delegateUserId)
                     .Where(item => supervisors.All(s => !item.SupervisorAdminID.Equals(s.SupervisorAdminID)))
                     .ToList();
+
+                if (!assessment.NonReportable)
+                {
+                    suggestedSupervisors = suggestedSupervisors.Where(s => s.SupervisorAdminUserID != delegateUserId).ToList();
+                }
             }
 
             var model = new ManageSupervisorsViewModel
@@ -731,7 +735,8 @@
             var sessionAddSupervisor = new SessionAddSupervisor()
             {
                 SelfAssessmentID = selfAssessmentId,
-                SelfAssessmentName = selfAssessment.Name
+                SelfAssessmentName = selfAssessment.Name,
+                NonReportable = selfAssessment.NonReportable
             };
 
             multiPageFormService.SetMultiPageFormData(
@@ -784,6 +789,13 @@
                 TempData["CentreID"] = sessionAddSupervisor.CentreID;
             }
 
+            var supervisorUserId = User.GetUserIdKnownNotNull();
+
+            if (!sessionAddSupervisor.NonReportable)
+            {
+                supervisors = supervisors.Where(s => s.AdminUserID != supervisorUserId).ToList();
+            }
+
             var searchSortPaginationOptions = new SearchSortFilterAndPaginateOptions(
                new SearchOptions(searchString),
                new SortOptions(sortBy, sortDirection),
@@ -831,6 +843,14 @@
             {
                 supervisors = supervisors.Where(s => s.CentreID == sessionAddSupervisor.CentreID).ToList();
             }
+
+            var supervisorUserId = User.GetUserIdKnownNotNull();
+
+            if (!sessionAddSupervisor.NonReportable)
+            {
+                supervisors = supervisors.Where(s => s.AdminUserID != supervisorUserId).ToList();
+            }
+
             var model = new AllSupervisorsViewModel();
             model.Supervisors = supervisors;
             model.SupervisorAdminID = sessionAddSupervisor.SupervisorAdminId;
@@ -1904,3 +1924,4 @@
         }
     }
 }
+

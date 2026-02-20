@@ -91,9 +91,9 @@
             nameof(Frameworks)
         );
 
-        public static readonly NavMenuTab RolesProfiles = new NavMenuTab(
+        public static readonly NavMenuTab CompetencyAssessments = new NavMenuTab(
             17,
-            nameof(RolesProfiles)
+            nameof(CompetencyAssessments)
         );
 
         public static readonly NavMenuTab LogOut = new NavMenuTab(

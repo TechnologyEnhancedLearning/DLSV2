@@ -1,0 +1,34 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
+@model RoleRequirementQuestionCellsViewModel
+
+<td class="nhsuk-table__cell">
+    @Model.AssessmentQuestion.Question @if (!Model.AssessmentQuestion.Required)
+        {
+        <span>(optional)</span>
+    }
+</td>
+
+<td class="nhsuk-table__cell">
+    @{
+        var responsesWithRoleRequirements =
+        Model.AssessmentQuestion.Responses.Count(r => r.LevelRAG.HasValue);
+    }
+
+    @if (responsesWithRoleRequirements > 0)
+    {
+        <span class="nhsuk-u-font-weight-bold">
+            @responsesWithRoleRequirements response@(responsesWithRoleRequirements > 1 ? "s" : "")
+            with role requirements
+        </span>
+    }
+    else
+    {
+        <span>No role requirements</span>
+    }
+</td>
+
+<td class="nhsuk-table__cell">
+    <a class="nhsuk-link" asp-action="EditQuestionResponseRoleRequirements" asp-route-competencyAssessmentId="@Model.AssessmentID" asp-route-competencyId="@Model.CompetencyID" asp-route-assessmentQuestionId="@Model.AssessmentQuestionID">
+        Edit
+    </a>
+</td>

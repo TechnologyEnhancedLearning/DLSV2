@@ -186,6 +186,7 @@
                         SA.SupervisorSelfAssessmentReview,
                         SA.ReviewerCommentsLabel,
                         SA.EnforceRoleRequirementsForSignOff,
+                        SA.RetirementDate,
                         COALESCE(SA.Vocabulary, 'Capability') AS Vocabulary,
                         COUNT(C.ID) AS NumberOfCompetencies,
                         CA.StartedDate,
@@ -223,7 +224,8 @@
                         SA.ManageSupervisorsDescription,
                         CA.NonReportable,
 					 U.FirstName +' '+ U.LastName AS DelegateName,
-                    SA.MinimumOptionalCompetencies
+                    SA.MinimumOptionalCompetencies,
+					SA.IncludeLearnerDeclarationPrompt
                     FROM CandidateAssessments CA
                     JOIN SelfAssessments SA
                         ON CA.SelfAssessmentID = SA.ID
@@ -248,7 +250,8 @@
                         CA.LaunchCount, CA.SubmittedDate, SA.LinearNavigation, SA.UseDescriptionExpanders,
                         SA.ManageOptionalCompetenciesPrompt, SA.SupervisorSelfAssessmentReview, SA.SupervisorResultsReview,
                         SA.ReviewerCommentsLabel,SA.EnforceRoleRequirementsForSignOff, SA.ManageSupervisorsDescription,CA.NonReportable,
-                        U.FirstName , U.LastName,SA.MinimumOptionalCompetencies, CA.SelfAssessmentProcessAgreed",
+                        U.FirstName , U.LastName,SA.MinimumOptionalCompetencies, CA.SelfAssessmentProcessAgreed, SA.IncludeLearnerDeclarationPrompt,
+                        SA.RetirementDate",
                 new { delegateUserId, selfAssessmentId }
             );
         }

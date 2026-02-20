@@ -88,7 +88,7 @@
 
         public async Task<CataloguesResult> GetCatalogues()
         {
-            var response = await GetStringAsync("/Catalogues");
+            var response = await GetStringAsync("/Catalogue");
             var result = JsonConvert.DeserializeObject<CataloguesResult>(response);
             return result;
         }

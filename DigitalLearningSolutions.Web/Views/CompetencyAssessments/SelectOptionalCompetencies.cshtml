@@ -1,0 +1,93 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
+@model SelectOptionalCompetenciesViewModel;
+@{
+    ViewData["Title"] = "Select Optional Competencies";
+    ViewData["Application"] = "Framework Service";
+}
+<link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
+@section NavMenuItems {
+    <partial name="~/Views/Frameworks/Shared/_NavMenuItems.cshtml" />
+}
+
+@section NavBreadcrumbs {
+    <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+        <div class="nhsuk-width-container">
+            <ol class="nhsuk-breadcrumb__list">
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewCompetencyAssessments" asp-route-tabname="Mine">Competency Assessments</a></li>
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.ID">Manage Competency Assessment</a></li>
+                <li class="nhsuk-breadcrumb__item">Optional Competencies</li>
+            </ol>
+            <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.ID">Back to manage competency assessment</a></p>
+        </div>
+    </nav>
+}
+<h1>Select optional competencies</h1>
+
+<p class="nhsuk-lede-text">
+    Optional competencies can be added to the assessment individually or as a group.
+</p>
+<form method="post" asp-action="SelectOptionalCompetencies">
+    <fieldset class="nhsuk-fieldset">
+        <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
+            <h2 class="nhsuk-fieldset__heading">
+                Which @Model.VocabularySingular.ToLower() groups and/or @Model.VocabularyPlural.ToLower() should be optional?
+            </h2>
+        </legend>
+    @foreach (var competencyGroup in Model.CompetencyGroups)
+    {
+        @if (competencyGroup.Count() > 1)
+        {
+
+            <div class="nhsuk-u-margin-bottom-6">
+                <h3>
+                    @competencyGroup.Key
+                </h3>
+                <div class="nhsuk-checkboxes">
+                    <div class="nhsuk-checkboxes__item">
+                        <input class="nhsuk-checkboxes__input" data-group="@competencyGroup.First().GroupId" id="competency-check-@competencyGroup.First().GroupId" name="GroupIds" checked="@competencyGroup.Any(x => x.GroupOptionalCompetencies)" type="checkbox" value="@competencyGroup.First().GroupId">
+                        <label class="nhsuk-label nhsuk-checkboxes__label" for="competency-check-@competencyGroup.First().GroupId">
+                            <strong>@competencyGroup.Key @Model.VocabularyPlural.ToLower() optional as a group</strong>
+                        </label>
+                    </div>
+                    @foreach (var competency in competencyGroup)
+                    {
+                        <div class="nhsuk-checkboxes__item">
+                            <input class="nhsuk-checkboxes__input" data-group="@competencyGroup.Key" id="competency-check-@competency.StructureId" name="SelectedCompetencyIds" checked="@(Model.SelectedCompetencyIds != null ? Model.SelectedCompetencyIds.Contains((int)competency.CompetencyID) : false)" type="checkbox" value="@competency.StructureId">
+                            <label class="nhsuk-label nhsuk-checkboxes__label" for="competency-check-@competency.StructureId">
+                                @foreach (var flag in competency.CompetencyFlags)
+                                {
+                                    <span class="nhsuk-u-padding-right-2 @(ViewData["cssClass"]?.ToString())">
+                                        <strong class="nhsuk-tag @flag.FlagTagClass">
+                                            @flag.FlagName
+                                        </strong>
+                                    </span>
+                                }
+                                @competency.CompetencyName
+                            </label>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+
+    }
+    </fieldset>
+    <input type="hidden" asp-for="ID" />
+    <input type="hidden" asp-for="MinimumOptionalCompetencies" />
+    <input type="hidden" asp-for="ManageOptionalCompetenciesPrompt" />
+    <button class="nhsuk-button" type="submit">
+        Save
+    </button>
+</form>
+
+<div class="nhsuk-back-link">
+    <a class="nhsuk-back-link__link" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.ID">
+        <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
+        </svg>
+        Cancel
+    </a>
+</div>
+@section scripts {
+    <script src="@Url.Content("~/js/frameworks/selectoptionalcompetencies.js")" asp-append-version="true"></script>
+}

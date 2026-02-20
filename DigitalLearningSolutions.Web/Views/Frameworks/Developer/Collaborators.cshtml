@@ -15,7 +15,7 @@
 {
     <vc:error-summary order-of-property-names="@(new string[] { "userEmail" })" />
 }
-@if ((string)ViewContext.RouteData.Values["actionname"] == "New")
+@if ((string)ViewContext.RouteData.Values["actionName"] == "New")
 {
     @section NavBreadcrumbs {
         <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
@@ -29,7 +29,7 @@
         </nav>
   }
 }
-else if ((string)ViewContext.RouteData.Values["actionname"] == "Review")
+else if ((string)ViewContext.RouteData.Values["actionName"] == "Review")
 {
     @section NavBreadcrumbs {
     <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
@@ -61,7 +61,7 @@ else
   }
 }
 <h1>Choose working group members</h1>
-@if ((string)ViewContext.RouteData.Values["actionname"] == "New")
+@if ((string)ViewContext.RouteData.Values["actionName"] == "New")
 {
     <p class="nhsuk-lede-text">Your framework has been created. Use this page to identify individuals who will be working on it with you.</p>
 }

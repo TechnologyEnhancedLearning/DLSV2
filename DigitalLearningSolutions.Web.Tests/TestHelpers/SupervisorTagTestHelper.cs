@@ -101,10 +101,10 @@ namespace DigitalLearningSolutions.Web.Tests.TestHelpers
           string? descriptionLabel = null,
           string? reviewerCommentsLabel = null,
           string? subGroup = null,
-          string? roleProfile = null,
-          int signOffRequested = 1,
-          int resultsVerificationRequests = 1,
-          bool isSupervisorResultsReviewed = false,
+          string? competencyAssessment = null,
+          int signOffRequested =1,
+          int resultsVerificationRequests =1,
+          bool isSupervisorResultsReviewed =false,
           bool isAssignedToSupervisor = false,
           bool nonReportable = false
             )
@@ -117,7 +117,7 @@ namespace DigitalLearningSolutions.Web.Tests.TestHelpers
                 ResultsVerificationRequests = resultsVerificationRequests,
                 ReviewerCommentsLabel = reviewerCommentsLabel,
                 SubGroup = subGroup,
-                RoleProfile = roleProfile,
+                CompetencyAssessment = competencyAssessment,
                 SignOffRequested = signOffRequested,
                 SupervisorResultsReview = supervisorResultsReview,
                 SupervisorSelfAssessmentReview = supervisorSelfAssessmentReview,
