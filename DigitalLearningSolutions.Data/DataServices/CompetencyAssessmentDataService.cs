@@ -91,7 +91,7 @@
         int GetCountOfAsssessmentQuestionInCompetencyAssessment(int competencyAssessmentId, int assessmentQuestionId);
         bool UpdateSupervisorRolesTaskStatus(int competencyAssessmentId, bool taskCompleteChecked);
         bool UpdateSelfAssessments(int competencyAssessmentId,
-                     int? supervised,
+                     int? signoff,
                      int? confirm,
                     int? supervisorDeclarationValue,
                     string? supervisorCustomText,
@@ -142,7 +142,7 @@
                 sa.MinimumOptionalCompetencies,
                 sa.ManageOptionalCompetenciesPrompt,
                 sa.IncludeLearnerDeclarationPrompt, sa.IncludesSignposting, sa.LinearNavigation, sa.UseDescriptionExpanders, sa.QuestionLabel, sa.ReviewerCommentsLabel,
-                sa.SupervisorSelfAssessmentReview, sa.SupervisorResultsReview, sar.ID AS SelfAssessmentReviewID,
+                sa.SupervisorSelfAssessmentReview, sa.SupervisorResultsReview, sar.ID AS SelfAssessmentReviewID, sa.SignOffSupervisorStatement, sa.SignOffRequestorStatement,
                 sar.SelfAssessmentCommentID";
 
         private const string SelfAssessmentFields =
@@ -1508,7 +1508,7 @@ ORDER BY
             return true;
         }
         public bool UpdateSelfAssessments(int competencyAssessmentId,
-            int? supervised,
+            int? signoff,
             int? confirm,
             int? supervisorDeclarationValue,
             string? supervisorCustomText,
@@ -1517,10 +1517,10 @@ ORDER BY
            )
         {
             var sqlQuery = @"
-            IF @supervised = 0 
+            IF @signoff = 0 
             BEGIN
-                UPDATE SelfAssessments SET SupervisorResultsReview = 0,
-                SupervisorSelfAssessmentReview = 0,
+                UPDATE SelfAssessments SET SupervisorSelfAssessmentReview = 0,
+                    SupervisorResultsReview = 0,
                     SignOffSupervisorStatement =  NULL,
                     SignOffRequestorStatement = NULL
                 WHERE ID = @competencyAssessmentId;
@@ -1528,8 +1528,8 @@ ORDER BY
             ELSE
             BEGIN
                 UPDATE SelfAssessments
-                SET SupervisorResultsReview = 1,
-                    SupervisorSelfAssessmentReview = @confirm,
+                SET SupervisorSelfAssessmentReview = 1,
+                    SupervisorResultsReview = @confirm,
                     SignOffSupervisorStatement = CASE WHEN @supervisorDeclarationValue = 0 THEN NULL ELSE @supervisorCustomText END,
                     SignOffRequestorStatement = CASE WHEN @leanerDeclarationValue = 0 THEN NULL ELSE @leanerCustomText END
                 WHERE ID = @competencyAssessmentId;
@@ -1540,7 +1540,7 @@ ORDER BY
             new
             {
                 competencyAssessmentId,
-                supervised,
+                signoff,
                 confirm,
                 supervisorDeclarationValue,
                 supervisorCustomText,
@@ -1553,7 +1553,7 @@ ORDER BY
             {
                 logger.LogWarning(
                     "Not updating SelfAssessments  as db update failed. " +
-                    $"competencyAssessmentId: {competencyAssessmentId}, supervised: {supervised}" +
+                    $"competencyAssessmentId: {competencyAssessmentId}, signoff: {signoff}" +
                     $"confirm: {confirm}, supervisorDeclarationValue: {supervisorDeclarationValue} " +
                     $"supervisorCustomText: {supervisorCustomText}, leanerDeclarationValue: {leanerDeclarationValue}, leanerCustomText: {leanerCustomText} "
                     );

@@ -1207,13 +1207,26 @@
             var result = ValidateCompetencyAssessmentAndRole(competencyAssessmentId, adminId, "Supervisor Roles", competencyAssessmentBase);
             if (result.StatusCode != 200)
                 return result;
+
+            var model = new ManagesupervisionViewModel(competencyAssessmentId, competencyAssessmentBase.CompetencyAssessmentName,
+                            competencyAssessmentBase.SupervisorResultsReview,
+                            competencyAssessmentBase.SupervisorSelfAssessmentReview,
+                            competencyAssessmentBase.SignOffSupervisorStatement,
+                            competencyAssessmentBase.SignOffRequestorStatement,
+                            this.config.GetLearnerDefaultText(),
+                            this.config.GetSupervisorDefaultText());
+
+            SetManagesupervisionData(model);
+
             var competencyAssessmentTaskStatus = competencyAssessmentService.GetCompetencyAssessmentTaskStatus(competencyAssessmentId, null);
-            if (competencyAssessmentTaskStatus.SupervisorRolesTaskStatus != null) return RedirectToAction("ManageSupervisionSettings", "CompetencyAssessments",
+            if (competencyAssessmentTaskStatus.SupervisorRolesTaskStatus != null)
+                return RedirectToAction("ManageSupervisionSettings", "CompetencyAssessments",
                 new
                 {
                     CompetencyAssessmentId = competencyAssessmentId,
                     ActionName = "SupervisorRoles"
-                }); return RedirectToAction("SupervisedSelfAssessmentSignoff", "CompetencyAssessments", new { competencyAssessmentId });
+                });
+            return RedirectToAction("SupervisedSelfAssessmentSignoff", "CompetencyAssessments", new { competencyAssessmentId });
         }
 
         [Route("/CompetencyAssessments/{competencyAssessmentId}/Supervised")]
@@ -1241,28 +1254,28 @@
         public IActionResult SupervisedSelfAssessmentSignoff(SupervisedSelfAssessmentSignoffViewModel supervisedSelf)
         {
             if (supervisedSelf == null) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
-            if (supervisedSelf.Supervised == null)
+            if (supervisedSelf.Signoff == null)
             {
-                ModelState.AddModelError(nameof(supervisedSelf.Supervised), "Please select a Supervised self assessment option");
+                ModelState.AddModelError(nameof(supervisedSelf.Signoff), "Please select a Supervisor signs off self assessment option");
                 return View(supervisedSelf);
             }
-            if (supervisedSelf.Confirm == null && supervisedSelf.SupervisedText == "Yes")
+            if (supervisedSelf.Confirm == null && supervisedSelf.SignoffText == "Yes")
             {
                 ModelState.AddModelError(nameof(supervisedSelf.Confirm), "Please select a Supervisor or nominated supervisor confirm individual assessment option");
                 return View(supervisedSelf);
             }
-            if (supervisedSelf.SupervisedText == "No")
+            if (supervisedSelf.SignoffText == "No")
             {
                 var model = new ManagesupervisionViewModel(supervisedSelf);
                 SetManagesupervisionData(model);
-                var competencyAssessmentTaskStatus = competencyAssessmentService.GetCompetencyAssessmentTaskStatus(supervisedSelf.CompetencyAssessmentId, null);
-                competencyAssessmentService.UpdateSupervisorRolesTaskStatus(supervisedSelf.CompetencyAssessmentId, competencyAssessmentTaskStatus.SupervisorRolesTaskStatus ?? false);
                 return RedirectToAction("ManageSupervisionSettings", "CompetencyAssessments", new { supervisedSelf.CompetencyAssessmentId });
             }
             else if (supervisedSelf.ActionName != null)
             {
                 var data = GetManagesupervisionData();
+                data.CompetencyAssessmentId = supervisedSelf.CompetencyAssessmentId;
                 var model = new ManagesupervisionViewModel(data.LearnerDeclaration, data.SupervisorDeclaration, supervisedSelf);
+                model.CompetencyAssessmentId = supervisedSelf.CompetencyAssessmentId;
                 SetManagesupervisionData(model);
                 return RedirectToAction("SupervisorSignoffDeclaration", "CompetencyAssessments",
                 new
@@ -1276,7 +1289,6 @@
                 var model = new ManagesupervisionViewModel(supervisedSelf);
                 SetManagesupervisionData(model);
                 var competencyAssessmentTaskStatus = competencyAssessmentService.GetCompetencyAssessmentTaskStatus(supervisedSelf.CompetencyAssessmentId, null);
-                competencyAssessmentService.UpdateSupervisorRolesTaskStatus(supervisedSelf.CompetencyAssessmentId, competencyAssessmentTaskStatus.SupervisorRolesTaskStatus ?? false);
                 return RedirectToAction("SupervisorSignoffDeclaration", "CompetencyAssessments", new { supervisedSelf.CompetencyAssessmentId });
             }
         }
@@ -1293,6 +1305,7 @@
             var data = GetManagesupervisionData();
             if (actionName == "Supervisor")
             {
+                data.CompetencyAssessmentId = competencyAssessmentId;
                 data.SupervisorDeclaration.DefaultText = this.config.GetSupervisorDefaultText();
                 data.SupervisorDeclaration.ActionName = actionName;
                 var models = new SupervisorSignoffDeclarationViewModel(data.SupervisorDeclaration);
@@ -1318,6 +1331,11 @@
             else if (viewModel.DeclarationValue == 1 && string.IsNullOrWhiteSpace(viewModel.CustomText))
             {
                 ModelState.AddModelError(nameof(viewModel.CustomText), "Please enter the custom declaration text");
+                return View(viewModel);
+            }
+            else if (viewModel.DeclarationValue == 1 && viewModel.CustomText.Length > 2000)
+            {
+                ModelState.AddModelError(nameof(viewModel.CustomText), "Declaration text must be 2000 characters or fewer");
                 return View(viewModel);
             }
 
@@ -1346,14 +1364,16 @@
             var data = GetManagesupervisionData();
             if (actionName == "Learner")
             {
+                data.CompetencyAssessmentId = competencyAssessmentId;
                 data.LearnerDeclaration.DefaultText = this.config.GetLearnerDefaultText();
                 data.LearnerDeclaration.ActionName = actionName;
                 var models = new LearnerSignoffDeclarationViewModel(data.LearnerDeclaration);
+                models.CompetencyAssessmentId = competencyAssessmentId;
                 return View(models);
             }
             var model = new LearnerSignoffDeclarationViewModel(competencyAssessmentId);
             model.CompetencyAssessmentName = data.CompetencyAssessmentName;
-            model.CompetencyAssessmentId  = competencyAssessmentId;
+            model.CompetencyAssessmentId = competencyAssessmentId;
             model.DefaultText = this.config.GetLearnerDefaultText().Replace("{{CompetencyAssessmentName}}", model.CompetencyAssessmentName);
             return View(model);
         }
@@ -1371,6 +1391,11 @@
             else if (viewModel.DeclarationValue == 1 && string.IsNullOrWhiteSpace(viewModel.CustomText))
             {
                 ModelState.AddModelError(nameof(viewModel.CustomText), "Please enter the custom declaration text");
+                return View(viewModel);
+            }
+            else if (viewModel.DeclarationValue == 1 && viewModel.CustomText.Length > 2000)
+            {
+                ModelState.AddModelError(nameof(viewModel.CustomText), "Declaration text must be 2000 characters or fewer");
                 return View(viewModel);
             }
 
@@ -1393,13 +1418,13 @@
             var competencyAssessmentTaskStatus = competencyAssessmentService.GetCompetencyAssessmentTaskStatus(competencyAssessmentId, null);
             if (actionName == "SupervisorRoles")
             {
-             var model = new ManagesupervisionViewModel(competencyAssessmentId, baseData.CompetencyAssessmentName,
-            baseData.SupervisorResultsReview,
-            baseData.SupervisorSelfAssessmentReview,
-            baseData.SignOffSupervisorStatement,
-             baseData.SignOffRequestorStatement,
-             this.config.GetLearnerDefaultText(),
-              this.config.GetSupervisorDefaultText());
+                var model = new ManagesupervisionViewModel(competencyAssessmentId, baseData.CompetencyAssessmentName,
+               baseData.SupervisorResultsReview,
+               baseData.SupervisorSelfAssessmentReview,
+               baseData.SignOffSupervisorStatement,
+                baseData.SignOffRequestorStatement,
+                this.config.GetLearnerDefaultText(),
+                 this.config.GetSupervisorDefaultText());
                 model.TaskCompleteChecked = competencyAssessmentTaskStatus.SupervisorRolesTaskStatus;
                 SetManagesupervisionData(model);
                 return View(model);
@@ -1426,7 +1451,7 @@
             var competencyAssessmentTaskStatus = competencyAssessmentService.GetCompetencyAssessmentTaskStatus(data.Signoff.CompetencyAssessmentId, null);
             competencyAssessmentService.UpdateSupervisorRolesTaskStatus(data.Signoff.CompetencyAssessmentId, viewModel.TaskCompleteChecked ?? false);
             competencyAssessmentService.UpdateSelfAssessments(data.Signoff.CompetencyAssessmentId,
-                data.Signoff.Supervised,
+                data.Signoff.Signoff,
                 data.Signoff.Confirm,
                 data.SupervisorDeclaration.DeclarationValue,
                 SanitizerHelper.SanitizeHtmlData(data.SupervisorDeclaration.CustomText),
