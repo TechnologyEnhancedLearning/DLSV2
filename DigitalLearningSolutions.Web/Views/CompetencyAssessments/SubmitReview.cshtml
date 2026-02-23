@@ -1,0 +1,84 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments;
+@model SubmitReviewViewModel;
+@{
+    var errorHasOccurred = !ViewData.ModelState.IsValid;
+    ViewData["Title"] = "Submit review";
+}
+@section NavMenuItems {
+    <partial name="Shared/_NavMenuItems" />
+}
+@section NavBreadcrumbs {
+    <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+        <div class="nhsuk-width-container">
+            <ol class="nhsuk-breadcrumb__list">
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewCompetencyAssessments" asp-route-tabname="Mine">Competency Assessments</a></li>
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.CompetencyAssessmentID">Manage Competency Assessment</a></li>
+                <li class="nhsuk-breadcrumb__item">Review</li>
+            </ol>
+
+        </div>
+    </nav>
+}
+<h1>Submit review</h1>
+@if (Model.SelfAssessmentReview.SignOffRequired)
+{
+    <div class="nhsuk-warning-callout">
+        <h2 class="nhsuk-warning-callout__label">
+            <span role="text">
+                <span class="nhsuk-u-visually-hidden">Important: </span>
+                Approval required
+            </span>
+        </h2>
+        <p>Your approval is required before this self assessment can be published.</p>
+    </div>
+}
+<form method="post">
+    @if (errorHasOccurred)
+    {
+        <vc:error-summary order-of-property-names="@(new[] { "SelfAssessmentReview.Comment", "SelfAssessmentReview.SignedOff" })" />
+    }
+    <div class="nhsuk-form-group">
+
+        <label class="nhsuk-label" for="comment">
+            Review comments
+        </label>
+        @if (ViewData.ModelState.ContainsKey("SelfAssessmentReview.Comment"))
+        {
+            <span class="nhsuk-error-message" id="comment-error">
+                <span class="nhsuk-u-visually-hidden">Error:</span> @ViewData.ModelState["SelfAssessmentReview.Comment"]?.Errors.FirstOrDefault()?.ErrorMessage
+            </span>
+        }
+        <textarea class="nhsuk-textarea" asp-for="SelfAssessmentReview.Comment" rows="3"></textarea>
+    </div>
+    <div class="nhsuk-form-group">
+        <div class="nhsuk-checkboxes__item">
+            @if (ViewData.ModelState.ContainsKey("SelfAssessmentReview.SignedOff"))
+            {
+                <span class="nhsuk-error-message" id="signed-off-error">
+                    <span class="nhsuk-u-visually-hidden">Error:</span> @ViewData.ModelState["SelfAssessmentReview.SignedOff"]?.Errors.FirstOrDefault()?.ErrorMessage
+                </span>
+            }
+            <input class="nhsuk-checkboxes__input" asp-for="SelfAssessmentReview.SignedOff" type="checkbox" aria-describedby="sign-off-hint" value="true">
+            <label class="nhsuk-label nhsuk-checkboxes__label" for="@Model.SelfAssessmentReview.SignedOff">
+                Approve for publishing?
+            </label>
+            <div class="nhsuk-hint nhsuk-checkboxes__hint" id="sign-off-hint">
+                I give my approval to publish this self assessment for use in its current state
+            </div>
+        </div>
+    </div>
+    <input type="hidden" asp-for="CompetencyAssessmentID" />
+    <input type="hidden" asp-for="SelfAssessmentReview.ID" />
+    <input type="hidden" asp-for="CompetencyAssessmentName" />
+    <button class="nhsuk-button" type="submit">
+        Submit
+    </button>
+</form>
+<div class="nhsuk-back-link">
+    <a class="nhsuk-back-link__link" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.CompetencyAssessmentID">
+        <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
+        </svg>
+        Cancel
+    </a>
+</div>

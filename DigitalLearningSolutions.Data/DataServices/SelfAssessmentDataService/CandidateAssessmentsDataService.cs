@@ -186,6 +186,7 @@
                         SA.SupervisorSelfAssessmentReview,
                         SA.ReviewerCommentsLabel,
                         SA.EnforceRoleRequirementsForSignOff,
+                        SA.RetirementDate,
                         COALESCE(SA.Vocabulary, 'Capability') AS Vocabulary,
                         COUNT(C.ID) AS NumberOfCompetencies,
                         CA.StartedDate,
@@ -202,7 +203,7 @@
                         CAST(CASE WHEN CA.SelfAssessmentProcessAgreed IS NOT NULL THEN 1 ELSE 0 END AS BIT) AS SelfAssessmentProcessAgreed,
                         CAST(CASE WHEN SA.SupervisorSelfAssessmentReview = 1 OR SA.SupervisorResultsReview = 1 THEN 1 ELSE 0 END AS BIT) AS IsSupervised,
                         CASE
-                            WHEN (SELECT COUNT(*) FROM SelfAssessmentSupervisorRoles WHERE SelfAssessmentID = @selfAssessmentId AND AllowDelegateNomination = 1) > 0
+                         WHEN (SELECT COUNT(*) FROM SelfAssessmentSupervisorRoles WHERE SelfAssessmentID = @selfAssessmentId AND AllowDelegateNomination = 1) > 0    
                             THEN 1
                             ELSE 0
                         END AS HasDelegateNominatedRoles,
@@ -210,7 +211,7 @@
                             (SELECT TOP (1) RoleName FROM SelfAssessmentSupervisorRoles
                             WHERE (ResultsReview = 1) AND (SelfAssessmentID = @selfAssessmentId) AND
                                    ((SELECT COUNT(*) AS Expr1 FROM SelfAssessmentSupervisorRoles AS SelfAssessmentSupervisorRoles_1
-                                    WHERE (ResultsReview = 1) AND (SelfAssessmentID = @selfAssessmentId)) = 1)),
+                                   WHERE (ResultsReview = 1) AND (SelfAssessmentID = @selfAssessmentId)) = 1)),
                             'Supervisor') AS VerificationRoleName,
                         COALESCE(
                             (SELECT TOP (1) RoleName FROM SelfAssessmentSupervisorRoles
@@ -223,7 +224,8 @@
                         SA.ManageSupervisorsDescription,
                         CA.NonReportable,
 					 U.FirstName +' '+ U.LastName AS DelegateName,
-                    SA.MinimumOptionalCompetencies
+                    SA.MinimumOptionalCompetencies,
+					SA.IncludeLearnerDeclarationPrompt
                     FROM CandidateAssessments CA
                     JOIN SelfAssessments SA
                         ON CA.SelfAssessmentID = SA.ID
@@ -248,7 +250,8 @@
                         CA.LaunchCount, CA.SubmittedDate, SA.LinearNavigation, SA.UseDescriptionExpanders,
                         SA.ManageOptionalCompetenciesPrompt, SA.SupervisorSelfAssessmentReview, SA.SupervisorResultsReview,
                         SA.ReviewerCommentsLabel,SA.EnforceRoleRequirementsForSignOff, SA.ManageSupervisorsDescription,CA.NonReportable,
-                        U.FirstName , U.LastName,SA.MinimumOptionalCompetencies, CA.SelfAssessmentProcessAgreed",
+                        U.FirstName , U.LastName,SA.MinimumOptionalCompetencies, CA.SelfAssessmentProcessAgreed, SA.IncludeLearnerDeclarationPrompt,
+                        SA.RetirementDate",
                 new { delegateUserId, selfAssessmentId }
             );
         }

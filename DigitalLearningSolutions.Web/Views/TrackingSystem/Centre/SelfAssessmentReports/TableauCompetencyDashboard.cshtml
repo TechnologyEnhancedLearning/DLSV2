@@ -25,6 +25,8 @@
     <tableau-viz id='tableau-viz'
                  src='@srcUrl' token='@jwtToken' toolbar='bottom'>
         If the dashboard doesn't appear after a few seconds, <a href="#">reload the page</a>
+        <viz-parameter name="aid" value="@aid"></viz-parameter>
+        <viz-parameter name="email" value="@email"></viz-parameter>
     </tableau-viz>
     <input type="hidden" id="hf-email" value="@email" />
     <input type="hidden" id="hf-adminid" value="@aid" />

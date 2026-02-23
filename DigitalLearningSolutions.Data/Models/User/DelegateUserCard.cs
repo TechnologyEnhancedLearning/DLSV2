@@ -20,6 +20,7 @@
             FirstName = delegateEntity.UserAccount.FirstName;
             LastName = delegateEntity.UserAccount.LastName;
             EmailAddress = delegateEntity.UserCentreDetails?.Email ?? delegateEntity.UserAccount.PrimaryEmail;
+            PrimaryEmail = Guid.TryParse(delegateEntity.UserAccount.PrimaryEmail, out _) ? null : delegateEntity.UserAccount.PrimaryEmail;
             Password = delegateEntity.UserAccount.PasswordHash;
             CandidateNumber = delegateEntity.DelegateAccount.CandidateNumber;
             DateRegistered = delegateEntity.DelegateAccount.DateRegistered;
@@ -48,7 +49,8 @@
         public bool IsAdmin => AdminId.HasValue;
         public bool IsYetToBeClaimed => RegistrationConfirmationHash != null;
         public bool IsEmailVerified => EmailVerified != null;
-
+        public string? Email { get; set; }
+        public string? PrimaryEmail { get; set; }
         public RegistrationType RegistrationType => (SelfReg, ExternalReg) switch
         {
             (true, true) => RegistrationType.SelfRegisteredExternal,

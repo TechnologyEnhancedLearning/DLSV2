@@ -49,7 +49,7 @@
                     context.Result = new RedirectToActionResult("StatusCode", "LearningSolutions", new { code = 403 });
                     return;
                 }
-
+                if (!selfAssessment.IncludeLearnerDeclarationPrompt) return;
                 var actionName = context.RouteData.Values["action"]?.ToString();
                 if (actionName == "AgreeSelfAssessmentProcess" || actionName == "ProcessAgreed")
                 {

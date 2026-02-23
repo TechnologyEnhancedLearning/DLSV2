@@ -2238,6 +2238,116 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[usp_MoveCompetencyInSelfAssessment]    Script Date: 24/11/2025 10:56:08 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///ALTER   PROCEDURE [dbo].[usp_MoveCompetencyInSelfAssessment]
+        ///    @SelfAssessmentID INT,
+        ///    @CompetencyID INT,
+        ///    @Direction NVARCHAR(10)
+        ///AS
+        ///BEGIN
+        ///    SET NOCOUNT ON;
+        ///
+        ///    DECLARE @GroupID INT, @CurrentOrder INT;
+        ///
+        ///    SELECT 
+        ///        @GroupID = CompetencyGroupID,
+        ///        @CurrentOrder = Ordering
+        ///    FROM SelfAssessment [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_483_Alter_usp_MoveCompetencyInSelfAssessment_Down {
+            get {
+                return ResourceManager.GetString("TD_483_Alter_usp_MoveCompetencyInSelfAssessment_Down", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[usp_MoveCompetencyInSelfAssessment]    Script Date: 24/11/2025 10:56:08 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///ALTER   PROCEDURE [dbo].[usp_MoveCompetencyInSelfAssessment]
+        ///    @SelfAssessmentID INT,
+        ///    @CompetencyID INT,
+        ///    @Direction NVARCHAR(10)
+        ///AS
+        ///BEGIN
+        ///    SET NOCOUNT ON;
+        ///
+        ///    DECLARE @CurrentOrder INT;
+        ///
+        ///    SELECT 
+        ///        @CurrentOrder = Ordering
+        ///    FROM SelfAssessmentStructure
+        ///    WHERE SelfAssessmentID = @SelfAssessme [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_483_Alter_usp_MoveCompetencyInSelfAssessment_Up {
+            get {
+                return ResourceManager.GetString("TD_483_Alter_usp_MoveCompetencyInSelfAssessment_Up", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 
+        ///CREATE OR ALTER PROCEDURE usp_RenumberSelfAssessmentStructure
+        ///    @SelfAssessmentID INT
+        ///AS
+        ///BEGIN
+        ///    SET NOCOUNT ON;
+        ///
+        ///    /*
+        ///        Step 1: Build an ordered list of groups
+        ///        - Each group is ranked by its current Min(Ordering)
+        ///        - Ungrouped competencies (NULL CompetencyGroupID) are treated as their own &quot;pseudo group&quot;
+        ///    */
+        ///    ;WITH GroupRanks AS (
+        ///        SELECT 
+        ///            CompetencyGroupID,
+        ///            ROW_NUMBER() OVER (ORDER BY MIN(Ordering)) AS GroupRank
+        ///        FROM Sel [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_483_uspMoveCompetencyGroupInSelfAssessmentCreateOrAlter_UP {
+            get {
+                return ResourceManager.GetString("TD-483-uspMoveCompetencyGroupInSelfAssessmentCreateOrAlter_UP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to CREATE OR ALTER PROCEDURE usp_MoveCompetencyInSelfAssessment
+        ///    @SelfAssessmentID INT,
+        ///    @CompetencyID INT,
+        ///    @Direction NVARCHAR(10)
+        ///AS
+        ///BEGIN
+        ///    SET NOCOUNT ON;
+        ///
+        ///    DECLARE @GroupID INT, @CurrentOrder INT;
+        ///
+        ///    SELECT 
+        ///        @GroupID = CompetencyGroupID,
+        ///        @CurrentOrder = Ordering
+        ///    FROM SelfAssessmentStructure
+        ///    WHERE SelfAssessmentID = @SelfAssessmentID AND CompetencyID = @CompetencyID;
+        ///
+        ///    IF @GroupID IS NULL
+        ///    BEGIN
+        ///        -- Can&apos;t reorder ungrouped competencies [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_483_uspMoveCompetencyInSelfAssessmentCreateOrAlter_UP {
+            get {
+                return ResourceManager.GetString("TD-483-uspMoveCompetencyInSelfAssessmentCreateOrAlter_UP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GetActivitiesForDelegateEnrolment]    Script Date: 22/10/2024 16:55:08 ******/
         ///SET ANSI_NULLS ON
         ///GO
@@ -2714,6 +2824,112 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         internal static string TD_5759_CreateOrAlterSelfAssessmentReportSPandTVF_UP {
             get {
                 return ResourceManager.GetString("TD-5759_CreateOrAlterSelfAssessmentReportSPandTVF_UP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[usp_GetSelfAssessmentReport]    Script Date: 01/12/2025 20:54:19 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///ALTER   PROCEDURE [dbo].[usp_GetSelfAssessmentReport]
+        ///    @SelfAssessmentID INT,
+        ///    @CentreID INT
+        ///AS
+        ///BEGIN
+        ///    SET NOCOUNT ON;
+        ///
+        ///    -- Step 1: Materialize the LatestAssessmentResults into a temp table
+        ///    IF OBJECT_ID(&apos;tempdb..#LatestAssessmentResults&apos;) IS NOT NULL
+        ///        DROP TABLE #LatestAssessmentResults;
+        ///
+        ///    SELECT
+        ///      [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_6437_usp_GetSelfAssessmentReport_Down {
+            get {
+                return ResourceManager.GetString("TD_6437_usp_GetSelfAssessmentReport_Down", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[usp_GetSelfAssessmentReport]    Script Date: 01/12/2025 20:54:19 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///ALTER   PROCEDURE [dbo].[usp_GetSelfAssessmentReport]
+        ///    @SelfAssessmentID INT,
+        ///    @CentreID INT
+        ///AS
+        ///BEGIN
+        ///    SET NOCOUNT ON;
+        ///
+        ///    -- Step 1: Materialize the LatestAssessmentResults into a temp table
+        ///    IF OBJECT_ID(&apos;tempdb..#LatestAssessmentResults&apos;) IS NOT NULL
+        ///        DROP TABLE #LatestAssessmentResults;
+        ///
+        ///    SELECT
+        ///      [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_6437_usp_GetSelfAssessmentReport_Up {
+            get {
+                return ResourceManager.GetString("TD_6437_usp_GetSelfAssessmentReport_Up", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  View [dbo].[AdminUsers]    Script Date: 09/02/2026 15:48:13 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///-- =============================================
+        ///-- Author:		
+        ///-- Modified date: 02/06/2023
+        ///-- Description:	Return the admin user details
+        ///-- =============================================
+        ///
+        ///ALTER VIEW [dbo].[AdminUsers] AS
+        ///SELECT dbo.AdminAccounts.ID                    AS AdminID,
+        ///       null                                    AS Login,
+        ///       dbo.Users.Passwor [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_6866_AlterViewAdminUsersAddAdminUserId_Down {
+            get {
+                return ResourceManager.GetString("TD_6866_AlterViewAdminUsersAddAdminUserId_Down", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  View [dbo].[AdminUsers]    Script Date: 09/02/2026 15:48:13 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///-- =============================================
+        ///-- Author:		
+        ///-- Modified date: 02/06/2023
+        ///-- Description:	Return the admin user details
+        ///-- =============================================
+        ///
+        ///ALTER VIEW [dbo].[AdminUsers] AS
+        ///SELECT dbo.AdminAccounts.ID                    AS AdminID,
+        ///       dbo.AdminAccounts.UserID				   AS AdminUserID,
+        ///       null                 [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_6866_AlterViewAdminUsersAddAdminUserId_Up {
+            get {
+                return ResourceManager.GetString("TD_6866_AlterViewAdminUsersAddAdminUserId_Up", resourceCulture);
             }
         }
         

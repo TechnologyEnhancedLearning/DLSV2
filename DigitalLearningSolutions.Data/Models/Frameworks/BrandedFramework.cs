@@ -2,6 +2,8 @@
 {
     public class BrandedFramework : BaseFramework
     {
+        public string? Description { get; set; }
+        public string? Vocabulary { get; set; }
         public string? Brand
         {
             get => brand;

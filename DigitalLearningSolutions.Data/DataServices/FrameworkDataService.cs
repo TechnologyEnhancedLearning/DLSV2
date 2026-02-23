@@ -5,6 +5,7 @@
     using System.Data;
     using System.Linq;
     using Dapper;
+    using DigitalLearningSolutions.Data.Extensions;
     using DigitalLearningSolutions.Data.Models.Common;
     using DigitalLearningSolutions.Data.Models.Email;
     using DigitalLearningSolutions.Data.Models.Frameworks;
@@ -51,9 +52,9 @@
         CollaboratorNotification? GetCollaboratorNotification(int id, int invitedByAdminId);
 
         //  Competencies/groups:
-        IEnumerable<FrameworkCompetencyGroup> GetFrameworkCompetencyGroups(int frameworkId);
+        IEnumerable<FrameworkCompetencyGroup> GetFrameworkCompetencyGroups(int frameworkId, int? assessmentId);
 
-        IEnumerable<FrameworkCompetency> GetFrameworkCompetenciesUngrouped(int frameworkId);
+        IEnumerable<FrameworkCompetency> GetFrameworkCompetenciesUngrouped(int frameworkId, int? assessmentId);
 
         CompetencyGroupBase? GetCompetencyGroupBaseById(int Id);
 
@@ -267,6 +268,10 @@
 
         void DeleteCompetencyLearningResource(int competencyLearningResourceId, int adminId);
         void UpdateFrameworkCompetencyFrameworkCompetencyGroup(int? competencyGroupId, int frameworkCompetencyGroupId, int adminId);
+
+        void ChangeFrameworkOwner(int frameworkId, string newOwnerEmail, int updatedByAdminId);
+        IEnumerable<int> GetAdminIdsForUserId(int userId);
+
     }
 
     public class FrameworkDataService : IFrameworkDataService
@@ -310,7 +315,7 @@
                 AND aa3.Active = 1 ORDER BY fwr.ID DESC) AS FrameworkReviewID";
 
         private const string BrandedFrameworkFields =
-            @",(SELECT BrandName
+            @", FW.Description, FW.FrameworkConfig AS Vocabulary, (SELECT BrandName
                                  FROM    Brands
                                  WHERE (BrandID = FW.BrandID)) AS Brand,
                                  (SELECT CategoryName
@@ -861,18 +866,23 @@
             );
         }
 
-        public IEnumerable<FrameworkCompetencyGroup> GetFrameworkCompetencyGroups(int frameworkId)
+        public IEnumerable<FrameworkCompetencyGroup> GetFrameworkCompetencyGroups(int frameworkId, int? assessmentId)
         {
+            var assessmentFilter = assessmentId.HasValue ?
+                @$"AND c.ID NOT IN (SELECT CompetencyID
+                  FROM   SelfAssessmentStructure
+                 WHERE (SelfAssessmentID = {assessmentId}))"
+                : string.Empty;
             var result = connection.Query<FrameworkCompetencyGroup, FrameworkCompetency, FrameworkCompetencyGroup>(
-                @"SELECT fcg.ID, fcg.CompetencyGroupID, cg.Name, cg.Description, fcg.Ordering, fc.ID, c.ID AS CompetencyID, c.Name, c.Description, fc.Ordering, COUNT(caq.AssessmentQuestionID) AS AssessmentQuestions
+                @$"SELECT fcg.ID, fcg.CompetencyGroupID, cg.Name, fcg.Ordering, fc.ID, c.ID AS CompetencyID, c.Name, c.Description, fc.Ordering,
+    (SELECT COUNT(*) FROM CompetencyAssessmentQuestions caq WHERE caq.CompetencyID = c.ID) AS AssessmentQuestions
                     ,(SELECT COUNT(*) FROM CompetencyLearningResources clr WHERE clr.CompetencyID = c.ID AND clr.RemovedDate IS NULL) AS CompetencyLearningResourcesCount
                     FROM   FrameworkCompetencyGroups AS fcg INNER JOIN
                       CompetencyGroups AS cg ON fcg.CompetencyGroupID = cg.ID LEFT OUTER JOIN
                        FrameworkCompetencies AS fc ON fcg.ID = fc.FrameworkCompetencyGroupID LEFT OUTER JOIN
-                       Competencies AS c ON fc.CompetencyID = c.ID LEFT OUTER JOIN
-                      CompetencyAssessmentQuestions AS caq ON c.ID = caq.CompetencyID
-                    WHERE (fcg.FrameworkID = @frameworkId)
-                    GROUP BY fcg.ID, fcg.CompetencyGroupID, cg.Name, cg.Description, fcg.Ordering, fc.ID, c.ID, c.Name, c.Description, fc.Ordering
+                       Competencies AS c ON fc.CompetencyID = c.ID
+                    WHERE (fcg.FrameworkID = @frameworkId) {assessmentFilter}
+                    GROUP BY fcg.ID, fcg.CompetencyGroupID, cg.Name, fcg.Ordering, fc.ID, c.ID, c.Name, c.Description, fc.Ordering
                     ORDER BY fcg.Ordering, fc.Ordering",
                 (frameworkCompetencyGroup, frameworkCompetency) =>
                 {
@@ -882,29 +892,36 @@
                 },
                 new { frameworkId }
             );
-            return result.GroupBy(frameworkCompetencyGroup => frameworkCompetencyGroup.CompetencyGroupID).Select(
-                group =>
-                {
-                    var groupedFrameworkCompetencyGroup = group.First();
-                    groupedFrameworkCompetencyGroup.FrameworkCompetencies = group.Where(frameworkCompetencyGroup => frameworkCompetencyGroup.FrameworkCompetencies.Count > 0)
-                    .Select(
-                        frameworkCompetencyGroup => frameworkCompetencyGroup.FrameworkCompetencies.Single()
-                    ).ToList();
-                    return groupedFrameworkCompetencyGroup;
-                }
-            );
+            return result
+    .GroupBy(fcg => fcg.CompetencyGroupID)
+    .Select(group =>
+    {
+        var groupedFrameworkCompetencyGroup = group.First();
+
+        // Flatten all FrameworkCompetencies from all instances in this group
+        groupedFrameworkCompetencyGroup.FrameworkCompetencies = group
+            .SelectMany(g => g.FrameworkCompetencies)
+            .Where(fc => fc != null).
+            Distinct().ToList();
+
+        return groupedFrameworkCompetencyGroup;
+    });
         }
 
-        public IEnumerable<FrameworkCompetency> GetFrameworkCompetenciesUngrouped(int frameworkId)
+        public IEnumerable<FrameworkCompetency> GetFrameworkCompetenciesUngrouped(int frameworkId, int? assessmentId)
         {
+            var assessmentFilter = assessmentId.HasValue ?
+                @$"AND c.ID NOT IN (SELECT CompetencyID
+                  FROM   SelfAssessmentStructure
+                 WHERE (SelfAssessmentID = {assessmentId}))"
+                : string.Empty;
             return connection.Query<FrameworkCompetency>(
-                @"SELECT fc.ID, c.ID AS CompetencyID, c.Name, c.Description, fc.Ordering, COUNT(caq.AssessmentQuestionID) AS AssessmentQuestions,(select COUNT(CompetencyId) from CompetencyLearningResources where CompetencyID=c.ID) AS CompetencyLearningResourcesCount
+                @$"SELECT fc.ID, c.ID AS CompetencyID, c.Name, c.Description, fc.Ordering,
+    (SELECT COUNT(*) FROM CompetencyAssessmentQuestions caq WHERE caq.CompetencyID = c.ID) AS AssessmentQuestions,(select COUNT(CompetencyId) from CompetencyLearningResources where CompetencyID=c.ID) AS CompetencyLearningResourcesCount
                     FROM FrameworkCompetencies AS fc
                         INNER JOIN Competencies AS c ON fc.CompetencyID = c.ID
-                        LEFT OUTER JOIN
-                      CompetencyAssessmentQuestions AS caq ON c.ID = caq.CompetencyID
                     WHERE fc.FrameworkID = @frameworkId
-                        AND fc.FrameworkCompetencyGroupID IS NULL
+                        AND fc.FrameworkCompetencyGroupID IS NULL {assessmentFilter}
 GROUP BY fc.ID, c.ID, c.Name, c.Description, fc.Ordering
                     ORDER BY fc.Ordering",
                 new { frameworkId }
@@ -2067,7 +2084,7 @@ WHERE (ID = @commentId)",
         public IEnumerable<CollaboratorDetail> GetReviewersForFrameworkId(int frameworkId)
         {
             return connection.Query<CollaboratorDetail>(
-                @"SELECT
+                @"SELECT DISTINCT
                         fc.ID,
                         fc.FrameworkID,
                         fc.AdminID,
@@ -2078,8 +2095,11 @@ WHERE (ID = @commentId)",
                     FROM FrameworkCollaborators fc
                     INNER JOIN AdminUsers AS au ON fc.AdminID = au.AdminID
                     LEFT OUTER JOIN FrameworkReviews ON fc.ID = FrameworkReviews.FrameworkCollaboratorID
-                    WHERE (fc.FrameworkID = @FrameworkID) AND (FrameworkReviews.ID IS NULL) AND (fc.IsDeleted=0) OR
-                            (fc.FrameworkID = @FrameworkID) AND (FrameworkReviews.Archived IS NOT NULL) AND (fc.IsDeleted=0)",
+                    WHERE ((fc.FrameworkID = @FrameworkID) AND (FrameworkReviews.ID IS NULL) AND (fc.IsDeleted=0)) OR
+                            ((fc.FrameworkID = @FrameworkID) AND (FrameworkReviews.Archived IS NOT NULL) AND (fc.IsDeleted=0))
+                            AND
+                            (fc.ID Not in ( Select FrameworkCollaboratorID from FrameworkReviews where FrameworkID = @FrameworkID AND 
+							FrameworkReviews.Archived IS NULL AND FrameworkCollaboratorID = fc.ID))",
                 new { frameworkId }
             );
         }
@@ -2261,7 +2281,7 @@ WHERE (OwnerAdminID = @adminId) OR
                  FROM    FrameworkCollaborators
                  WHERE (FrameworkID = FW.ID) AND (IsDeleted=0)))) AS MyFrameworksCount,
 
-                 (SELECT COUNT(*) FROM SelfAssessments) AS RoleProfileCount,
+                 (SELECT COUNT(*) FROM SelfAssessments) AS CompetencyAssessmentCount,
 
                  (SELECT COUNT(*) FROM SelfAssessments AS RP LEFT OUTER JOIN
              SelfAssessmentCollaborators AS RPC ON RPC.SelfAssessmentID = RP.ID AND RPC.AdminID = @adminId
@@ -2269,7 +2289,7 @@ WHERE (RP.CreatedByAdminID = @adminId) OR
              (@adminId IN
                  (SELECT AdminID
                  FROM    SelfAssessmentCollaborators
-                 WHERE (SelfAssessmentID = RP.ID)))) AS MyRoleProfileCount",
+                 WHERE (SelfAssessmentID = RP.ID)))) AS MyCompetencyAssessmentCount",
                 new { adminId }
             ).FirstOrDefault();
         }
@@ -2279,7 +2299,7 @@ WHERE (RP.CreatedByAdminID = @adminId) OR
             return connection.Query<DashboardToDoItem>(
                 @"SELECT
                         FW.ID AS FrameworkID,
-                        0 AS RoleProfileID,
+                        0 AS SelfAssessmentID,
                         FW.FrameworkName AS ItemName,
                         AU.Forename + ' ' + AU.Surname + (CASE WHEN AU.Active = 1 THEN '' ELSE ' (Inactive)' END) AS RequestorName,
                         FWR.SignOffRequired,
@@ -2291,8 +2311,8 @@ WHERE (RP.CreatedByAdminID = @adminId) OR
                     WHERE (FWC.AdminID = @adminId) AND (FWR.ReviewComplete IS NULL) AND (FWR.Archived IS NULL)
                     UNION ALL
                     SELECT
-                        0 AS SelfAssessmentID,
-                        RP.ID AS SelfAssessmentID,
+                        0 AS FrameworkID,
+                        RP.ID AS CompetencyAssessmentID,
                         RP.Name AS ItemName,
                         AU.Forename + ' ' + AU.Surname + (CASE WHEN AU.Active = 1 THEN '' ELSE ' (Inactive)' END) AS RequestorName,
                         RPR.SignOffRequired,
@@ -2548,6 +2568,52 @@ WHERE (RP.CreatedByAdminID = @adminId) OR
                     $"frameworkCompetencyGroupId: {frameworkCompetencyGroupId}, competencyGroupId: {competencyGroupId}."
                 );
             }
+        }
+
+        public void ChangeFrameworkOwner(int frameworkId, string newOwnerEmail, int updatedByAdminId)
+        {
+            // Find the AdminID for the new owner
+            var newOwnerAdminId = connection.Query<int?>(
+                @"SELECT AdminID FROM AdminUsers WHERE Email = @newOwnerEmail AND Active = 1",
+                new { newOwnerEmail }
+            ).FirstOrDefault(); ;
+            if (newOwnerAdminId == null)
+            {
+                throw new Exception("No active admin user found with that email.");
+            }
+
+            // Update the owner
+            connection.EnsureOpen();
+            using var transaction = connection.BeginTransaction();
+            {
+                var rows = connection.Execute(
+                @"UPDATE Frameworks SET OwnerAdminID = @newOwnerAdminId, UpdatedByAdminID = @updatedByAdminId WHERE ID = @frameworkId",
+                new { frameworkId, newOwnerAdminId, updatedByAdminId }
+                , transaction
+            );
+                connection.Execute(
+                @"UPDATE FrameworkCollaborators
+                  SET IsDeleted = 1
+                  WHERE FrameworkID = @frameworkId
+                  AND AdminID = @newOwnerAdminId
+                  AND IsDeleted = 0;",
+            new { frameworkId, newOwnerAdminId },
+            transaction
+        );
+                transaction.Commit();
+
+                if (rows < 1)
+                {
+                    throw new Exception("Failed to update framework owner.");
+                }
+            }
+        }
+        public IEnumerable<int> GetAdminIdsForUserId(int userId)
+        {
+            return connection.Query<int>(
+                @"SELECT ID FROM AdminAccounts WHERE UserID = @userId",
+                new { userId }
+            );
         }
     }
 }

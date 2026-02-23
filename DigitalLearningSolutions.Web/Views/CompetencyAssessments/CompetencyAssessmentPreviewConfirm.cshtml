@@ -1,0 +1,51 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
+@using Microsoft.Extensions.Configuration
+@model CompetencyAssessmentPreviewViewModel
+@inject IConfiguration Configuration
+
+@{
+    ViewData["Title"] = "Competency Assessment - Preview";
+    ViewData["Application"] = "Competency Assessment Service";
+    ViewData["HeaderPathName"] = "Competency Assessment Service";
+}
+
+@section NavMenuItems {
+    <partial name="Shared/_NavMenuItems" />
+}
+@section NavBreadcrumbs {
+    <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+        <div class="nhsuk-width-container">
+            <ol class="nhsuk-breadcrumb__list">
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewCompetencyAssessments" asp-route-tabname="Mine">Competency Assessments</a></li>
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.CompetencyAssessmentId">Manage Competency Assessment</a></li>
+                <li class="nhsuk-breadcrumb__item">Confirm Preview</li>
+            </ol>
+            <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.CompetencyAssessmentId">Back to manage competency assessment</a></p>
+        </div>
+    </nav>
+}
+<div>
+    <div class="nhsuk-form-group" id="form-group">
+        <form asp-action="PreviewConfirm" asp-route-competencyAssessmentId="@Model.CompetencyAssessmentId" asp-route-competencyGroupId="@Model.CompetencyAssessmentId">
+            <div class="nhsuk-u-reading-width">
+                <h1 id="form-heading" class="nhsuk-fieldset__heading nhsuk-label--l">
+                    Preview self assessment
+                </h1>
+                <p class="nhsuk-body-l">
+                    To preview this self assessment, it must be made available to your current centre, @Model.CentreName, if it isn’t already. You will then be enrolled as a test learner to view the self-assessment as a learner would.
+                </p>
+            </div>
+            <button class="nhsuk-button" type="submit">
+                Proceed to preview
+            </button>
+        </form>
+    </div>
+    <div class="nhsuk-back-link">
+        <a class="nhsuk-back-link__link" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.CompetencyAssessmentId">
+            <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
+            </svg>
+            Cancel
+        </a>
+    </div>
+</div>

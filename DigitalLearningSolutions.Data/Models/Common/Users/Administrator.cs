@@ -6,6 +6,7 @@ namespace DigitalLearningSolutions.Data.Models.Common.Users
     public class Administrator : BaseSearchableItem
     {
         public int AdminID { get; set; }
+        public int AdminUserID { get; set; }
         public int CentreID { get; set; }
         public string? Email { get; set; }
         public string? Forename { get; set; }

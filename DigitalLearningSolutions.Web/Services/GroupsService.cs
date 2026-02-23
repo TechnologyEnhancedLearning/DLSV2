@@ -721,7 +721,11 @@
                 delegateUserId,
                 groupCourse.CustomisationId
             );
-
+            // If the delegate has already completed this course, do nothing
+            if (candidateProgressOnCourse.Any(p => p.Completed != null))
+            {
+                return;
+            }
             var existingRecordsToUpdate = candidateProgressOnCourse.Where(
                 p => ProgressShouldBeUpdatedOnEnrolment(p, isAddCourseToGroup)
             ).ToList();

@@ -23,11 +23,10 @@
         <h1 class="nhsuk-u-padding-bottom-3" id="page-heading">Confirm Enrolment</h1>
         <p class="nhsuk-body-m">You are about to enrol learners on a retiring self-assessment.</p>
         <p class="nhsuk-body-m nhsuk-u-font-weight-bold">Retirement date: @Model.RetirementDate?.ToString("dd/MM/yyyy")</p>
-        <p class="nhsuk-body-m">After this date, this self-assessment will no longer be available for use.</p>
         <p class="nhsuk-body-m">Please note:</p>
         <ul>
-            <li>Learners may not have enough time to complete the self-assessment before it is retired</li>
-            <li>You may wish to consider enrolling them on an updated version, if available</li>
+            <li>once enrolled, learners can continue to complete the self-assessment even after the retirement date</li>
+            <li>you may wish to consider enrolling them on an updated version, if available</li>
         </ul>
         <p class="nhsuk-body-m">To continue, you must acknowledge that you understand the self-assessment is being retired and you still wish to proceed.</p>
         <form method="post" asp-controller="Supervisor">

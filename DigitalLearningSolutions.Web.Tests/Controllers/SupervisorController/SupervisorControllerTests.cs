@@ -211,7 +211,7 @@
             result.Should().BeViewResult()
             .WithViewName("ReviewSelfAssessment")
             .ModelAs<ReviewSelfAssessmentViewModel>()
-            .CompetencyGroups ?.SelectMany(group => group).FirstOrDefault(x => x.Id == 1)?.Optional.Should().Be(true);
+            .CompetencyGroups?.SelectMany(group => group).FirstOrDefault(x => x.Id == 1)?.Optional.Should().Be(true);
             result.Should().BeViewResult()
            .WithViewName("ReviewSelfAssessment")
            .ModelAs<ReviewSelfAssessmentViewModel>()

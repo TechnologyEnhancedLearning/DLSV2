@@ -1,0 +1,415 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
+@model OptionsLabelsViewModel
+@{
+    ViewData["Title"] = "Competency Assessment options and labels";
+    ViewData["Application"] = "Competency Assessment Service";
+
+    var steps = new[]
+    {
+        new { Step = (int)OptionLabel.Declaration, Text = "Declaration"},
+        new { Step = (int)OptionLabel.Signposting, Text = "Signposting"},
+        new { Step = (int)OptionLabel.LinearNavigation, Text = "Linear navigation"},
+        new { Step = (int)OptionLabel.DescriptionExpanders, Text = "Description expanders"},
+        new { Step = (int)OptionLabel.QuestionLabels, Text = "Question label"},
+        new { Step = (int)OptionLabel.CommentsLabel, Text = "Comments label"},
+        new { Step = (int)OptionLabel.Summary, Text = "Summary"},
+    };
+    if (!Model.IsSupervisionSwitchedOn)
+        steps = steps.Where(s => s.Step != (int)OptionLabel.Declaration && s.Step != (int)OptionLabel.CommentsLabel).ToArray();
+    if (!Model.IsSignpostedLearning)
+        steps = steps.Where(s => s.Step != (int)OptionLabel.Signposting).ToArray();
+
+    int index = Array.FindIndex(steps, s => s.Step == Model.CurrentStep);
+
+    const string questionLabelId = "conditional-completion-criteria";
+    var questionLabelCss = "nhsuk-radios__conditional" + (Model.QuestionLabel ? "" : " nhsuk-radios__conditional--hidden");
+    const string reviewerCommentsLabelId = "conditional-completion-criteria";
+    var reviewerCommentsLabelCss = "nhsuk-radios__conditional" + (Model.ReviewerCommentsLabel ? "" : " nhsuk-radios__conditional--hidden");
+}
+<link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
+@section NavMenuItems {
+    <partial name="Shared/_NavMenuItems" />
+}
+@if (Model.Error)
+{
+    <vc:error-summary order-of-property-names="@(new string[] { nameof(Model.QuestionLabelText), nameof(Model.ReviewerCommentsLabelText) })" />
+}
+
+@section NavBreadcrumbs {
+    <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+        <div class="nhsuk-width-container">
+            <ol class="nhsuk-breadcrumb__list">
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewCompetencyAssessments" asp-route-tabname="Mine">Competency Assessments</a></li>
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.CompetencyAssessmentID">Manage Competency Assessment</a></li>
+                @foreach (var item in steps)
+                {
+                    <li class="nhsuk-breadcrumb__item">
+                        @if (Model.CurrentStep == item.Step)
+                        {
+                            @item.Text
+                            break;
+                        }
+                        else
+                        {
+                            <a class="abc" asp-action="OptionsLabels" asp-route-step="@item.Step">@item.Text</a>
+                        }
+                    </li>
+                }
+            </ol>
+            <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.CompetencyAssessmentID">Back to manage competency assessment</a></p>
+        </div>
+    </nav>
+}
+
+<form asp-action="OptionsLabels" method="post">
+    <input type="hidden" name="CurrentStep" value="@Model.CurrentStep" />
+
+    @if (Model.CurrentStep == (int)OptionLabel.Declaration)
+    {
+        <div class="nhsuk-form-group">
+            <fieldset class="nhsuk-fieldset" aria-describedby="example-hints-hint">
+                <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
+                    <h1 class="nhsuk-fieldset__heading">
+                        Display learner declaration?
+                    </h1>
+                </legend>
+                <div id="example-hints-hint" class="nhsuk-hint">
+                    Do you want to prompt learners to agree to the self assessment process when they first start the self assessment?
+                </div>
+                <div class="nhsuk-radios" id="IncludeLearnerDeclarationPrompt">
+                    <div class="nhsuk-radios__item">
+                        <input class="nhsuk-radios__input" id="radio-yes" asp-for="IncludeLearnerDeclarationPrompt" type="radio" value="True">
+                        <label class="nhsuk-label nhsuk-radios__label" for="radio-yes">
+                            Yes
+                        </label>
+                    </div>
+
+                    <div class="nhsuk-radios__item">
+                        <input class="nhsuk-radios__input" id="radio-no" asp-for="IncludeLearnerDeclarationPrompt" type="radio" value="False">
+                        <label class="nhsuk-label nhsuk-radios__label" for="radio-no">
+                            No
+                        </label>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+    }
+    else if (Model.CurrentStep == (int)OptionLabel.Signposting)
+    {
+        <div class="nhsuk-form-group">
+            <fieldset class="nhsuk-fieldset" aria-describedby="example-hints-hint">
+                <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
+                    <h1 class="nhsuk-fieldset__heading">
+                        Include signposting?
+                    </h1>
+                </legend>
+                <div id="example-hints-hint" class="nhsuk-hint">
+                    Do you want to display signposted learning content when a learner submits their self assessment results?
+                </div>
+                <div class="nhsuk-radios" id="IncludesSignposting">
+                    <div class="nhsuk-radios__item">
+                        <input class="nhsuk-radios__input" id="radio-yes" asp-for="IncludesSignposting" type="radio" value="True">
+                        <label class="nhsuk-label nhsuk-radios__label" for="radio-yes">
+                            Yes
+                        </label>
+                    </div>
+
+                    <div class="nhsuk-radios__item">
+                        <input class="nhsuk-radios__input" id="radio-no" asp-for="IncludesSignposting" type="radio" value="False">
+                        <label class="nhsuk-label nhsuk-radios__label" for="radio-no">
+                            No
+                        </label>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+    }
+    else if (Model.CurrentStep == (int)OptionLabel.LinearNavigation)
+    {
+        <div class="nhsuk-form-group">
+            <fieldset class="nhsuk-fieldset" aria-describedby="example-hints-hint">
+                <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
+                    <h1 class="nhsuk-fieldset__heading">
+                        Use linear navigation?
+                    </h1>
+                </legend>
+                <div id="example-hints-hint" class="nhsuk-hint">
+                    Do you want the learner to work through @Model.VocabularyPlural.ToLower() using next and previous links? If not, the learner will navigate between @Model.VocabularyPlural.ToLower() using the @Model.VocabularySingular.ToLower() menu.
+                </div>
+                <div class="nhsuk-radios" id="LinearNavigation">
+                    <div class="nhsuk-radios__item">
+                        <input class="nhsuk-radios__input" id="radio-yes" asp-for="LinearNavigation" type="radio" value="True">
+                        <label class="nhsuk-label nhsuk-radios__label" for="radio-yes">
+                            Yes
+                        </label>
+                    </div>
+
+                    <div class="nhsuk-radios__item">
+                        <input class="nhsuk-radios__input" id="radio-no" asp-for="LinearNavigation" type="radio" value="False">
+                        <label class="nhsuk-label nhsuk-radios__label" for="radio-no">
+                            No
+                        </label>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+    }
+    else if (Model.CurrentStep == (int)OptionLabel.DescriptionExpanders)
+    {
+        <div class="nhsuk-form-group">
+            <fieldset class="nhsuk-fieldset" aria-describedby="example-hints-hint">
+                <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
+                    <h1 class="nhsuk-fieldset__heading">
+                        Use description expanders?
+                    </h1>
+                </legend>
+                <div id="example-hints-hint" class="nhsuk-hint">
+                    Do you want to show @Model.VocabularySingular.ToLower() descriptions using expanders? If not, the description will be displayed on the page without the user needing to expand it.
+                </div>
+                <div class="nhsuk-radios" id="UseDescriptionExpanders">
+                    <div class="nhsuk-radios__item">
+                        <input class="nhsuk-radios__input" id="radio-yes" asp-for="UseDescriptionExpanders" type="radio" value="True">
+                        <label class="nhsuk-label nhsuk-radios__label" for="radio-yes">
+                            Yes
+                        </label>
+                    </div>
+
+                    <div class="nhsuk-radios__item">
+                        <input class="nhsuk-radios__input" id="radio-no" asp-for="UseDescriptionExpanders" type="radio" value="False">
+                        <label class="nhsuk-label nhsuk-radios__label" for="radio-no">
+                            No
+                        </label>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+    }
+    else if (Model.CurrentStep == (int)OptionLabel.QuestionLabels)
+    {
+        <div class="nhsuk-form-group">
+            <fieldset class="nhsuk-fieldset" aria-describedby="example-hints-hint">
+                <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
+                    <h1 class="nhsuk-fieldset__heading">
+                        Custom question label
+                    </h1>
+                </legend>
+                <div id="example-hints-hint" class="nhsuk-hint">
+                    Do you want to specify a custom label for self assessment questions? If not, they will be labelled as “question”.
+                </div>
+                <div class="nhsuk-radios nhsuk-radios--conditional" id="QuestionLabel">
+                    <div class="nhsuk-radios__item">
+                        <input class="nhsuk-radios__input" id="radio-yes" asp-for="QuestionLabel" type="radio" value="True"
+                               aria-controls="@questionLabelId"
+                               aria-expanded="@Model.QuestionLabel.ToString()">
+                        <label class="nhsuk-label nhsuk-radios__label" for="radio-yes">
+                            Yes
+                        </label>
+                    </div>
+                    <div class="@questionLabelCss" id="@questionLabelId">
+                        <vc:text-input asp-for="@nameof(Model.QuestionLabelText)"
+                                       label="Enter question label"
+                                       populate-with-current-value="true"
+                                       type="text"
+                                       spell-check="false"
+                                       hint-text=""
+                                       autocomplete="off"
+                                       css-class="nhsuk-u-width-one-half"
+                                       required="true" />
+                    </div>
+                    <div class="nhsuk-radios__item">
+                        <input class="nhsuk-radios__input" id="radio-no" asp-for="QuestionLabel" type="radio" value="False">
+                        <label class="nhsuk-label nhsuk-radios__label" for="radio-no">
+                            No
+                        </label>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+    }
+    else if (Model.CurrentStep == (int)OptionLabel.CommentsLabel)
+    {
+        <div class="nhsuk-form-group">
+            <fieldset class="nhsuk-fieldset" aria-describedby="example-hints-hint">
+                <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
+                    <h1 class="nhsuk-fieldset__heading">
+                        Reviewer comments label
+                    </h1>
+                </legend>
+                <div id="example-hints-hint" class="nhsuk-hint">
+                    Do you want to specify a custom supervisor comments prompt? If not, they will be labelled as “Reviewer comments”.
+                </div>
+                <div class="nhsuk-radios nhsuk-radios--conditional" id="ReviewerCommentsLabel">
+                    <div class="nhsuk-radios__item">
+                        <input class="nhsuk-radios__input" id="radio-yes" asp-for="ReviewerCommentsLabel" type="radio" value="True"
+                               aria-controls="@reviewerCommentsLabelId"
+                               aria-expanded="@Model.ReviewerCommentsLabel.ToString()">
+                        <label class="nhsuk-label nhsuk-radios__label" for="radio-yes">
+                            Yes
+                        </label>
+                    </div>
+                    <div class="@questionLabelCss" id="@reviewerCommentsLabelId">
+                        <vc:text-input asp-for="@nameof(Model.ReviewerCommentsLabelText)"
+                                       label="Enter reviewer comments label"
+                                       populate-with-current-value="true"
+                                       type="text"
+                                       spell-check="false"
+                                       hint-text=""
+                                       autocomplete="off"
+                                       css-class="nhsuk-u-width-one-half"
+                                       required="true" />
+                    </div>
+                    <div class="nhsuk-radios__item">
+                        <input class="nhsuk-radios__input" id="radio-no" asp-for="ReviewerCommentsLabel" type="radio" value="False">
+                        <label class="nhsuk-label nhsuk-radios__label" for="radio-no">
+                            No
+                        </label>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+    }
+    else if (Model.CurrentStep == (int)OptionLabel.Summary)
+    {
+        <div class="nhsuk-grid-row">
+            <div class="nhsuk-grid-column-full">
+
+                <div class="nhsuk-u-margin-bottom-8">
+                    <h1 id="page-heading" class="nhsuk-heading-xl">Summary</h1>
+                </div>
+
+                <dl class="nhsuk-summary-list word-break">
+                    @if (Model.IsSupervisionSwitchedOn)
+                    {
+                        <div class="nhsuk-summary-list__row">
+                            <dt class="nhsuk-summary-list__key">
+                                Display learner declaration?
+                            </dt>
+                            <dd class="nhsuk-summary-list__value">
+                                @(Model.IncludeLearnerDeclarationPrompt ? "Yes" : "No")
+                            </dd>
+                            <dd class="nhsuk-summary-list__actions">
+                                <a asp-action="OptionsLabels" asp-route-step="@((int)OptionLabel.Declaration)">
+                                    Change
+                                </a>
+                            </dd>
+                        </div>
+                    }
+                    @if (Model.IsSignpostedLearning)
+                    {
+                        <div class="nhsuk-summary-list__row">
+                            <dt class="nhsuk-summary-list__key">
+                                Include signposting?
+                            </dt>
+                            <dd class="nhsuk-summary-list__value">
+                                @(Model.IncludesSignposting ? "Yes" : "No")
+                            </dd>
+                            <dd class="nhsuk-summary-list__actions">
+                                <a asp-action="OptionsLabels" asp-route-step="@((int)OptionLabel.Signposting)">
+                                    Change
+                                </a>
+                            </dd>
+                        </div>
+                    }
+                    <div class="nhsuk-summary-list__row">
+                        <dt class="nhsuk-summary-list__key">
+                            Use linear navigation?
+                        </dt>
+                        <dd class="nhsuk-summary-list__value">
+                            @(Model.LinearNavigation ? "Yes" : "No")
+                        </dd>
+                        <dd class="nhsuk-summary-list__actions">
+                            <a asp-action="OptionsLabels" asp-route-step="@((int)OptionLabel.LinearNavigation)">
+                                Change
+                            </a>
+                        </dd>
+                    </div>
+                    <div class="nhsuk-summary-list__row">
+                        <dt class="nhsuk-summary-list__key">
+                            Use description expanders?
+                        </dt>
+                        <dd class="nhsuk-summary-list__value">
+                            @(Model.UseDescriptionExpanders ? "Yes" : "No")
+                        </dd>
+                        <dd class="nhsuk-summary-list__actions">
+                            <a asp-action="OptionsLabels" asp-route-step="@((int)OptionLabel.DescriptionExpanders)">
+                                Change
+                            </a>
+                        </dd>
+                    </div>
+                    <div class="nhsuk-summary-list__row">
+                        <dt class="nhsuk-summary-list__key">
+                            Custom question label
+                        </dt>
+                        <dd class="nhsuk-summary-list__value">
+                            @(Model.QuestionLabel ? "Yes - " + Model.QuestionLabelText : "No")
+                        </dd>
+                        <dd class="nhsuk-summary-list__actions">
+                            <a asp-action="OptionsLabels" asp-route-step="@((int)OptionLabel.QuestionLabels)">
+                                Change
+                            </a>
+                        </dd>
+                    </div>
+                    @if (Model.IsSupervisionSwitchedOn)
+                    {
+                        <div class="nhsuk-summary-list__row">
+                            <dt class="nhsuk-summary-list__key">
+                                Reviewer comments label
+                            </dt>
+                            <dd class="nhsuk-summary-list__value">
+                                @(Model.ReviewerCommentsLabel ? "Yes - " + Model.ReviewerCommentsLabelText : "No")
+                            </dd>
+                            <dd class="nhsuk-summary-list__actions">
+                                <a asp-action="OptionsLabels" asp-route-step="@((int)OptionLabel.CommentsLabel)">
+                                    Change
+                                </a>
+                            </dd>
+                        </div>
+                    }
+                </dl>
+            </div>
+        </div>
+        <vc:single-checkbox asp-for="@nameof(Model.SelfAssessmentOptionsTaskStatus)" label="Mark this task as complete" hint-text="You will still be able to make changes after marking this task as complete."></vc:single-checkbox>
+    }
+    @if (index > 0 && Model.CurrentStep < (int)OptionLabel.Summary)
+    {
+        <a class="nhsuk-button nhsuk-button--secondary" role="button" asp-action="OptionsLabels" asp-route-step="@(steps[index - 1].Step)">
+            Back
+        </a>
+    }
+    <button class="nhsuk-button" type="submit">
+        @(Model.CurrentStep == (int)OptionLabel.Summary ? "Submit" : Model.SelfAssessmentOptionsTaskStatus == null ? "Next" : "Save")
+    </button>
+
+    <div class="nhsuk-back-link">
+        @if (Model.SelfAssessmentOptionsTaskStatus == null)
+        {
+            <a class="nhsuk-back-link__link" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.CompetencyAssessmentID">
+                <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
+                </svg>
+                Cancel
+            </a>
+        }
+        else
+        {
+            if (Model.CurrentStep != (int)OptionLabel.Summary)
+            {
+                <a class="nhsuk-back-link__link" asp-action="OptionsLabels" asp-route-step="@((int)OptionLabel.Summary)">
+                    <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                        <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
+                    </svg>
+                    Cancel
+                </a>
+            }
+            else
+            {
+                <a class="nhsuk-back-link__link" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.CompetencyAssessmentID">
+                    <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                        <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
+                    </svg>
+                    Cancel
+                </a>
+            }
+        }
+    </div>
+</form>

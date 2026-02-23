@@ -34,7 +34,7 @@
                 return;
             }
 
-            if (context.ActionArguments.ContainsKey("actionname") && context.ActionArguments["actionname"].ToString() == "Edit")
+            if (context.ActionArguments.ContainsKey("actionName") && context.ActionArguments["actionName"].ToString() == "Edit")
             {
                 return;
             }

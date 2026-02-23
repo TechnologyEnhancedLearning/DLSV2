@@ -110,6 +110,7 @@
             return connection.Query<SelfAssessmentSupervisor>(
                 @"SELECT DISTINCT
                     sd.ID AS SupervisorDelegateID,
+                    au.AdminUserID AS SupervisorAdminUserID,
                     sd.SupervisorAdminID,
                     sd.SupervisorEmail,
                     sd.NotificationSent,
@@ -217,6 +218,7 @@
             return connection.Query<Administrator>(
                 @"SELECT
                         AdminID,
+                        AdminUserID,
                         Forename,
                         Surname,
                         Active,

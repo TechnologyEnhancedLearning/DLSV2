@@ -47,11 +47,11 @@
         <partial name="_ErrorSummary" />
       }
       <nhs-form-group nhs-validation-for="CompetencyGroupBase.Name">
-        <label class="nhsuk-label" id="competency-group-name-label" for="competency-group-name">
+        <label class="nhsuk-label" id="competency-group-name-label" for="Name">
           @Model.VocabSingular() group name
         </label>
         <span nhs-validation-for="CompetencyGroupBase.Name"></span>
-        <input class="nhsuk-input" asp-for="CompetencyGroupBase.Name" id="competency-group-name" name="Name" type="text" error-class-toggle="nhsuk-input--error" aria-describedby="competency-group-name-label">
+        <input class="nhsuk-input" asp-for="CompetencyGroupBase.Name" id="Name" name="Name" type="text" error-class-toggle="nhsuk-input--error" aria-describedby="competency-group-name-label">
       </nhs-form-group>
       <nhs-form-group nhs-validation-for="CompetencyGroupBase.Description">
         <span nhs-validation-for="CompetencyGroupBase.Description"></span>
