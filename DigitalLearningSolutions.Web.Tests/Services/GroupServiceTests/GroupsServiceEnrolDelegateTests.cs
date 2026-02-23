@@ -111,7 +111,7 @@
         }
 
         [Test]
-        public void EnrolDelegateOnGroupCourses_adds_new_progress_record_when_existing_progress_record_is_completed()
+        public void EnrolDelegateOnGroupCourses_does_not_create_new_progress_record_when_existing_progress_record_is_completed()
         {
             // Given
             var existingProgressRecord = ProgressTestHelper.GetDefaultProgress(completed: testDate);
@@ -135,22 +135,25 @@
             using (new AssertionScope())
             {
                 DelegateProgressRecordMustNotHaveBeenUpdated();
-                A.CallTo(
-                    () => progressDataService.CreateNewDelegateProgress(
-                        reusableDelegateDetails.Id,
-                        reusableGroupCourse.CustomisationId,
-                        reusableGroupCourse.CurrentVersion,
-                        null,
-                        3,
-                        null,
-                        A<DateTime?>._,
-                        A<int>._,
-                        testDate
-                    )
-                ).MustHaveHappened();
-                A.CallTo(() => progressDataService.CreateNewAspProgress(GenericRelatedTutorialId, GenericNewProgressId))
-                    .MustHaveHappened();
+
+                A.CallTo(() => progressDataService.CreateNewDelegateProgress(
+                    A<int>._,
+                    A<int>._,
+                    A<int>._,
+                    A<DateTime?>._,
+                    A<int>._,
+                    A<int?>._,
+                    A<DateTime?>._,
+                    A<int>._,
+                    A<DateTime>._
+                )).MustNotHaveHappened();
+
+                A.CallTo(() => progressDataService.CreateNewAspProgress(
+                    A<int>._,
+                    A<int>._
+                )).MustNotHaveHappened();
             }
+
         }
 
         [Test]

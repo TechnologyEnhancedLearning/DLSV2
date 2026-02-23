@@ -100,7 +100,7 @@
                 WHERE FC.CompetencyID = C.ID),
             'Capability') AS Vocabulary,
             CASE
-                WHEN (SELECT COUNT(*) FROM SelfAssessmentSupervisorRoles WHERE SelfAssessmentID = SAS.SelfAssessmentID) > 0
+              WHEN (SELECT COUNT(*) FROM SelfAssessmentSupervisorRoles WHERE SelfAssessmentID = SAS.SelfAssessmentID) > 0  
                 THEN 1
                 ELSE 0
             END AS HasDelegateNominatedRoles,
@@ -642,7 +642,7 @@
 
         public void RemoveReviewCandidateAssessmentOptionalCompetencies(int id)
         {
-           
+
             connection.Execute(
                      @"delete from SelfAssessmentResultSupervisorVerifications WHERE SelfAssessmentResultId = @id", new { id });
 

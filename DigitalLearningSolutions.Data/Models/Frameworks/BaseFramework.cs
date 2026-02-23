@@ -22,7 +22,6 @@ namespace DigitalLearningSolutions.Data.Models.Frameworks
         public string? UpdatedBy { get; set; }
         public int UserRole { get; set; }
         public int? FrameworkReviewID { get; set; }
-
         public override string SearchableName
         {
             get => SearchableNameOverrideForFuzzySharp ?? FrameworkName;

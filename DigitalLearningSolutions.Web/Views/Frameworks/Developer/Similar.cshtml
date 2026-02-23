@@ -71,10 +71,10 @@ else
       } distinct from <span class="nhsuk-u-font-weight-bold">@Model.FrameworkName</span>, you can continue to create it.
     </p>
   </div>
-  <a class="nhsuk-button nhsuk-button--secondary" role="button" asp-action="CreateNewFramework" asp-route-actionname="@(ViewContext.RouteData.Values["actionname"])">
+  <a class="nhsuk-button nhsuk-button--secondary" role="button" asp-action="CreateNewFramework" asp-route-actionName="@(ViewContext.RouteData.Values["actionName"])">
     Back
   </a>
-  <a class="nhsuk-button" role="button" asp-action="SaveNewFramework" asp-route-frameworkname="@Model.FrameworkName" asp-route-actionname="@(ViewContext.RouteData.Values["actionname"])">
+  <a class="nhsuk-button" role="button" asp-action="SaveNewFramework" asp-route-frameworkname="@Model.FrameworkName" asp-route-actionName="@(ViewContext.RouteData.Values["actionName"])">
     Next
   </a>
   <div class="nhsuk-back-link">

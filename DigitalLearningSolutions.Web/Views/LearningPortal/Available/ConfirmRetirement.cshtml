@@ -20,9 +20,9 @@
     {
       <vc:error-summary order-of-property-names="@(new[] { nameof(Model.ActionConfirmed) })" />
     }
-    <h1 id="page-heading">Confirm Retirement</h1>
+    <h1 id="page-heading">Confirm Enrolment</h1>
             <p class="nhsuk-body-m">You are about to enrol on a retiring <strong>@Model.Name</strong> self-assessment.</p>
-            <p class="nhsuk-body-m">     Retirement date:   <strong>@Model.RetirementDate?.ToString("dd MMMM yyyy")</strong>  </p>
+            <p class="nhsuk-body-m">     Retirement date:   <strong>@Model.RetirementDate?.ToString("dd/MM/yyyy")</strong>  </p>
             <p class="nhsuk-body-m">After this date, the <strong>@Model.Name</strong> self-assessment will no longer be accessible.</p>
 
             <p class="nhsuk-body-m">Please consider:</p>

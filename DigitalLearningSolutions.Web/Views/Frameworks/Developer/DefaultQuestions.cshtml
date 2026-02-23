@@ -66,13 +66,13 @@
             </td>
             <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
               <span class="nhsuk-table-responsive__heading">Actions </span>
-              <a asp-action="RemoveDefaultQuestion" asp-route-frameworkId="@Model.BaseFramework.ID" asp-route-assessmentQuestionId="@question.ID" asp-route-actionname="@(ViewContext.RouteData.Values["actionname"])">
+              <a asp-action="RemoveDefaultQuestion" asp-route-frameworkId="@Model.BaseFramework.ID" asp-route-assessmentQuestionId="@question.ID" asp-route-actionName="@(ViewContext.RouteData.Values["actionName"])">
                 Remove
               </a>
               @if (question.UserIsOwner)
               {
                 <span>&nbsp;</span>
-                <a asp-action="StartAssessmentQuestionSession" asp-route-assessmentQuestionId="@question.ID" asp-route-frameworkCompetencyId="0" asp-route-frameworkId="@Model.BaseFramework.ID" asp-route-actionname="@(ViewContext.RouteData.Values["actionname"])">
+                <a asp-action="StartAssessmentQuestionSession" asp-route-assessmentQuestionId="@question.ID" asp-route-frameworkCompetencyId="0" asp-route-frameworkId="@Model.BaseFramework.ID" asp-route-actionName="@(ViewContext.RouteData.Values["actionName"])">
                   Edit
                 </a>
               }
@@ -103,7 +103,7 @@
     Add
   </button>
 </form>
-<a class="nhsuk-button nhsuk-button--secondary" role="button" asp-action="StartAssessmentQuestionSession" asp-route-frameworkId="@Model.BaseFramework.ID" asp-route-frameworkCompetencyId="0" asp-route-actionname="@(ViewContext.RouteData.Values["actionname"])">
+<a class="nhsuk-button nhsuk-button--secondary" role="button" asp-action="StartAssessmentQuestionSession" asp-route-frameworkId="@Model.BaseFramework.ID" asp-route-frameworkCompetencyId="0" asp-route-actionName="@(ViewContext.RouteData.Values["actionName"])">
   Add a new question
 </a>
 <div class=" nhsuk-u-margin-top-6">

@@ -16,7 +16,6 @@
         void SendReviewRequest(int id, int invitedByAdminId, bool required, bool reminder, int centreId);
         void SendReviewOutcomeNotification(int reviewId, int centreId);
         void SendSupervisorDelegateInvite(int supervisorDelegateId, int adminId, int centreId);
-        void SendSupervisorDelegateConfirmed(int superviseDelegateId, int adminId, int delegateUserId, int centreId);
         void SendSupervisorResultReviewed(int adminId, int supervisorDelegateId, int candidateAssessmentId, int resultId, int centreId);
         void SendSupervisorEnroledDelegate(int adminId, int supervisorDelegateId, int candidateAssessmentId, DateTime? completeByDate, int centreId);
         void SendReminderDelegateSelfAssessment(int adminId, int supervisorDelegateId, int candidateAssessmentId, int centreId);
@@ -26,6 +25,8 @@
         void SendSignOffRequest(int candidateAssessmentSupervisorId, int selfAssessmentID, int delegateUserId, int centreId);
         void SendProfileAssessmentSignedOff(int supervisorDelegateId, int candidateAssessmentId, string? supervisorComments, bool signedOff, int adminId, int centreId);
         void SendSupervisorDelegateReminder(int supervisorDelegateId, int adminId, int centreId);
+        void SendReviewRequestForCompetencyAssessment(int id, int invitedByAdminId, bool required, bool reminder, int centreId);
+        void SendCompetencyAssessmentsReviewOutcomeNotification(int reviewId, int centreId);
     }
 
     public class FrameworkNotificationService : IFrameworkNotificationService
@@ -34,7 +35,7 @@
         private readonly IConfigDataService configDataService;
         private readonly IEmailService emailService;
         private readonly IFrameworkService frameworkService;
-        private readonly IRoleProfileService roleProfileService;
+        private readonly ICompetencyAssessmentService competencyAssessmentService;
         private readonly ISupervisorService supervisorService;
         private readonly ISelfAssessmentDataService selfAssessmentDataService;
         private readonly ICentresDataService centresDataService;
@@ -42,7 +43,7 @@
            IFrameworkService frameworkService,
            IConfigDataService configDataService,
            IEmailService emailService,
-           IRoleProfileService roleProfileService,
+           ICompetencyAssessmentService competencyAssessmentService,
            ISupervisorService supervisorService,
            ISelfAssessmentDataService selfAssessmentDataService,
            ICentresDataService centresDataService
@@ -51,7 +52,7 @@
             this.frameworkService = frameworkService;
             this.configDataService = configDataService;
             this.emailService = emailService;
-            this.roleProfileService = roleProfileService;
+            this.competencyAssessmentService = competencyAssessmentService;
             this.supervisorService = supervisorService;
             this.selfAssessmentDataService = selfAssessmentDataService;
             this.centresDataService = centresDataService;
@@ -141,11 +142,37 @@
             };
             emailService.SendEmail(new Email(emailSubjectLine, builder, collaboratorNotification.UserEmail, collaboratorNotification.InvitedByEmail));
         }
+        public void SendReviewRequestForCompetencyAssessment(int id, int invitedByAdminId, bool required, bool reminder, int centreId)
+        {
+            string centreName = GetCentreName(centreId);
+            var collaboratorNotification = competencyAssessmentService.GetCollaboratorNotification(id, invitedByAdminId);
+            if (collaboratorNotification == null)
+            {
+                throw new NotificationDataException($"No record found when trying to fetch collaboratorNotification Data. id: {id}, invitedByAdminId: {invitedByAdminId}");
+            }
+            var competencyAssessmentUrl = GetCompetencyAssessmentUrl(collaboratorNotification.SelfAssessmentID, "Review");
+            string emailSubjectLine = (reminder ? " REMINDER: " : "") + "Competency Assessment Review Request - Digital Learning Solutions";
+            string signOffRequired = required ? "You are required to sign-off this competency assessment before it can be published." : "You are not required to sign-off this competency assessment before it is published.";
+            var builder = new BodyBuilder
+            {
+                TextBody = $@"Dear colleague,
+                              You have been requested to review the competency assessment, {collaboratorNotification?.CompetencyAssessmentName}, by {collaboratorNotification?.InvitedByName} ({collaboratorNotification?.InvitedByEmail}) ({centreName}).
+                              To review the competency assessment, visit this url: {competencyAssessmentUrl}. Click the Review competency assessment button to submit your review and, if appropriate, sign-off the competency assessment. {signOffRequired}. You will need to be registered on the Digital Learning Solutions platform to review the competency assessment.",
+                HtmlBody = $@"<body style= 'font-family: Calibri; font-size: small;'><p>Dear colleague,</p><p>You have been requested to review the competency assessment, {collaboratorNotification?.CompetencyAssessmentName}, by <a href='mailto:{collaboratorNotification?.InvitedByEmail}'>{collaboratorNotification?.InvitedByName} ({centreName})</a>.</p><p><a href='{competencyAssessmentUrl}'>Click here</a> to review the competency assessment. Click the Review competency assessment button to submit your review and, if appropriate, sign-off the competency assessment.</p><p>{signOffRequired}</p><p>You will need to be registered on the Digital Learning Solutions platform to view the competency assessment.</p></body>"
+            };
+            emailService.SendEmail(new Email(emailSubjectLine, builder, collaboratorNotification.UserEmail, collaboratorNotification.InvitedByEmail));
+        }
         public string GetFrameworkUrl(int frameworkId, string tab)
         {
             var frameworkUrl = GetDLSUriBuilder();
             frameworkUrl.Path += $"Framework/{frameworkId}/{tab}/";
             return frameworkUrl.Uri.ToString();
+        }
+        public string GetCompetencyAssessmentUrl(int selfAssessmentID, string actionName)
+        {
+            var competencyAssessmentUrl = GetDLSUriBuilder();
+            competencyAssessmentUrl.Path += $"CompetencyAssessments/{selfAssessmentID}/{actionName}";
+            return competencyAssessmentUrl.Uri.ToString();
         }
         public string GetCurrentActivitiesUrl()
         {
@@ -204,7 +231,38 @@
             };
             emailService.SendEmail(new Email(emailSubjectLine, builder, outcomeNotification.OwnerEmail, outcomeNotification.UserEmail));
         }
-
+        public void SendCompetencyAssessmentsReviewOutcomeNotification(int reviewId, int centreId)
+        {
+            string centreName = GetCentreName(centreId);
+            var outcomeNotification = competencyAssessmentService.GetSelfAssessmentReviewNotification(reviewId);
+            if (outcomeNotification == null)
+            {
+                throw new NotificationDataException($"No record found when trying to fetch review outcome Data. reviewId: {reviewId}");
+            }
+            var competencyAssessmentUrl = GetCompetencyAssessmentUrl(outcomeNotification.SelfAssessmentID, "PublishReview");
+            string emailSubjectLine = $"Competency Assessment Review Outcome - {(outcomeNotification.SignedOff ? "Approved" : "Rejected")} - Digital Learning Solutions";
+            string approvalStatus = outcomeNotification.ReviewerFirstName + (outcomeNotification.SignedOff ? " approved the competency assessment for publishing." : " did not approve the competency assessment for publishing.");
+            string commentsText = outcomeNotification.ReviewerFirstName + (outcomeNotification.Comment != null ? " left the following review comment: " + outcomeNotification.Comment : " did not leave a review comment.");
+            string commentsHtml = "<p>" + outcomeNotification.ReviewerFirstName + (outcomeNotification.Comment != null ? " left the following review comment:</p><hr/><p>" + outcomeNotification.Comment + "</p><hr/>" : " did not leave a review comment.</p>");
+            string reviewerFullName = $"{outcomeNotification.ReviewerFirstName} {outcomeNotification.ReviewerLastName} {(outcomeNotification.ReviewerActive == true ? "" : " (inactive)")}";
+            var builder = new BodyBuilder
+            {
+                TextBody = $@"Dear {outcomeNotification.OwnerFirstName},
+                              Your competency assessment, {outcomeNotification.SelfAssessmentName}, has been reviewed by {reviewerFullName} ({outcomeNotification.UserEmail}) ({centreName}).
+                              {approvalStatus}
+                              {commentsText}
+                              The full competency assessment review status, can be viewed by visiting: {competencyAssessmentUrl}. Once all of the required reviewers have approved the competency assessment, you may publish it. You will need to login to the Digital Learning Solutions platform to access the competency assessment.",
+                HtmlBody = $@"<body style= 'font-family: Calibri; font-size: small;'>
+                                <p>Dear {outcomeNotification.OwnerFirstName},</p>
+                                <p>Your competency assessment, {outcomeNotification.SelfAssessmentName}, has been reviewed by <a href='mailto:{outcomeNotification.UserEmail}'>{reviewerFullName} ({centreName})</a>.</p>
+                                <p>{approvalStatus}</p>
+                                {commentsHtml}
+                                <p><a href='{competencyAssessmentUrl}'>Click here</a> to view the full review status for the competency assessment. Once all of the required reviewers have approved the competency assessment, you may publish it.</p>
+                                <p>You will need to login to the Digital Learning Solutions platform to access the competency assessment.</p>
+                            </body>",
+            };
+            emailService.SendEmail(new Email(emailSubjectLine, builder, outcomeNotification.OwnerEmail, outcomeNotification.UserEmail));
+        }
 
         public void SendSupervisorDelegateInvite(int supervisorDelegateId, int adminId, int centreId)
         {
@@ -221,8 +279,8 @@
                 builder.TextBody = $@"Dear colleague,
                               You have been invited to register to access the NHS England, Digital Learning Solutions platform as a supervised delegate by {supervisorDelegate.SupervisorName} ({supervisorDelegate.SupervisorEmail}) ({centreName}).
                               To register, visit {dlsUrlBuilder.Uri.ToString()}.
-                              Registering using this link will confirm your acceptance of the invite. Your supervisor will then be able to assign role profile assessments and view and validate your self assessment results.";
-                builder.HtmlBody = $@"<body style= 'font-family: Calibri; font-size: small;'><p>Dear colleague,</p><p>You have been invited to register to access the NHS England, Digital Learning Solutions platform as a supervised delegate by <a href='mailto:{supervisorDelegate.SupervisorEmail}'>{supervisorDelegate.SupervisorName} ({centreName})</a>.</p><p><a href='{dlsUrlBuilder.Uri.ToString()}'>Click here</a> to register and confirm your acceptance of the invite.</p><p>Your supervisor will then be able to assign role profile assessments and view and validate your self assessment results.</p></body>";
+                              Registering using this link will confirm your acceptance of the invite. Your supervisor will then be able to assign competency assessments and view and validate your self assessment results.";
+                builder.HtmlBody = $@"<body style= 'font-family: Calibri; font-size: small;'><p>Dear colleague,</p><p>You have been invited to register to access the NHS England, Digital Learning Solutions platform as a supervised delegate by <a href='mailto:{supervisorDelegate.SupervisorEmail}'>{supervisorDelegate.SupervisorName} ({centreName})</a>.</p><p><a href='{dlsUrlBuilder.Uri.ToString()}'>Click here</a> to register and confirm your acceptance of the invite.</p><p>Your supervisor will then be able to assign competency assessments and view and validate your self assessment results.</p></body>";
                 emailService.SendEmail(new Email(emailSubjectLine, builder, supervisorDelegate.DelegateEmail));
             }
         }
@@ -240,7 +298,7 @@ You have been identified as a supervised delegate by {supervisorDelegate.Supervi
 You are already registered as a delegate at the supervisor's DLS centre so they can now assign competency self assessments and view and validate your self assessment results.
 
 If this looks like a mistake, please contact {supervisorDelegate.SupervisorName} ({supervisorDelegate.SupervisorEmail}) ({centreName}) directly to correct.";
-            builder.HtmlBody = $@"<body style= 'font-family: Calibri; font-size: small;'><p>Dear {supervisorDelegate.FirstName}</p><p>{supervisorDelegate.SupervisorName} ({centreName}) has accepted your request to be your supervisor for profile asessment activities in the NHS England, Digital Learning Solutions platform.</p><p><a href='{GetCurrentActivitiesUrl()}'>Click here</a> to access your role profile assessments.</p></body>";
+            builder.HtmlBody = $@"<body style= 'font-family: Calibri; font-size: small;'><p>Dear {supervisorDelegate.FirstName}</p><p>{supervisorDelegate.SupervisorName} ({centreName}) has accepted your request to be your supervisor for profile asessment activities in the NHS England, Digital Learning Solutions platform.</p><p><a href='{GetCurrentActivitiesUrl()}'>Click here</a> to access your competency assessments.</p></body>";
             string toEmail = (@adminId == 0 ? supervisorDelegate.DelegateEmail : supervisorDelegate.SupervisorEmail);
             emailService.SendEmail(new Email(emailSubjectLine, builder, toEmail));
         }
@@ -410,8 +468,8 @@ If this looks like a mistake, please contact {supervisorDelegate.SupervisorName}
                 builder.TextBody = $@"Dear colleague,
                               This is a reminder to to register to access the NHS England, Digital Learning Solutions platform as a supervised delegate by {supervisorDelegate.SupervisorName} ({supervisorDelegate.SupervisorEmail}) ({centreName}).
                               To register, visit {dlsUrlBuilder.Uri.ToString()}.
-                              Your supervisor will then be able to assign role profile assessments and view and validate your self assessment results.";
-                builder.HtmlBody = $@"<body style= 'font-family: Calibri; font-size: small;'><p>Dear colleague,</p><p>This is a reminder to register to access the NHS England, Digital Learning Solutions platform as a supervised delegate by <a href='mailto:{supervisorDelegate.SupervisorEmail}'>{supervisorDelegate.SupervisorName} ({centreName})</a>.</p><p><a href='{dlsUrlBuilder.Uri.ToString()}'>Click here</a> to register. </p><p>Your supervisor will then be able to assign role profile assessments and view and validate your self assessment results.</p></body>";
+                              Your supervisor will then be able to assign competency assessments and view and validate your self assessment results.";
+                builder.HtmlBody = $@"<body style= 'font-family: Calibri; font-size: small;'><p>Dear colleague,</p><p>This is a reminder to register to access the NHS England, Digital Learning Solutions platform as a supervised delegate by <a href='mailto:{supervisorDelegate.SupervisorEmail}'>{supervisorDelegate.SupervisorName} ({centreName})</a>.</p><p><a href='{dlsUrlBuilder.Uri.ToString()}'>Click here</a> to register. </p><p>Your supervisor will then be able to assign competency assessments and view and validate your self assessment results.</p></body>";
                 emailService.SendEmail(new Email(emailSubjectLine, builder, supervisorDelegate.DelegateEmail));
             }
         }
