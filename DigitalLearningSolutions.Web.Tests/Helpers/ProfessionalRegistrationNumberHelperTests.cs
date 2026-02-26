@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Tests.Helpers
 {
+    using System.Linq;
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Tests.TestHelpers;
     using FluentAssertions;
@@ -71,7 +72,7 @@
         {
             // Given
             var state = new ModelStateDictionary();
-            const string validPrn = "AB123456";
+            const string validPrn = "abc-123";
 
             // When
             ProfessionalRegistrationNumberHelper.ValidateProfessionalRegistrationNumber(
@@ -105,13 +106,22 @@
             }
         }
 
-        [TestCase(null, ErrorMessagesTestHelper.MissingNumberError)]
-        [TestCase("", ErrorMessagesTestHelper.MissingNumberError)]
-        [TestCase("1234", ErrorMessagesTestHelper.LengthError)]
-        [TestCase("1234", ErrorMessagesTestHelper.LengthError)]
-        [TestCase("01234_", ErrorMessagesTestHelper.InvalidFormatError)]
-        [TestCase("01234 ", ErrorMessagesTestHelper.InvalidFormatError)]
-        [TestCase("01234$", ErrorMessagesTestHelper.InvalidFormatError)]
+        [TestCase(null, "Enter a professional registration number")]
+        [TestCase("", "Enter a professional registration number")]
+        [TestCase("123", "Professional registration number must be between 5 and 20 characters")]
+        [TestCase("0123456789-0123456789", "Professional registration number must be between 5 and 20 characters")]
+        [TestCase(
+            "01234_",
+            "Invalid professional registration number format - Only alphanumeric characters (a-z, A-Z and 0-9) and hyphens (-) allowed"
+        )]
+        [TestCase(
+            "01234 ",
+            "Invalid professional registration number format - Only alphanumeric characters (a-z, A-Z and 0-9) and hyphens (-) allowed"
+        )]
+        [TestCase(
+            "01234$",
+            "Invalid professional registration number format - Only alphanumeric characters (a-z, A-Z and 0-9) and hyphens (-) allowed"
+        )]
         public void ValidateProfessionalRegistrationNumber_sets_error_when_prn_is_invalid(
             string prn,
             string expectedError
