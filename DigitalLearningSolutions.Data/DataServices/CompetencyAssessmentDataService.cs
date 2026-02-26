@@ -183,7 +183,7 @@
 
         private const string SelfAssessmentBaseTables =
             @"SelfAssessments AS sa LEFT OUTER JOIN
-             SelfAssessmentCollaborators AS sac ON sac.SelfAssessmentID = sa.ID AND sac.AdminID = @adminId";
+             SelfAssessmentCollaborators AS sac ON sac.SelfAssessmentID = sa.ID AND sac.AdminID = @adminId AND sac.IsDeleted = 0";
 
         private const string SelfAssessmentTables =
             @" LEFT OUTER JOIN
@@ -1177,10 +1177,14 @@
                     CASE WHEN sc.CanModify = 1 THEN 'Contributor' ELSE 'Reviewer' END AS CompetencyAssessmentRole,
                     sa.[Name] AS CompetencyAssessmentName,
                     (SELECT Forename + ' ' + Surname + (CASE WHEN Active = 1 THEN '' ELSE ' (Inactive)' END) AS Expr1 FROM AdminUsers AS au1 WHERE (AdminID = @invitedByAdminId)) AS InvitedByName,
-                    (SELECT Email FROM AdminUsers AS au2 WHERE (AdminID = @invitedByAdminId)) AS InvitedByEmail
+                    (SELECT Email FROM AdminUsers AS au2 WHERE (AdminID = @invitedByAdminId)) AS InvitedByEmail,
+                    sr.ID AS SelfAssessmentReviewID
                 FROM SelfAssessmentCollaborators AS sc
-                INNER JOIN SelfAssessments AS sa ON sc.SelfAssessmentID = sa.ID
-                INNER JOIN AdminUsers AS au ON sc.AdminID = au.AdminID
+                    INNER JOIN SelfAssessments AS sa ON sc.SelfAssessmentID = sa.ID
+                    INNER JOIN AdminUsers AS au ON sc.AdminID = au.AdminID
+                    LEFT JOIN SelfAssessmentReviews AS sr 
+					    ON sr.SelfAssessmentID = sa.ID AND sr.SelfAssessmentCollaboratorID = sc.ID
+                        AND sr.ReviewComplete IS NULL AND sr.Archived IS NULL
                 WHERE (sc.ID = @id) AND (sc.IsDeleted=0)",
                 new { invitedByAdminId, id }
             ).FirstOrDefault();
