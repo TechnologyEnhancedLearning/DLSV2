@@ -13,9 +13,9 @@
 
 <div class="nhsuk-grid-row">
   <div class="nhsuk-grid-column-full">
-    @if (errorHasOccurred)
-    {
-      <vc:error-summary order-of-property-names="@(new[] {
+        @if (errorHasOccurred)
+        {
+            <vc:error-summary order-of-property-names="@(new[] {
                                                    nameof(Model.FirstName),
                                                    nameof(Model.LastName),
                                                    nameof(Model.CentreSpecificEmail),
@@ -28,7 +28,8 @@
                                                    nameof(Model.Answer4),
                                                    nameof(Model.Answer5),
                                                    nameof(Model.Answer6) })" />
-    }
+            
+        }
 
     <h1 class="nhsuk-heading-xl">Edit delegate details</h1>
 
