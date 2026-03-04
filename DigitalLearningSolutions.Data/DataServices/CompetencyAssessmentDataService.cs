@@ -1492,8 +1492,10 @@ ORDER BY
                     ON fc.AdminID = au.AdminID
                     WHERE fc.FrameworkID = @frameworkId
                     AND fc.IsDeleted = 0
-                    AND fc.AdminID NOT IN (SELECT AdminID FROM SelfAssessmentCollaborators WHERE SelfAssessmentID = @selfAssessmentId AND IsDeleted = 0)
-                    AND fc.AdminID NOT IN (SELECT CreatedByAdminId FROM SelfAssessmentFrameworks WHERE SelfAssessmentId = @selfAssessmentId AND FrameworkID = @frameworkId AND RemovedDate IS NULL);",
+                    AND NOT EXISTS (SELECT 1 FROM AdminAccounts AS aa JOIN SelfAssessmentCollaborators AS sac ON sac.AdminID = aa.ID 
+					    WHERE aa.UserID = au.AdminUserID AND sac.SelfAssessmentID = @selfAssessmentId AND sac.IsDeleted = 0)
+	                AND NOT EXISTS (SELECT 1 FROM AdminAccounts AS aa JOIN SelfAssessments AS sa ON sa.CreatedByAdminID = aa.ID 
+					    WHERE aa.UserID = au.AdminUserID AND sa.ID = @selfAssessmentId);",
                 new { selfAssessmentId, frameworkId }
             );
         }
