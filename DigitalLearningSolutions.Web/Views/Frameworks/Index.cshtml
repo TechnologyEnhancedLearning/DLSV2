@@ -21,7 +21,7 @@
     </nav>
 }
 <h1>Frameworks Dashboard</h1>
-<p class="nhsuk-body-m">Welcome <span class="nhsuk-u-font-weight-bold">@Model.Username</span>. You are accessing as a <span class="nhsuk-u-font-weight-bold">@(Model.IsFrameworkDeveloper ? "Framework Developer" : Model.IsFrameworkContributor ? "Framework Contributor" : "Framework Viewer")</span><feature name="@(FeatureFlags.WorkforceManagerInterface)"> and a <span class="nhsuk-u-font-weight-bold">@(Model.IsWorkforceManager | Model.IsFrameworkDeveloper ? "Self Assessment Developer" :  "Self Assessment Viewer")</span></feature>.</p>
+<p class="nhsuk-body-m">Welcome <span class="nhsuk-u-font-weight-bold">@Model.Username</span>. You are accessing as a <span class="nhsuk-u-font-weight-bold">@(Model.IsFrameworkDeveloper ? "Framework Developer" : Model.IsFrameworkContributor ? "Framework Contributor" : "Framework Viewer")</span><feature name="@(FeatureFlags.WorkforceManagerInterface)"> and a <span class="nhsuk-u-font-weight-bold">@(Model.IsWorkforceManager | Model.IsFrameworkDeveloper ? "Self Assessment Developer" : "Self Assessment Viewer")</span></feature>.</p>
 <h2>Your to do list</h2>
 @if (Model.DashboardToDoItems.Count() > 0)
 {
@@ -29,7 +29,7 @@
         @foreach (var toDoItem in Model.DashboardToDoItems)
         {
             <li class="nhsuk-contents-list__item">
-                @if (toDoItem.FrameworkID != null)
+                @if (toDoItem.FrameworkID != 0)
                 {
                     <a class="nhsuk-contents-list__link nhsuk-link--no-visited-state" asp-controller="Frameworks" asp-route-tabname="Structure" asp-route-frameworkId="@toDoItem.FrameworkID" asp-action="ViewFramework">
                         @(toDoItem.SignOffRequired ? "Approve " : "Review ") @toDoItem.ItemName for @toDoItem.RequestorName (requested @toDoItem.Requested.ToShortDateString())
@@ -37,7 +37,7 @@
                 }
                 else
                 {
-                    <a class="nhsuk-contents-list__link nhsuk-link--no-visited-state" asp-controller="CompetencyAssessments" asp-route-competencyAssessmentId="@toDoItem.CompetencyAssessmentID" asp-action="ViewCompetencyAssessment">
+                    <a class="nhsuk-contents-list__link nhsuk-link--no-visited-state" asp-controller="CompetencyAssessments" asp-route-competencyAssessmentId="@toDoItem.CompetencyAssessmentID" asp-action="ManageCompetencyAssessment">
                         @(toDoItem.SignOffRequired ? "Approve " : "Review ") @toDoItem.ItemName for @toDoItem.RequestorName (requested @toDoItem.Requested.ToShortDateString())
                     </a>
                 }

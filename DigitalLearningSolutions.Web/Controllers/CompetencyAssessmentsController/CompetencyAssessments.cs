@@ -1530,6 +1530,10 @@
         [Route("/CompetencyAssessments/{competencyAssessmentId}/PublishWithoutReview")]
         public IActionResult PublishWithoutReview(PublishWithoutReviewViewModel publish)
         {
+            if (!ModelState.IsValid)
+            {
+                return View(publish);
+            }
             var adminId = GetAdminID();
             var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(publish.CompetencyAssessmentID, adminId);
             var result = ValidateCompetencyAssessmentAndRole(publish.CompetencyAssessmentID, adminId, "Publish Without Review", competencyAssessmentBase);

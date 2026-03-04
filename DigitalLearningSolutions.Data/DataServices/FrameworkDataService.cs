@@ -2284,7 +2284,7 @@ WHERE (OwnerAdminID = @adminId) OR
                  (SELECT COUNT(*) FROM SelfAssessments) AS CompetencyAssessmentCount,
 
                  (SELECT COUNT(*) FROM SelfAssessments AS RP LEFT OUTER JOIN
-             SelfAssessmentCollaborators AS RPC ON RPC.SelfAssessmentID = RP.ID AND RPC.AdminID = @adminId
+             SelfAssessmentCollaborators AS RPC ON RPC.SelfAssessmentID = RP.ID AND RPC.AdminID = @adminId AND RPC.IsDeleted = 0
 WHERE (RP.CreatedByAdminID = @adminId) OR
              (@adminId IN
                  (SELECT AdminID
@@ -2299,7 +2299,7 @@ WHERE (RP.CreatedByAdminID = @adminId) OR
             return connection.Query<DashboardToDoItem>(
                 @"SELECT
                         FW.ID AS FrameworkID,
-                        0 AS SelfAssessmentID,
+                        0 AS CompetencyAssessmentID,
                         FW.FrameworkName AS ItemName,
                         AU.Forename + ' ' + AU.Surname + (CASE WHEN AU.Active = 1 THEN '' ELSE ' (Inactive)' END) AS RequestorName,
                         FWR.SignOffRequired,
@@ -2319,7 +2319,7 @@ WHERE (RP.CreatedByAdminID = @adminId) OR
                         RPR.ReviewRequested AS Requested
                     FROM SelfAssessmentReviews AS RPR
                     INNER JOIN SelfAssessments AS RP ON RPR.SelfAssessmentID = RP.ID
-                    INNER JOIN SelfAssessmentCollaborators AS RPC ON RPR.SelfAssessmentCollaboratorID = RPC.ID
+                    INNER JOIN SelfAssessmentCollaborators AS RPC ON RPR.SelfAssessmentCollaboratorID = RPC.ID AND RPC.IsDeleted = 0
                     INNER JOIN AdminUsers AS AU ON RP.CreatedByAdminID = AU.AdminID
                     WHERE (RPC.AdminID = @adminId) AND (RPR.ReviewComplete IS NULL) AND (RPR.Archived IS NULL)",
                 new { adminId }
