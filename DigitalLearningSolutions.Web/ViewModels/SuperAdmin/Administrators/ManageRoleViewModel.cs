@@ -9,7 +9,7 @@
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.Common;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Administrator;
-    using NHSUKViewComponents.Web.ViewModels;
+    using NHSETELViewComponents.ViewModels;
 
     public class ManageRoleViewModel : AdminRolesViewModel
     {

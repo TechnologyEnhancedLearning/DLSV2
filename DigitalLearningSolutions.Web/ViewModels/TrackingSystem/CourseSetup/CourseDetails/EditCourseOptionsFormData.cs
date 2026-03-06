@@ -3,7 +3,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using DigitalLearningSolutions.Data.Models.MultiPageFormData.AddNewCentreCourse;
-    using NHSUKViewComponents.Web.ViewModels;
+    using NHSETELViewComponents.ViewModels;
 
     public class EditCourseOptionsFormData
     {

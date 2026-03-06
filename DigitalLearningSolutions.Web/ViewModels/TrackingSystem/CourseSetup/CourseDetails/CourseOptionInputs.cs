@@ -1,6 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.CourseSetup.CourseDetails
 {
-    using NHSUKViewComponents.Web.ViewModels;
+    using NHSETELViewComponents.ViewModels;
 
     public static class CourseOptionsInputs
     {
