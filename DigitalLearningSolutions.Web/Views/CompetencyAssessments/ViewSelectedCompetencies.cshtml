@@ -38,11 +38,14 @@
             <dd class="nhsuk-summary-list__value">
                 @primaryFramework.FrameworkName (@primaryFramework.AssessmentFrameworkCompetencyCount @Model.VocabularyPlural.ToLower())
             </dd>
-            <dd class="nhsuk-summary-list__actions">
-                <a asp-action="AddCompetencies" asp-route-competencyAssessmentId="@Model.ID" asp-route-frameworkId="@primaryFramework.ID">
-                    Manage<span class="nhsuk-u-visually-hidden"> @Model.VocabularyPlural.ToLower()</span>
-                </a>
-            </dd>
+            @if (Model.UserRole > 1)
+            {
+                <dd class="nhsuk-summary-list__actions">
+                    <a asp-action="AddCompetencies" asp-route-competencyAssessmentId="@Model.ID" asp-route-frameworkId="@primaryFramework.ID">
+                        Manage<span class="nhsuk-u-visually-hidden"> @Model.VocabularyPlural.ToLower()</span>
+                    </a>
+                </dd>
+            }
         </div>
     }
     @{
@@ -57,11 +60,14 @@
             <dd class="nhsuk-summary-list__value">
                 @framework.FrameworkName (@framework.AssessmentFrameworkCompetencyCount @Model.VocabularyPlural.ToLower())
             </dd>
-            <dd class="nhsuk-summary-list__actions">
-                <a asp-action="AddCompetencies" asp-route-competencyAssessmentId="@Model.ID" asp-route-frameworkId="@framework.ID">
-                    Manage<span class="nhsuk-u-visually-hidden"> @Model.VocabularyPlural.ToLower()</span>
-                </a>
-            </dd>
+            @if (Model.UserRole > 1)
+            {
+                <dd class="nhsuk-summary-list__actions">
+                    <a asp-action="AddCompetencies" asp-route-competencyAssessmentId="@Model.ID" asp-route-frameworkId="@framework.ID">
+                        Manage<span class="nhsuk-u-visually-hidden"> @Model.VocabularyPlural.ToLower()</span>
+                    </a>
+                </dd>
+            }
         </div>
         i++;
     }
@@ -210,9 +216,12 @@ else
     <nhs-form-group>
         <vc:single-checkbox asp-for="@nameof(Model.TaskStatus)" label="Mark this task as complete" hint-text="You will still be able to make changes after marking this task as complete."></vc:single-checkbox>
     </nhs-form-group>
-    <button class="nhsuk-button" type="submit">
-        Submit
-    </button>
+    @if (Model.UserRole > 1)
+    {
+        <button class="nhsuk-button" type="submit">
+            Submit
+        </button>
+    }
     <div class="nhsuk-back-link">
         <a class="nhsuk-back-link__link" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.ID">
             <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">

@@ -84,9 +84,12 @@
     <input name="ID" type="hidden" asp-for="ID" />
     <input name="CompetencyAssessmentName" type="hidden" asp-for="CompetencyAssessmentName" />
     <input name="userRole" type="hidden" asp-for="UserRole" />
-    <button class="nhsuk-button" type="submit">
-        Save
-    </button>
+    @if (Model.UserRole > 1)
+    {
+        <button class="nhsuk-button" type="submit">
+            Save
+        </button>
+    }
     <div class="nhsuk-back-link">
         <a class="nhsuk-back-link__link" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.ID">
             <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">

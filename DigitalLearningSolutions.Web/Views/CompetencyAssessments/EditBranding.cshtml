@@ -65,9 +65,12 @@
     <input name="userRole" type="hidden" asp-for="UserRole" />
     <input name="Category" type="hidden" asp-for="Category" />
     <input name="Brand" type="hidden" asp-for="Brand" />
-    <button class="nhsuk-button" type="submit">
-        Save
-    </button>
+    @if (Model.UserRole > 1)
+    {
+        <button class="nhsuk-button" type="submit">
+            Save
+        </button>
+    }
 </form>
 <div class="nhsuk-back-link">
     <a class="nhsuk-back-link__link" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.ID">
