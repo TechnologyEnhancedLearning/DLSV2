@@ -50,15 +50,18 @@
             <dd class="nhsuk-summary-list__value">
                 @Model.PrimaryFramework.FrameworkName
             </dd>
-            <dd class="nhsuk-summary-list__actions">
-                <ul class="nhsuk-summary-list__actions-list left-align-actions">
-                    <li class="nhsuk-summary-list__actions-list-item">
-                        <a asp-action="RemoveFramework" asp-route-frameworkId="@Model.PrimaryFramework.ID" asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">
-                            Remove<span class="nhsuk-u-visually-hidden"> @Model.PrimaryFramework.FrameworkName</span>
-                        </a>
-                    </li>
-                </ul>
-            </dd>
+            @if (Model.UserRole > 1)
+            {
+                <dd class="nhsuk-summary-list__actions">
+                    <ul class="nhsuk-summary-list__actions-list left-align-actions">
+                        <li class="nhsuk-summary-list__actions-list-item">
+                            <a asp-action="RemoveFramework" asp-route-frameworkId="@Model.PrimaryFramework.ID" asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">
+                                Remove<span class="nhsuk-u-visually-hidden"> @Model.PrimaryFramework.FrameworkName</span>
+                            </a>
+                        </li>
+                    </ul>
+                </dd>
+            }
         </div>
     }
     @if (Model.AdditionalFrameworks.Count() > 0)
@@ -67,30 +70,33 @@
         {
             <div class="nhsuk-summary-list__row">
                 <dt class="nhsuk-summary-list__key">
-                    Additional framework @(i+1)
+                    Additional framework @(i + 1)
                 </dt>
                 <dd class="nhsuk-summary-list__value">
                     @Model.AdditionalFrameworks.ElementAt(i).FrameworkName
                 </dd>
-                <dd class="nhsuk-summary-list__actions">
-                    <ul class="nhsuk-summary-list__actions-list nhsuk-summary-list__actions-list--inline left-align-actions">
-                        <li class="nhsuk-summary-list__actions-list-item">
-                            <a asp-action="RemoveFramework"
-                               asp-route-frameworkId="@Model.AdditionalFrameworks.ElementAt(i).ID"
-                               asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">
-                                Remove <span class="nhsuk-u-visually-hidden">@Model.AdditionalFrameworks.ElementAt(i).FrameworkName</span>
-                            </a>
-                        </li>
-                        <li class="nhsuk-summary-list__actions-list-item">
-                            <a asp-action="ConfirmMaKePrimaryFramework"
-                               asp-route-frameworkId="@Model.AdditionalFrameworks.ElementAt(i).ID"
-                               asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">
-                                Make primary <span class="nhsuk-u-visually-hidden">@Model.AdditionalFrameworks.ElementAt(i).FrameworkName</span>
-                            </a>
-                        </li>
-                       
-                    </ul>
-                </dd>
+                @if (Model.UserRole > 1)
+                {
+                    <dd class="nhsuk-summary-list__actions">
+                        <ul class="nhsuk-summary-list__actions-list nhsuk-summary-list__actions-list--inline left-align-actions">
+                            <li class="nhsuk-summary-list__actions-list-item">
+                                <a asp-action="RemoveFramework"
+                                   asp-route-frameworkId="@Model.AdditionalFrameworks.ElementAt(i).ID"
+                                   asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">
+                                    Remove <span class="nhsuk-u-visually-hidden">@Model.AdditionalFrameworks.ElementAt(i).FrameworkName</span>
+                                </a>
+                            </li>
+                            <li class="nhsuk-summary-list__actions-list-item">
+                                <a asp-action="ConfirmMaKePrimaryFramework"
+                                   asp-route-frameworkId="@Model.AdditionalFrameworks.ElementAt(i).ID"
+                                   asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">
+                                    Make primary <span class="nhsuk-u-visually-hidden">@Model.AdditionalFrameworks.ElementAt(i).FrameworkName</span>
+                                </a>
+                            </li>
+
+                        </ul>
+                    </dd>
+                }
             </div>
         }
     }
@@ -118,28 +124,34 @@
         </div>
         <input type="hidden" asp-for="ActionName" />
         <input type="hidden" asp-for="TaskStatus" />
-        <button class="nhsuk-button" type="submit">Add</button>
+        @if (Model.UserRole > 1)
+        {
+            <button class="nhsuk-button" type="submit">Add</button>
+        }
     </form>
 }
 @if (Model.ActionName == "Summary")
 {
-    @if (Model.Frameworks.Any())
+    if (Model.UserRole > 1)
     {
-        <a class="nhsuk-button nhsuk-button--secondary" role="button" asp-action="SelectFrameworkSources" asp-route-actionName="AddFramework" asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">
-            Add framework
-        </a>
+        @if (Model.Frameworks.Any())
+        {
+            <a class="nhsuk-button nhsuk-button--secondary" role="button" asp-action="SelectFrameworkSources" asp-route-actionName="AddFramework" asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">
+                Add framework
+            </a>
+        }
+        <form method="post">
+            <nhs-form-group>
+                <vc:single-checkbox asp-for="@nameof(Model.TaskStatus)" label="Mark this task as complete" hint-text="You will still be able to make changes after marking this task as complete."></vc:single-checkbox>
+            </nhs-form-group>
+            <input type="hidden" asp-for="FrameworkId" value="0" />
+            <input type="hidden" asp-for="ActionName" />
+            <input type="hidden" asp-for="ID" />
+            <button class="nhsuk-button" type="submit">
+                Save
+            </button>
+        </form>
     }
-    <form method="post">
-        <nhs-form-group>
-            <vc:single-checkbox asp-for="@nameof(Model.TaskStatus)" label="Mark this task as complete" hint-text="You will still be able to make changes after marking this task as complete."></vc:single-checkbox>
-        </nhs-form-group>
-        <input type="hidden" asp-for="FrameworkId" value="0" />
-        <input type="hidden" asp-for="ActionName" />
-        <input type="hidden" asp-for="ID" />
-        <button class="nhsuk-button" type="submit">
-            Save
-        </button>
-    </form>
 }
 <div class="nhsuk-back-link">
     <a class="nhsuk-back-link__link" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.ID">
