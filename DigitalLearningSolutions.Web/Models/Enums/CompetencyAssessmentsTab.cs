@@ -9,7 +9,7 @@
             nameof(MyCompetencyAssessments),
             "CompetencyAssessments",
             "ViewCompetencyAssessments",
-            "My Competency Assessments",
+            "My Self-assessments",
             new Dictionary<string, string> { { "tabName", "Mine" } }
         );
 
@@ -18,7 +18,7 @@
             nameof(AllCompetencyAssessments),
             "CompetencyAssessments",
             "ViewCompetencyAssessments",
-            "All Competency Assessments",
+            "All Self-assessments",
             new Dictionary<string, string> { { "tabName", "All" } }
         );
 

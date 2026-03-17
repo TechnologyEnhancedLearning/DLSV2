@@ -4,9 +4,9 @@
 @inject IConfiguration Configuration
 
 @{
-    ViewData["Title"] = "Competency Assessment - Preview";
-    ViewData["Application"] = "Competency Assessment Service";
-    ViewData["HeaderPathName"] = "Competency Assessment Service";
+    ViewData["Title"] = "Self-assessment - Preview";
+    ViewData["Application"] = "Self-assessment Service";
+    ViewData["HeaderPathName"] = "Self-assessment Service";
 }
 
 @section NavMenuItems {
@@ -16,11 +16,11 @@
     <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
         <div class="nhsuk-width-container">
             <ol class="nhsuk-breadcrumb__list">
-                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewCompetencyAssessments" asp-route-tabname="Mine">Competency Assessments</a></li>
-                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.CompetencyAssessmentId">Manage Competency Assessment</a></li>
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewCompetencyAssessments" asp-route-tabname="Mine">Self-assessments</a></li>
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.CompetencyAssessmentId">Manage self-assessment</a></li>
                 <li class="nhsuk-breadcrumb__item">Confirm Preview</li>
             </ol>
-            <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.CompetencyAssessmentId">Back to manage competency assessment</a></p>
+            <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.CompetencyAssessmentId">Back to manage self-assessment</a></p>
         </div>
     </nav>
 }

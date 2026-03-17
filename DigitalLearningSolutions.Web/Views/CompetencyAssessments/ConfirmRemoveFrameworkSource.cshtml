@@ -3,7 +3,7 @@
 @model ConfirmRemoveFrameworkSourceViewModel;
 @{
     var errorHasOccurred = !ViewData.ModelState.IsValid;
-    ViewData["Title"] = "Competency Assessments - Remove source framework";
+    ViewData["Title"] = "Self-assessments - remove source framework";
 }
 <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-full">
@@ -28,7 +28,7 @@
             <input type="hidden" asp-for="CompetencyCount" />
             <input type="hidden" asp-for="Vocabulary" />
             <p>
-                This competency assessment has @Model.CompetencyCount @DisplayStringHelper.PluraliseStringIfRequired(@Model.Vocabulary.ToLower(), Model.CompetencyCount)
+                This self-assessment has @Model.CompetencyCount @DisplayStringHelper.PluraliseStringIfRequired(@Model.Vocabulary.ToLower(), Model.CompetencyCount)
                 associated with it from the framework @Model.FrameworkName. Removing this
                 framework source will remove the @DisplayStringHelper.PluraliseStringIfRequired(@Model.Vocabulary.ToLower(), Model.CompetencyCount) from the assessment.
             </p>
