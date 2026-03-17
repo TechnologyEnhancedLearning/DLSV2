@@ -150,7 +150,7 @@
             {
                 throw new NotificationDataException($"No record found when trying to fetch collaboratorNotification Data. id: {id}, invitedByAdminId: {invitedByAdminId}");
             }
-            var competencyAssessmentUrl = GetCompetencyAssessmentUrl(collaboratorNotification.SelfAssessmentID, "Review");
+            var competencyAssessmentUrl = GetCompetencyAssessmentUrl(collaboratorNotification.SelfAssessmentID, "Review", collaboratorNotification.SelfAssessmentReviewID);
             string emailSubjectLine = (reminder ? " REMINDER: " : "") + "Competency Assessment Review Request - Digital Learning Solutions";
             string signOffRequired = required ? "You are required to sign-off this competency assessment before it can be published." : "You are not required to sign-off this competency assessment before it is published.";
             var builder = new BodyBuilder
@@ -168,10 +168,13 @@
             frameworkUrl.Path += $"Framework/{frameworkId}/{tab}/";
             return frameworkUrl.Uri.ToString();
         }
-        public string GetCompetencyAssessmentUrl(int selfAssessmentID, string actionName)
+        public string GetCompetencyAssessmentUrl(int selfAssessmentID, string actionName, int? id = null)
         {
             var competencyAssessmentUrl = GetDLSUriBuilder();
-            competencyAssessmentUrl.Path += $"CompetencyAssessments/{selfAssessmentID}/{actionName}";
+
+            competencyAssessmentUrl.Path += id != null
+                        ? $"CompetencyAssessments/{selfAssessmentID}/{id}/{actionName}"
+                        : $"CompetencyAssessments/{selfAssessmentID}/{actionName}";
             return competencyAssessmentUrl.Uri.ToString();
         }
         public string GetCurrentActivitiesUrl()

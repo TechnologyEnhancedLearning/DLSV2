@@ -12,6 +12,7 @@
         public string? UserEmail { get; set; }
         public bool Error { get; set; }
         public string? ActionName { get; set; }
+        public int UserRole { get; set; }
 
     }
 }

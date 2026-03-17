@@ -50,5 +50,8 @@
         <span nhs-validation-for="FrameworkId"></span>
     </div>
     <input type="hidden" asp-for="@Model.ID" />
-    <button type="submit" class="nhsuk-button">Next</button>
+    @if (Model.UserRole > 1)
+    {
+        <button type="submit" class="nhsuk-button">Next</button>
+    }
 </form>
