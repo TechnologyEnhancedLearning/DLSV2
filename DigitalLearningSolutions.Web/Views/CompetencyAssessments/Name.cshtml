@@ -1,49 +1,49 @@
 ﻿@using DigitalLearningSolutions.Data.Models.CompetencyAssessments;
 @model CompetencyAssessmentBase;
 @{
-    ViewData["Title"] = "New Competency Assessments";
+    ViewData["Title"] = "New self-assessments";
     ViewData["Application"] = "Framework Service";
 }
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
 @section NavMenuItems {
     <partial name="~/Views/Frameworks/Shared/_NavMenuItems.cshtml" />
 }
-  @if ((string)ViewContext.RouteData.Values["actionname"] == "New")
+@if ((string)ViewContext.RouteData.Values["actionname"] == "New")
 {
     @section NavBreadcrumbs {
-    <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
-        <div class="nhsuk-width-container">
-            <ol class="nhsuk-breadcrumb__list">
-                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewCompetencyAssessments" asp-route-tabname="Mine">Competency Assessments</a></li>
-                <li class="nhsuk-breadcrumb__item">Create competency assessment</li>
-            </ol>
-            <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ViewCompetencyAssessments" asp-route-tabname="Mine">Back to competency assessments</a></p>
-        </div>
-    </nav>
+        <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+            <div class="nhsuk-width-container">
+                <ol class="nhsuk-breadcrumb__list">
+                    <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewCompetencyAssessments" asp-route-tabname="Mine">Self-assessments</a></li>
+                    <li class="nhsuk-breadcrumb__item">Create self-assessment</li>
+                </ol>
+                <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ViewCompetencyAssessments" asp-route-tabname="Mine">Back to self-assessments</a></p>
+            </div>
+        </nav>
     }
 }
 else
 {
     @section NavBreadcrumbs {
-    <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
-        <div class="nhsuk-width-container">
-            <ol class="nhsuk-breadcrumb__list">
-                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewCompetencyAssessments" asp-route-tabname="Mine">Competency Assessments</a></li>
-                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.ID">Manage Competency Assessment</a></li>
-                <li class="nhsuk-breadcrumb__item">Name</li>
-            </ol>
-            <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.ID">Back to competency assessment detail</a></p>
-        </div>
-    </nav>
+        <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+            <div class="nhsuk-width-container">
+                <ol class="nhsuk-breadcrumb__list">
+                    <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewCompetencyAssessments" asp-route-tabname="Mine">Self-assessments</a></li>
+                    <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.ID">Manage self-assessment</a></li>
+                    <li class="nhsuk-breadcrumb__item">Name</li>
+                </ol>
+                <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.ID">Back to self-assessment detail</a></p>
+            </div>
+        </nav>
     }
 }
 @if ((string)ViewContext.RouteData.Values["actionName"] == "New")
 {
-    <h1>Create a new competency assessment</h1>
+    <h1>Create a new self-assessment</h1>
 }
 else
 {
-    <h1>Edit competency assessment name</h1>
+    <h1>Edit self-assessment name</h1>
 }
 <form method="post">
     @if (!ViewData.ModelState.IsValid)
@@ -52,7 +52,7 @@ else
     }
     <nhs-form-group nhs-validation-for="CompetencyAssessmentName">
         <label class="nhsuk-label" for="roleprofilename">
-            <h2>What is the name of your competency assessment?</h2>
+            <h2>What is the name of your self-assessment?</h2>
         </label>
         <div class="nhsuk-hint" id="assessment-name-hint">
             Choose a title that identifies scope of capabilities covered and/or the roles or levels the assessment targets.

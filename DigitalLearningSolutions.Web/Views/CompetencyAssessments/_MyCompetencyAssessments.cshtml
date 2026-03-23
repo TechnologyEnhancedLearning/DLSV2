@@ -1,11 +1,11 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
 @model MyCompetencyAssessmentsViewModel
 
-<h1>My Competency Assessments</h1>
+<h1>My Self-assessments</h1>
 @if (!Model.CompetencyAssessments.Any() && Model.SearchString == null)
 {
   <p class="nhsuk-u-margin-top-4" role="alert">
-    <b>You are not working on any competency assessments.</b>
+        <b>You are not working on any self-assessments.</b>
   </p>
 }
 else
@@ -24,6 +24,6 @@ else
 @if (Model.IsWorkforceManager)
 {
     <a class="nhsuk-button nhsuk-u-margin-top-4" asp-action="CompetencyAssessmentName" asp-route-actionName="New">
-    Create new competency assessment
+        Create new self-assessment
   </a>
 }
