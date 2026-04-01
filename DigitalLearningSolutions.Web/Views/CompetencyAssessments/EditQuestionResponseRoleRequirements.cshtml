@@ -1,8 +1,8 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
 @model EditQuestionResponseRoleRequirementsViewModel;
 @{
-    ViewData["Title"] = "Manage Role Requirements";
-    ViewData["Application"] = "Framework Service";
+    ViewData["Title"] = "Manage role requirements";
+    ViewData["Application"] = "Framework service";
 }
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
 @section NavMenuItems {
@@ -141,7 +141,7 @@
             <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--m">
                 Apply to all?
             </legend>
-            <vc:single-checkbox asp-for="@nameof(Model.ApplyToAll)" label="Apply role requirements to all @Model.CountAssessmentQuestionInSelfAssessment instances of this assessment question in @Model.CompetencyAssessmentName" hint-text="This will not affect instances that are added to the self assessment later"></vc:single-checkbox>
+            <vc:single-checkbox asp-for="@nameof(Model.ApplyToAll)" label="Apply role requirements to all @Model.CountAssessmentQuestionInSelfAssessment instances of this assessment question in @Model.CompetencyAssessmentName" hint-text="This will not affect instances that are added to the self-assessment later"></vc:single-checkbox>
         </fieldset>
     }
     <input type="hidden" asp-for="@Model.Id" />

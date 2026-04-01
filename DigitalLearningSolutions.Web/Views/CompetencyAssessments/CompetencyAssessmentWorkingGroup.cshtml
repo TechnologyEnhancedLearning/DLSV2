@@ -2,8 +2,8 @@
 @model WorkingGroupCollaboratorsViewModel
 @{
     ViewData["Title"] = "Assign working group";
-    ViewData["Application"] = "Self-assessment Service";
-    ViewData["HeaderPathName"] = "Self-assessment Service";
+    ViewData["Application"] = "Self-assessment service";
+    ViewData["HeaderPathName"] = "Self-assessment service";
     string errMsg = TempData["CompetencyAssessmentError"]?.ToString();
     if (!string.IsNullOrWhiteSpace(errMsg)) { Model.Error = true; }
 }

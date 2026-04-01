@@ -1,8 +1,8 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
 @model SelectOptionalCompetenciesViewModel;
 @{
-    ViewData["Title"] = "Manage Optional Competencies";
-    ViewData["Application"] = "Framework Service";
+    ViewData["Title"] = "Manage optional competencies";
+    ViewData["Application"] = "Framework service";
 }
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
 @section NavMenuItems {
@@ -24,7 +24,7 @@
 <h1>Manage optional @Model.VocabularyPlural.ToLower()</h1>
 <p class="nhsuk-lede-text">
     Manage optional @Model.VocabularyPlural.ToLower() for the assessment @Model.CompetencyAssessmentName.
-    Optional @Model.VocabularyPlural.ToLower() can be selected for inclusion in a self assessment by a learner if required.
+    Optional @Model.VocabularyPlural.ToLower() can be selected for inclusion in a self-assessment by a learner if required.
 </p>
 <dl class="nhsuk-summary-list">
     <div class="nhsuk-summary-list__row">
@@ -34,7 +34,7 @@
         <dd class="nhsuk-summary-list__value">
             @if (!Model.SelectedCompetencyIds.Any())
             {
-                <text>No @Model.VocabularyPlural.ToLower() have been made optional for this self assessment.</text>
+                <text>No @Model.VocabularyPlural.ToLower() have been made optional for this self-assessment.</text>
             }
             else
             {

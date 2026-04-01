@@ -1,8 +1,8 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
 @model SetOptionalCompetencyLearnerPromptViewModel;
 @{
-    ViewData["Title"] = "Set Optional Competencies Learner Prompt";
-    ViewData["Application"] = "Framework Service";
+    ViewData["Title"] = "Set optional competencies learner prompt";
+    ViewData["Application"] = "Framework service";
 }
 <link rel="stylesheet" href="@Url.Content("~/css/jodit.css")" asp-append-version="true">
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
@@ -25,7 +25,7 @@
 <h1>Optional @Model.VocabularyPlural.ToLower() learner prompt</h1>
 
 <p class="nhsuk-lede-text">
-    Provide an optional prompt to help learners choose the right optional @Model.VocabularyPlural.ToLower() to include in their @Model.CompetencyAssessmentName self assessment.
+    Provide an optional prompt to help learners choose the right optional @Model.VocabularyPlural.ToLower() to include in their @Model.CompetencyAssessmentName self-assessment.
 </p>
 <form method="post" asp-action="SetOptionalCompetencyLearnerPrompt">
     <nhs-form-group nhs-validation-for="ManageOptionalCompetenciesPrompt">

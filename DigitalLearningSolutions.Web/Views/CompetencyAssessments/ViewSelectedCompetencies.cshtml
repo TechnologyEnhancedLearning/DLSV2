@@ -1,8 +1,8 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
 @model ViewSelectedCompetenciesViewModel;
 @{
-    ViewData["Title"] = "Select Competencies";
-    ViewData["Application"] = "Framework Service";
+    ViewData["Title"] = "Select competencies";
+    ViewData["Application"] = "Framework service";
     var groupCount = Model.Competencies.Where(c => c.GroupId != 0)
         .GroupBy(c => new { c.FrameworkId, c.FrameworkName, c.GroupId, c.GroupName })
         .Count();
