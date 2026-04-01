@@ -1,8 +1,8 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
 @model EditCompetencyRoleRequirementsViewModel;
 @{
-    ViewData["Title"] = "Manage Role Requirements";
-    ViewData["Application"] = "Framework Service";
+    ViewData["Title"] = "Manage role requirements";
+    ViewData["Application"] = "Framework service";
 }
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
 @section NavMenuItems {
@@ -24,7 +24,7 @@
 }
 <h1>Edit @Model.VocabularySingular.ToLower() role requirements</h1>
 <p class="nhsuk-lede-text">
-    Manage role requirements @Model.CompetencyAssessmentName @Model.VocabularySingular.ToLower() self assessment questions.
+    Manage role requirements @Model.CompetencyAssessmentName @Model.VocabularySingular.ToLower() self-assessment questions.
 </p>
 @foreach (var group in Model.GroupedCompetencyWithAssessmentRoleRequirements)
 {
