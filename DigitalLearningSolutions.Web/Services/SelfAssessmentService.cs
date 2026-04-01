@@ -132,7 +132,7 @@
 
         void RemoveEnrolment(int selfAssessmentId, int delegateUserId);
         public (SelfAssessmentDelegatesData, int?) GetSelfAssessmentDelegatesPerPage(string searchString, int offSet, int itemsPerPage, string sortBy, string sortDirection,
-            int? selfAssessmentId, int centreId, bool? isDelegateActive, bool? removed, bool? submitted, bool? signedOff, int? adminCategoryId);
+            int? selfAssessmentId, int centreId, bool? isDelegateActive, bool? removed, bool? submitted, bool? signedOff, int? adminCategoryId, bool? started);
         public SelfAssessmentDelegatesData GetSelfAssessmentActivityDelegatesExport(string searchString, int itemsPerPage, string sortBy, string sortDirection,
            int? selfAssessmentId, int centreId, bool? isDelegateActive, bool? removed, int currentRun, bool? submitted, bool? signedOff);
         public int GetSelfAssessmentActivityDelegatesExportCount(string searchString, string sortBy, string sortDirection,
@@ -480,7 +480,7 @@
         }
 
         public (SelfAssessmentDelegatesData, int?) GetSelfAssessmentDelegatesPerPage(string searchString, int offSet, int itemsPerPage, string sortBy, string sortDirection,
-            int? selfAssessmentId, int centreId, bool? isDelegateActive, bool? removed, bool? submitted, bool? signedOff, int? adminCategoryId)
+            int? selfAssessmentId, int centreId, bool? isDelegateActive, bool? removed, bool? submitted, bool? signedOff, int? adminCategoryId, bool? started)
         {
 
             var selfAssessmentCategoryId = selfAssessmentDataService.GetSelfAssessmentCategoryId((int)selfAssessmentId);
@@ -492,7 +492,7 @@
             }
 
             (var delegateselfAssessments, int resultCount) = selfAssessmentDataService.GetSelfAssessmentDelegates(searchString, offSet, itemsPerPage, sortBy, sortDirection,
-            selfAssessmentId, centreId, isDelegateActive, removed, submitted, signedOff);
+            selfAssessmentId, centreId, isDelegateActive, removed, submitted, signedOff, started);
 
             List<SelfAssessmentDelegate> selfAssessmentDelegateList = new List<SelfAssessmentDelegate>();
             foreach (var delegateInfo in delegateselfAssessments)
