@@ -1,8 +1,8 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
 @model SetMinimumOptionalCompetenciesViewModel;
 @{
-    ViewData["Title"] = "Set Minimum Optional Competencies";
-    ViewData["Application"] = "Framework Service";
+    ViewData["Title"] = "Set minimum optional competencies";
+    ViewData["Application"] = "Framework service";
 }
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
 @section NavMenuItems {
@@ -24,7 +24,7 @@
 <h1>Set a minimum number of optional @Model.VocabularyPlural.ToLower()</h1>
 
 <p class="nhsuk-lede-text">
-    If required, you can specify a minimum number of optional @Model.VocabularyPlural.ToLower() that a learner must select when completing their @Model.CompetencyAssessmentName self assessment.
+    If required, you can specify a minimum number of optional @Model.VocabularyPlural.ToLower() that a learner must select when completing their @Model.CompetencyAssessmentName self-assessment.
 </p>
 <form method="post" asp-action="SetMinimumOptionalCompetencies">
     <nhs-form-group nhs-validation-for="MinimumOptionalCompetencies">
