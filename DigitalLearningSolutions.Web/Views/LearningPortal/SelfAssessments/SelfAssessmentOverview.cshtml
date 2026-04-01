@@ -80,11 +80,7 @@
         }
         @if (Model.SelfAssessment.IsSupervised && Model.CompetencyGroups.Count() > 5)
         {
-            <div class="nhsuk-panell competency-group-panel nhsuk-u-padding-4">
-                <partial name="SelfAssessments/_SelfAssessmentOverallProgress"
-                         model="@competencySummaries"
-                         view-data="@(new ViewDataDictionary(ViewData) { { "IsSupervisorResultsReviewed", Model.SelfAssessment.IsSupervisorResultsReviewed } })" />
-            </div>
+            <partial name="SelfAssessments/_SupervisorSignOffPanel" model="Model" />
         }
         <partial name="_OverviewActionButtons.cshtml" model=Model />
         @if ((competencyQuestionsSummary == competencyVerifiedSummary) && (Model.NumberOfSelfAssessedOptionalCompetencies < Model.SelfAssessment.MinimumOptionalCompetencies))
@@ -190,57 +186,7 @@
         }
         @if (Model.SelfAssessment.IsSupervised)
         {
-            <div class="nhsuk-panell competency-group-panel nhsuk-u-padding-4">
-                <partial name="SelfAssessments/_SelfAssessmentOverallProgress"
-                         model="@competencySummaries"
-                         view-data="@(new ViewDataDictionary(ViewData) { { "IsSupervisorResultsReviewed", Model.SelfAssessment.IsSupervisorResultsReviewed } })" />
-                <h2>@Model.SelfAssessment.SignOffRoleName Sign-off</h2>
-                <partial name="../../Supervisor/Shared/_SupervisorSignOffSummary.cshtml" model="Model.SupervisorSignOffs"
-                         view-data="@(new ViewDataDictionary(ViewData) { { "IsAllCompetencyConfirmed", competencySummaries.Sum(c => (int)c["questionsCount"]) == competencySummaries.Sum(c => (int)c["verifiedCount"]) },
-                                { "IsOngoingSelfAssessment", latestResult > latestSignoff }})" />
-                @if (Model.AllQuestionsVerifiedOrNotRequired)
-                {
-                    @if (!Model.SupervisorSignOffs.Any())
-                    {
-                        <p class="nhsuk-body-l">You have not yet requested @Model.SelfAssessment.SignOffRoleName sign-off for this self assessment.</p>
-                    }
-                    else if (!Model.SupervisorSignOffs.Where(x => x.Verified == null).Any() && latestResult > latestSignoff)
-                    {
-                        <div class="nhsuk-warning-callout">
-                            <h3 class="nhsuk-warning-callout__label">
-                                <span role="text">
-                                    <span class="nhsuk-u-visually-hidden">New self assessment results</span>
-                                    New self assessment results
-                                </span>
-                            </h3>
-                            <p>
-                                You have submitted new self assessment results since this self assessment was signed off.
-                                Please resubmit your self assessment for sign off once these results are confirmed.
-                            </p>
-                        </div>
-                    }
-                    @if (!Model.SupervisorSignOffs.Where(x => x.Verified == null).Any()
-                   && (latestResult > latestSignoff || !signedOff)
-                   && (Model.NumberOfSelfAssessedOptionalCompetencies >= Model.SelfAssessment.MinimumOptionalCompetencies)
-                   )
-                    {
-                        <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-bottom-2"
-                           asp-action="RequestSignOff"
-                           asp-route-vocabulary="@Model.SelfAssessment.Vocabulary"
-                           asp-route-selfAssessmentId="@Model.SelfAssessment.Id"
-                           role="button">
-                            Request @Model.SelfAssessment.SignOffRoleName sign-off
-                        </a>
-                    }
-                }
-                else
-                {
-                    <p class="nhsuk-body-l">
-                        All required @Model.SelfAssessment.Vocabulary.ToLower() self-assessments must be completed and confirmed,
-                        before requesting @Model.SelfAssessment.SignOffRoleName sign off of the @Model.SelfAssessment.Name.
-                    </p>
-                }
-            </div>
+            <partial name="SelfAssessments/_SupervisorSignOffPanel" model="Model" />
         }
     </div>
 </div>
