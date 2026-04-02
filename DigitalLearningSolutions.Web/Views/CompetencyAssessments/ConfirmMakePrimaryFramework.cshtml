@@ -13,7 +13,13 @@
         {
             <vc:error-summary order-of-property-names="@(new[] { nameof(Model.Confirm) })" />
         }
-        <h1 class="nhsuk-heading-xl">Primary framework</h1>
+        <h1 class="app-page-heading">
+            <span class="nhsuk-caption-xl">
+                @Model.AssessmentName
+                <span class="nhsuk-u-visually-hidden"> – </span>
+            </span>
+            Primary framework
+        </h1>
     </div>
 </div>
 

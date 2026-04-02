@@ -21,7 +21,12 @@
         </div>
     </nav>
 }
-<h1>Publish @Model.CompetencyAssessmentName self assesment </h1>
+<h1 class="app-page-heading">
+    <span class="nhsuk-caption-xl">
+        @Model.CompetencyAssessmentName
+        <span class="nhsuk-u-visually-hidden"> – </span>
+    </span>Publish self-assesment
+</h1>
 <p>Please ensure that all of the reviewers who are required to approve the self assesment are listed below.</p>
 <input type="hidden" asp-for="CompetencyAssessmentID" />
 <input type="hidden" asp-for="CompetencyAssessmentName" />

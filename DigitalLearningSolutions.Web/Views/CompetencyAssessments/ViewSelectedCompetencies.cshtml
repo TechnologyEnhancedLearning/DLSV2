@@ -26,7 +26,12 @@
         </div>
     </nav>
 }
-<h1 class="nhsuk-heading-xl">@Model.VocabularyPlural to assess</h1>
+<h1 class="app-page-heading">
+    <span class="nhsuk-caption-xl">
+        @Model.CompetencyAssessmentName
+        <span class="nhsuk-u-visually-hidden"> – </span>
+    </span>
+  @Model.VocabularyPlural to assess</h1>
 <h2>Linked frameworks</h2>
 <dl class="nhsuk-summary-list">
     @if (primaryFramework != null)

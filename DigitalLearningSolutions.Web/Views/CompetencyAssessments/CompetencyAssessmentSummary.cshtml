@@ -21,8 +21,12 @@
     </nav>
 }
 
-
-<h1> Check your answer before creating self-assessment</h1>
+<h1 class="app-page-heading">
+    <span class="nhsuk-caption-xl">
+        @Model.CompetencyAssessmentName
+        <span class="nhsuk-u-visually-hidden"> – </span>
+    </span>
+ Check your answer before creating self-assessment</h1>
 <form method="post">
     @if (!ViewData.ModelState.IsValid)
     {
