@@ -22,7 +22,13 @@
         </div>
     </nav>
 }
-<h1>Edit include role requirements filters</h1>
+<h1 class="app-page-heading">
+    <span class="nhsuk-caption-xl">
+        @Model.CompetencyAssessmentName
+        <span class="nhsuk-u-visually-hidden"> – </span>
+    </span>
+    Role requirement filters
+</h1>
 <form method="post" asp-action="EditRoleRequirementsFlags">
     <nhs-form-group nhs-validation-for="IncludeRequirementsFilters">
         <fieldset class="nhsuk-fieldset" aria-describedby="role-requirements-filters-hint">
