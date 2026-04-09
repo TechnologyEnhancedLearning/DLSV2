@@ -29,12 +29,13 @@
         }
         <form method="post">
             <fieldset class="nhsuk-fieldset">
-                <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
-                    <h1 class="nhsuk-fieldset__heading">
-                        Supervisor sign off declaration
-                    </h1>
-                </legend>
-
+                <h1 class="app-page-heading">
+                    <span class="nhsuk-caption-xl">
+                        @Model.CompetencyAssessmentName
+                        <span class="nhsuk-u-visually-hidden"> – </span>
+                    </span>
+                    Supervisor sign off declaration
+                </h1>
                 <p class="nhsuk-hint">
                     This will be displayed to the supervisor when they are signing off a completed self-assessment.
                 </p>
@@ -93,14 +94,6 @@
                 <button class="nhsuk-button" type="submit">
                     Next
                 </button>
-                <div class="nhsuk-back-link">
-                    <a class="nhsuk-back-link__link" asp-action="SupervisedSelfAssessmentSignoff" asp-route-competencyAssessmentId="@Model.CompetencyAssessmentId">
-                        <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                            <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
-                        </svg>
-                        Cancel
-                    </a>
-                </div>
             </div>
         </form>
     </div>
