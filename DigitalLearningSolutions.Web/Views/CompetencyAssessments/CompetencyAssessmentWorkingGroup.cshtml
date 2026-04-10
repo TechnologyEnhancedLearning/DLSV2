@@ -29,7 +29,7 @@
 }
 <h1>Choose working group members</h1>
 <div class="nhsuk-table__panel-with-heading-tab">
-    <h2 class="nhsuk-table__heading-tab">Working Group Members</h2>
+    <h2 class="nhsuk-table__heading-tab">Working group members</h2>
     <table role="presentation" class="nhsuk-table-responsive">
         <thead role="rowgroup" class="nhsuk-table__head">
             <tr role="row">
@@ -108,10 +108,10 @@
         </div>
 
         <button class="nhsuk-button nhsuk-button--secondary button-small" asp-route-canModify="True" asp-route-actionName="Collaborators" asp-route-competencyAssessmentId="@Model.CompetencyAssessmentID">
-            Add  as Contributor
+            Add as contributor
         </button>
         <button class="nhsuk-button nhsuk-button--secondary button-small" asp-route-canModify="False" asp-route-actionName="Collaborators" asp-route-competencyAssessmentId="@Model.CompetencyAssessmentID">
-            Add as Reviewer
+            Add as reviewer
         </button>
     }
     <vc:single-checkbox asp-for="@nameof(Model.CompetencyAssessmentTaskStatus)" label="Mark this task as complete" hint-text="You will still be able to make changes after marking this task as complete."></vc:single-checkbox>

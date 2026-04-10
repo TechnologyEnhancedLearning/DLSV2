@@ -26,7 +26,8 @@
         @Model.CompetencyAssessmentName
         <span class="nhsuk-u-visually-hidden"> – </span>
     </span>
-    Choose self-assessment vocabulary</h1>
+    Select self-assessment vocabulary
+</h1>
 <form method="post">
     @if (!ViewData.ModelState.IsValid)
     {
@@ -34,11 +35,6 @@
     }
     <nhs-form-group nhs-validation-for="Vocabulary">
         <fieldset class="nhsuk-fieldset">
-            <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--s">
-                <h2 class="nhsuk-fieldset__heading">
-                    Choose assessment vocabulary - the name given to the building blocks of your assessment.
-                </h2>
-            </legend>
             <div class="nhsuk-radios">
                 <div class="nhsuk-radios__item">
                     <input class="nhsuk-radios__input" asp-for="Vocabulary" type="radio" value="Capability" aria-describedby="vocabulary-item-1-hint">
