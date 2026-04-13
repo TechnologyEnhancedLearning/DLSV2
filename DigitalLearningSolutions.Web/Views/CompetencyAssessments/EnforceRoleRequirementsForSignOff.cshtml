@@ -22,6 +22,7 @@
         </div>
     </nav>
 }
+<div class="nhsuk-form-group">
 <h1 class="app-page-heading">
     <span class="nhsuk-caption-xl">
         @Model.CompetencyAssessmentName
@@ -32,8 +33,8 @@
 <form method="post" asp-action="EditRoleRequirementsFlags">
     <nhs-form-group nhs-validation-for="EnforceRoleRequirementsForSignOff">
         <fieldset class="nhsuk-fieldset" aria-describedby="enforce-role-requirements-hint">
-            <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
-                <h2>Do you want to enforce role requirements for the @Model.CompetencyAssessmentName self-assessment?</h2>
+            <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--m">
+                    Do you want to enforce role requirements for the self-assessment?
             </legend>
             <div id="enforce-role-requirements-hint" class="nhsuk-hint">
                 When role requirements are enforced, learners can only request confirmation for self‑assessment results that meet the required competency criteria, even if no specific requirements are set.
@@ -63,4 +64,5 @@
         </svg>
         Cancel
     </a>
+</div>
 </div>

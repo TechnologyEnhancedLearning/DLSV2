@@ -21,30 +21,31 @@
         </div>
     </nav>
 }
-
+<div class="nhsuk-form-group">
 <h1 class="app-page-heading">
     <span class="nhsuk-caption-xl">
         @Model.CompetencyAssessmentName
         <span class="nhsuk-u-visually-hidden"> – </span>
     </span>
-@Model.VocabularySingular.ToLower() role requirements</h1>
+    Self-assessment @Model.VocabularySingular.ToLower() role requirements
+</h1>
 
-<p class="nhsuk-lede-text">
-    Specify whether role requirements will be enforced for the @Model.CompetencyAssessmentName self-assessment. When requirements are set, they must be met by the learner before the self-assessment can be signed off.
+<p>
+    Specify whether role requirements will be enforced for the self-assessment. When requirements are set, they must be met by the learner before the self-assessment can be signed off.
 </p>
 <dl class="nhsuk-summary-list">
     <div class="nhsuk-summary-list__row">
         <dt class="nhsuk-summary-list__key">
-            Enforce role requirements for self-assessment
+            Enforce role requirements
         </dt>
         <dd class="nhsuk-summary-list__value">
             @if (Model.EnforceRoleRequirementsForSignOff)
             {
-                <text>Yes. Enforce role requirements.</text>
+                <text>Yes.</text>
             }
             else
             {
-                <text>No. Do not enforce role requirements.</text>
+                <text>No.</text>
             }
         </dd>
         @if (Model.UserRole > 1)
@@ -56,16 +57,16 @@
     </div>
     <div class="nhsuk-summary-list__row">
         <dt class="nhsuk-summary-list__key">
-            Include requirement status filters
+            Role requirement filters
         </dt>
         <dd class="nhsuk-summary-list__value">
             @if (Model.IncludeRequirementsFilters)
             {
-                <text>Yes. Include filters.</text>
+                <text>Yes.</text>
             }
             else
             {
-                <text>No. Do not include filters.</text>
+                <text>No.</text>
             }
         </dd>
         @if (Model.UserRole > 1)
@@ -111,4 +112,5 @@
         </svg>
         Cancel
     </a>
+</div>
 </div>
