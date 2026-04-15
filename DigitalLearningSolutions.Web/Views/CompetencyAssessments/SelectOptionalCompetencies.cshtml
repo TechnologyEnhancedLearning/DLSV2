@@ -21,6 +21,7 @@
         </div>
     </nav>
 }
+<div class="nhsuk-form-group">
 <h1 class="app-page-heading">
     <span class="nhsuk-caption-xl">
         @Model.CompetencyAssessmentName
@@ -29,15 +30,13 @@
     Select optional competencies
 </h1>
 
-<p class="nhsuk-lede-text">
-    Optional competencies can be added to the assessment individually or as a group.
+<p>
+ Optional competencies can be added to the assessment individually or as a group.
 </p>
 <form method="post" asp-action="SelectOptionalCompetencies">
     <fieldset class="nhsuk-fieldset">
         <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
-            <h2 class="nhsuk-fieldset__heading">
-                Which @Model.VocabularySingular.ToLower() groups and/or @Model.VocabularyPlural.ToLower() should be optional?
-            </h2>
+         Which @Model.VocabularySingular.ToLower() groups and/or @Model.VocabularyPlural.ToLower() should be optional?
         </legend>
         @foreach (var competencyGroup in Model.CompetencyGroups)
         {
@@ -45,9 +44,9 @@
             {
 
                 <div class="nhsuk-u-margin-bottom-6">
-                    <h3>
+                        <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--m">
                         @competencyGroup.Key
-                    </h3>
+                        </legend>
                     <div class="nhsuk-checkboxes">
                         <div class="nhsuk-checkboxes__item">
                             <input class="nhsuk-checkboxes__input" data-group="@competencyGroup.First().GroupId" id="competency-check-@competencyGroup.First().GroupId" name="GroupIds" checked="@competencyGroup.Any(x => x.GroupOptionalCompetencies)" type="checkbox" value="@competencyGroup.First().GroupId">
@@ -93,6 +92,7 @@
         </svg>
         Cancel
     </a>
+    </div>
 </div>
 @section scripts {
     <script src="@Url.Content("~/js/frameworks/selectoptionalcompetencies.js")" asp-append-version="true"></script>

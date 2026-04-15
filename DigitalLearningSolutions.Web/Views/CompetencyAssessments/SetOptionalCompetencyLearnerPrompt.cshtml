@@ -22,29 +22,31 @@
         </div>
     </nav>
 }
+<div class="nhsuk-form-group">
 <h1 class="app-page-heading">
     <span class="nhsuk-caption-xl">
         @Model.CompetencyAssessmentName
         <span class="nhsuk-u-visually-hidden"> – </span>
-    </span>Optional @Model.VocabularyPlural.ToLower() learner prompt
+    </span>Optional learner prompt
 </h1>
 
-<p class="nhsuk-lede-text">
-    Provide an optional prompt to help learners choose the right optional @Model.VocabularyPlural.ToLower() to include in their @Model.CompetencyAssessmentName self-assessment.
+<p>
+    Provide a prompt to help learners choose the right optional @Model.VocabularyPlural.ToLower() to include in their self-assessment.
 </p>
 <form method="post" asp-action="SetOptionalCompetencyLearnerPrompt">
     <nhs-form-group nhs-validation-for="ManageOptionalCompetenciesPrompt">
         <vc:text-area asp-for="ManageOptionalCompetenciesPrompt"
                       character-count="null"
-                      label="Set optional @Model.VocabularyPlural.ToLower()"
+                      label=""
                       rows="5"
                       css-class="html-editor"
-                      hint-text="This text will be displayed above the optional @Model.VocabularyPlural.ToLower() list to help the learner to choose them."
+                      hint-text="This text will be displayed above the optional @Model.VocabularyPlural.ToLower() list."
                       populate-with-current-value="true"
                       spell-check="false" />
         <span nhs-validation-for="ManageOptionalCompetenciesPrompt"></span>
     </nhs-form-group>
     <input type="hidden" asp-for="ID" />
+        <hr class="nhsuk-section-break nhsuk-section-break--m" />
     <button class="nhsuk-button" type="submit">
         Save
     </button>
@@ -57,6 +59,7 @@
         </svg>
         Cancel
     </a>
+</div>
 </div>
 @section scripts {
     <script src="@Url.Content("~/js/frameworks/htmleditor.js")" asp-append-version="true"></script>
