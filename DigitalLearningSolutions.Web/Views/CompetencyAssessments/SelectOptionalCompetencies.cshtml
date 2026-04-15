@@ -35,6 +35,7 @@
 </p>
 <form method="post" asp-action="SelectOptionalCompetencies">
     <fieldset class="nhsuk-fieldset">
+
         <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
          Which @Model.VocabularySingular.ToLower() groups and/or @Model.VocabularyPlural.ToLower() should be optional?
         </legend>
@@ -44,9 +45,14 @@
             {
 
                 <div class="nhsuk-u-margin-bottom-6">
+
                         <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--m">
                         @competencyGroup.Key
                         </legend>
+
+                    <h2>
+                        @competencyGroup.Key
+                    </h2>
                     <div class="nhsuk-checkboxes">
                         <div class="nhsuk-checkboxes__item">
                             <input class="nhsuk-checkboxes__input" data-group="@competencyGroup.First().GroupId" id="competency-check-@competencyGroup.First().GroupId" name="GroupIds" checked="@competencyGroup.Any(x => x.GroupOptionalCompetencies)" type="checkbox" value="@competencyGroup.First().GroupId">

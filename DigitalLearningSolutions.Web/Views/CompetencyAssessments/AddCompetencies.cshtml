@@ -1,7 +1,7 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
 @model AddCompetenciesViewModel;
 @{
-    ViewData["Title"] = "Add Competencies to self-assessment";
+    ViewData["Title"] = "Add competencies to self-assessment";
     ViewData["Application"] = "Framework service";
 }
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
@@ -15,7 +15,7 @@
             <ol class="nhsuk-breadcrumb__list">
                 <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewCompetencyAssessments" asp-route-tabname="Mine">Self-assessments</a></li>
                 <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.ID">Manage self-assessment</a></li>
-                <li class="nhsuk-breadcrumb__item">Select Framework Sources</li>
+                <li class="nhsuk-breadcrumb__item">Select framework sources</li>
             </ol>
             <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.ID">Back to manage self-assessment</a></p>
         </div>
@@ -38,9 +38,9 @@
                     @if (competencyGroup.FrameworkCompetencies.Count() > 0)
                     {
                         <div class="nhsuk-u-margin-bottom-6">
-                            <h3>
+                            <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--m">
                                 @competencyGroup.Name
-                            </h3>
+                            </legend>
                             @if (competencyGroup.FrameworkCompetencies.Count() > 1)
                             {
                                 <div class="nhsuk-grid-row nhsuk-u-margin-top-3 nhsuk-u-margin-bottom-1 js-only-block">

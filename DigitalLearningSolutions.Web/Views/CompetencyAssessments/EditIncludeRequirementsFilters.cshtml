@@ -32,8 +32,8 @@
 <form method="post" asp-action="EditRoleRequirementsFlags">
     <nhs-form-group nhs-validation-for="IncludeRequirementsFilters">
         <fieldset class="nhsuk-fieldset" aria-describedby="role-requirements-filters-hint">
-            <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
-                <h2>Do you want to include role requirements filters in the @Model.CompetencyAssessmentName self-assessment?</h2>
+            <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--m">
+                Do you want to include role requirements filters in the self-assessment?
             </legend>
             <div id="role-requirements-filters-hint" class="nhsuk-hint">
                 This will allow the learner to filter self-assessment competencies based on whether they are meeting the role requirements set.
@@ -54,7 +54,7 @@
     <input type="hidden" asp-for="Id" />
     <input type="hidden" asp-for="EnforceRoleRequirementsForSignOff" />
     <input type="hidden" asp-for="TaskStatus" />
-    <button class="nhsuk-button nhsuk-button--primary" type="submit">Save changes</button>
+    <button class="nhsuk-button nhsuk-button--primary" type="submit">Save</button>
 </form>
 <div class="nhsuk-back-link">
     <a class="nhsuk-back-link__link" asp-action="ManageCompetencyRoleRequirements" asp-route-competencyAssessmentId="@Model.Id">
