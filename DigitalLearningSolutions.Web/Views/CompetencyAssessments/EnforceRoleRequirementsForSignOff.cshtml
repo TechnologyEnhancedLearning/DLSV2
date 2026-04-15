@@ -33,8 +33,8 @@
 <form method="post" asp-action="EditRoleRequirementsFlags">
     <nhs-form-group nhs-validation-for="EnforceRoleRequirementsForSignOff">
         <fieldset class="nhsuk-fieldset" aria-describedby="enforce-role-requirements-hint">
-                <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--m">
-                    Do you want to enforce role requirements for the self-assessment?
+            <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--m">
+                Do you want to enforce role requirements for the self-assessment?
             </legend>
             <div id="enforce-role-requirements-hint" class="nhsuk-hint">
                 When role requirements are enforced, learners can only request confirmation for self‑assessment results that meet the required competency criteria, even if no specific requirements are set.
@@ -55,7 +55,7 @@
     <input type="hidden" asp-for="Id" />
     <input type="hidden" asp-for="IncludeRequirementsFilters" />
     <input type="hidden" asp-for="TaskStatus" />
-    <button class="nhsuk-button nhsuk-button--primary" type="submit">Save changes</button>
+    <button class="nhsuk-button nhsuk-button--primary" type="submit">Save</button>
 </form>
 <div class="nhsuk-back-link">
     <a class="nhsuk-back-link__link" asp-action="ManageCompetencyRoleRequirements" asp-route-competencyAssessmentId="@Model.Id">

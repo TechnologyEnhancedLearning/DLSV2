@@ -34,20 +34,16 @@
 </p>
 <form method="post" asp-action="SelectOptionalCompetencies">
     <fieldset class="nhsuk-fieldset">
-        <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
-            <h2 class="nhsuk-fieldset__heading">
-                Which @Model.VocabularySingular.ToLower() groups and/or @Model.VocabularyPlural.ToLower() should be optional?
-            </h2>
-        </legend>
+
         @foreach (var competencyGroup in Model.CompetencyGroups)
         {
             @if (competencyGroup.Count() > 1)
             {
 
                 <div class="nhsuk-u-margin-bottom-6">
-                    <h3>
+                    <h2>
                         @competencyGroup.Key
-                    </h3>
+                    </h2>
                     <div class="nhsuk-checkboxes">
                         <div class="nhsuk-checkboxes__item">
                             <input class="nhsuk-checkboxes__input" data-group="@competencyGroup.First().GroupId" id="competency-check-@competencyGroup.First().GroupId" name="GroupIds" checked="@competencyGroup.Any(x => x.GroupOptionalCompetencies)" type="checkbox" value="@competencyGroup.First().GroupId">
