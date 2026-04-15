@@ -72,5 +72,20 @@
             FilterStatus.Default
         );
     }
+    public static class SelfAssessmentLearnerActivityFilterOptions
+    {
+        private const string Group = "LearnerActivity";
 
+        public static readonly FilterOptionModel Started = new FilterOptionModel(
+            "Started",
+            FilteringHelper.BuildFilterValueString(Group, nameof(SelfAssessmentDelegate.LaunchCount), "true"),
+            FilterStatus.Success
+        );
+
+        public static readonly FilterOptionModel NotStarted = new FilterOptionModel(
+            "Not started",
+            FilteringHelper.BuildFilterValueString(Group, nameof(SelfAssessmentDelegate.LaunchCount), "false"),
+            FilterStatus.Default
+        );
+    }
 }

@@ -3,29 +3,29 @@
 @using DigitalLearningSolutions.Web.Models.Enums
 @using DigitalLearningSolutions.Data.Enums
 <li class="nhsuk-header__navigation-item @Html.GetSelectedCssClassIfTabSelected(NavMenuTab.Dashboard)">
-  <a class="nhsuk-header__navigation-link" asp-controller="Frameworks" asp-action="Index">
-    Dashboard
-  </a>
+    <a class="nhsuk-header__navigation-link" asp-controller="Frameworks" asp-action="Index">
+        Dashboard
+    </a>
 </li>
 <li class="nhsuk-header__navigation-item @Html.GetSelectedCssClassIfTabSelected(NavMenuTab.Frameworks)">
-  <a class="nhsuk-header__navigation-link" asp-controller="Frameworks" asp-action="ViewFrameworks" asp-route-tabname="Mine">
-    Frameworks
-  </a>
+    <a class="nhsuk-header__navigation-link" asp-controller="Frameworks" asp-action="ViewFrameworks" asp-route-tabname="Mine">
+        Frameworks
+    </a>
 </li>
 <feature name="@(FeatureFlags.WorkforceManagerInterface)">
-  <li class="nhsuk-header__navigation-item @Html.GetSelectedCssClassIfTabSelected(NavMenuTab.CompetencyAssessments)">
-    <a class="nhsuk-header__navigation-link" asp-controller="CompetencyAssessments" asp-action="ViewCompetencyAssessments" asp-route-tabname="Mine">
-      Competency Assessments
-    </a>
-  </li>
+    <li class="nhsuk-header__navigation-item @Html.GetSelectedCssClassIfTabSelected(NavMenuTab.CompetencyAssessments)">
+        <a class="nhsuk-header__navigation-link" asp-controller="CompetencyAssessments" asp-action="ViewCompetencyAssessments" asp-route-tabname="Mine">
+            Self-assessments
+        </a>
+    </li>
 </feature>
 <li class="nhsuk-header__navigation-item @Html.GetSelectedCssClassIfTabSelected(NavMenuTab.Support)">
-  <a class="nhsuk-header__navigation-link" asp-controller="Support" asp-action="Index" asp-route-dlsSubApplication="@DlsSubApplication.Frameworks.UrlSegment">
-    Support
-  </a>
+    <a class="nhsuk-header__navigation-link" asp-controller="Support" asp-action="Index" asp-route-dlsSubApplication="@DlsSubApplication.Frameworks.UrlSegment">
+        Support
+    </a>
 </li>
 <li class="nhsuk-header__navigation-item @Html.GetSelectedCssClassIfTabSelected(NavMenuTab.MyAccount)">
-  <a class="nhsuk-header__navigation-link" asp-controller="MyAccount" asp-action="Index" asp-route-dlsSubApplication="@DlsSubApplication.Frameworks.UrlSegment">
-    My account
-  </a>
+    <a class="nhsuk-header__navigation-link" asp-controller="MyAccount" asp-action="Index" asp-route-dlsSubApplication="@DlsSubApplication.Frameworks.UrlSegment">
+        My account
+    </a>
 </li>

@@ -1,8 +1,8 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
 @model SetMinimumOptionalCompetenciesViewModel;
 @{
-    ViewData["Title"] = "Set Minimum Optional Competencies";
-    ViewData["Application"] = "Framework Service";
+    ViewData["Title"] = "Set minimum optional competencies";
+    ViewData["Application"] = "Framework service";
 }
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
 @section NavMenuItems {
@@ -13,18 +13,23 @@
     <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
         <div class="nhsuk-width-container">
             <ol class="nhsuk-breadcrumb__list">
-                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewCompetencyAssessments" asp-route-tabname="Mine">Competency Assessments</a></li>
-                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.ID">Manage Competency Assessment</a></li>
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewCompetencyAssessments" asp-route-tabname="Mine">Self-assessments</a></li>
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.ID">Manage self-assessment</a></li>
                 <li class="nhsuk-breadcrumb__item">Optional Competencies</li>
             </ol>
-            <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.ID">Back to manage competency assessment</a></p>
+            <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.ID">Back to manage self-assessment</a></p>
         </div>
     </nav>
 }
-<h1>Set a minimum number of optional @Model.VocabularyPlural.ToLower()</h1>
+<h1 class="app-page-heading">
+    <span class="nhsuk-caption-xl">
+        @Model.CompetencyAssessmentName
+        <span class="nhsuk-u-visually-hidden"> – </span>
+    </span>Set a minimum number of optional @Model.VocabularyPlural.ToLower()
+</h1>
 
 <p class="nhsuk-lede-text">
-    If required, you can specify a minimum number of optional @Model.VocabularyPlural.ToLower() that a learner must select when completing their @Model.CompetencyAssessmentName self assessment.
+    If required, you can specify a minimum number of optional @Model.VocabularyPlural.ToLower() that a learner must select when completing their @Model.CompetencyAssessmentName self-assessment.
 </p>
 <form method="post" asp-action="SetMinimumOptionalCompetencies">
     <nhs-form-group nhs-validation-for="MinimumOptionalCompetencies">

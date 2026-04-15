@@ -1,8 +1,8 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
 @model ManageCompetencyRoleRequirementsViewModel;
 @{
-    ViewData["Title"] = "Manage Role Requirements";
-    ViewData["Application"] = "Framework Service";
+    ViewData["Title"] = "Manage role requirements";
+    ViewData["Application"] = "Framework service";
 }
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
 @section NavMenuItems {
@@ -13,22 +13,29 @@
     <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
         <div class="nhsuk-width-container">
             <ol class="nhsuk-breadcrumb__list">
-                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewCompetencyAssessments" asp-route-tabname="Mine">Competency Assessments</a></li>
-                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.Id">Manage Competency Assessment</a></li>
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewCompetencyAssessments" asp-route-tabname="Mine">Self-assessments</a></li>
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.Id">Manage self-assessment</a></li>
                 <li class="nhsuk-breadcrumb__item">Role Requirements</li>
             </ol>
-            <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.Id">Back to manage competency assessment</a></p>
+            <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.Id">Back to manage self-assessment</a></p>
         </div>
     </nav>
 }
-<h1>Self assessment @Model.VocabularySingular.ToLower() role requirements</h1>
+
+<h1 class="app-page-heading">
+    <span class="nhsuk-caption-xl">
+        @Model.CompetencyAssessmentName
+        <span class="nhsuk-u-visually-hidden"> – </span>
+    </span>
+@Model.VocabularySingular.ToLower() role requirements</h1>
+
 <p class="nhsuk-lede-text">
-    Specify whether role requirements will be enforced for the @Model.CompetencyAssessmentName self assessment. When requirements are set, they must be met by the learner before the self assessment can be signed off.
+    Specify whether role requirements will be enforced for the @Model.CompetencyAssessmentName self-assessment. When requirements are set, they must be met by the learner before the self-assessment can be signed off.
 </p>
 <dl class="nhsuk-summary-list">
     <div class="nhsuk-summary-list__row">
         <dt class="nhsuk-summary-list__key">
-            Enforce role requirements for self assessment
+            Enforce role requirements for self-assessment
         </dt>
         <dd class="nhsuk-summary-list__value">
             @if (Model.EnforceRoleRequirementsForSignOff)
@@ -40,9 +47,12 @@
                 <text>No. Do not enforce role requirements.</text>
             }
         </dd>
-        <dd class="nhsuk-summary-list__actions">
-            <a class="nhsuk-link" asp-route-competencyAssessmentId="@Model.Id" asp-action="EditEnforceRoleRequirementsForSignOff">Change<span class="nhsuk-u-visually-hidden"> role requirements enforcement</span></a>
-        </dd>
+        @if (Model.UserRole > 1)
+        {
+            <dd class="nhsuk-summary-list__actions">
+                <a class="nhsuk-link" asp-route-competencyAssessmentId="@Model.Id" asp-action="EditEnforceRoleRequirementsForSignOff">Change<span class="nhsuk-u-visually-hidden"> role requirements enforcement</span></a>
+            </dd>
+        }
     </div>
     <div class="nhsuk-summary-list__row">
         <dt class="nhsuk-summary-list__key">
@@ -58,9 +68,12 @@
                 <text>No. Do not include filters.</text>
             }
         </dd>
-        <dd class="nhsuk-summary-list__actions">
-            <a class="nhsuk-link" asp-route-competencyAssessmentId="@Model.Id" asp-action="EditIncludeRequirementsFilters">Change<span class="nhsuk-u-visually-hidden"> include requirements filters</span></a>
-        </dd>
+        @if (Model.UserRole > 1)
+        {
+            <dd class="nhsuk-summary-list__actions">
+                <a class="nhsuk-link" asp-route-competencyAssessmentId="@Model.Id" asp-action="EditIncludeRequirementsFilters">Change<span class="nhsuk-u-visually-hidden"> include requirements filters</span></a>
+            </dd>
+        }
     </div>
     <div class="nhsuk-summary-list__row">
         <dt class="nhsuk-summary-list__key">
@@ -69,9 +82,12 @@
         <dd class="nhsuk-summary-list__value">
             @Model.CountCompetencyRequirements @Model.VocabularySingular.ToLower() assessment questions with role requirements set.
         </dd>
-        <dd class="nhsuk-summary-list__actions">
-            <a class="nhsuk-link" asp-route-competencyAssessmentId="@Model.Id" asp-action="EditCompetencyRoleRequirements">Change<span class="nhsuk-u-visually-hidden"> include requirements filters</span></a>
-        </dd>
+        @if (Model.UserRole > 1)
+        {
+            <dd class="nhsuk-summary-list__actions">
+                <a class="nhsuk-link" asp-route-competencyAssessmentId="@Model.Id" asp-action="EditCompetencyRoleRequirements">Change<span class="nhsuk-u-visually-hidden"> include requirements filters</span></a>
+            </dd>
+        }
     </div>
 </dl>
 <form method="post" asp-action="ManageCompetencyRoleRequirements">
@@ -81,9 +97,12 @@
         <input type="hidden" asp-for="IncludeRequirementsFilters" />
         <vc:single-checkbox asp-for="@nameof(Model.TaskStatus)" label="Mark this task as complete" hint-text="You will still be able to make changes after marking this task as complete."></vc:single-checkbox>
     </nhs-form-group>
-    <button class="nhsuk-button" type="submit">
-        Save
-    </button>
+    @if (Model.UserRole > 1)
+    {
+        <button class="nhsuk-button" type="submit">
+            Save
+        </button>
+    }
 </form>
 <div class="nhsuk-back-link">
     <a class="nhsuk-back-link__link" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.Id">

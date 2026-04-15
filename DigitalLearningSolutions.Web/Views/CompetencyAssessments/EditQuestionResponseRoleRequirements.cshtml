@@ -1,8 +1,8 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
 @model EditQuestionResponseRoleRequirementsViewModel;
 @{
-    ViewData["Title"] = "Manage Role Requirements";
-    ViewData["Application"] = "Framework Service";
+    ViewData["Title"] = "Manage role requirements";
+    ViewData["Application"] = "Framework service";
 }
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
 @section NavMenuItems {
@@ -13,8 +13,8 @@
     <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
         <div class="nhsuk-width-container">
             <ol class="nhsuk-breadcrumb__list">
-                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewCompetencyAssessments" asp-route-tabname="Mine">Competency Assessments</a></li>
-                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.Id">Manage Competency Assessment</a></li>
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewCompetencyAssessments" asp-route-tabname="Mine">Self-assessments</a></li>
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.Id">Manage self-assessment</a></li>
                 <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ManageCompetencyRoleRequirements" asp-route-competencyAssessmentId="@Model.Id">Role Requirements</a></li>
                 <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="EditCompetencyRoleRequirements" asp-route-competencyAssessmentId="@Model.Id">Edit Role Requirements</a></li>
                 <li class="nhsuk-breadcrumb__item">Set Role Requirements</li>
@@ -23,11 +23,17 @@
         </div>
     </nav>
 }
-<h1>Edit @Model.VocabularySingular.ToLower() role requirements</h1>
+<h1 class="app-page-heading">
+    <span class="nhsuk-caption-xl">
+        @Model.CompetencyAssessmentName
+        <span class="nhsuk-u-visually-hidden"> – </span>
+    </span>
+    @Model.VocabularySingular.ToLower() role requirements
+</h1>
 <dl class="nhsuk-summary-list">
     <div class="nhsuk-summary-list__row">
         <dt class="nhsuk-summary-list__key">
-            @Model.VocabularySingular Assessment
+            @Model.VocabularySingular assessment
         </dt>
         <dd class="nhsuk-summary-list__value">
             @Model.CompetencyAssessmentName
@@ -59,7 +65,7 @@
     </div>
     <div class="nhsuk-summary-list__row">
         <dt class="nhsuk-summary-list__key">
-            Assessment Question
+            Assessment question
         </dt>
         <dd class="nhsuk-summary-list__value">
             @Model.GroupedCompetencyWithAssessmentRoleRequirements.First().Competencies.First().Questions.First().Question
@@ -141,7 +147,7 @@
             <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--m">
                 Apply to all?
             </legend>
-            <vc:single-checkbox asp-for="@nameof(Model.ApplyToAll)" label="Apply role requirements to all @Model.CountAssessmentQuestionInSelfAssessment instances of this assessment question in @Model.CompetencyAssessmentName" hint-text="This will not affect instances that are added to the self assessment later"></vc:single-checkbox>
+            <vc:single-checkbox asp-for="@nameof(Model.ApplyToAll)" label="Apply role requirements to all @Model.CountAssessmentQuestionInSelfAssessment instances of this assessment question in @Model.CompetencyAssessmentName" hint-text="This will not affect instances that are added to the self-assessment later"></vc:single-checkbox>
         </fieldset>
     }
     <input type="hidden" asp-for="@Model.Id" />

@@ -1,8 +1,8 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
 @model OptionsLabelsViewModel
 @{
-    ViewData["Title"] = "Competency Assessment options and labels";
-    ViewData["Application"] = "Competency Assessment Service";
+    ViewData["Title"] = "Self-assessment options and labels";
+    ViewData["Application"] = "Self-assessment service";
 
     var steps = new[]
     {
@@ -39,10 +39,23 @@
     <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
         <div class="nhsuk-width-container">
             <ol class="nhsuk-breadcrumb__list">
-                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewCompetencyAssessments" asp-route-tabname="Mine">Competency Assessments</a></li>
-                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.CompetencyAssessmentID">Manage Competency Assessment</a></li>
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewCompetencyAssessments" asp-route-tabname="Mine">Self-assessments</a></li>
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.CompetencyAssessmentID">Manage self-assessment</a></li>
                 @foreach (var item in steps)
                 {
+                    @if (Model.UserRole < 2)
+                    {
+
+                        @if (Model.CurrentStep == item.Step)
+                        {
+                            <li class="nhsuk-breadcrumb__item">
+                                @item.Text
+                            </li>
+                            break;
+                        }
+
+                        continue;
+                    }
                     <li class="nhsuk-breadcrumb__item">
                         @if (Model.CurrentStep == item.Step)
                         {
@@ -51,12 +64,12 @@
                         }
                         else
                         {
-                            <a class="abc" asp-action="OptionsLabels" asp-route-step="@item.Step">@item.Text</a>
+                            <a class="nhsuk-breadcrumb__link trigger-loader" asp-action="OptionsLabels" asp-route-step="@item.Step">@item.Text</a>
                         }
                     </li>
                 }
             </ol>
-            <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.CompetencyAssessmentID">Back to manage competency assessment</a></p>
+            <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.CompetencyAssessmentID">Back to manage self-assessment</a></p>
         </div>
     </nav>
 }
@@ -74,7 +87,7 @@
                     </h1>
                 </legend>
                 <div id="example-hints-hint" class="nhsuk-hint">
-                    Do you want to prompt learners to agree to the self assessment process when they first start the self assessment?
+                    Do you want to prompt learners to agree to the self-assessment process when they first start the self-assessment?
                 </div>
                 <div class="nhsuk-radios" id="IncludeLearnerDeclarationPrompt">
                     <div class="nhsuk-radios__item">
@@ -104,7 +117,7 @@
                     </h1>
                 </legend>
                 <div id="example-hints-hint" class="nhsuk-hint">
-                    Do you want to display signposted learning content when a learner submits their self assessment results?
+                    Do you want to display signposted learning content when a learner submits their self-assessment results?
                 </div>
                 <div class="nhsuk-radios" id="IncludesSignposting">
                     <div class="nhsuk-radios__item">
@@ -194,7 +207,7 @@
                     </h1>
                 </legend>
                 <div id="example-hints-hint" class="nhsuk-hint">
-                    Do you want to specify a custom label for self assessment questions? If not, they will be labelled as “question”.
+                    Do you want to specify a custom label for self-assessment questions? If not, they will be labelled as “question”.
                 </div>
                 <div class="nhsuk-radios nhsuk-radios--conditional" id="QuestionLabel">
                     <div class="nhsuk-radios__item">
@@ -287,11 +300,14 @@
                             <dd class="nhsuk-summary-list__value">
                                 @(Model.IncludeLearnerDeclarationPrompt ? "Yes" : "No")
                             </dd>
-                            <dd class="nhsuk-summary-list__actions">
-                                <a asp-action="OptionsLabels" asp-route-step="@((int)OptionLabel.Declaration)">
-                                    Change
-                                </a>
-                            </dd>
+                            @if (Model.UserRole > 1)
+                            {
+                                <dd class="nhsuk-summary-list__actions">
+                                    <a asp-action="OptionsLabels" asp-route-step="@((int)OptionLabel.Declaration)">
+                                        Change
+                                    </a>
+                                </dd>
+                            }
                         </div>
                     }
                     @if (Model.IsSignpostedLearning)
@@ -303,11 +319,14 @@
                             <dd class="nhsuk-summary-list__value">
                                 @(Model.IncludesSignposting ? "Yes" : "No")
                             </dd>
-                            <dd class="nhsuk-summary-list__actions">
-                                <a asp-action="OptionsLabels" asp-route-step="@((int)OptionLabel.Signposting)">
-                                    Change
-                                </a>
-                            </dd>
+                            @if (Model.UserRole > 1)
+                            {
+                                <dd class="nhsuk-summary-list__actions">
+                                    <a asp-action="OptionsLabels" asp-route-step="@((int)OptionLabel.Signposting)">
+                                        Change
+                                    </a>
+                                </dd>
+                            }
                         </div>
                     }
                     <div class="nhsuk-summary-list__row">
@@ -317,11 +336,14 @@
                         <dd class="nhsuk-summary-list__value">
                             @(Model.LinearNavigation ? "Yes" : "No")
                         </dd>
-                        <dd class="nhsuk-summary-list__actions">
-                            <a asp-action="OptionsLabels" asp-route-step="@((int)OptionLabel.LinearNavigation)">
-                                Change
-                            </a>
-                        </dd>
+                        @if (Model.UserRole > 1)
+                        {
+                            <dd class="nhsuk-summary-list__actions">
+                                <a asp-action="OptionsLabels" asp-route-step="@((int)OptionLabel.LinearNavigation)">
+                                    Change
+                                </a>
+                            </dd>
+                        }
                     </div>
                     <div class="nhsuk-summary-list__row">
                         <dt class="nhsuk-summary-list__key">
@@ -330,11 +352,14 @@
                         <dd class="nhsuk-summary-list__value">
                             @(Model.UseDescriptionExpanders ? "Yes" : "No")
                         </dd>
-                        <dd class="nhsuk-summary-list__actions">
-                            <a asp-action="OptionsLabels" asp-route-step="@((int)OptionLabel.DescriptionExpanders)">
-                                Change
-                            </a>
-                        </dd>
+                        @if (Model.UserRole > 1)
+                        {
+                            <dd class="nhsuk-summary-list__actions">
+                                <a asp-action="OptionsLabels" asp-route-step="@((int)OptionLabel.DescriptionExpanders)">
+                                    Change
+                                </a>
+                            </dd>
+                        }
                     </div>
                     <div class="nhsuk-summary-list__row">
                         <dt class="nhsuk-summary-list__key">
@@ -343,11 +368,14 @@
                         <dd class="nhsuk-summary-list__value">
                             @(Model.QuestionLabel ? "Yes - " + Model.QuestionLabelText : "No")
                         </dd>
-                        <dd class="nhsuk-summary-list__actions">
-                            <a asp-action="OptionsLabels" asp-route-step="@((int)OptionLabel.QuestionLabels)">
-                                Change
-                            </a>
-                        </dd>
+                        @if (Model.UserRole > 1)
+                        {
+                            <dd class="nhsuk-summary-list__actions">
+                                <a asp-action="OptionsLabels" asp-route-step="@((int)OptionLabel.QuestionLabels)">
+                                    Change
+                                </a>
+                            </dd>
+                        }
                     </div>
                     @if (Model.IsSupervisionSwitchedOn)
                     {
@@ -358,11 +386,14 @@
                             <dd class="nhsuk-summary-list__value">
                                 @(Model.ReviewerCommentsLabel ? "Yes - " + Model.ReviewerCommentsLabelText : "No")
                             </dd>
-                            <dd class="nhsuk-summary-list__actions">
-                                <a asp-action="OptionsLabels" asp-route-step="@((int)OptionLabel.CommentsLabel)">
-                                    Change
-                                </a>
-                            </dd>
+                            @if (Model.UserRole > 1)
+                            {
+                                <dd class="nhsuk-summary-list__actions">
+                                    <a asp-action="OptionsLabels" asp-route-step="@((int)OptionLabel.CommentsLabel)">
+                                        Change
+                                    </a>
+                                </dd>
+                            }
                         </div>
                     }
                 </dl>
@@ -376,10 +407,12 @@
             Back
         </a>
     }
-    <button class="nhsuk-button" type="submit">
-        @(Model.CurrentStep == (int)OptionLabel.Summary ? "Submit" : Model.SelfAssessmentOptionsTaskStatus == null ? "Next" : "Save")
-    </button>
-
+    @if (Model.UserRole > 1)
+    {
+        <button class="nhsuk-button" type="submit">
+            @(Model.CurrentStep == (int)OptionLabel.Summary ? "Submit" : Model.SelfAssessmentOptionsTaskStatus == null ? "Next" : "Save")
+        </button>
+    }
     <div class="nhsuk-back-link">
         @if (Model.SelfAssessmentOptionsTaskStatus == null)
         {

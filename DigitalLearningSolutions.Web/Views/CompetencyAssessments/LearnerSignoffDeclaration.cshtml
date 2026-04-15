@@ -13,8 +13,8 @@
     <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
         <div class="nhsuk-width-container">
             <ol class="nhsuk-breadcrumb__list">
-                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewCompetencyAssessments" asp-route-tabname="Mine">Competency Assessments</a></li>
-                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.CompetencyAssessmentId">Manage Competency Assessment</a></li>
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewCompetencyAssessments" asp-route-tabname="Mine">Self-assessments</a></li>
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.CompetencyAssessmentId">Manage self-assessment</a></li>
                 <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="SupervisedSelfAssessmentSignoff" asp-route-competencyAssessmentId="@Model.CompetencyAssessmentId" asp-route-actionName="Signoff">Supervisor roles</a></li>
                 <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="SupervisorSignoffDeclaration" asp-route-competencyAssessmentId="@Model.CompetencyAssessmentId" asp-route-actionName="Supervisor">Supervisor sign off declaration</a></li>
                 <li class="nhsuk-breadcrumb__item">Learner sign off declaration</li>
@@ -30,14 +30,15 @@
         }
         <form method="post">
             <fieldset class="nhsuk-fieldset">
-                <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
-                    <h1 class="nhsuk-fieldset__heading">
-                        Learner sign off declaration
-                    </h1>
-                </legend>
-
+                <h1 class="app-page-heading">
+                    <span class="nhsuk-caption-xl">
+                        @Model.CompetencyAssessmentName
+                        <span class="nhsuk-u-visually-hidden"> – </span>
+                    </span>
+                    Learner sign off declaration
+                </h1>
                 <p class="nhsuk-hint">
-                    This will be displayed to the learner is requesting supervisor signing off of their completed self assessment
+                    This will be displayed to the learner is requesting supervisor signing off of their completed self-assessment
                 </p>
                 <div class="nhsuk-form-group @(errorHasOccurred ? "nhsuk-form-group--error" : "")">
                     <div class="nhsuk-radios nhsuk-radios--conditional">
@@ -92,14 +93,7 @@
                 <button class="nhsuk-button" type="submit">
                     Next
                 </button>
-                <div class="nhsuk-back-link">
-                    <a class="nhsuk-back-link__link" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.CompetencyAssessmentId">
-                        <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                            <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
-                        </svg>
-                        Cancel
-                    </a>
-                </div>
+               
             </div>
         </form>
     </div>

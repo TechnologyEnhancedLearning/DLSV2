@@ -11,15 +11,22 @@
     <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
         <div class="nhsuk-width-container">
             <ol class="nhsuk-breadcrumb__list">
-                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewCompetencyAssessments" asp-route-tabname="Mine">Competency Assessments</a></li>
-                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.CompetencyAssessmentID">Manage Competency Assessment</a></li>
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewCompetencyAssessments" asp-route-tabname="Mine">Self-assessments</a></li>
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.CompetencyAssessmentID">Manage self-assessment</a></li>
                 <li class="nhsuk-breadcrumb__item">Review</li>
             </ol>
 
         </div>
     </nav>
 }
-<h1>Submit review</h1>
+
+<h1 class="app-page-heading">
+    <span class="nhsuk-caption-xl">
+        @Model.CompetencyAssessmentName
+        <span class="nhsuk-u-visually-hidden"> – </span>
+    </span>
+    Submit review
+</h1>
 @if (Model.SelfAssessmentReview.SignOffRequired)
 {
     <div class="nhsuk-warning-callout">
@@ -29,7 +36,7 @@
                 Approval required
             </span>
         </h2>
-        <p>Your approval is required before this self assessment can be published.</p>
+        <p>Your approval is required before this self-assessment can be published.</p>
     </div>
 }
 <form method="post">
@@ -63,7 +70,7 @@
                 Approve for publishing?
             </label>
             <div class="nhsuk-hint nhsuk-checkboxes__hint" id="sign-off-hint">
-                I give my approval to publish this self assessment for use in its current state
+                I give my approval to publish this self-assessment for use in its current state
             </div>
         </div>
     </div>

@@ -11,8 +11,8 @@
     <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
         <div class="nhsuk-width-container">
             <ol class="nhsuk-breadcrumb__list">
-                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewCompetencyAssessments" asp-route-tabname="Mine">Competency Assessments</a></li>
-                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.CompetencyAssessmentID">Manage Competency Assessment</a></li>
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewCompetencyAssessments" asp-route-tabname="Mine">Self-assessments</a></li>
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.CompetencyAssessmentID">Manage self-assessment</a></li>
                 <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="SendForReview" asp-route-competencyAssessmentId="@Model.CompetencyAssessmentID">Send for Review</a></li>
                 <li class="nhsuk-breadcrumb__item">Publish without review</li>
 
@@ -21,7 +21,12 @@
         </div>
     </nav>
 }
-<h1>Publish without review</h1>
+<h1 class="app-page-heading">
+    <span class="nhsuk-caption-xl">
+        @Model.CompetencyAssessmentName
+        <span class="nhsuk-u-visually-hidden"> – </span>
+    </span>Publish without review
+</h1>
 
 <form method="post">
     <div class="nhsuk-grid-row">
@@ -30,11 +35,11 @@
             {
                 <vc:error-summary order-of-property-names="@(new[] { nameof(Model.Confirm) })" />
             }
-            <p> By choosing to publish this self assessment without submitting for review, you confirm that a suitable and robust review process has taken place offline and that the self assessment has been confirmed as ready for production use with learners.</p>
+            <p> By choosing to publish this self-assessment without submitting for review, you confirm that a suitable and robust review process has taken place offline and that the self-assessment has been confirmed as ready for production use with learners.</p>
 
 
             <vc:single-checkbox asp-for="@nameof(Model.Confirm)"
-                                label="I confirm that I wish to publish this self assessment without submitting for review. "
+                                label="I confirm that I wish to publish this self-assessment without submitting for review. "
                                 hint-text="" />
 
 

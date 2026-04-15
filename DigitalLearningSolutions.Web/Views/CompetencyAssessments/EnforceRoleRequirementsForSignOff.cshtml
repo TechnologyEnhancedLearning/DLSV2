@@ -1,8 +1,8 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
 @model EditRoleRequirementsFlagsViewModel;
 @{
-    ViewData["Title"] = "Manage Role Requirements";
-    ViewData["Application"] = "Framework Service";
+    ViewData["Title"] = "Manage role requirements";
+    ViewData["Application"] = "Framework service";
 }
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
 @section NavMenuItems {
@@ -13,8 +13,8 @@
     <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
         <div class="nhsuk-width-container">
             <ol class="nhsuk-breadcrumb__list">
-                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewCompetencyAssessments" asp-route-tabname="Mine">Competency Assessments</a></li>
-                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.Id">Manage Competency Assessment</a></li>
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewCompetencyAssessments" asp-route-tabname="Mine">Self-assessments</a></li>
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.Id">Manage self-assessment</a></li>
                 <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ManageCompetencyRoleRequirements" asp-route-competencyAssessmentId="@Model.Id">Role Requirements</a></li>
                 <li class="nhsuk-breadcrumb__item">Enforce Role Requirements</li>
             </ol>
@@ -22,12 +22,18 @@
         </div>
     </nav>
 }
-<h1>Edit role requirement enforcement</h1>
+<h1 class="app-page-heading">
+    <span class="nhsuk-caption-xl">
+        @Model.CompetencyAssessmentName
+        <span class="nhsuk-u-visually-hidden"> – </span>
+    </span>
+    Enforce role requirements
+</h1>
 <form method="post" asp-action="EditRoleRequirementsFlags">
     <nhs-form-group nhs-validation-for="EnforceRoleRequirementsForSignOff">
         <fieldset class="nhsuk-fieldset" aria-describedby="enforce-role-requirements-hint">
-            <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
-                <h2>Do you want to enforce role requirements for the @Model.CompetencyAssessmentName self assessment?</h2>
+            <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--m">
+                Do you want to enforce role requirements for the self-assessment?
             </legend>
             <div id="enforce-role-requirements-hint" class="nhsuk-hint">
                 When role requirements are enforced, learners can only request confirmation for self‑assessment results that meet the required competency criteria, even if no specific requirements are set.
@@ -48,7 +54,7 @@
     <input type="hidden" asp-for="Id" />
     <input type="hidden" asp-for="IncludeRequirementsFilters" />
     <input type="hidden" asp-for="TaskStatus" />
-    <button class="nhsuk-button nhsuk-button--primary" type="submit">Save changes</button>
+    <button class="nhsuk-button nhsuk-button--primary" type="submit">Save</button>
 </form>
 <div class="nhsuk-back-link">
     <a class="nhsuk-back-link__link" asp-action="ManageCompetencyRoleRequirements" asp-route-competencyAssessmentId="@Model.Id">

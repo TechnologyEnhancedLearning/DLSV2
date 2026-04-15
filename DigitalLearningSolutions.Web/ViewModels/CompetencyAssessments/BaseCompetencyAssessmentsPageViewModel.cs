@@ -60,7 +60,7 @@
     public static class CompetencyAssessmentSortByOptionTexts
     {
         public const string
-            CompetencyAssessmentName = "Competency Assessment",
+            CompetencyAssessmentName = "Self-assessment",
             CompetencyAssessmentOwner = "Owner",
             CompetencyAssessmentCreatedDate = "Created Date",
             CompetencyAssessmentPublishStatus = "Publish Status",

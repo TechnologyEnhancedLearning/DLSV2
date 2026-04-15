@@ -1,8 +1,8 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
 @model ManageCompetencyAssessmentViewModel
 @{
-    ViewData["Title"] = Model.PublishStatusID == 3 ? "Manage" : "Create" + " competency assessment";
-    ViewData["Application"] = "Framework Service";
+    ViewData["Title"] = Model.PublishStatusID == 3 ? "Manage" : "Create" + " self-assessment";
+    ViewData["Application"] = "Framework service";
 }
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
 @section NavMenuItems {
@@ -12,12 +12,12 @@
     <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
         <div class="nhsuk-width-container">
             <ol class="nhsuk-breadcrumb__list">
-                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewCompetencyAssessments" asp-route-tabname="Mine">Competency Assessments</a></li>
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewCompetencyAssessments" asp-route-tabname="Mine">Self-assessments</a></li>
                 <li class="nhsuk-breadcrumb__item">@Model.CompetencyAssessmentName</li>
             </ol>
             <p class="nhsuk-breadcrumb__back">
                 <a class="nhsuk-breadcrumb__backlink" asp-action="ViewCompetencyAssessments" asp-route-tabname="Mine">
-                    <span class="nhsuk-u-visually-hidden">Back to &nbsp;</span>Competency Assessments
+                    <span class="nhsuk-u-visually-hidden">Back to &nbsp;</span>Self-assessments
                 </a>
             </p>
         </div>
@@ -36,10 +36,18 @@
             <dd class="nhsuk-summary-list__value">
                 @Model.CompetencyAssessmentName
             </dd>
+            @if (Model.SelfAssessmentReviewID != null && Model.SelfAssessmentCommentID is null)
+            {
+                <dd class="nhsuk-summary-list__actions">
+                </dd>
+            }
             <dd class="nhsuk-summary-list__actions">
-                <a asp-action="CompetencyAssessmentName" asp-route-actionName="Edit" asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">
-                    Change<span class="nhsuk-u-visually-hidden"> assessment name</span>
-                </a>
+                @if (Model.UserRole > 1)
+                {
+                    <a asp-action="CompetencyAssessmentName" asp-route-actionName="Edit" asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">
+                        Change<span class="nhsuk-u-visually-hidden"> assessment name</span>
+                    </a>
+                }
             </dd>
         </div>
         <div class="nhsuk-summary-list__row">
@@ -51,14 +59,16 @@
                     @(Model.PublishStatusID == 1 ? "Draft" : Model.PublishStatusID == 2 ? "In review" : "Published")
                 </strong>
             </dd>
-            <dd class="nhsuk-summary-list__actions">
-                @if (Model.SelfAssessmentReviewID != null && Model.SelfAssessmentCommentID is null)
-                {
+            @if (Model.SelfAssessmentReviewID != null && Model.SelfAssessmentCommentID is null)
+            {
+                <dd class="nhsuk-summary-list__actions">
+
                     <a asp-action="SubmitReview" asp-route-selfAssessmentReviewId="@Model.SelfAssessmentReviewID" asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">
                         Submit my review<span class="nhsuk-u-visually-hidden"> review</span>
                     </a>
-                }
-            </dd>
+
+                </dd>
+            }
             @if (Model.HasCompetencies)
             {
                 <dd class="nhsuk-summary-list__actions">
@@ -73,7 +83,7 @@
     <ul class="nhsuk-task-list nhsuk-u-margin-bottom-0">
         <li class="nhsuk-task-list__item nhsuk-task-list__item--with-link">
             <div class="nhsuk-task-list__name-and-hint" aria-describedby="select-frameworks-status">
-                <a class="nhsuk-link nhsuk-task-list__link" asp-action="SelectFrameworkSources" asp-route-actionName="@(Model.CompetencyAssessmentTaskStatus.FrameworkLinksTaskStatus == null ? "AddFramework" : "Summary" )" asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">
+                <a class="nhsuk-link nhsuk-task-list__link" asp-action="SelectFrameworkSources" asp-route-actionName="@(Model.CompetencyAssessmentTaskStatus.FrameworkLinksTaskStatus == null ? "AddFramework" : "Summary")" asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">
                     Select (@Model.VocabularySingular) framework sources
                 </a>
             </div>
@@ -221,49 +231,52 @@
                 <partial name="Shared/_TaskStatusTag" model="@Model.CompetencyAssessmentTaskStatus.SelfAssessmentOptionsTaskStatus" />
             </div>
         </li>
-        <li class="nhsuk-task-list__item">
+        @if (Model.PublishStatusID != 3 && Model.UserRole > 1)
+        {
+            <li class="nhsuk-task-list__item">
 
-            @if (Model.CompetencyAssessmentTaskStatus.IntroductoryTextTaskStatus != true ||
-                        Model.CompetencyAssessmentTaskStatus.BrandingTaskStatus != true ||
-                        Model.CompetencyAssessmentTaskStatus.VocabularyTaskStatus != true ||
-                        Model.CompetencyAssessmentTaskStatus.WorkingGroupTaskStatus != true ||
-                        Model.CompetencyAssessmentTaskStatus.NationalRoleProfileTaskStatus != true ||
-                        Model.CompetencyAssessmentTaskStatus.FrameworkLinksTaskStatus != true ||
-                        Model.CompetencyAssessmentTaskStatus.SelectCompetenciesTaskStatus != true ||
-                        Model.CompetencyAssessmentTaskStatus.OptionalCompetenciesTaskStatus != true ||
-                        Model.CompetencyAssessmentTaskStatus.RoleRequirementsTaskStatus != true ||
-                        Model.CompetencyAssessmentTaskStatus.SupervisorRolesTaskStatus != true ||
-                        Model.CompetencyAssessmentTaskStatus.SelfAssessmentOptionsTaskStatus != true)
-            {
-                <div class="nhsuk-task-list__name-and-hint" aria-describedby="review-status">
-                    <div>
-                        Send for review
-                    </div>
-                </div>
-                <div class="nhsuk-task-list__status nhsuk-task-list__status--cannot-start-yet" id="review-status">
-                    Cannot start yet
-                </div>
-            }
-            else
-            {
-                <div class="nhsuk-task-list__name-and-hint" aria-describedby="review-status">
-                    @if (Model.PublishStatusID == 1)
-                    {
-                        <a class="nhsuk-link nhsuk-task-list__link" asp-action="SendForReview" asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">
+                @if (Model.CompetencyAssessmentTaskStatus.IntroductoryTextTaskStatus != true ||
+                            Model.CompetencyAssessmentTaskStatus.BrandingTaskStatus != true ||
+                            Model.CompetencyAssessmentTaskStatus.VocabularyTaskStatus != true ||
+                            Model.CompetencyAssessmentTaskStatus.WorkingGroupTaskStatus != true ||
+                            Model.CompetencyAssessmentTaskStatus.NationalRoleProfileTaskStatus != true ||
+                            Model.CompetencyAssessmentTaskStatus.FrameworkLinksTaskStatus != true ||
+                            Model.CompetencyAssessmentTaskStatus.SelectCompetenciesTaskStatus != true ||
+                            Model.CompetencyAssessmentTaskStatus.OptionalCompetenciesTaskStatus != true ||
+                            Model.CompetencyAssessmentTaskStatus.RoleRequirementsTaskStatus != true ||
+                            Model.CompetencyAssessmentTaskStatus.SupervisorRolesTaskStatus != true ||
+                            Model.CompetencyAssessmentTaskStatus.SelfAssessmentOptionsTaskStatus != true)
+                {
+                    <div class="nhsuk-task-list__name-and-hint" aria-describedby="review-status">
+                        <div>
                             Send for review
-                        </a>
-                    }
-                    else
-                    {
-                        <a class="nhsuk-link nhsuk-task-list__link" asp-action="PublishReview" asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">
-                            Review and publish
-                        </a>
-                    }
-                </div>
-                <div class="nhsuk-task-list__status" id="review-status">
-                    <partial name="Shared/_TaskStatusTag" model="@Model.CompetencyAssessmentTaskStatus.ReviewTaskStatus" />
-                </div>
-             } 
-        </li>
+                        </div>
+                    </div>
+                    <div class="nhsuk-task-list__status nhsuk-task-list__status--cannot-start-yet" id="review-status">
+                        Cannot start yet
+                    </div>
+                }
+                else
+                {
+                    <div class="nhsuk-task-list__name-and-hint" aria-describedby="review-status">
+                        @if (Model.PublishStatusID == 1)
+                        {
+                            <a class="nhsuk-link nhsuk-task-list__link" asp-action="SendForReview" asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">
+                                Send for review
+                            </a>
+                        }
+                        else
+                        {
+                            <a class="nhsuk-link nhsuk-task-list__link" asp-action="PublishReview" asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">
+                                Review and publish
+                            </a>
+                        }
+                    </div>
+                    <div class="nhsuk-task-list__status" id="review-status">
+                        <partial name="Shared/_TaskStatusTag" model="@Model.CompetencyAssessmentTaskStatus.ReviewTaskStatus" />
+                    </div>
+                }
+            </li>
+        }
     </ul>
 </div>

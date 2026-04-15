@@ -1,8 +1,8 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
 @model EditCompetencyRoleRequirementsViewModel;
 @{
-    ViewData["Title"] = "Manage Role Requirements";
-    ViewData["Application"] = "Framework Service";
+    ViewData["Title"] = "Manage role requirements";
+    ViewData["Application"] = "Framework service";
 }
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
 @section NavMenuItems {
@@ -13,8 +13,8 @@
     <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
         <div class="nhsuk-width-container">
             <ol class="nhsuk-breadcrumb__list">
-                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewCompetencyAssessments" asp-route-tabname="Mine">Competency Assessments</a></li>
-                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.Id">Manage Competency Assessment</a></li>
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewCompetencyAssessments" asp-route-tabname="Mine">Self-assessments</a></li>
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.Id">Manage self-assessment</a></li>
                 <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ManageCompetencyRoleRequirements" asp-route-competencyAssessmentId="@Model.Id">Role Requirements</a></li>
                 <li class="nhsuk-breadcrumb__item">Edit Role Requirements</li>
             </ol>
@@ -24,7 +24,7 @@
 }
 <h1>Edit @Model.VocabularySingular.ToLower() role requirements</h1>
 <p class="nhsuk-lede-text">
-    Manage role requirements @Model.CompetencyAssessmentName @Model.VocabularySingular.ToLower() self assessment questions.
+    Manage role requirements @Model.CompetencyAssessmentName @Model.VocabularySingular.ToLower() self-assessment questions.
 </p>
 @foreach (var group in Model.GroupedCompetencyWithAssessmentRoleRequirements)
 {
@@ -33,8 +33,8 @@
         <thead class="nhsuk-table__head">
             <tr class="nhsuk-table__row">
                 <th class="nhsuk-table__header" scope="col">@Model.VocabularySingular</th>
-                <th class="nhsuk-table__header" scope="col">Assessment Question </th>
-                <th>Role Requirements</th>
+                <th class="nhsuk-table__header" scope="col">Assessment question </th>
+                <th>Role requirements</th>
                 <th class="nhsuk-table__header" scope="col">Actions</th>
             </tr>
         </thead>

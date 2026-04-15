@@ -11,9 +11,12 @@
     <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
         <div class="nhsuk-width-container">
             <ol class="nhsuk-breadcrumb__list">
-                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewCompetencyAssessments" asp-route-tabname="Mine">Competency Assessments</a></li>
-                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.CompetencyAssessmentId">Manage Competency Assessment</a></li>
-                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="SupervisedSelfAssessmentSignoff" asp-route-competencyAssessmentId="@Model.CompetencyAssessmentId" asp-route-actionName="Signoff">Supervisor roles</a></li>
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewCompetencyAssessments" asp-route-tabname="Mine">Self-assessments</a></li>
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.CompetencyAssessmentId">Manage self-assessment</a></li>
+                @if (Model.UserRole > 1)
+                {
+                    <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="SupervisedSelfAssessmentSignoff" asp-route-competencyAssessmentId="@Model.CompetencyAssessmentId" asp-route-actionName="Signoff">Supervisor roles</a></li>
+                }
                 @if (@Model.Signoff.SignoffText == "Yes")
                 {
                     <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="SupervisorSignoffDeclaration" asp-route-competencyAssessmentId="@Model.CompetencyAssessmentId" asp-route-actionName="Supervisor">Supervisor sign off declaration</a></li>
@@ -31,7 +34,13 @@
         {
             <vc:error-summary order-of-property-names="@(new[] { nameof(Model.TaskCompleteChecked) })" />
         }
-        <h1 class="nhsuk-heading-xl">Manage supervision settings</h1>
+        <h1 class="app-page-heading">
+            <span class="nhsuk-caption-xl">
+                @Model.CompetencyAssessmentName
+                <span class="nhsuk-u-visually-hidden"> – </span>
+            </span>
+         Manage supervision settings
+       </h1>
     </div>
 </div>
 <div class="nhsuk-grid-row">
@@ -42,26 +51,29 @@
 
                 <div class="nhsuk-summary-list__row">
                     <dt class="nhsuk-summary-list__key">
-                        Supervisor signs off self assessment
+                        Will the self-assessment be supervised
                     </dt>
                     <dd class="nhsuk-summary-list__value">
                         @Model.Signoff.SignoffText
                     </dd>
-                    <dd class="nhsuk-summary-list__actions">
-                        <ul class="nhsuk-summary-list__actions-list left-align-actions">
-                            <li class="nhsuk-summary-list__actions-list-item">
-                                <a asp-action="SupervisedSelfAssessmentSignoff" asp-route-actionName="Signoff" asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">
-                                    Change<span class="nhsuk-u-visually-hidden"> Supervisor signs off self assessment</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </dd>
+                    @if (Model.UserRole > 1)
+                    {
+                        <dd class="nhsuk-summary-list__actions">
+                            <ul class="nhsuk-summary-list__actions-list left-align-actions">
+                                <li class="nhsuk-summary-list__actions-list-item">
+                                    <a asp-action="SupervisedSelfAssessmentSignoff" asp-route-actionName="Signoff" asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">
+                                        Change<span class="nhsuk-u-visually-hidden"> Supervisor signs off self-assessment</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </dd>
+                    }
                 </div>
                 @if (@Model.Signoff.SignoffText == "Yes")
                 {
                     <div class="nhsuk-summary-list__row">
                         <dt class="nhsuk-summary-list__key">
-                            Supervisor sign off statement
+                            Supervisor sign off declaration
                         </dt>
                         <dd class="nhsuk-summary-list__value">
                             <strong>@Model.SupervisorDeclaration.Declaration</strong>
@@ -71,7 +83,7 @@
                                 <details class="nhsuk-details__text">
                                     <summary class="nhsuk-details__summary">
                                         <span class="nhsuk-details__summary-text">
-                                            View declaration text
+                                            View supervisor sign off declaration text
                                         </span>
                                     </summary>
                                     <div class="nhsuk-body" id="default-declaration-text">
@@ -80,20 +92,23 @@
                                 </details>
                             </div>
                         </dd>
-                        <dd class="nhsuk-summary-list__actions">
-                            <ul class="nhsuk-summary-list__actions-list left-align-actions">
-                                <li class="nhsuk-summary-list__actions-list-item">
-                                    <a asp-action="SupervisorSignoffDeclaration" asp-route-actionName="Supervisor" asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">
+                        @if (Model.UserRole > 1)
+                        {
+                            <dd class="nhsuk-summary-list__actions">
+                                <ul class="nhsuk-summary-list__actions-list left-align-actions">
+                                    <li class="nhsuk-summary-list__actions-list-item">
+                                        <a asp-action="SupervisorSignoffDeclaration" asp-route-actionName="Supervisor" asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">
 
-                                        Change<span class="nhsuk-u-visually-hidden"> Supervisor sign off statement</span>
-                                    </a>
-                                </li>
-                            </ul>
-                        </dd>
+                                            Change<span class="nhsuk-u-visually-hidden"> Supervisor sign off declaration</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </dd>
+                        }
                     </div>
                     <div class="nhsuk-summary-list__row">
                         <dt class="nhsuk-summary-list__key">
-                            Learner sign off statement
+                            Learner sign off declaration
                         </dt>
                         <dd class="nhsuk-summary-list__value">
                             <strong>@Model.LearnerDeclaration.Declaration</strong>
@@ -103,7 +118,7 @@
                                 <details class="nhsuk-details__text">
                                     <summary class="nhsuk-details__summary">
                                         <span class="nhsuk-details__summary-text">
-                                            View declaration text
+                                            View Learner sign off declaration text
                                         </span>
                                     </summary>
                                     <div class="nhsuk-body" id="default-declaration-text">
@@ -113,20 +128,23 @@
                                 </details>
                             </div>
                         </dd>
-                        <dd class="nhsuk-summary-list__actions">
-                            <ul class="nhsuk-summary-list__actions-list left-align-actions">
-                                <li class="nhsuk-summary-list__actions-list-item">
-                                    <a asp-action="LearnerSignoffDeclaration" asp-route-actionName="Learner" asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">
+                        @if (Model.UserRole > 1)
+                        {
+                            <dd class="nhsuk-summary-list__actions">
+                                <ul class="nhsuk-summary-list__actions-list left-align-actions">
+                                    <li class="nhsuk-summary-list__actions-list-item">
+                                        <a asp-action="LearnerSignoffDeclaration" asp-route-actionName="Learner" asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">
 
-                                        Change<span class="nhsuk-u-visually-hidden"> Learner sign off statement</span>
-                                    </a>
-                                </li>
-                            </ul>
-                        </dd>
+                                            Change<span class="nhsuk-u-visually-hidden"> Learner sign off declaration</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </dd>
+                        }
                     </div>
                     <div class="nhsuk-summary-list__row">
                         <dt class="nhsuk-summary-list__key">
-                            Supervisor or nominated supervisor confirms individual assessment results
+                           Will supervisor or nominated supervisor confirms individual assessment results
                         </dt>
                         <dd class="nhsuk-summary-list__value">
                             @Model.Signoff.ConfirmText
@@ -145,12 +163,13 @@
 
 
             <div class="nhsuk-u-margin-top-8">
-
-                <button class="nhsuk-button nhsuk-button--primary" type="submit">
-                    Save
-                </button>
+                @if (Model.UserRole > 1)
+                {
+                    <button class="nhsuk-button nhsuk-button--primary" type="submit">
+                        Save
+                    </button>
+                }
                 <a class="nhsuk-button nhsuk-button--secondary" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.Signoff.CompetencyAssessmentId">
-
                     Cancel
                 </a>
             </div>

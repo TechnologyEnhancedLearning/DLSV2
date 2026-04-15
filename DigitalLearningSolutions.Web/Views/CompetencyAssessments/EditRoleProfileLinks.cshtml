@@ -1,8 +1,8 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments;
 @model EditRoleProfileLinksViewModel;
 @{
-    ViewData["Title"] = "Edit National Role Profile Links";
-    ViewData["Application"] = "Framework Service";
+    ViewData["Title"] = "Edit national role profile links";
+    ViewData["Application"] = "Framework service";
 }
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
 @section NavMenuItems {
@@ -13,16 +13,21 @@
     <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
         <div class="nhsuk-width-container">
             <ol class="nhsuk-breadcrumb__list">
-                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewCompetencyAssessments" asp-route-tabname="Mine">Competency Assessments</a></li>
-                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.ID">Manage Competency Assessment</a></li>
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewCompetencyAssessments" asp-route-tabname="Mine">Self-assessments</a></li>
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.ID">Manage self-assessment</a></li>
                 <li class="nhsuk-breadcrumb__item">Role Profile Links</li>
             </ol>
-            <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.ID">Back to competency assessment detail</a></p>
+            <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.ID">Back to self-assessment detail</a></p>
         </div>
     </nav>
 }
-
-<h1>Edit @Model.CompetencyAssessmentName national NHS role profile links</h1>
+<h1 class="app-page-heading">
+    <span class="nhsuk-caption-xl">
+        @Model.CompetencyAssessmentName
+        <span class="nhsuk-u-visually-hidden"> – </span>
+    </span>
+    National NHS role profile links
+</h1>
 @if (Model.TaskStatus != null | Model.ActionName != "EditGroup")
 {
     <dl class="nhsuk-summary-list">
@@ -34,11 +39,14 @@
             <dd class="nhsuk-summary-list__value">
                 @Model.GroupName
             </dd>
-            <dd class="nhsuk-summary-list__actions">
-                <a asp-action="EditRoleProfileLinks" asp-route-actionName="EditGroup" asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">
-                    Change<span class="nhsuk-u-visually-hidden"> professional group link</span>
-                </a>
-            </dd>
+            @if (Model.UserRole > 1)
+            {
+                <dd class="nhsuk-summary-list__actions">
+                    <a asp-action="EditRoleProfileLinks" asp-route-actionName="EditGroup" asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">
+                        Change<span class="nhsuk-u-visually-hidden"> professional group link</span>
+                    </a>
+                </dd>
+            }
         </div>
         @if (Model.ProfessionalGroupId != null && Model.ActionName != "EditSubGroup")
         {
@@ -49,11 +57,14 @@
                 <dd class="nhsuk-summary-list__value">
                     @Model.SubGroupName
                 </dd>
-                <dd class="nhsuk-summary-list__actions">
-                    <a asp-action="EditRoleProfileLinks" asp-route-actionName="EditSubGroup" asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">
-                        Change<span class="nhsuk-u-visually-hidden"> sub group link</span>
-                    </a>
-                </dd>
+                @if (Model.UserRole > 1)
+                {
+                    <dd class="nhsuk-summary-list__actions">
+                        <a asp-action="EditRoleProfileLinks" asp-route-actionName="EditSubGroup" asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">
+                            Change<span class="nhsuk-u-visually-hidden"> sub group link</span>
+                        </a>
+                    </dd>
+                }
             </div>
         }
         @if (Model.SubGroupId != null && Model.ActionName == "Summary")
@@ -65,11 +76,14 @@
                 <dd class="nhsuk-summary-list__value">
                     @Model.RoleName
                 </dd>
-                <dd class="nhsuk-summary-list__actions">
-                    <a asp-action="EditRoleProfileLinks" asp-route-actionName="EditRole" asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">
-                        Change<span class="nhsuk-u-visually-hidden"> role profile link</span>
-                    </a>
-                </dd>
+                @if (Model.UserRole > 1)
+                {
+                    <dd class="nhsuk-summary-list__actions">
+                        <a asp-action="EditRoleProfileLinks" asp-route-actionName="EditRole" asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">
+                            Change<span class="nhsuk-u-visually-hidden"> role profile link</span>
+                        </a>
+                    </dd>
+                }
             </div>
         }
     </dl>
@@ -244,9 +258,12 @@ else if (Model.ActionName == "Summary")
         <input type="hidden" asp-for="RoleName" />
         <input type="hidden" asp-for="SubGroupName" />
         <input type="hidden" asp-for="GroupName" />
-        <button class="nhsuk-button" type="submit">
-            Save
-        </button>
+        @if (Model.UserRole > 1)
+        {
+            <button class="nhsuk-button" type="submit">
+                Save
+            </button>
+        }
     </form>
 }
 <div class="nhsuk-back-link">

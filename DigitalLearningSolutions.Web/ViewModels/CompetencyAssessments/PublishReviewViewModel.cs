@@ -15,7 +15,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
             CompetencyAssessmentName = competencyAssessmentName;
             SelfAssessmentReviews = selfAssessmentReviews;
             CompetencyAssessmentBase = competencyAssessmentBase;
-            CanPublish = selfAssessmentReviews?.All(x => x.SignedOff) ?? true;
+            CanPublish = selfAssessmentReviews?.Where(x => x.SignOffRequired).All(x => x.SignedOff) ?? true;
         }
         public int CompetencyAssessmentID { get; set; }
         public string CompetencyAssessmentName { get; set; } = string.Empty;

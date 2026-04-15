@@ -1,8 +1,8 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
 @model EditRoleRequirementsFlagsViewModel;
 @{
-    ViewData["Title"] = "Manage Role Requirements";
-    ViewData["Application"] = "Framework Service";
+    ViewData["Title"] = "Manage role requirements";
+    ViewData["Application"] = "Framework service";
 }
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
 @section NavMenuItems {
@@ -13,8 +13,8 @@
     <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
         <div class="nhsuk-width-container">
             <ol class="nhsuk-breadcrumb__list">
-                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewCompetencyAssessments" asp-route-tabname="Mine">Competency Assessments</a></li>
-                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.Id">Manage Competency Assessment</a></li>
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewCompetencyAssessments" asp-route-tabname="Mine">Self-assessments</a></li>
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.Id">Manage self-assessment</a></li>
                 <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ManageCompetencyRoleRequirements" asp-route-competencyAssessmentId="@Model.Id">Role Requirements</a></li>
                 <li class="nhsuk-breadcrumb__item">Edit Include Requirement Filters</li>
             </ol>
@@ -22,15 +22,21 @@
         </div>
     </nav>
 }
-<h1>Edit include role requirements filters</h1>
+<h1 class="app-page-heading">
+    <span class="nhsuk-caption-xl">
+        @Model.CompetencyAssessmentName
+        <span class="nhsuk-u-visually-hidden"> – </span>
+    </span>
+    Role requirement filters
+</h1>
 <form method="post" asp-action="EditRoleRequirementsFlags">
     <nhs-form-group nhs-validation-for="IncludeRequirementsFilters">
         <fieldset class="nhsuk-fieldset" aria-describedby="role-requirements-filters-hint">
-            <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
-                <h2>Do you want to include role requirements filters in the @Model.CompetencyAssessmentName self assessment?</h2>
+            <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--m">
+                Do you want to include role requirements filters in the self-assessment?
             </legend>
             <div id="role-requirements-filters-hint" class="nhsuk-hint">
-                This will allow the learner to filter self assessment competencies based on whether they are meeting the role requirements set.
+                This will allow the learner to filter self-assessment competencies based on whether they are meeting the role requirements set.
             </div>
             <span nhs-validation-for="IncludeRequirementsFilters"></span>
             <div class="nhsuk-radios nhsuk-radios--inline">
@@ -48,7 +54,7 @@
     <input type="hidden" asp-for="Id" />
     <input type="hidden" asp-for="EnforceRoleRequirementsForSignOff" />
     <input type="hidden" asp-for="TaskStatus" />
-    <button class="nhsuk-button nhsuk-button--primary" type="submit">Save changes</button>
+    <button class="nhsuk-button nhsuk-button--primary" type="submit">Save</button>
 </form>
 <div class="nhsuk-back-link">
     <a class="nhsuk-back-link__link" asp-action="ManageCompetencyRoleRequirements" asp-route-competencyAssessmentId="@Model.Id">
