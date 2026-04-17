@@ -12,6 +12,7 @@
     <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
         <div class="nhsuk-width-container">
             <ol class="nhsuk-breadcrumb__list">
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Frameworks" asp-action="Index">Home</a></li>
                 <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewCompetencyAssessments" asp-route-tabname="Mine">Self-assessments</a></li>
                 <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.CompetencyAssessmentId">Manage self-assessment</a></li>
                 <li class="nhsuk-breadcrumb__item">Supervisor roles</li>
@@ -78,12 +79,12 @@
                                 </span>
                             }
                             <label class="nhsuk-label" for="confirm-yes">
-                             Will supervisor or nominated supervisor confirm individual assessment results?
+                                Will supervisor or nominated supervisor confirm individual assessment results?
                             </label>
 
                             <div class="nhsuk-radios__item">
                                 <input class="nhsuk-radios__input" id="confirm-no" name="Confirm" type="radio" value="0"
-                                @(Model.Confirm == 0 ? "checked" : "")>
+                                       @(Model.Confirm == 0 ? "checked" : "")>
                                 <label class="nhsuk-label nhsuk-radios__label" for="confirm-no">
                                     No
                                 </label>
