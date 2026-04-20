@@ -37,9 +37,6 @@
     @if (primaryFramework != null)
     {
         <div class="nhsuk-summary-list__row">
-            <dt class="nhsuk-summary-list__key">
-                Primary framework
-            </dt>
             <dd class="nhsuk-summary-list__value">
                 @primaryFramework.FrameworkName (@primaryFramework.AssessmentFrameworkCompetencyCount @Model.VocabularyPlural.ToLower())
             </dd>
@@ -47,7 +44,7 @@
             {
                 <dd class="nhsuk-summary-list__actions">
                     <a asp-action="AddCompetencies" asp-route-competencyAssessmentId="@Model.ID" asp-route-frameworkId="@primaryFramework.ID">
-                        Manage<span class="nhsuk-u-visually-hidden"> @Model.VocabularyPlural.ToLower()</span>
+                        Add @Model.VocabularyPlural.ToLower()<span class="nhsuk-u-visually-hidden"> @Model.VocabularyPlural.ToLower()</span>
                     </a>
                 </dd>
             }
@@ -59,9 +56,6 @@
     @foreach (var framework in linkedFrameworks)
     {
         <div class="nhsuk-summary-list__row">
-            <dt class="nhsuk-summary-list__key">
-                Additional framework @i
-            </dt>
             <dd class="nhsuk-summary-list__value">
                 @framework.FrameworkName (@framework.AssessmentFrameworkCompetencyCount @Model.VocabularyPlural.ToLower())
             </dd>
@@ -69,7 +63,7 @@
             {
                 <dd class="nhsuk-summary-list__actions">
                     <a asp-action="AddCompetencies" asp-route-competencyAssessmentId="@Model.ID" asp-route-frameworkId="@framework.ID">
-                        Manage<span class="nhsuk-u-visually-hidden"> @Model.VocabularyPlural.ToLower()</span>
+                        Add @Model.VocabularyPlural.ToLower()<span class="nhsuk-u-visually-hidden"> @Model.VocabularyPlural.ToLower()</span>
                     </a>
                 </dd>
             }
@@ -213,7 +207,9 @@
 }
 else
 {
-    <p>There are no @Model.VocabularyPlural.ToLower() selected for this self-assessment.</p>
+     <p> @Model.VocabularyPlural will appear here after you have added them from the frameworks linked to the self-assessment</p>
+    <hr class="nhsuk-section-break nhsuk-section-break--l nhsuk-section-break--visible" />
+
 }
 
 <form method="post">
@@ -224,7 +220,7 @@ else
     @if (Model.UserRole > 1)
     {
         <button class="nhsuk-button" type="submit">
-            Submit
+            Save
         </button>
     }
     <div class="nhsuk-back-link">
