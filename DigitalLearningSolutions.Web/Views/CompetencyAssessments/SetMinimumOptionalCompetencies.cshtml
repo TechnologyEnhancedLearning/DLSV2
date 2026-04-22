@@ -21,6 +21,7 @@
         </div>
     </nav>
 }
+<div class="nhsuk-form-group">
 <h1 class="app-page-heading">
     <span class="nhsuk-caption-xl">
         @Model.CompetencyAssessmentName
@@ -28,8 +29,8 @@
     </span>Set a minimum number of optional @Model.VocabularyPlural.ToLower()
 </h1>
 
-<p class="nhsuk-lede-text">
-    If required, you can specify a minimum number of optional @Model.VocabularyPlural.ToLower() that a learner must select when completing their @Model.CompetencyAssessmentName self-assessment.
+<p>
+ You can specify a minimum number of optional @Model.VocabularyPlural.ToLower() that a learner must select when completing their self-assessment.
 </p>
 <form method="post" asp-action="SetMinimumOptionalCompetencies">
     <nhs-form-group nhs-validation-for="MinimumOptionalCompetencies">
@@ -56,4 +57,5 @@
         </svg>
         Cancel
     </a>
+</div>
 </div>
