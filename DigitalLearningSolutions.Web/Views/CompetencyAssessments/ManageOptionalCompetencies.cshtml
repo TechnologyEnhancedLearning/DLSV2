@@ -21,6 +21,7 @@
         </div>
     </nav>
 }
+<div class="nhsuk-form-group">
 <h1 class="app-page-heading">
     <span class="nhsuk-caption-xl">
         @Model.CompetencyAssessmentName
@@ -28,9 +29,8 @@
     </span>
   Manage optional @Model.VocabularyPlural.ToLower()
   </h1>
-<p class="nhsuk-lede-text">
-    Manage optional @Model.VocabularyPlural.ToLower() for the assessment @Model.CompetencyAssessmentName.
-    Optional @Model.VocabularyPlural.ToLower() can be selected for inclusion in a self-assessment by a learner if required.
+<p>
+ Optional proficiencies can be selected for inclusion in a self-assessment by a learner if required.
 </p>
 <dl class="nhsuk-summary-list">
     <div class="nhsuk-summary-list__row">
@@ -84,7 +84,7 @@
         </div>
         <div class="nhsuk-summary-list__row">
             <dt class="nhsuk-summary-list__key">
-                Optional @Model.VocabularySingular.ToLower() learner prompt
+                Optional learner prompt
             </dt>
             <dd class="nhsuk-summary-list__value">
                 @Html.Raw(Model.ManageOptionalCompetenciesPrompt == null ? "No learner prompt specified" : Model.ManageOptionalCompetenciesPrompt.ToString())
@@ -121,4 +121,5 @@
         </svg>
         Cancel
     </a>
+</div>
 </div>
