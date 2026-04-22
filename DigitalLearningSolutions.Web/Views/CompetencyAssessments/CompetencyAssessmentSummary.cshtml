@@ -13,6 +13,7 @@
     <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
         <div class="nhsuk-width-container">
             <ol class="nhsuk-breadcrumb__list">
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Frameworks" asp-action="Index">Home</a></li>
                 <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewCompetencyAssessments" asp-route-tabname="Mine">Self-assessments</a></li>
                 <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="CompetencyAssessmentFeatures" asp-route-competencyAssessmentId="@Model.ID" asp-route-frameworkId="@Model.FrameworkId">Self-assessment features</a></li>
                 <li class="nhsuk-breadcrumb__item">Self-assessment features summary</li>
@@ -26,7 +27,8 @@
         @Model.CompetencyAssessmentName
         <span class="nhsuk-u-visually-hidden"> – </span>
     </span>
- Check your answer before creating self-assessment</h1>
+    Check your answer before creating self-assessment
+</h1>
 <form method="post">
     @if (!ViewData.ModelState.IsValid)
     {

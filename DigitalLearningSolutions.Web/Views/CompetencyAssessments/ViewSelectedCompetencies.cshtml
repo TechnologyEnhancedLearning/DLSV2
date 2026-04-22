@@ -18,6 +18,7 @@
     <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
         <div class="nhsuk-width-container">
             <ol class="nhsuk-breadcrumb__list">
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Frameworks" asp-action="Index">Home</a></li>
                 <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewCompetencyAssessments" asp-route-tabname="Mine">Self-assessments</a></li>
                 <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.ID">Manage self-assessment</a></li>
                 <li class="nhsuk-breadcrumb__item">Select @Model.VocabularyPlural To Assess</li>
@@ -31,7 +32,8 @@
         @Model.CompetencyAssessmentName
         <span class="nhsuk-u-visually-hidden"> – </span>
     </span>
-  @Model.VocabularyPlural to assess</h1>
+    @Model.VocabularyPlural to assess
+</h1>
 <h2>Linked frameworks</h2>
 <dl class="nhsuk-summary-list">
     @if (primaryFramework != null)
