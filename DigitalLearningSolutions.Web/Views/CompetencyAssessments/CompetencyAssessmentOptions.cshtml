@@ -83,7 +83,11 @@
         <div class="nhsuk-form-group">
             <fieldset class="nhsuk-fieldset" aria-describedby="example-hints-hint">
                 <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
-                    <h1 class="nhsuk-fieldset__heading">
+                    <h1 class="app-page-heading">
+                        <span class="nhsuk-caption-xl">
+                            @Model.CompetencyAssessmentName
+                            <span class="nhsuk-u-visually-hidden"> – </span>
+                        </span>
                         Display learner declaration?
                     </h1>
                 </legend>
@@ -113,7 +117,11 @@
         <div class="nhsuk-form-group">
             <fieldset class="nhsuk-fieldset" aria-describedby="example-hints-hint">
                 <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
-                    <h1 class="nhsuk-fieldset__heading">
+                    <h1 class="app-page-heading">
+                        <span class="nhsuk-caption-xl">
+                            @Model.CompetencyAssessmentName
+                            <span class="nhsuk-u-visually-hidden"> – </span>
+                        </span>
                         Include signposting?
                     </h1>
                 </legend>
@@ -143,7 +151,11 @@
         <div class="nhsuk-form-group">
             <fieldset class="nhsuk-fieldset" aria-describedby="example-hints-hint">
                 <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
-                    <h1 class="nhsuk-fieldset__heading">
+                    <h1 class="app-page-heading">
+                        <span class="nhsuk-caption-xl">
+                            @Model.CompetencyAssessmentName
+                            <span class="nhsuk-u-visually-hidden"> – </span>
+                        </span>
                         Use linear navigation?
                     </h1>
                 </legend>
@@ -173,7 +185,11 @@
         <div class="nhsuk-form-group">
             <fieldset class="nhsuk-fieldset" aria-describedby="example-hints-hint">
                 <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
-                    <h1 class="nhsuk-fieldset__heading">
+                    <h1 class="app-page-heading">
+                        <span class="nhsuk-caption-xl">
+                            @Model.CompetencyAssessmentName
+                            <span class="nhsuk-u-visually-hidden"> – </span>
+                        </span>
                         Use description expanders?
                     </h1>
                 </legend>
@@ -203,7 +219,11 @@
         <div class="nhsuk-form-group">
             <fieldset class="nhsuk-fieldset" aria-describedby="example-hints-hint">
                 <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
-                    <h1 class="nhsuk-fieldset__heading">
+                    <h1 class="app-page-heading">
+                        <span class="nhsuk-caption-xl">
+                            @Model.CompetencyAssessmentName
+                            <span class="nhsuk-u-visually-hidden"> – </span>
+                        </span>
                         Custom question label
                     </h1>
                 </legend>
@@ -245,7 +265,11 @@
         <div class="nhsuk-form-group">
             <fieldset class="nhsuk-fieldset" aria-describedby="example-hints-hint">
                 <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
-                    <h1 class="nhsuk-fieldset__heading">
+                    <h1 class="app-page-heading">
+                        <span class="nhsuk-caption-xl">
+                            @Model.CompetencyAssessmentName
+                            <span class="nhsuk-u-visually-hidden"> – </span>
+                        </span>
                         Reviewer comments label
                     </h1>
                 </legend>
@@ -287,9 +311,13 @@
         <div class="nhsuk-grid-row">
             <div class="nhsuk-grid-column-full">
 
-                <div class="nhsuk-u-margin-bottom-8">
-                    <h1 id="page-heading" class="nhsuk-heading-xl">Summary</h1>
-                </div>
+                <h1 class="app-page-heading">
+                    <span class="nhsuk-caption-xl">
+                        @Model.CompetencyAssessmentName
+                        <span class="nhsuk-u-visually-hidden"> – </span>
+                    </span>Summary
+                </h1>
+            
 
                 <dl class="nhsuk-summary-list word-break">
                     @if (Model.IsSupervisionSwitchedOn)

@@ -22,7 +22,12 @@
         </div>
     </nav>
 }
-<h1>Select framework source</h1>
+<h1 class="app-page-heading">
+    <span class="nhsuk-caption-xl">
+        @Model.CompetencyAssessmentName
+        <span class="nhsuk-u-visually-hidden"> – </span>
+    </span>Select framework source
+</h1>
 <form method="post">
     @if (!ViewData.ModelState.IsValid)
     {

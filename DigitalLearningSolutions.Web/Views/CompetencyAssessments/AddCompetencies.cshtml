@@ -27,8 +27,12 @@
     <nhs-form-group nhs-validation-for="SelectedCompetencyIds">
         <fieldset class="nhsuk-fieldset">
             <legend class="nhsuk-fieldset__legend">
-                <h1>
-                    Add @Model.VocabularyPlural.ToLower() to assessment from @Model.FrameworkName
+                <h1 class="app-page-heading">
+                <span class="nhsuk-caption-xl">
+                    @Model.CompetencyAssessmentName
+                    <span class="nhsuk-u-visually-hidden"> – </span>
+                </span>
+                    Add @Model.VocabularyPlural.ToLower() to assessment
                 </h1>
             </legend>
 

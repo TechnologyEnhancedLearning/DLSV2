@@ -28,7 +28,14 @@
         </div>
     </nav>
 }
-<h1>Choose working group members</h1>
+<h1 class="app-page-heading">
+    <span class="nhsuk-caption-xl">
+        @Model.CompetencyAssessmentName
+        <span class="nhsuk-u-visually-hidden"> – </span>
+    </span>
+   Choose working group members</h1>
+=======
+<h1>Select working group members</h1>
 <div class="nhsuk-table__panel-with-heading-tab">
     <h2 class="nhsuk-table__heading-tab">Working group members</h2>
     <table role="presentation" class="nhsuk-table-responsive">
@@ -87,16 +94,20 @@
     @if (Model.UserRole > 1)
     {
         <label class="nhsuk-label nhsuk-u-margin-top-6" for="add-user-hint">
-            <h2>Add a user to the working group</h2>
+            <h2>Add a user as a:</h2>
         </label>
+        <ul class="nhsuk-list nhsuk-list--bullet">
+            <li>Contributor</li>
+            <li>Reviewer</li>
+        </ul>
         <div class="@(Model.Error ? "nhsuk-form-group nhsuk-form-group--error" : "nhsuk-form-group")">
             <div class=" sort-select-container">
                 <label class="nhsuk-label" for="UserEmail">
-                    User email address
+                    Email address
                 </label>
 
                 <div class="nhsuk-hint" id="add-user-hint">
-                    Provide the email address of a user with a registered DLS admin account to add as a Contributor (to help create your self-assessment) or Reviewer (to review your self-assessment and mark it as ready for publication).
+                    Provide the email address of a user with a registered DLS administration account.
                 </div>
                 @if (Model.Error)
                 {
@@ -115,7 +126,7 @@
             Add as reviewer
         </button>
     }
-    <vc:single-checkbox asp-for="@nameof(Model.CompetencyAssessmentTaskStatus)" label="Mark this task as complete" hint-text="You will still be able to make changes after marking this task as complete."></vc:single-checkbox>
+    <vc:single-checkbox asp-for="@nameof(Model.CompetencyAssessmentTaskStatus)" label="Mark this task as complete." hint-text="You will still be able to make changes after marking this task as complete."></vc:single-checkbox>
 
     @if (Model.UserRole > 1)
     {
@@ -123,13 +134,13 @@
             @if (Model.ActionName == "CollaboratorReview")
             {
                 <a class="nhsuk-button" asp-action="SendForReview" asp-route-actionName="CollaboratorReview" asp-route-competencyAssessmentId="@Model.CompetencyAssessmentID">
-                    Done
+                    Add
                 </a>
             }
             else
             {
                 <button class="nhsuk-button" asp-route-actionName="Summary" asp-route-competencyAssessmentId="@Model.CompetencyAssessmentID" asp-route-taskStatus="@Model.CompetencyAssessmentTaskStatus">
-                    Done
+                    Add
                 </button>
             }
         </div>

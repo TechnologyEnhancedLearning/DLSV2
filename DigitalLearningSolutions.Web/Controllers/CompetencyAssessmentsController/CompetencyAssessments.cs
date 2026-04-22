@@ -875,6 +875,7 @@
             var model = new WorkingGroupCollaboratorsViewModel()
             {
                 CompetencyAssessmentID = competencyAssessmentId,
+                CompetencyAssessmentName = competencyAssessmentBase.CompetencyAssessmentName,
                 Collaborators = collaborators,
                 CompetencyAssessmentTaskStatus = taskStatus.WorkingGroupTaskStatus,
                 UserEmail = null,
@@ -996,6 +997,7 @@
 
             data.CurrentStep = step;
             var model = new OptionsLabelsViewModel(data);
+            model.CompetencyAssessmentName = competencyAssessmentBase.CompetencyAssessmentName;
 
             return View("CompetencyAssessmentOptions", model);
         }
