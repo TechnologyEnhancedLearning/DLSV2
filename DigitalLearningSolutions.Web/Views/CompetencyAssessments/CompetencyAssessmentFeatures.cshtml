@@ -13,7 +13,8 @@
     <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
         <div class="nhsuk-width-container">
             <ol class="nhsuk-breadcrumb__list">
-                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewCompetencyAssessments" asp-route-tabname="Mine">self-assessments</a></li>
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Frameworks" asp-action="Index">Home</a></li>
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewCompetencyAssessments" asp-route-tabname="Mine">Self-assessments</a></li>
                 <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="CompetencyAssessmentName" asp-route-competencyAssessmentId="@Model.ID">Manage self-assessment</a></li>
                 <li class="nhsuk-breadcrumb__item">Self-assessment features</li>
             </ol>
@@ -26,7 +27,8 @@
         @Model.CompetencyAssessmentName
         <span class="nhsuk-u-visually-hidden"> – </span>
     </span>
-Create a new self-assessment</h1>
+    Create a new self-assessment
+</h1>
 <h2> Which features of the framework do you want to copy into the self-assessment?</h2>
 <p class="nhsuk-body-m">The framework itself will be used as the source for this self-assessment. </p>
 <p class="nhsuk-body-m">Select any additional features you want to copy into the self-assessment. You can edit all features later if needed.</p>
