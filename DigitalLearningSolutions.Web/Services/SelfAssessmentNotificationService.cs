@@ -42,7 +42,7 @@
             var builder = new BodyBuilder
             {
                 TextBody = $@"Dear colleague,
-                              You have been identified as a {collaboratorNotification.CompetencyAssessmentRole}, {collaboratorNotification.CompetencyAssessmentName} by {collaboratorNotification.InvitedByName} ({collaboratorNotification.InvitedByEmail}).
+                              You have been identified as a {collaboratorNotification.CompetencyAssessmentRole} for the competency assessment, {collaboratorNotification.CompetencyAssessmentName} by {collaboratorNotification.InvitedByName} ({collaboratorNotification.InvitedByEmail}).
                               To access the competency assessment, visit this url: {competencyAssessmentUrl}. You must be registered on the Digital Learning Solutions platform to view the self-assessment.",
                 HtmlBody = $@"<body style= 'font-family: Calibri; font-size: small;'>
                                 <p>Dear colleague,</p>
