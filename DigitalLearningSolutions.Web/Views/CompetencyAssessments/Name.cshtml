@@ -45,7 +45,12 @@ else
 }
 else
 {
-    <h1>Edit self-assessment name</h1>
+    <h1 class="app-page-heading">
+        <span class="nhsuk-caption-xl">
+            @Model.CompetencyAssessmentName
+            <span class="nhsuk-u-visually-hidden"> – </span>
+        </span>Edit self-assessment name
+    </h1>
 }
 <form method="post">
     <div class="nhsuk-u-reading-width">
