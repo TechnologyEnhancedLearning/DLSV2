@@ -638,7 +638,7 @@
             return RedirectToAction("ManageCompetencyAssessment", new { competencyAssessmentId = model.ID });
         }
         [HttpGet]
-        [Route("/CompetencyAssessments/{competencyAssessmentId}/Competencies/Optional/Manage")]
+        [Route("/CompetencyAssessments/{competencyAssessmentId}/{vocabularyPlural}/Optional/Manage")]
         public IActionResult ManageOptionalCompetencies(int competencyAssessmentId)
         {
             var adminId = GetAdminID();
@@ -656,7 +656,7 @@
             return View(model);
         }
         [HttpPost]
-        [Route("/CompetencyAssessments/{competencyAssessmentId}/Competencies/Optional/Manage")]
+        [Route("/CompetencyAssessments/{competencyAssessmentId}/{vocabularyPlural}/Optional/Manage")]
         public IActionResult ManageOptionalCompetencies(ViewSelectedCompetenciesFormData model)
         {
             if (model.TaskStatus == null)
@@ -667,7 +667,7 @@
             return RedirectToAction("ManageCompetencyAssessment", new { competencyAssessmentId = model.ID });
         }
         [HttpGet]
-        [Route("/CompetencyAssessments/{competencyAssessmentId}/Competencies/Optional/Select")]
+        [Route("/CompetencyAssessments/{competencyAssessmentId}/{vocabularyPlural}/Optional/Select")]
         public IActionResult SelectOptionalCompetencies(int competencyAssessmentId)
         {
             var adminId = GetAdminID();
@@ -685,7 +685,7 @@
             return View(model);
         }
         [HttpPost]
-        [Route("/CompetencyAssessments/{competencyAssessmentId}/Competencies/Optional/Select")]
+        [Route("/CompetencyAssessments/{competencyAssessmentId}/{vocabularyPlural}/Optional/Select")]
         public IActionResult SelectOptionalCompetencies(SelectOptionalCompetenciesFormData model)
         {
             if (!ModelState.IsValid)
@@ -704,7 +704,7 @@
             return RedirectToAction("ManageOptionalCompetencies", new { competencyAssessmentId = model.ID });
         }
         [HttpGet]
-        [Route("/CompetencyAssessments/{competencyAssessmentId}/Competencies/Optional/SetMinimum")]
+        [Route("/CompetencyAssessments/{competencyAssessmentId}/{vocabularyPlural}/Optional/SetMinimum")]
         public IActionResult SetMinimumOptionalCompetencies(int competencyAssessmentId)
         {
             var adminId = GetAdminID();
@@ -717,7 +717,7 @@
             return View("SetMinimumOptionalCompetencies", viewModel);
         }
         [HttpPost]
-        [Route("/CompetencyAssessments/{competencyAssessmentId}/Competencies/Optional/SetMinimum")]
+        [Route("/CompetencyAssessments/{competencyAssessmentId}/{vocabularyPlural}/Optional/SetMinimum")]
         public IActionResult SetMinimumOptionalCompetencies(SetMinimumOptionalCompetenciesFormData model)
         {
             if (!ModelState.IsValid)
@@ -732,7 +732,7 @@
             return RedirectToAction("ManageOptionalCompetencies", new { competencyAssessmentId = model.ID });
         }
         [HttpGet]
-        [Route("/CompetencyAssessments/{competencyAssessmentId}/Competencies/Optional/LearnerPrompt")]
+        [Route("/CompetencyAssessments/{competencyAssessmentId}/{vocabularyPlural}/Optional/LearnerPrompt")]
         public IActionResult SetOptionalCompetencyLearnerPrompt(int competencyAssessmentId)
         {
             var adminId = GetAdminID();
@@ -745,7 +745,7 @@
             return View("SetOptionalCompetencyLearnerPrompt", viewModel);
         }
         [HttpPost]
-        [Route("/CompetencyAssessments/{competencyAssessmentId}/Competencies/Optional/LearnerPrompt")]
+        [Route("/CompetencyAssessments/{competencyAssessmentId}/{vocabularyPlural}/Optional/LearnerPrompt")]
         public IActionResult SetOptionalCompetencyLearnerPrompt(SetOptionalCompetencyLearnerPromptFormData model)
         {
             if (!ModelState.IsValid)

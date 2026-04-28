@@ -25,5 +25,17 @@
         public string VocabularySingular { get; set; }
         public string VocabularyPlural { get; set; }
         public IEnumerable<IGrouping<string, Competency>>? CompetencyGroups { get; set; }
+        public string GetGroupLabel(string? key)
+        {
+            if (string.IsNullOrWhiteSpace(key)) return "";
+
+            if (string.IsNullOrWhiteSpace(VocabularyPlural))
+                return key;
+            var keyLower = key.ToLower();
+            var vocab = VocabularyPlural.ToLower();
+            if (keyLower.Contains(vocab) || keyLower.Contains("proficiencies"))
+                return key;
+            return $"{key} {vocab}";
+        }
     }
 }
