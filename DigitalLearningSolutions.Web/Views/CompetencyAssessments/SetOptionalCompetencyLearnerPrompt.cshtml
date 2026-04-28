@@ -16,7 +16,7 @@
             <ol class="nhsuk-breadcrumb__list">
                 <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewCompetencyAssessments" asp-route-tabname="Mine">Self-assessments</a></li>
                 <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.ID">Manage self-assessment</a></li>
-                <li class="nhsuk-breadcrumb__item">Optional Competencies</li>
+                <li class="nhsuk-breadcrumb__item">Optional @Model.VocabularyPlural.ToLower()</li>
             </ol>
             <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.ID">Back to manage self-assessment</a></p>
         </div>

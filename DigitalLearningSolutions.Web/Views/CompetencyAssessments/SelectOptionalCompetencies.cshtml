@@ -15,7 +15,7 @@
             <ol class="nhsuk-breadcrumb__list">
                 <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewCompetencyAssessments" asp-route-tabname="Mine">Self-assessments</a></li>
                 <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.ID">Manage self-assessment</a></li>
-                <li class="nhsuk-breadcrumb__item">Optional Competencies</li>
+                <li class="nhsuk-breadcrumb__item">Optional @Model.VocabularyPlural.ToLower()</li>
             </ol>
             <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.ID">Back to manage self-assessment</a></p>
         </div>
@@ -27,7 +27,7 @@
         @Model.CompetencyAssessmentName
         <span class="nhsuk-u-visually-hidden"> – </span>
     </span>
-    Select optional competencies
+    Select optional @Model.VocabularyPlural.ToLower()
 </h1>
 
 <p>
@@ -49,15 +49,11 @@
                         <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--m">
                         @competencyGroup.Key
                         </legend>
-
-                    <h2>
-                        @competencyGroup.Key
-                    </h2>
                     <div class="nhsuk-checkboxes">
                         <div class="nhsuk-checkboxes__item">
                             <input class="nhsuk-checkboxes__input" data-group="@competencyGroup.First().GroupId" id="competency-check-@competencyGroup.First().GroupId" name="GroupIds" checked="@competencyGroup.Any(x => x.GroupOptionalCompetencies)" type="checkbox" value="@competencyGroup.First().GroupId">
                             <label class="nhsuk-label nhsuk-checkboxes__label" for="competency-check-@competencyGroup.First().GroupId">
-                                <strong>@competencyGroup.Key @Model.VocabularyPlural.ToLower() optional as a group</strong>
+                                    <strong>@Model.GetGroupLabel(competencyGroup.Key) optional as a group</strong>
                             </label>
                         </div>
                         @foreach (var competency in competencyGroup)
