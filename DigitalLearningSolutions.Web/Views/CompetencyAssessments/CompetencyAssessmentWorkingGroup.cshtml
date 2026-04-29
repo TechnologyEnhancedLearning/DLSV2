@@ -33,68 +33,14 @@
         @Model.CompetencyAssessmentName
         <span class="nhsuk-u-visually-hidden"> – </span>
     </span>
-   Choose working group members</h1>
-=======
-<h1>Select working group members</h1>
-<div class="nhsuk-table__panel-with-heading-tab">
-    <h2 class="nhsuk-table__heading-tab">Working group members</h2>
-    <table role="presentation" class="nhsuk-table-responsive">
-        <thead role="rowgroup" class="nhsuk-table__head">
-            <tr role="row">
-                <th role="columnheader" class="" scope="col">
-                    User
-                </th>
-                <th role="columnheader" class="" scope="col">
-                    Role
-                </th>
-                @if (Model.Collaborators.Count() > 1 && Model.UserRole > 1)
-                {
-                    <th role="columnheader" class="" scope="col">
-                        Actions
-                    </th>
-                }
-            </tr>
-        </thead>
-        <tbody class="nhsuk-table__body">
-            @foreach (var collaborator in Model.Collaborators)
-            {
-                <tr role="row" class="nhsuk-table__row collaborator-row">
-                    <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
-                        <span class="nhsuk-table-responsive__heading">User </span>
-                        <span class="framework-collaborator-user">
-                            @collaborator.UserEmail @(collaborator.UserActive == true ? "" : "(inactive)")
-                        </span>
-                    </td>
-                    <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
-                        <span class="nhsuk-table-responsive__heading">Role </span>
-                        <span class="framework-collaborator-role">
-                            <partial name="Shared/_RoleTag" model="collaborator" />
-                        </span>
-                    </td>
-                    @if (Model.Collaborators.Count() > 1 && Model.UserRole > 1)
-                    {
-                        <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
-                            <span class="nhsuk-table-responsive__heading">Actions </span>
-                            @if (collaborator.CompetencyAssessmentRole != "Owner")
-                            {
-                                <a asp-action="RemoveCollaborator" asp-route-actionName="Collaborators" asp-route-competencyAssessmentId="@Model.CompetencyAssessmentID" asp-route-id="@collaborator.ID" )">
-                                    Remove
-                                </a>
-                            }
+    Select working group members</h1>
 
-                        </td>
-                    }
-                </tr>
-            }
-        </tbody>
-    </table>
-</div>
 <input type="hidden" asp-for="ActionName" />
 <form method="post">
     @if (Model.UserRole > 1)
     {
         <label class="nhsuk-label nhsuk-u-margin-top-6" for="add-user-hint">
-            <h2>Add a user as a:</h2>
+            <p>Add a user as a:</p>
         </label>
         <ul class="nhsuk-list nhsuk-list--bullet">
             <li>Contributor</li>
@@ -154,3 +100,58 @@
         </a>
     </div>
 </form>
+
+
+<div class="nhsuk-table__panel-with-heading-tab">
+    <h2 class="nhsuk-table__heading-tab">Working group members</h2>
+    <table role="presentation" class="nhsuk-table-responsive">
+        <thead role="rowgroup" class="nhsuk-table__head">
+            <tr role="row">
+                <th role="columnheader" class="" scope="col">
+                    User
+                </th>
+                <th role="columnheader" class="" scope="col">
+                    Role
+                </th>
+                @if (Model.Collaborators.Count() > 1 && Model.UserRole > 1)
+                {
+                    <th role="columnheader" class="" scope="col">
+                        Actions
+                    </th>
+                }
+            </tr>
+        </thead>
+        <tbody class="nhsuk-table__body">
+            @foreach (var collaborator in Model.Collaborators)
+            {
+                <tr role="row" class="nhsuk-table__row collaborator-row">
+                    <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
+                        <span class="nhsuk-table-responsive__heading">User </span>
+                        <span class="framework-collaborator-user">
+                            @collaborator.UserEmail @(collaborator.UserActive == true ? "" : "(inactive)")
+                        </span>
+                    </td>
+                    <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
+                        <span class="nhsuk-table-responsive__heading">Role </span>
+                        <span class="framework-collaborator-role">
+                            <partial name="Shared/_RoleTag" model="collaborator" />
+                        </span>
+                    </td>
+                    @if (Model.Collaborators.Count() > 1 && Model.UserRole > 1)
+                    {
+                        <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
+                            <span class="nhsuk-table-responsive__heading">Actions </span>
+                            @if (collaborator.CompetencyAssessmentRole != "Owner")
+                            {
+                                <a asp-action="RemoveCollaborator" asp-route-actionName="Collaborators" asp-route-competencyAssessmentId="@Model.CompetencyAssessmentID" asp-route-id="@collaborator.ID" )">
+                                    Remove
+                                </a>
+                            }
+
+                        </td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
