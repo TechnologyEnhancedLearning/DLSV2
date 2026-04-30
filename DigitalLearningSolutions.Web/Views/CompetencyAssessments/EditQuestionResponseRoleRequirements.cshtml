@@ -67,7 +67,7 @@
     </div>
 </dl>
 <form method="post" asp-action="EditQuestionResponseRoleRequirements">
-    <h2>Set role requirements for each possible response</h2>
+    <h2>Set role requirements for each response</h2>
     @foreach (var response in Model.GroupedCompetencyWithAssessmentRoleRequirements.First().Competencies.First().Questions.First().Responses)
     {
         <nhs-form-group>
@@ -76,7 +76,7 @@
                     @response.ResponseLabel
                 </legend>
                 <div id="response-@response.ResponseValue-hint" class="nhsuk-hint">
-                    Choose a role requirement status for learners choosing this response
+                    Select a role requirement status for learners choosing this response
                 </div>
 
                 <div class="nhsuk-radios" data-module="nhsuk-radios">
@@ -137,6 +137,7 @@
     }
     @if (Model.CountAssessmentQuestionInSelfAssessment > 1)
     {
+        <hr class="nhsuk-section-break nhsuk-section-break--m" />
         <fieldset class="nhsuk-fieldset">
             <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--m">
                 Apply to all?
@@ -147,6 +148,7 @@
     <input type="hidden" asp-for="@Model.Id" />
     <input type="hidden" asp-for="@Model.CompetencyId" />
     <input type="hidden" asp-for="@Model.AssessmentQuestionId" />
+        <hr class="nhsuk-section-break nhsuk-section-break--m" />
     <button class="nhsuk-button" type="submit">
         Save
     </button>

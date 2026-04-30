@@ -38,7 +38,7 @@
                 Do you want to enforce role requirements for the self-assessment?
             </legend>
             <div id="enforce-role-requirements-hint" class="nhsuk-hint">
-                When role requirements are enforced, learners can only request confirmation for self‑assessment results that meet the required competency criteria, even if no specific requirements are set.
+                    When requirements are set, they must be met by the learner before the self-assessment can be signed off.
             </div>
             <span nhs-validation-for="EnforceRoleRequirementsForSignOff"></span>
             <div class="nhsuk-radios nhsuk-radios--inline">
@@ -56,6 +56,7 @@
     <input type="hidden" asp-for="Id" />
     <input type="hidden" asp-for="IncludeRequirementsFilters" />
     <input type="hidden" asp-for="TaskStatus" />
+        <hr class="nhsuk-section-break nhsuk-section-break--m" />
     <button class="nhsuk-button nhsuk-button--primary" type="submit">Save</button>
 </form>
 <div class="nhsuk-back-link">
