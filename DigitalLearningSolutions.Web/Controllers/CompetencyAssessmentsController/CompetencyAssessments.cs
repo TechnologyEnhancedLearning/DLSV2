@@ -209,6 +209,7 @@
             {
                 competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
             }
+            if (competencyAssessmentBase.UserRole < 2) actionName = "Summary";
             var professionalGroups = competencyAssessmentService.GetNRPProfessionalGroups();
             var subGroups = competencyAssessmentService.GetNRPSubGroups(competencyAssessmentBase.NRPProfessionalGroupID);
             var roles = competencyAssessmentService.GetNRPRoles(competencyAssessmentBase.NRPSubGroupID);
@@ -878,7 +879,8 @@
                 CompetencyAssessmentTaskStatus = taskStatus.WorkingGroupTaskStatus,
                 UserEmail = null,
                 Error = false,
-                ActionName = actionName
+                ActionName = actionName,
+                UserRole = competencyAssessmentBase.UserRole
             };
             if (TempData["CompetencyAssessmentError"] != null)
             {
@@ -955,6 +957,7 @@
             data.ReviewerCommentsLabelText = competencyAssessmentBase.ReviewerCommentsLabel?.Trim();
             data.IsSupervisionSwitchedOn = competencyAssessmentBase.SupervisorSelfAssessmentReview && competencyAssessmentBase.SupervisorResultsReview;
             data.IsSignpostedLearning = competencyAssessmentService.HasCompetencyWithSignpostedLearning(competencyAssessmentId);
+            data.UserRole = competencyAssessmentBase.UserRole;
 
             var taskStatus = competencyAssessmentService.GetCompetencyAssessmentTaskStatus(competencyAssessmentId, null);
             data.SelfAssessmentOptionsTaskStatus = taskStatus.SelfAssessmentOptionsTaskStatus;
@@ -962,7 +965,7 @@
             SetOptionsLabelsData(data);
 
             var step = (int)OptionLabel.Declaration;
-            if (taskStatus.SelfAssessmentOptionsTaskStatus != null)
+            if (taskStatus.SelfAssessmentOptionsTaskStatus != null || competencyAssessmentBase.UserRole < 2)
                 step = (int)OptionLabel.Summary;
 
             ValidateStep(data, ref step);
@@ -979,6 +982,10 @@
             var result = ValidateCompetencyAssessmentAndRole(competencyAssessmentId, adminId, "competency assessment options");
             if (result.StatusCode != 200)
                 return result;
+
+            var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
+            if (competencyAssessmentBase.UserRole < 2)
+                step = (int)OptionLabel.Summary;
 
             var data = GetOptionsLabelslData();
 
@@ -1223,12 +1230,13 @@
                             competencyAssessmentBase.SignOffSupervisorStatement,
                             competencyAssessmentBase.SignOffRequestorStatement,
                             this.config.GetLearnerDefaultText(),
-                            this.config.GetSupervisorDefaultText());
+                            this.config.GetSupervisorDefaultText(),
+                            competencyAssessmentBase.UserRole);
 
             SetManagesupervisionData(model);
 
             var competencyAssessmentTaskStatus = competencyAssessmentService.GetCompetencyAssessmentTaskStatus(competencyAssessmentId, null);
-            if (competencyAssessmentTaskStatus.SupervisorRolesTaskStatus != null)
+            if (competencyAssessmentTaskStatus.SupervisorRolesTaskStatus != null || competencyAssessmentBase.UserRole < 2)
                 return RedirectToAction("ManageSupervisionSettings", "CompetencyAssessments",
                 new
                 {
@@ -1428,17 +1436,20 @@
             if (actionName == "SupervisorRoles")
             {
                 var model = new ManagesupervisionViewModel(competencyAssessmentId, baseData.CompetencyAssessmentName,
-               baseData.SupervisorResultsReview,
-               baseData.SupervisorSelfAssessmentReview,
-               baseData.SignOffSupervisorStatement,
-                baseData.SignOffRequestorStatement,
-                this.config.GetLearnerDefaultText(),
-                 this.config.GetSupervisorDefaultText());
+                                baseData.SupervisorResultsReview,
+                                baseData.SupervisorSelfAssessmentReview,
+                                baseData.SignOffSupervisorStatement,
+                                baseData.SignOffRequestorStatement,
+                                this.config.GetLearnerDefaultText(),
+                                this.config.GetSupervisorDefaultText(),
+                                baseData.UserRole);
+
                 model.TaskCompleteChecked = competencyAssessmentTaskStatus.SupervisorRolesTaskStatus;
                 SetManagesupervisionData(model);
                 return View(model);
             }
             var data = GetManagesupervisionData();
+            data.UserRole = baseData.UserRole;
             var dataModel = new ManagesupervisionViewModel(competencyAssessmentId, data, this.config.GetLearnerDefaultText(), this.config.GetSupervisorDefaultText());
             dataModel.TaskCompleteChecked = competencyAssessmentTaskStatus.SupervisorRolesTaskStatus;
             return View(dataModel);
@@ -1530,6 +1541,10 @@
         [Route("/CompetencyAssessments/{competencyAssessmentId}/PublishWithoutReview")]
         public IActionResult PublishWithoutReview(PublishWithoutReviewViewModel publish)
         {
+            if (!ModelState.IsValid)
+            {
+                return View(publish);
+            }
             var adminId = GetAdminID();
             var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(publish.CompetencyAssessmentID, adminId);
             var result = ValidateCompetencyAssessmentAndRole(publish.CompetencyAssessmentID, adminId, "Publish Without Review", competencyAssessmentBase);
@@ -1780,10 +1795,6 @@
                 {
                     logger.LogWarning($"Failed to load {pageName} page for competencyAssessmentId: {competencyAssessmentId} adminId: {adminId}");
                     return StatusCode(500);
-                }
-                if (competencyAssessmentBase.UserRole < 2)
-                {
-                    return StatusCode(403);
                 }
             }
             else
