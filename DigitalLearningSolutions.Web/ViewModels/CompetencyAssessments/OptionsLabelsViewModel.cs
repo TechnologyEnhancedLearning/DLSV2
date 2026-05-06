@@ -26,6 +26,7 @@
             SelfAssessmentOptionsTaskStatus = optionsLabels.SelfAssessmentOptionsTaskStatus;
             IsSupervisionSwitchedOn = optionsLabels.IsSupervisionSwitchedOn;
             IsSignpostedLearning = optionsLabels.IsSignpostedLearning;
+            UserRole = optionsLabels.UserRole;
         }
 
         public int FrameworkId { get; set; }
@@ -47,7 +48,8 @@
         public string? Vocabulary { get; set; }
         public bool? SelfAssessmentOptionsTaskStatus { get; set; }
         public bool Error { get; set; }
-        
+        public int UserRole { get; set; }
+
     }
     public enum OptionLabel
     {
