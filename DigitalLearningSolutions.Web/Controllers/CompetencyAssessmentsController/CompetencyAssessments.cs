@@ -875,6 +875,7 @@
             var model = new WorkingGroupCollaboratorsViewModel()
             {
                 CompetencyAssessmentID = competencyAssessmentId,
+                CompetencyAssessmentName = competencyAssessmentBase.CompetencyAssessmentName,
                 Collaborators = collaborators,
                 CompetencyAssessmentTaskStatus = taskStatus.WorkingGroupTaskStatus,
                 UserEmail = null,
@@ -996,6 +997,7 @@
 
             data.CurrentStep = step;
             var model = new OptionsLabelsViewModel(data);
+            model.CompetencyAssessmentName = competencyAssessmentBase.CompetencyAssessmentName;
 
             return View("CompetencyAssessmentOptions", model);
         }
@@ -1254,6 +1256,7 @@
             {
                 var data = GetManagesupervisionData();
                 data.Signoff.ActionName = actionName;
+                data.Signoff.CompetencyAssessmentName = data.CompetencyAssessmentName;
                 var models = new SupervisedSelfAssessmentSignoffViewModel(data.Signoff);
                 return View(models);
             }
@@ -1271,16 +1274,6 @@
         public IActionResult SupervisedSelfAssessmentSignoff(SupervisedSelfAssessmentSignoffViewModel supervisedSelf)
         {
             if (supervisedSelf == null) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
-            if (supervisedSelf.Signoff == null)
-            {
-                ModelState.AddModelError(nameof(supervisedSelf.Signoff), "Please select a Supervisor signs off self assessment option");
-                return View(supervisedSelf);
-            }
-            if (supervisedSelf.Confirm == null && supervisedSelf.SignoffText == "Yes")
-            {
-                ModelState.AddModelError(nameof(supervisedSelf.Confirm), "Please select a Supervisor or nominated supervisor confirm individual assessment option");
-                return View(supervisedSelf);
-            }
             if (supervisedSelf.SignoffText == "No")
             {
                 var model = new ManagesupervisionViewModel(supervisedSelf);
@@ -1325,6 +1318,7 @@
                 data.CompetencyAssessmentId = competencyAssessmentId;
                 data.SupervisorDeclaration.DefaultText = this.config.GetSupervisorDefaultText();
                 data.SupervisorDeclaration.ActionName = actionName;
+                data.SupervisorDeclaration.CompetencyAssessmentName = baseData.CompetencyAssessmentName;
                 var models = new SupervisorSignoffDeclarationViewModel(data.SupervisorDeclaration);
                 return View(models);
             }
@@ -1340,12 +1334,7 @@
         public IActionResult SupervisorSignoffDeclaration(SupervisorSignoffDeclarationViewModel viewModel)
         {
             if (viewModel == null) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
-            if (viewModel.DeclarationValue == null)
-            {
-                ModelState.AddModelError(nameof(viewModel.DeclarationValue), "Please select a declaration option");
-                return View(viewModel);
-            }
-            else if (viewModel.DeclarationValue == 1 && string.IsNullOrWhiteSpace(viewModel.CustomText))
+             if (viewModel.DeclarationValue == 1 && string.IsNullOrWhiteSpace(viewModel.CustomText))
             {
                 ModelState.AddModelError(nameof(viewModel.CustomText), "Please enter the custom declaration text");
                 return View(viewModel);
@@ -1384,6 +1373,7 @@
                 data.CompetencyAssessmentId = competencyAssessmentId;
                 data.LearnerDeclaration.DefaultText = this.config.GetLearnerDefaultText();
                 data.LearnerDeclaration.ActionName = actionName;
+                data.LearnerDeclaration.CompetencyAssessmentName = baseData.CompetencyAssessmentName;
                 var models = new LearnerSignoffDeclarationViewModel(data.LearnerDeclaration);
                 models.CompetencyAssessmentId = competencyAssessmentId;
                 return View(models);
@@ -1400,12 +1390,7 @@
         public IActionResult LearnerSignoffDeclaration(LearnerSignoffDeclarationViewModel viewModel)
         {
             if (viewModel == null) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
-            if (viewModel.DeclarationValue == null)
-            {
-                ModelState.AddModelError(nameof(viewModel.DeclarationValue), "Please select a declaration option");
-                return View(viewModel);
-            }
-            else if (viewModel.DeclarationValue == 1 && string.IsNullOrWhiteSpace(viewModel.CustomText))
+            if (viewModel.DeclarationValue == 1 && string.IsNullOrWhiteSpace(viewModel.CustomText))
             {
                 ModelState.AddModelError(nameof(viewModel.CustomText), "Please enter the custom declaration text");
                 return View(viewModel);

@@ -32,7 +32,7 @@
         public int FrameworkId { get; set; }
         public int CompetencyAssessmentID { get; set; }
         public int CurrentStep { get; set; } = 1;
-
+        public string CompetencyAssessmentName { get; set; } = string.Empty;
         public bool IncludeLearnerDeclarationPrompt { get; set; }
         public bool IncludesSignposting { get; set; }
         public bool LinearNavigation { get; set; }

@@ -153,7 +153,7 @@
 
         void RemoveEnrolment(int selfAssessmentId, int delegateUserId);
         (IEnumerable<SelfAssessmentDelegate>, int) GetSelfAssessmentDelegates(string searchString, int offSet, int itemsPerPage, string sortBy, string sortDirection,
-            int? selfAssessmentId, int centreId, bool? isDelegateActive, bool? removed, bool? submitted, bool? signedOff);
+            int? selfAssessmentId, int centreId, bool? isDelegateActive, bool? removed, bool? submitted, bool? signedOff, bool? started);
 
         IEnumerable<SelfAssessmentDelegate> GetDelegatesOnSelfAssessmentForExport(int? selfAssessmentId, int centreId);
 
@@ -269,7 +269,7 @@
         }
 
         public (IEnumerable<SelfAssessmentDelegate>, int) GetSelfAssessmentDelegates(string searchString, int offSet, int itemsPerPage, string sortBy, string sortDirection,
-            int? selfAssessmentId, int centreId, bool? isDelegateActive, bool? removed, bool? submitted, bool? signedOff)
+            int? selfAssessmentId, int centreId, bool? isDelegateActive, bool? removed, bool? submitted, bool? signedOff, bool? started)
         {
             searchString = searchString == null ? string.Empty : searchString.Trim();
 
@@ -326,6 +326,7 @@
                 AND ((@isDelegateActive IS NULL) OR (@isDelegateActive = 1 AND (da.Active = 1)) OR (@isDelegateActive = 0 AND (da.Active = 0)))
 				AND ((@removed IS NULL) OR (@removed = 1 AND (ca.RemovedDate IS NOT NULL)) OR (@removed = 0 AND (ca.RemovedDate IS NULL)))
                 AND ((@submitted IS NULL) OR (@submitted = 1 AND (ca.SubmittedDate IS NOT NULL)) OR (@submitted = 0 AND (ca.SubmittedDate IS NULL)))
+                AND ((@started IS NULL) OR (@started = 1 AND (ca.LaunchCount >= 1)) OR (@started = 0 AND (ca.LaunchCount = 0)))
                 AND COALESCE(ucd.Email, u.PrimaryEmail) LIKE '%_@_%' ";
 
             var groupBy = $@" GROUP BY 
@@ -393,7 +394,8 @@
                     isDelegateActive,
                     removed,
                     submitted,
-                    signedOff
+                    signedOff,
+                    started
                 },
                 commandTimeout: 3000
             );
@@ -415,7 +417,8 @@
                     isDelegateActive,
                     removed,
                     submitted,
-                    signedOff
+                    signedOff,
+                    started
                 },
                 commandTimeout: 3000
             );

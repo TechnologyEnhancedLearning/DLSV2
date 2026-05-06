@@ -29,6 +29,11 @@
             SelfAssessmentSignedOffFilterOptions.SignedOff,
             SelfAssessmentSignedOffFilterOptions.NotSignedOff,
         };
+        public static readonly IEnumerable<FilterOptionModel> LearnerActivityStatusOptions = new[]
+       {
+            SelfAssessmentLearnerActivityFilterOptions.Started,
+            SelfAssessmentLearnerActivityFilterOptions.NotStarted,
+        };
 
         public static List<FilterModel> GetAllSelfAssessmentDelegatesFilterViewModels()
         {
@@ -38,6 +43,7 @@
                 new FilterModel("RemovedStatus", "Removed status", RemovedStatusOptions, "status"),
                 new FilterModel("SubmittedStatus", "Submitted status", SubmittedStatusOptions,"status"),
                 new FilterModel("SignedOffStatus", "Signed off status", SignedOffStatusOptions, "status"),
+                new FilterModel("LearnerActivityStatus", "Learner activity status", LearnerActivityStatusOptions, "status"),
             };
             return filters;
         }

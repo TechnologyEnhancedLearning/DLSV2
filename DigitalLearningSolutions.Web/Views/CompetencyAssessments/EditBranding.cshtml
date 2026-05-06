@@ -1,9 +1,9 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
 @model EditBrandingViewModel
 @{
-    ViewData["Title"] = "Assessment Branding";
-    ViewData["Application"] = "Framework Service";
-    ViewData["HeaderPathName"] = "Framework Service";
+    ViewData["Title"] = "Assessment branding";
+    ViewData["Application"] = "Framework service";
+    ViewData["HeaderPathName"] = "Framework service";
 }
 
 @section NavMenuItems {
@@ -13,17 +13,23 @@
     <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
         <div class="nhsuk-width-container">
             <ol class="nhsuk-breadcrumb__list">
-                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewCompetencyAssessments" asp-route-tabname="Mine">Competency Assessments</a></li>
-                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.ID">Manage Competency Assessment</a></li>
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Frameworks" asp-action="Index">Home</a></li>
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewCompetencyAssessments" asp-route-tabname="Mine">Self-assessments</a></li>
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.ID">Manage self-assessment</a></li>
                 <li class="nhsuk-breadcrumb__item">Brand and category</li>
             </ol>
-            <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.ID">Back to competency assessment detail</a></p>
+            <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.ID">Back to self-assessment detail</a></p>
         </div>
     </nav>
 }
-
-<h1>Edit @Model.CompetencyAssessmentName provider and category</h1>
-<p>This will be visible to users when they browse assessments. It will help them to identify where the assessment is from and what it contains.</p>
+<h1 class="app-page-heading">
+    <span class="nhsuk-caption-xl">
+        @Model.CompetencyAssessmentName
+        <span class="nhsuk-u-visually-hidden"> – </span>
+    </span>
+    Provider and category
+</h1>
+<p>This will be visible to users when they browse the self-assessment. It will help them to identify where it is from and what it contains.</p>
 <form method="post">
     @if (!ViewData.ModelState.IsValid)
     {
