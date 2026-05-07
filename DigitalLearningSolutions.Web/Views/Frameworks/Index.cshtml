@@ -11,8 +11,16 @@
 @section NavMenuItems {
     <partial name="Shared/_NavMenuItems" />
 }
+@section NavBreadcrumbs {
+<nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+    <div class="nhsuk-width-container">
+        <ol class="nhsuk-breadcrumb__list">
+            <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Frameworks" asp-action="Index">Frameworks</a></li>
+        </ol>
+     </div>
+</nav>
+}
 <h1>Frameworks dashboard</h1>
-<p class="nhsuk-body-m">Welcome <span class="nhsuk-u-font-weight-bold">@Model.Username</span>. You are accessing as a <span class="nhsuk-u-font-weight-bold">@(Model.IsFrameworkDeveloper ? "framework developer" : Model.IsFrameworkContributor ? "framework contributor" : "framework viewer")</span><feature name="@(FeatureFlags.WorkforceManagerInterface)"> and a <span class="nhsuk-u-font-weight-bold">@(Model.IsWorkforceManager | Model.IsFrameworkDeveloper ? "self-assessment developer" : "self-assessment viewer")</span></feature>.</p>
 <h2>Your to do list</h2>
 @if (Model.DashboardToDoItems.Count() > 0)
 {
