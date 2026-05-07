@@ -6,7 +6,9 @@
     var errorHasOccurred = !ViewData.ModelState.IsValid && ViewData.ModelState.ContainsKey(nameof(Model.Confirm));
     ViewData["Title"] = "Self-assessments - make primary framework";
 }
-
+@section NavMenuItems {
+    <partial name="~/Views/Frameworks/Shared/_NavMenuItems.cshtml" />
+}
 <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-full">
         @if (errorHasOccurred)
