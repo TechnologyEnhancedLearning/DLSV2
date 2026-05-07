@@ -1065,6 +1065,7 @@
                         var errModel = new OptionsLabelsViewModel(data);
                         errModel.ReviewerCommentsLabel = model.ReviewerCommentsLabel;
                         errModel.ReviewerCommentsLabelText = model.ReviewerCommentsLabelText;
+                        errModel.CompetencyAssessmentName  = model.CompetencyAssessmentName;
                         errModel.Error = true;
                         return View("CompetencyAssessmentOptions", errModel);
                     }
@@ -1689,7 +1690,7 @@
                 return StatusCode(500);
             }
 
-            var model = new CompetencyAssessmentPreviewViewModel(competencyAssessmentId, centreId, centreName);
+            var model = new CompetencyAssessmentPreviewViewModel(competencyAssessmentId, competencyAssessmentBase.CompetencyAssessmentName, centreId, centreName);
 
             return View("CompetencyAssessmentPreviewConfirm", model);
         }
