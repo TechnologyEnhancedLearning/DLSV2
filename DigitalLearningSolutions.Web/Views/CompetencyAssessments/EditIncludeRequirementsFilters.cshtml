@@ -35,10 +35,10 @@
     <nhs-form-group nhs-validation-for="IncludeRequirementsFilters">
         <fieldset class="nhsuk-fieldset" aria-describedby="role-requirements-filters-hint">
             <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--m">
-                Do you want to include role requirements filters in the self-assessment?
+                    Do you want to enforce role requirements filters for the self-assessment?
             </legend>
             <div id="role-requirements-filters-hint" class="nhsuk-hint">
-                This will allow the learner to filter self-assessment competencies based on whether they are meeting the role requirements set.
+                    This will allow the learner to filter self-assessment @Model.VocabularyPlural.ToLower() based on whether they are meeting the role requirements set.
             </div>
             <span nhs-validation-for="IncludeRequirementsFilters"></span>
             <div class="nhsuk-radios nhsuk-radios--inline">
@@ -56,6 +56,7 @@
     <input type="hidden" asp-for="Id" />
     <input type="hidden" asp-for="EnforceRoleRequirementsForSignOff" />
     <input type="hidden" asp-for="TaskStatus" />
+    <hr class="nhsuk-section-break nhsuk-section-break--m" />
     <button class="nhsuk-button nhsuk-button--primary" type="submit">Save</button>
 </form>
 <div class="nhsuk-back-link">
