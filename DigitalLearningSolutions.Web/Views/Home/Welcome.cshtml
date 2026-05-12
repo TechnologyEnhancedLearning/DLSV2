@@ -29,17 +29,21 @@
                     <a class="nhsuk-button auth-button--blue" role="button" asp-controller="Login" asp-action="SharedAuth">
                         Log in with Learning hub
                     </a>
+                    <p class="nhsuk-u-font-weight-bold">Or</p>
                 </feature>
-                @* Hiding this for now as per TD-7112.
-                This would be completely removed once we have a confirmation. *@
-                    @* <p class="nhsuk-u-font-weight-bold">Or</p>
-                </feature>
-                <a class="nhsuk-button auth-button auth-button--left" role="button" asp-controller="Login" asp-action="Index">
-                    Log in
-                </a>
+
+                @if (Model.ShowDlsLoginButton)
+                {
+                    <a class="nhsuk-button auth-button auth-button--left"
+                       role="button"
+                       asp-controller="Login"
+                       asp-action="Index">
+                        Log in
+                    </a>
+                }
                 <a class="nhsuk-button nhsuk-button--secondary auth-button" role="button" asp-controller="Register" asp-action="Start">
                     Register
-                </a> *@
+                </a>
             }
         </div>
         <partial name="MiniHub/_ContentsList" model="@Model.MiniHubNavigationModel" />
