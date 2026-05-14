@@ -13,8 +13,8 @@
     const updateState = () => {
       const isChecked = groupToggle.checked;
 
-      childCheckboxes.forEach((cb) => {
-        cb.checked = isChecked;
+      childCheckboxes.forEach((_, index) => {
+        childCheckboxes[index].checked = isChecked;
       });
     };
 
@@ -25,4 +25,3 @@
     updateState();
   });
 });
-
