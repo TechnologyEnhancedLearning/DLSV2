@@ -7,5 +7,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
         
         public string? ManageOptionalCompetenciesPrompt { get; set; }
         public int ID { get; set; }
+        public string VocabularySingular { get; set; }
+        public string VocabularyPlural { get; set; }
     }
 }

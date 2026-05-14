@@ -22,8 +22,6 @@
         }
         public string CompetencyAssessmentName { get; set; }
         public int UserRole { get; set; }
-        public string VocabularySingular { get; set; }
-        public string VocabularyPlural { get; set; }
         public IEnumerable<IGrouping<string, Competency>>? CompetencyGroups { get; set; }
         public string GetGroupLabel(string? key)
         {

@@ -14,16 +14,7 @@
       const isChecked = groupToggle.checked;
 
       childCheckboxes.forEach((cb) => {
-        if (isChecked) {
-          // eslint-disable-next-line no-param-reassign
-          cb.checked = true; // force selected
-          // eslint-disable-next-line no-param-reassign
-          cb.disabled = true; // lock them
-        } else {
-          // eslint-disable-next-line no-param-reassign
-          cb.disabled = false; // re-enable when group is unchecked
-          // optional: leave cb.checked unchanged
-        }
+        cb.checked = isChecked;
       });
     };
 
@@ -34,3 +25,4 @@
     updateState();
   });
 });
+

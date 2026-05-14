@@ -1,7 +1,7 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
 @model SelectOptionalCompetenciesViewModel;
 @{
-    ViewData["Title"] = "Manage optional competencies";
+    ViewData["Title"] = $"Manage optional {@Model.VocabularyPlural.ToLower()}";
     ViewData["Application"] = "Framework service";
 }
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
@@ -106,6 +106,8 @@ Optional @Model.VocabularyPlural.ToLower() can be selected for inclusion in a se
         <input type="hidden" asp-for="ManageOptionalCompetenciesPrompt" />
         <input type="hidden" asp-for="SelectedCompetencyIds" />
         <input type="hidden" asp-for="GroupIds" />
+        <input type="hidden" asp-for="VocabularyPlural" />
+
         <vc:single-checkbox asp-for="@nameof(Model.TaskStatus)" label="Mark this task as complete" hint-text="You will still be able to make changes after marking this task as complete."></vc:single-checkbox>
     </nhs-form-group>
     @if (Model.UserRole > 1)
