@@ -48,9 +48,9 @@
         }
 
         [HttpGet]
-        public IActionResult Welcome()
+        public IActionResult Welcome(bool fallbackLogin = false)
         {
-            return View(GetLandingPageViewModel(0));
+            return View(GetLandingPageViewModel(0, fallbackLogin));
         }
 
         [HttpGet]
@@ -76,7 +76,7 @@
             return View(model);
         }
 
-        private LandingPageViewModel GetLandingPageViewModel(int sectionIndex)
+        private LandingPageViewModel GetLandingPageViewModel(int sectionIndex, bool fallbackLogin = false)
         {
             return new LandingPageViewModel
             {
@@ -84,6 +84,7 @@
                 UserIsLoggedIn = User.Identity.IsAuthenticated,
                 UserIsLoggedInCentre = User.GetCentreId() != null,
                 CurrentSiteBaseUrl = configuration.GetCurrentSystemBaseUrl(),
+                ShowDlsLoginButton = fallbackLogin,
             };
         }
     }

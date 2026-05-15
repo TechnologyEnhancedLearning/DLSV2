@@ -28,7 +28,7 @@
         <span class="nhsuk-u-visually-hidden"> – </span>
     </span>Publish self-assesment
 </h1>
-<p>Please ensure that all of the reviewers who are required to approve the self assesment are listed below.</p>
+<p>Please ensure that all of the reviewers who are required to approve the self-assesment are listed below.</p>
 <input type="hidden" asp-for="CompetencyAssessmentID" />
 <input type="hidden" asp-for="CompetencyAssessmentName" />
 @if (Model.SelfAssessmentReviews.Any())
@@ -103,9 +103,9 @@
                         Ready to publish
                     </span>
                 </h3>
-                <p>There are no outstanding reviewers whose approval is required before this self assesment can be published.</p>
-                <p>Once published, this self assesment and its @Model.VocabPlural().ToLower() can be discovered by Profile Managers and included in national and local job profiles.</p>
-                <p>Please ensure that all of the reviewers who are required to approve the self assesment are listed above before publishing.</p>
+                <p>There are no outstanding reviewers whose approval is required before this self-assesment can be published.</p>
+                <p>Once published, this self-assesment and its @Model.VocabPlural().ToLower() can be discovered by Profile Managers and included in national and local job profiles.</p>
+                <p>Please ensure that all of the reviewers who are required to approve the self-assesment are listed above before publishing.</p>
             </div>
         }
         else
@@ -116,14 +116,14 @@
                         Approvals required
                     </span>
                 </h3>
-                <p>There are outstanding reviewers whose approval is required before this self assesment can be published.</p>
+                <p>There are outstanding reviewers whose approval is required before this self-assesment can be published.</p>
             </div>
         }
     </div>
     <div class="nhsuk-grid-column-full">
         @if (Model.CanPublish)
         {
-            <a role="button" asp-action="PublishSelfAssesment" asp-route-competencyAssessmentID="@Model.CompetencyAssessmentID" class="nhsuk-button">Publish self assesment</a>
+            <a role="button" asp-action="PublishSelfAssesment" asp-route-competencyAssessmentID="@Model.CompetencyAssessmentID" class="nhsuk-button">Publish self-assesment</a>
         }
         <a role="button" asp-action="SendForReview" asp-route-competencyAssessmentID="@Model.CompetencyAssessmentID" class="nhsuk-button nhsuk-button--secondary">Invite more reviewers</a>
     </div>
