@@ -31,9 +31,16 @@
                     </a>
                     <p class="nhsuk-u-font-weight-bold">Or</p>
                 </feature>
-                <a class="nhsuk-button auth-button auth-button--left" role="button" asp-controller="Login" asp-action="Index">
-                    Log in
-                </a>
+
+                @if (Model.ShowDlsLoginButton)
+                {
+                    <a class="nhsuk-button auth-button auth-button--left"
+                       role="button"
+                       asp-controller="Login"
+                       asp-action="Index">
+                        Log in
+                    </a>
+                }
                 <a class="nhsuk-button nhsuk-button--secondary auth-button" role="button" asp-controller="Register" asp-action="Start">
                     Register
                 </a>
