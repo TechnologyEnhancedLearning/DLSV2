@@ -25,8 +25,8 @@
         void SendSignOffRequest(int candidateAssessmentSupervisorId, int selfAssessmentID, int delegateUserId, int centreId);
         void SendProfileAssessmentSignedOff(int supervisorDelegateId, int candidateAssessmentId, string? supervisorComments, bool signedOff, int adminId, int centreId);
         void SendSupervisorDelegateReminder(int supervisorDelegateId, int adminId, int centreId);
-        void SendReviewRequestForCompetencyAssessment(int id, int invitedByAdminId, bool required, bool reminder, int centreId);
-        void SendCompetencyAssessmentsReviewOutcomeNotification(int reviewId, int centreId);
+        void SendReviewRequestForSelfAssessment(int id, int invitedByAdminId, bool required, bool reminder, int centreId);
+        void SendSelfAssessmentsReviewOutcomeNotification(int reviewId, int centreId);
     }
 
     public class FrameworkNotificationService : IFrameworkNotificationService
@@ -142,7 +142,7 @@
             };
             emailService.SendEmail(new Email(emailSubjectLine, builder, collaboratorNotification.UserEmail, collaboratorNotification.InvitedByEmail));
         }
-        public void SendReviewRequestForCompetencyAssessment(int id, int invitedByAdminId, bool required, bool reminder, int centreId)
+        public void SendReviewRequestForSelfAssessment(int id, int invitedByAdminId, bool required, bool reminder, int centreId)
         {
             string centreName = GetCentreName(centreId);
             var collaboratorNotification = competencyAssessmentService.GetCollaboratorNotification(id, invitedByAdminId);
@@ -170,12 +170,12 @@
         }
         public string GetCompetencyAssessmentUrl(int selfAssessmentID, string actionName, int? id = null)
         {
-            var competencyAssessmentUrl = GetDLSUriBuilder();
+            var selfAssessmentUrl = GetDLSUriBuilder();
 
-            competencyAssessmentUrl.Path += id != null
-                        ? $"CompetencyAssessments/{selfAssessmentID}/{id}/{actionName}"
-                        : $"CompetencyAssessments/{selfAssessmentID}/{actionName}";
-            return competencyAssessmentUrl.Uri.ToString();
+            selfAssessmentUrl.Path += id != null
+                        ? $"Self-Assessment/{selfAssessmentID}/{id}/{actionName}"
+                        : $"Self-Assessment/{selfAssessmentID}/{actionName}";
+            return selfAssessmentUrl.Uri.ToString();
         }
         public string GetCurrentActivitiesUrl()
         {
@@ -234,7 +234,7 @@
             };
             emailService.SendEmail(new Email(emailSubjectLine, builder, outcomeNotification.OwnerEmail, outcomeNotification.UserEmail));
         }
-        public void SendCompetencyAssessmentsReviewOutcomeNotification(int reviewId, int centreId)
+        public void SendSelfAssessmentsReviewOutcomeNotification(int reviewId, int centreId)
         {
             string centreName = GetCentreName(centreId);
             var outcomeNotification = competencyAssessmentService.GetSelfAssessmentReviewNotification(reviewId);
@@ -243,25 +243,25 @@
                 throw new NotificationDataException($"No record found when trying to fetch review outcome Data. reviewId: {reviewId}");
             }
             var competencyAssessmentUrl = GetCompetencyAssessmentUrl(outcomeNotification.SelfAssessmentID, "PublishReview");
-            string emailSubjectLine = $"Competency Assessment Review Outcome - {(outcomeNotification.SignedOff ? "Approved" : "Rejected")} - Digital Learning Solutions";
-            string approvalStatus = outcomeNotification.ReviewerFirstName + (outcomeNotification.SignedOff ? " approved the competency assessment for publishing." : " did not approve the competency assessment for publishing.");
+            string emailSubjectLine = $"Self-assessment Review Outcome - {(outcomeNotification.SignedOff ? "Approved" : "Rejected")} - Digital Learning Solutions";
+            string approvalStatus = outcomeNotification.ReviewerFirstName + (outcomeNotification.SignedOff ? " approved the self-assessment for publishing." : " did not approve the self-assessment for publishing.");
             string commentsText = outcomeNotification.ReviewerFirstName + (outcomeNotification.Comment != null ? " left the following review comment: " + outcomeNotification.Comment : " did not leave a review comment.");
             string commentsHtml = "<p>" + outcomeNotification.ReviewerFirstName + (outcomeNotification.Comment != null ? " left the following review comment:</p><hr/><p>" + outcomeNotification.Comment + "</p><hr/>" : " did not leave a review comment.</p>");
             string reviewerFullName = $"{outcomeNotification.ReviewerFirstName} {outcomeNotification.ReviewerLastName} {(outcomeNotification.ReviewerActive == true ? "" : " (inactive)")}";
             var builder = new BodyBuilder
             {
                 TextBody = $@"Dear {outcomeNotification.OwnerFirstName},
-                              Your competency assessment, {outcomeNotification.SelfAssessmentName}, has been reviewed by {reviewerFullName} ({outcomeNotification.UserEmail}) ({centreName}).
+                              Your self-assessment, {outcomeNotification.SelfAssessmentName}, has been reviewed by {reviewerFullName} ({outcomeNotification.UserEmail}) ({centreName}).
                               {approvalStatus}
                               {commentsText}
-                              The full competency assessment review status, can be viewed by visiting: {competencyAssessmentUrl}. Once all of the required reviewers have approved the competency assessment, you may publish it. You will need to login to the Digital Learning Solutions platform to access the competency assessment.",
+                              The full self-assessment review status, can be viewed by visiting: {competencyAssessmentUrl}. Once all of the required reviewers have approved the self-assessment, you may publish it. You will need to login to the Digital Learning Solutions platform to access the self-assessment.",
                 HtmlBody = $@"<body style= 'font-family: Calibri; font-size: small;'>
                                 <p>Dear {outcomeNotification.OwnerFirstName},</p>
-                                <p>Your competency assessment, {outcomeNotification.SelfAssessmentName}, has been reviewed by <a href='mailto:{outcomeNotification.UserEmail}'>{reviewerFullName} ({centreName})</a>.</p>
+                                <p>Your self-assessment, {outcomeNotification.SelfAssessmentName}, has been reviewed by <a href='mailto:{outcomeNotification.UserEmail}'>{reviewerFullName} ({centreName})</a>.</p>
                                 <p>{approvalStatus}</p>
                                 {commentsHtml}
-                                <p><a href='{competencyAssessmentUrl}'>Click here</a> to view the full review status for the competency assessment. Once all of the required reviewers have approved the competency assessment, you may publish it.</p>
-                                <p>You will need to login to the Digital Learning Solutions platform to access the competency assessment.</p>
+                                <p><a href='{competencyAssessmentUrl}'>Click here</a> to view the full review status for the self-assessment. Once all of the required reviewers have approved the self-assessment, you may publish it.</p>
+                                <p>You will need to login to the Digital Learning Solutions platform to access the self-assessment.</p>
                             </body>",
             };
             emailService.SendEmail(new Email(emailSubjectLine, builder, outcomeNotification.OwnerEmail, outcomeNotification.UserEmail));
