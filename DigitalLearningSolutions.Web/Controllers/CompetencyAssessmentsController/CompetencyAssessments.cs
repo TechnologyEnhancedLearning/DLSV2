@@ -480,7 +480,7 @@
 
             var competencies = competencyAssessmentService.GetCompetenciesForCompetencyAssessment(competencyAssessmentId);
             var linkedFrameworks = competencyAssessmentService.GetLinkedFrameworksForCompetencyAssessment(competencyAssessmentId);
-            if (!competencies.Any())
+            if (!linkedFrameworks.Any())
             {
                 return RedirectToAction("AddCompetenciesSelectFramework", new { competencyAssessmentId });
             }
@@ -604,8 +604,6 @@
             competencyAssessmentService.RemoveCompetencyGroupFromAssessment(competencyAssessmentId, competencyGroupId);
             return RedirectToAction("ViewSelectedCompetencies", new { competencyAssessmentId });
         }
-
-
         public IActionResult MoveCompetencyInSelfAssessment(int competencyAssessmentId, int competencyId, string direction)
         {
             var adminId = GetAdminID();
@@ -632,7 +630,7 @@
         {
             if (model.TaskStatus == null)
             {
-                model.TaskStatus = false;
+             model.TaskStatus = false;
             }
             competencyAssessmentService.UpdateSelectCompetenciesTaskStatus(model.ID, model.TaskStatus.Value, null);
             return RedirectToAction("ManageCompetencyAssessment", new { competencyAssessmentId = model.ID });

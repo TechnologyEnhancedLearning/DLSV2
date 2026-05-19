@@ -1,7 +1,7 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
 @model AddCompetenciesViewModel;
 @{
-    ViewData["Title"] = "Add competencies to self-assessment";
+    ViewData["Title"] = $"Add {@Model.VocabularyPlural.ToLower()} to self-assessment";
     ViewData["Application"] = "Framework service";
 }
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
@@ -35,7 +35,6 @@
                     Add @Model.VocabularyPlural.ToLower() to assessment
                 </h1>
             </legend>
-
             @if (Model.GroupedCompetencies.Count() > 0)
             {
                 @foreach (var competencyGroup in Model.GroupedCompetencies)
