@@ -378,7 +378,8 @@
         public IActionResult SelectFrameworkSources(int competencyAssessmentId, string actionName)
         {
             var adminId = GetAdminID();
-            var frameworks = frameworkService.GetAllFrameworks(adminId);
+            var frameworks = frameworkService.GetAllFrameworks(adminId).Where(f => f.PublishStatusID == 3)
+                            .ToList();
             var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
             if (competencyAssessmentBase == null)
             {
@@ -402,7 +403,8 @@
             var competencyAssessmentId = model.CompetencyAssessmentId;
             if (!ModelState.IsValid)
             {
-                var frameworks = frameworkService.GetAllFrameworks(adminId);
+                var frameworks = frameworkService.GetAllFrameworks(adminId).Where(f => f.PublishStatusID == 3)
+                            .ToList();
                 var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
 
                 if (competencyAssessmentBase == null)
