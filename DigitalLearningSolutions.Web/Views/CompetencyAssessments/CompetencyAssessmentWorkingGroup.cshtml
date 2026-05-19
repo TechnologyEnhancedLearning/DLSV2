@@ -1,7 +1,7 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
 @model WorkingGroupCollaboratorsViewModel
 @{
-    ViewData["Title"] = "Assign working group";
+    ViewData["Title"] = "Select working group members";
     ViewData["Application"] = "Self-assessment service";
     ViewData["HeaderPathName"] = "Self-assessment service";
     string errMsg = TempData["CompetencyAssessmentError"]?.ToString();
@@ -33,9 +33,18 @@
         @Model.CompetencyAssessmentName
         <span class="nhsuk-u-visually-hidden"> – </span>
     </span>
-   Choose working group members</h1>
-=======
-<h1>Select working group members</h1>
+Select working group members</h1>
+<form method="post">
+    @if (Model.UserRole > 1)
+    {
+        <label class="nhsuk-label nhsuk-u-margin-top-6" for="add-user-hint">
+            <h2>Add a user as a:</h2>
+            <p>Add a user as a:</p>
+        </label>
+        <ul class="nhsuk-list nhsuk-list--bullet">
+            <li>Contributor</li>
+            <li>Reviewer</li>
+        </ul>
 <div class="nhsuk-table__panel-with-heading-tab">
     <h2 class="nhsuk-table__heading-tab">Working group members</h2>
     <table role="presentation" class="nhsuk-table-responsive">
@@ -90,16 +99,7 @@
     </table>
 </div>
 <input type="hidden" asp-for="ActionName" />
-<form method="post">
-    @if (Model.UserRole > 1)
-    {
-        <label class="nhsuk-label nhsuk-u-margin-top-6" for="add-user-hint">
-            <h2>Add a user as a:</h2>
-        </label>
-        <ul class="nhsuk-list nhsuk-list--bullet">
-            <li>Contributor</li>
-            <li>Reviewer</li>
-        </ul>
+
         <div class="@(Model.Error ? "nhsuk-form-group nhsuk-form-group--error" : "nhsuk-form-group")">
             <div class=" sort-select-container">
                 <label class="nhsuk-label" for="UserEmail">

@@ -48,11 +48,11 @@
             var builder = new BodyBuilder
             {
                 TextBody = $@"Dear colleague,
-                              You have been identified as a {collaboratorNotification.CompetencyAssessmentRole} for the self-assessment, {collaboratorNotification.CompetencyAssessmentName} by {collaboratorNotification.InvitedByName} ({collaboratorNotification.InvitedByEmail}).
-                              To access the self-assessment, visit this url: {competencyAssessmentUrl}. You must be registered on the Digital Learning Solutions platform to view the self-assessment.",
+                               You have been identified as a {collaboratorNotification.CompetencyAssessmentRole} for {collaboratorNotification.CompetencyAssessmentName} by {collaboratorNotification.InvitedByName} ({collaboratorNotification.InvitedByEmail}).
+                              To access the assessment, visit this url: {competencyAssessmentUrl}. You must be registered on the Digital Learning Solutions platform to view the self-assessment.",
                 HtmlBody = $@"<body style= 'font-family: Calibri; font-size: small;'>
                                 <p>Dear colleague,</p>
-                                <p>You have been identified as a {collaboratorNotification.CompetencyAssessmentRole} for the  self-assessment {collaboratorNotification.CompetencyAssessmentName}, by <a href='mailto:{collaboratorNotification.InvitedByEmail}'>{collaboratorNotification.InvitedByName}</a>.</p>
+                                  <p>You have been identified as a {collaboratorNotification.CompetencyAssessmentRole} for {collaboratorNotification.CompetencyAssessmentName}, by <a href='mailto:{collaboratorNotification.InvitedByEmail}'>{collaboratorNotification.InvitedByName}</a>.</p>
                                 <p><a href='{competencyAssessmentUrl}'>Use this link</a> to access the self-assessment. You must be registered on the Digital Learning Solutions platform to view the self-assessment.</p>
                             </body>",
             };

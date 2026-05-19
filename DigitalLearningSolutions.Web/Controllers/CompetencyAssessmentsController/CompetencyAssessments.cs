@@ -701,7 +701,7 @@
                 return View("SelectOptionalCompetencies", viewModel);
             }
             competencyAssessmentService.UpdateOptionalCompetenciesInAssessment(model.ID, model.GroupIds ?? [], model.SelectedCompetencyIds ?? []);
-            return RedirectToAction("ManageOptionalCompetencies", new { competencyAssessmentId = model.ID });
+            return RedirectToAction("ManageOptionalCompetencies", new { competencyAssessmentId = model.ID, vocabularyPlural = model.VocabularyPlural });
         }
         [HttpGet]
         [Route("/Self-Assessment/{competencyAssessmentId}/{vocabularyPlural}/Optional/SetMinimum")]
@@ -729,7 +729,7 @@
                 return View("SetMinimumOptionalCompetencies", viewModel);
             }
             competencyAssessmentService.UpdateMinimumOptionalCompetencies(model.ID, model.MinimumOptionalCompetencies ?? 0);
-            return RedirectToAction("ManageOptionalCompetencies", new { competencyAssessmentId = model.ID });
+            return RedirectToAction("ManageOptionalCompetencies", new { competencyAssessmentId = model.ID, vocabularyPlural = model.VocabularyPlural });
         }
         [HttpGet]
         [Route("/Self-Assessment/{competencyAssessmentId}/{vocabularyPlural}/Optional/LearnerPrompt")]
@@ -757,7 +757,7 @@
                 return View("SetOptionalCompetencyLearnerPrompt", viewModel);
             }
             competencyAssessmentService.UpdateManageOptionalCompetenciesPrompt(model.ID, model.ManageOptionalCompetenciesPrompt);
-            return RedirectToAction("ManageOptionalCompetencies", new { competencyAssessmentId = model.ID });
+            return RedirectToAction("ManageOptionalCompetencies", new { competencyAssessmentId = model.ID, vocabularyPlural = model.VocabularyPlural });
         }
 
         [Route("/Self-Assessment/Framework/{frameworkId}/{competencyAssessmentId}/Features")]
