@@ -378,7 +378,8 @@
         public IActionResult SelectFrameworkSources(int competencyAssessmentId, string actionName)
         {
             var adminId = GetAdminID();
-            var frameworks = frameworkService.GetAllFrameworks(adminId);
+            var frameworks = frameworkService.GetAllFrameworks(adminId).Where(f => f.PublishStatusID == 3)
+                            .ToList();
             var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
             if (competencyAssessmentBase == null)
             {
@@ -402,7 +403,8 @@
             var competencyAssessmentId = model.CompetencyAssessmentId;
             if (!ModelState.IsValid)
             {
-                var frameworks = frameworkService.GetAllFrameworks(adminId);
+                var frameworks = frameworkService.GetAllFrameworks(adminId).Where(f => f.PublishStatusID == 3)
+                            .ToList();
                 var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
 
                 if (competencyAssessmentBase == null)
@@ -480,7 +482,7 @@
 
             var competencies = competencyAssessmentService.GetCompetenciesForCompetencyAssessment(competencyAssessmentId);
             var linkedFrameworks = competencyAssessmentService.GetLinkedFrameworksForCompetencyAssessment(competencyAssessmentId);
-            if (!competencies.Any())
+            if (!linkedFrameworks.Any())
             {
                 return RedirectToAction("AddCompetenciesSelectFramework", new { competencyAssessmentId });
             }
@@ -604,8 +606,6 @@
             competencyAssessmentService.RemoveCompetencyGroupFromAssessment(competencyAssessmentId, competencyGroupId);
             return RedirectToAction("ViewSelectedCompetencies", new { competencyAssessmentId });
         }
-
-
         public IActionResult MoveCompetencyInSelfAssessment(int competencyAssessmentId, int competencyId, string direction)
         {
             var adminId = GetAdminID();
@@ -632,7 +632,7 @@
         {
             if (model.TaskStatus == null)
             {
-                model.TaskStatus = false;
+             model.TaskStatus = false;
             }
             competencyAssessmentService.UpdateSelectCompetenciesTaskStatus(model.ID, model.TaskStatus.Value, null);
             return RedirectToAction("ManageCompetencyAssessment", new { competencyAssessmentId = model.ID });
@@ -1501,7 +1501,7 @@
             {
                 var required = send.SignOffRequiredChecked.IndexOf(collaborator) != -1;
                 competencyAssessmentService.InsertSelfAssessmentReview(send.CompetencyAssessmentID, collaborator, required);
-                frameworkNotificationService.SendReviewRequestForCompetencyAssessment(collaborator, adminId, required, false, User.GetCentreIdKnownNotNull());
+                selfAssessmentNotificationService.SendReviewRequestForSelfAssessment(collaborator, adminId, required, false, User.GetCentreIdKnownNotNull());
             }
             competencyAssessmentService.UpdateCompetencyAssessmentPublishStatus(send.CompetencyAssessmentID, 2, adminId);
             var taskStatus = competencyAssessmentService.GetCompetencyAssessmentTaskStatus(send.CompetencyAssessmentID, null);
@@ -1588,7 +1588,7 @@
             }
             commentId = competencyAssessmentService.InsertComment(submit.CompetencyAssessmentID, adminId, submit.SelfAssessmentReview.Comment, null);
             competencyAssessmentService.UpdateSelfAssessmentReview(submit.CompetencyAssessmentID, submit.SelfAssessmentReview.ID, submit.SelfAssessmentReview.SignedOff, commentId);
-            frameworkNotificationService.SendCompetencyAssessmentsReviewOutcomeNotification(submit.SelfAssessmentReview.ID, centreId);
+            selfAssessmentNotificationService.SendSelfAssessmentsReviewOutcomeNotification(submit.SelfAssessmentReview.ID, centreId);
             return RedirectToAction("ManageCompetencyAssessment", new { competencyAssessmentId = submit.CompetencyAssessmentID });
         }
         [HttpGet]
@@ -1620,7 +1620,7 @@
         public IActionResult ResendRequest(int reviewId, int competencyAssessmentId, int competencyAssessmentCollaboratorId, bool required)
         {
             var adminId = GetAdminID();
-            frameworkNotificationService.SendReviewRequestForCompetencyAssessment(competencyAssessmentCollaboratorId, adminId, required, true, User.GetCentreIdKnownNotNull());
+            selfAssessmentNotificationService.SendReviewRequestForSelfAssessment(competencyAssessmentCollaboratorId, adminId, required, true, User.GetCentreIdKnownNotNull());
             competencyAssessmentService.UpdateReviewRequestedDate(reviewId);
             return RedirectToAction("PublishReview", new { competencyAssessmentId });
         }
@@ -1630,7 +1630,7 @@
             competencyAssessmentService.InsertCompetencySelfAssessmentReview(reviewId);
             var review = competencyAssessmentService.GetSelfAssessmentReviewNotification(reviewId);
             if (review == null) return StatusCode(404);
-            frameworkNotificationService.SendReviewRequestForCompetencyAssessment(review.SelfAssessmentCollaboratorID, adminId, review.SignOffRequired, false, User.GetCentreIdKnownNotNull());
+            selfAssessmentNotificationService.SendReviewRequestForSelfAssessment(review.SelfAssessmentCollaboratorID, adminId, review.SignOffRequired, false, User.GetCentreIdKnownNotNull());
             return RedirectToAction("PublishReview", new { competencyAssessmentId });
         }
         public IActionResult RemoveRequest(int competencyAssessmentId, int reviewId)

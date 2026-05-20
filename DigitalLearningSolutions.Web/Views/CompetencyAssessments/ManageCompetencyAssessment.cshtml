@@ -156,7 +156,7 @@
             else
             {
                 <div class="nhsuk-task-list__name-and-hint" aria-describedby="select-competencies-status">
-                    <a class="nhsuk-link nhsuk-task-list__link" asp-action="ViewSelectedCompetencies" asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">
+                    <a class="nhsuk-link nhsuk-task-list__link" asp-action="ViewSelectedCompetencies" asp-route-vocabularyPlural="@Model.VocabularyPlural" asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">
                         Select @Model.VocabularyPlural.ToLower() to assess
                     </a>
                 </div>

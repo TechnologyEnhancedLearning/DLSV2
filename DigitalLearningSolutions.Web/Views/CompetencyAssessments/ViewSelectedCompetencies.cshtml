@@ -1,7 +1,7 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
 @model ViewSelectedCompetenciesViewModel;
 @{
-    ViewData["Title"] = "Select competencies";
+    ViewData["Title"] = $"Select {@Model.VocabularyPlural.ToLower()} to assess";
     ViewData["Application"] = "Framework service";
     var groupCount = Model.Competencies.Where(c => c.GroupId != 0)
         .GroupBy(c => new { c.FrameworkId, c.FrameworkName, c.GroupId, c.GroupName })
@@ -32,7 +32,7 @@
         @Model.CompetencyAssessmentName
         <span class="nhsuk-u-visually-hidden"> – </span>
     </span>
-    @Model.VocabularyPlural to assess
+    Select @Model.VocabularyPlural.ToLower() to assess
 </h1>
 <h2>Linked frameworks</h2>
 <dl class="nhsuk-summary-list">
@@ -45,7 +45,7 @@
             @if (Model.UserRole > 1)
             {
                 <dd class="nhsuk-summary-list__actions">
-                    <a asp-action="AddCompetencies" asp-route-competencyAssessmentId="@Model.ID" asp-route-frameworkId="@primaryFramework.ID">
+                    <a asp-action="AddCompetencies" asp-route-vocabularyPlural="@Model.VocabularyPlural" asp-route-competencyAssessmentId="@Model.ID" asp-route-frameworkId="@primaryFramework.ID">
                         Add @Model.VocabularyPlural.ToLower()<span class="nhsuk-u-visually-hidden"> @Model.VocabularyPlural.ToLower()</span>
                     </a>
                 </dd>
@@ -64,7 +64,7 @@
             @if (Model.UserRole > 1)
             {
                 <dd class="nhsuk-summary-list__actions">
-                    <a asp-action="AddCompetencies" asp-route-competencyAssessmentId="@Model.ID" asp-route-frameworkId="@framework.ID">
+                    <a asp-action="AddCompetencies" asp-route-vocabularyPlural="@Model.VocabularyPlural" asp-route-competencyAssessmentId="@Model.ID" asp-route-frameworkId="@framework.ID">
                         Add @Model.VocabularyPlural.ToLower()<span class="nhsuk-u-visually-hidden"> @Model.VocabularyPlural.ToLower()</span>
                     </a>
                 </dd>
@@ -73,6 +73,9 @@
         i++;
     }
 </dl>
+<p> @Model.VocabularyPlural will appear here after you have added them from the frameworks linked to the self-assessment</p>
+<hr class="nhsuk-section-break nhsuk-section-break--m nhsuk-section-break--visible" />
+
 <h2>@Model.VocabularyPlural</h2>
 @{
     int groupNum = 1;
@@ -207,12 +210,9 @@
         }
     }
 }
-else
-{
-     <p> @Model.VocabularyPlural will appear here after you have added them from the frameworks linked to the self-assessment</p>
-    <hr class="nhsuk-section-break nhsuk-section-break--l nhsuk-section-break--visible" />
 
-}
+    
+
 
 <form method="post">
     <input name="ID" type="hidden" asp-for="ID" />
