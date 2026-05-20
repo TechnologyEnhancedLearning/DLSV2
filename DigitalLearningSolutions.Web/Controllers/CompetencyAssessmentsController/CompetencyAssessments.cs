@@ -1499,7 +1499,7 @@
             {
                 var required = send.SignOffRequiredChecked.IndexOf(collaborator) != -1;
                 competencyAssessmentService.InsertSelfAssessmentReview(send.CompetencyAssessmentID, collaborator, required);
-                frameworkNotificationService.SendReviewRequestForCompetencyAssessment(collaborator, adminId, required, false, User.GetCentreIdKnownNotNull());
+                selfAssessmentNotificationService.SendReviewRequestForSelfAssessment(collaborator, adminId, required, false, User.GetCentreIdKnownNotNull());
             }
             competencyAssessmentService.UpdateCompetencyAssessmentPublishStatus(send.CompetencyAssessmentID, 2, adminId);
             var taskStatus = competencyAssessmentService.GetCompetencyAssessmentTaskStatus(send.CompetencyAssessmentID, null);
@@ -1586,7 +1586,7 @@
             }
             commentId = competencyAssessmentService.InsertComment(submit.CompetencyAssessmentID, adminId, submit.SelfAssessmentReview.Comment, null);
             competencyAssessmentService.UpdateSelfAssessmentReview(submit.CompetencyAssessmentID, submit.SelfAssessmentReview.ID, submit.SelfAssessmentReview.SignedOff, commentId);
-            frameworkNotificationService.SendCompetencyAssessmentsReviewOutcomeNotification(submit.SelfAssessmentReview.ID, centreId);
+            selfAssessmentNotificationService.SendSelfAssessmentsReviewOutcomeNotification(submit.SelfAssessmentReview.ID, centreId);
             return RedirectToAction("ManageCompetencyAssessment", new { competencyAssessmentId = submit.CompetencyAssessmentID });
         }
         [HttpGet]
@@ -1618,7 +1618,7 @@
         public IActionResult ResendRequest(int reviewId, int competencyAssessmentId, int competencyAssessmentCollaboratorId, bool required)
         {
             var adminId = GetAdminID();
-            frameworkNotificationService.SendReviewRequestForCompetencyAssessment(competencyAssessmentCollaboratorId, adminId, required, true, User.GetCentreIdKnownNotNull());
+            selfAssessmentNotificationService.SendReviewRequestForSelfAssessment(competencyAssessmentCollaboratorId, adminId, required, true, User.GetCentreIdKnownNotNull());
             competencyAssessmentService.UpdateReviewRequestedDate(reviewId);
             return RedirectToAction("PublishReview", new { competencyAssessmentId });
         }
@@ -1628,7 +1628,7 @@
             competencyAssessmentService.InsertCompetencySelfAssessmentReview(reviewId);
             var review = competencyAssessmentService.GetSelfAssessmentReviewNotification(reviewId);
             if (review == null) return StatusCode(404);
-            frameworkNotificationService.SendReviewRequestForCompetencyAssessment(review.SelfAssessmentCollaboratorID, adminId, review.SignOffRequired, false, User.GetCentreIdKnownNotNull());
+            selfAssessmentNotificationService.SendReviewRequestForSelfAssessment(review.SelfAssessmentCollaboratorID, adminId, review.SignOffRequired, false, User.GetCentreIdKnownNotNull());
             return RedirectToAction("PublishReview", new { competencyAssessmentId });
         }
         public IActionResult RemoveRequest(int competencyAssessmentId, int reviewId)
