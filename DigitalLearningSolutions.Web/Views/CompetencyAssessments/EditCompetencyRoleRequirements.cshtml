@@ -69,7 +69,8 @@
                             AssessmentQuestion = competency.Questions.First(),
                             AssessmentID = Model.Id,
                             CompetencyID = competency.CompetencyID,
-                            AssessmentQuestionID = competency.Questions.First().AssessmentQuestionID
+                            AssessmentQuestionID = competency.Questions.First().AssessmentQuestionID,
+                            VocabularySingular = Model.VocabularySingular
                         }
                         )
         </tr>
@@ -83,7 +84,9 @@
                             AssessmentQuestion = question,
                             AssessmentID = Model.Id,
                             CompetencyID = competency.CompetencyID,
-                            AssessmentQuestionID = question.AssessmentQuestionID
+                            AssessmentQuestionID = question.AssessmentQuestionID,
+                            VocabularySingular = Model.VocabularySingular
+
                         }
                         )
         </tr>
