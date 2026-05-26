@@ -895,7 +895,8 @@
         public IActionResult AssessmentWorkingGroup(WorkingGroupCollaboratorsViewModel model, bool canModify, string actionName)
         {
             int? centreID = GetCentreId();
-            if (actionName == "Collaborators" || actionName == "CollaboratorReview")
+
+            if (actionName == "Collaborators")
             {
                 var collaboratorId = competencyAssessmentService.AddCollaboratorToCompetencyAssessment(model.CompetencyAssessmentID, model.UserEmail, canModify, centreID);
                 if (collaboratorId > 0)
@@ -928,6 +929,10 @@
                 }
                 return RedirectToAction("AssessmentWorkingGroup", "CompetencyAssessments", new { model.CompetencyAssessmentID, actionName = actionName });
 
+            }
+            else if(actionName == "CollaboratorReview")
+            {
+                return RedirectToAction("SendForReview", "CompetencyAssessments", new { model.CompetencyAssessmentID, actionName = actionName });
             }
             else
             {

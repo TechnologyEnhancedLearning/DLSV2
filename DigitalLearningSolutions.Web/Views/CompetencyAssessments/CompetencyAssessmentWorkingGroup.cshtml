@@ -37,18 +37,20 @@ Select working group members</h1>
 <form method="post">
     @if (Model.UserRole > 1)
     {
-        <label class="nhsuk-label nhsuk-u-margin-top-6" for="add-user-hint">
-            <h2>Add a user as a:</h2>
+        <label class="nhsuk-label nhsuk-u-margin-top-6">
             <p>Add a user as a:</p>
         </label>
         <ul class="nhsuk-list nhsuk-list--bullet">
             <li>Contributor</li>
             <li>Reviewer</li>
         </ul>
-<div class="nhsuk-table__panel-with-heading-tab">
-    <h2 class="nhsuk-table__heading-tab">Working group members</h2>
-    <table role="presentation" class="nhsuk-table-responsive">
-        <thead role="rowgroup" class="nhsuk-table__head">
+        <label class="nhsuk-label nhsuk-u-margin-top-6">
+        <p>to help create your competency assessment</p>
+        </label>
+        <div class="nhsuk-table__panel-with-heading-tab">
+         <h2 class="nhsuk-table__heading-tab">Working group members</h2>
+         <table role="presentation" class="nhsuk-table-responsive">
+            <thead role="rowgroup" class="nhsuk-table__head">
             <tr role="row">
                 <th role="columnheader" class="" scope="col">
                     User
@@ -98,8 +100,6 @@ Select working group members</h1>
         </tbody>
     </table>
 </div>
-<input type="hidden" asp-for="ActionName" />
-
         <div class="@(Model.Error ? "nhsuk-form-group nhsuk-form-group--error" : "nhsuk-form-group")">
             <div class=" sort-select-container">
                 <label class="nhsuk-label" for="UserEmail">
@@ -134,13 +134,13 @@ Select working group members</h1>
             @if (Model.ActionName == "CollaboratorReview")
             {
                 <a class="nhsuk-button" asp-action="SendForReview" asp-route-actionName="CollaboratorReview" asp-route-competencyAssessmentId="@Model.CompetencyAssessmentID">
-                    Add
+                    Save
                 </a>
             }
             else
             {
                 <button class="nhsuk-button" asp-route-actionName="Summary" asp-route-competencyAssessmentId="@Model.CompetencyAssessmentID" asp-route-taskStatus="@Model.CompetencyAssessmentTaskStatus">
-                    Add
+                    Save
                 </button>
             }
         </div>
