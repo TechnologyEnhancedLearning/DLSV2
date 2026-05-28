@@ -6,32 +6,27 @@
       group.querySelector<HTMLInputElement>('input[name="GroupIds"]');
 
     const childCheckboxes =
-      group.querySelectorAll<HTMLInputElement>('input[name="SelectedCompetencyIds"]');
+      group.querySelectorAll<HTMLInputElement>(
+        'input[name="SelectedCompetencyIds"]',
+      );
 
     if (!groupToggle) {
       return;
     }
 
-    const syncChildren = () => {
-      if (groupToggle.checked) {
-        childCheckboxes.forEach((checkbox) => {
-          checkbox.checked = true;
-        });
-      }
+    const setChildrenCheckedState = (checked: boolean) => {
+      childCheckboxes.forEach((checkboxElement) => {
+        const checkbox = checkboxElement;
+        checkbox.checked = checked;
+      });
     };
 
-    syncChildren();
+    if (groupToggle.checked) {
+      setChildrenCheckedState(true);
+    }
 
     groupToggle.addEventListener('change', () => {
-      if (groupToggle.checked) {
-        childCheckboxes.forEach((checkbox) => {
-          checkbox.checked = true;
-        });
-      } else {
-        childCheckboxes.forEach((checkbox) => {
-          checkbox.checked = false;
-        });
-      }
+      setChildrenCheckedState(groupToggle.checked);
     });
   });
 });
