@@ -3,6 +3,7 @@
 @{
     ViewData["Title"] = $"Add {@Model.VocabularyPlural.ToLower()} to self-assessment";
     ViewData["Application"] = "Framework service";
+    var errorHasOccurred = !ViewData.ModelState.IsValid;
 }
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
 @section NavMenuItems {
@@ -24,6 +25,10 @@
 }
 
 <form method="post">
+    @if (errorHasOccurred)
+    {
+        <vc:error-summary order-of-property-names="@(new[] { nameof(Model.SelectedCompetencyIds)})" />
+    }
     <nhs-form-group nhs-validation-for="SelectedCompetencyIds">
         <fieldset class="nhsuk-fieldset">
             <legend class="nhsuk-fieldset__legend">
