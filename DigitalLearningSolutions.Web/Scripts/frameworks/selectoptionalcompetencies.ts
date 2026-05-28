@@ -1,27 +1,27 @@
 ﻿document.addEventListener('DOMContentLoaded', () => {
+  // Explicitly tell TypeScript these are HTMLInputElements
   const groups = document.querySelectorAll<HTMLDivElement>('.nhsuk-checkboxes');
 
   groups.forEach((group) => {
+    // Cast the specific input types
     const groupToggle = group.querySelector<HTMLInputElement>('input[name="GroupIds"]');
+    const childCheckboxes = group.querySelectorAll<HTMLInputElement>('input[name="SelectedCompetencyIds"]');
+
     if (!groupToggle) return;
 
-    // All individual competency checkboxes in the group
-    const childCheckboxes = group.querySelectorAll<HTMLInputElement>(
-      'input[name="SelectedCompetencyIds"]',
-    );
-
-    const updateState = () => {
-      const isChecked = groupToggle.checked;
-
-      childCheckboxes.forEach((_, index) => {
-        childCheckboxes[index].checked = isChecked;
-      });
+    const syncChildren = () => {
+      if (groupToggle.checked) {
+        childCheckboxes.forEach(cb => cb.checked = true);
+      }
     };
 
-    // Run when the group checkbox changes
-    groupToggle.addEventListener('change', updateState);
+    syncChildren();
 
-    // Also run at page load in case some are pre-checked server-side
-    updateState();
+    groupToggle.addEventListener('change', () => {
+      syncChildren();
+      if (!groupToggle.checked) {
+        childCheckboxes.forEach(cb => cb.checked = false);
+      }
+    });
   });
 });
