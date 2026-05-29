@@ -4,6 +4,8 @@
     using DigitalLearningSolutions.Data.Models.Frameworks;
     using DigitalLearningSolutions.Web.Helpers;
     using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
+
     public class AddCompetenciesViewModel
     {
         public AddCompetenciesViewModel(CompetencyAssessmentBase competencyAssessmentBase, IEnumerable<FrameworkCompetencyGroup> groupedCompetencies, IEnumerable<FrameworkCompetency> ungroupedCompetencies, int frameworkId, string? frameworkName, int[] selectedFrameworkCompetencies)
@@ -26,6 +28,7 @@
         public string VocabularyPlural { get; set; }
         public IEnumerable<FrameworkCompetencyGroup> GroupedCompetencies { get; set; }
         public IEnumerable<FrameworkCompetency> UngroupedCompetencies { get; set; }
+        [Required(ErrorMessage = "Select at least one competency")]
         public int[] SelectedCompetencyIds { get; set; }
         public int FrameworkId { get; set; }
         public string? FrameworkName { get; set; }
