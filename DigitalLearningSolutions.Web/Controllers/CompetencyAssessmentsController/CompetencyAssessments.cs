@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.CompetencyAssessmentsController
 {
+    using System;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Extensions;
     using DigitalLearningSolutions.Data.Models.CompetencyAssessments;
@@ -1734,6 +1735,42 @@
 
             return RedirectToAction("SelfAssessment", "LearningPortal", new { selfAssessmentId = model.CompetencyAssessmentId });
         }
+
+        [HttpGet]
+        [Route("/Self-Assessment/{competencyAssessmentId}/Retire")]
+        public IActionResult RetireCompetencyAssessment(int competencyAssessmentId)
+        {
+            var adminId = GetAdminID();
+            var assessment = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
+            if (assessment == null) return StatusCode(404);
+
+            var model = new RetireCompetencyAssessmentViewModel(competencyAssessmentId, assessment);
+            return View("RetireCompetencyAssessment", model);
+        }
+
+        [HttpPost]
+        [Route("/Self-Assessment/{competencyAssessmentId}/Retire")]
+        public IActionResult RetireCompetencyAssessment(RetireCompetencyAssessmentViewModel model, int competencyAssessmentId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View("RetireCompetencyAssessment", model);
+            }
+
+            model.RetirementDate = new DateTime(model.Year!.Value, model.Month!.Value, model.Day!.Value);
+            
+
+            var adminId = GetAdminID();
+            competencyAssessmentService.RetireCompetencyAssessment(
+                model.CompetencyAssessmentId,
+                model.RetirementDate,
+                model.RetirementReason!,
+                adminId
+            );
+
+            return RedirectToAction("ManageCompetencyAssessment", new { competencyAssessmentId = model.CompetencyAssessmentId });
+        }
+
 
         private void SetManagesupervisionData(ManagesupervisionViewModel data)
         {

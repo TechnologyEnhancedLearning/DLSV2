@@ -55,9 +55,29 @@
             <dt class="nhsuk-summary-list__key">
                 Publish status
             </dt>
+            @{
+                var statusClass = Model.PublishStatusID switch
+                {
+                    1 => "nhsuk-tag--grey",
+                    2 => "nhsuk-tag--yellow",
+                    3 => "nhsuk-tag--green",
+                    4 => "nhsuk-tag--red",
+                    5 => "nhsuk-tag--red"
+                };
+
+                var statusText = Model.PublishStatusID switch
+                {
+                    1 => "Draft",
+                    2 => "In review",
+                    3 => "Published",
+                    4 => "Scheduled For Retirement",
+                    5 => "Retired"
+                };
+            }
+
             <dd class="nhsuk-summary-list__value">
-                <strong class="nhsuk-u-margin-right-3 nhsuk-tag @(Model.PublishStatusID == 1 ? "nhsuk-tag--grey" : Model.PublishStatusID == 2 ? "nhsuk-tag--yellow" : "nhsuk-tag--green")">
-                    @(Model.PublishStatusID == 1 ? "Draft" : Model.PublishStatusID == 2 ? "In review" : "Published")
+                <strong class="nhsuk-u-margin-right-3 nhsuk-tag @statusClass">
+                    @statusText
                 </strong>
             </dd>
             @if (Model.SelfAssessmentReviewID != null && Model.SelfAssessmentCommentID is null)
@@ -237,16 +257,16 @@
             <li class="nhsuk-task-list__item">
 
                 @if (Model.CompetencyAssessmentTaskStatus.IntroductoryTextTaskStatus != true ||
-                            Model.CompetencyAssessmentTaskStatus.BrandingTaskStatus != true ||
-                            Model.CompetencyAssessmentTaskStatus.VocabularyTaskStatus != true ||
-                            Model.CompetencyAssessmentTaskStatus.WorkingGroupTaskStatus != true ||
-                            Model.CompetencyAssessmentTaskStatus.NationalRoleProfileTaskStatus != true ||
-                            Model.CompetencyAssessmentTaskStatus.FrameworkLinksTaskStatus != true ||
-                            Model.CompetencyAssessmentTaskStatus.SelectCompetenciesTaskStatus != true ||
-                            Model.CompetencyAssessmentTaskStatus.OptionalCompetenciesTaskStatus != true ||
-                            Model.CompetencyAssessmentTaskStatus.RoleRequirementsTaskStatus != true ||
-                            Model.CompetencyAssessmentTaskStatus.SupervisorRolesTaskStatus != true ||
-                            Model.CompetencyAssessmentTaskStatus.SelfAssessmentOptionsTaskStatus != true)
+               Model.CompetencyAssessmentTaskStatus.BrandingTaskStatus != true ||
+               Model.CompetencyAssessmentTaskStatus.VocabularyTaskStatus != true ||
+               Model.CompetencyAssessmentTaskStatus.WorkingGroupTaskStatus != true ||
+               Model.CompetencyAssessmentTaskStatus.NationalRoleProfileTaskStatus != true ||
+               Model.CompetencyAssessmentTaskStatus.FrameworkLinksTaskStatus != true ||
+               Model.CompetencyAssessmentTaskStatus.SelectCompetenciesTaskStatus != true ||
+               Model.CompetencyAssessmentTaskStatus.OptionalCompetenciesTaskStatus != true ||
+               Model.CompetencyAssessmentTaskStatus.RoleRequirementsTaskStatus != true ||
+               Model.CompetencyAssessmentTaskStatus.SupervisorRolesTaskStatus != true ||
+               Model.CompetencyAssessmentTaskStatus.SelfAssessmentOptionsTaskStatus != true)
                 {
                     <div class="nhsuk-task-list__name-and-hint" aria-describedby="review-status">
                         <div>
@@ -280,4 +300,25 @@
             </li>
         }
     </ul>
+    @{
+        var hasRetirement = Model.RetirementDate != null;
+    }
+    <div class="nhsuk-u-margin-top-6">
+        @if (!hasRetirement && Model.UserRole > 1)
+        {
+            <form asp-action="RetireCompetencyAssessment" asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]" method="get">
+                <button class="nhsuk-button nhsuk-button--warning" data-module="nhsuk-button" type="submit">
+                    Retire competency assessment
+                </button>
+            </form>
+        }
+        else if (hasRetirement && Model.UserRole > 1)
+        {
+            <form asp-action="RetireCompetencyAssessment" asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]" method="get">
+                <button class="nhsuk-button nhsuk-button--warning" data-module="nhsuk-button" type="submit">
+                    Manage retirement
+                </button>
+            </form>
+        }
+    </div>
 </div>
