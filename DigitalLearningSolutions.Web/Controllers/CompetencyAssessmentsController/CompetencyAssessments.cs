@@ -562,7 +562,24 @@
         {
             if (!ModelState.IsValid)
             {
-                //reload model and view
+                var adminId = GetAdminID();
+                var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
+                var framework = frameworkService.GetBaseFrameworkByFrameworkId(frameworkId, adminId);
+                var groupedCompetencies = frameworkService.GetFrameworkCompetencyGroups(frameworkId, competencyAssessmentId);
+                var ungroupedCompetencies = frameworkService.GetFrameworkCompetenciesUngrouped(frameworkId, competencyAssessmentId);
+                var competencyIds = ungroupedCompetencies.Select(c => c.CompetencyID).ToArray();
+                var competencyFlags = frameworkService.GetSelectedCompetencyFlagsByCompetecyIds(competencyIds);
+                foreach (var competency in ungroupedCompetencies)
+                    competency.CompetencyFlags = competencyFlags.Where(f => f.CompetencyId == competency.CompetencyID);
+                foreach (var group in groupedCompetencies)
+                {
+                    competencyIds = group.FrameworkCompetencies.Select(c => c.CompetencyID).ToArray();
+                    competencyFlags = frameworkService.GetSelectedCompetencyFlagsByCompetecyIds(competencyIds);
+                    foreach (var competency in group.FrameworkCompetencies)
+                        competency.CompetencyFlags = competencyFlags.Where(f => f.CompetencyId == competency.CompetencyID);
+                }
+                var models = new AddCompetenciesViewModel(competencyAssessmentBase, groupedCompetencies, ungroupedCompetencies, frameworkId, framework.FrameworkName, model.SelectedCompetencyIds);
+                return View("AddCompetencies", models);
             }
             if (model.SelectedCompetencyIds != null)
             {

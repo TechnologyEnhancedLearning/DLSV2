@@ -123,7 +123,7 @@
         public string GetCompetencyAssessmentkUrl(int competencyAssessmentID, string tab)
         {
             var competencyAssessmentUrl = GetDLSUriBuilder();
-            competencyAssessmentUrl.Path += $"CompetencyAssessments/{competencyAssessmentID}/{tab}/";
+            competencyAssessmentUrl.Path += $"Self-assessment/{competencyAssessmentID}/{tab}/";
             return competencyAssessmentUrl.Uri.ToString();
         }
         public UriBuilder GetDLSUriBuilder()
