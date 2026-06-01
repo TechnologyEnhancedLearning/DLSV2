@@ -73,16 +73,19 @@
                 }
             </div>
         }
-        @if (Model.AdditionalFrameworks.Count() > 0)
+        @if (Model?.AdditionalFrameworks != null && Model.AdditionalFrameworks.Any())
         {
-            for (int i = 0; i < Model.AdditionalFrameworks.Count(); i++)
+            int i = 0;
+            foreach (var framework in Model.AdditionalFrameworks)
             {
+                if (framework == null) continue; // Safety check in case an item in the list is null
+
                 <div class="nhsuk-summary-list__row">
                     <dt class="nhsuk-summary-list__key">
                         Additional framework @(i + 1)
                     </dt>
                     <dd class="nhsuk-summary-list__value">
-                        @Model.AdditionalFrameworks.ElementAt(i).FrameworkName
+                        @framework.FrameworkName
                     </dd>
                     @if (Model.UserRole > 1)
                     {
@@ -90,28 +93,32 @@
                             <ul class="nhsuk-summary-list__actions-list nhsuk-summary-list__actions-list--inline left-align-actions">
                                 <li class="nhsuk-summary-list__actions-list-item">
                                     <a asp-action="RemoveFramework"
-                                       asp-route-frameworkId="@Model.AdditionalFrameworks.ElementAt(i).ID"
+                                       asp-route-frameworkId="@framework.ID"
                                        asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">
-                                        Remove <span class="nhsuk-u-visually-hidden">@Model.AdditionalFrameworks.ElementAt(i).FrameworkName</span>
+                                        Remove <span class="nhsuk-u-visually-hidden">@framework.FrameworkName</span>
                                     </a>
                                 </li>
                                 <li class="nhsuk-summary-list__actions-list-item">
-                                    <a asp-action="ConfirmMaKePrimaryFramework"
-                                       asp-route-frameworkId="@Model.AdditionalFrameworks.ElementAt(i).ID"
+                                    <a asp-action="ConfirmMakePrimaryFramework"
+                                       asp-route-frameworkId="@framework.ID"
                                        asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">
-                                        Make primary <span class="nhsuk-u-visually-hidden">@Model.AdditionalFrameworks.ElementAt(i).FrameworkName</span>
+                                        Make primary <span class="nhsuk-u-visually-hidden">@framework.FrameworkName</span>
                                     </a>
                                 </li>
-
                             </ul>
                         </dd>
                     }
                 </div>
+                i++;
             }
+        }
+        else
+        {
+            <p>No additional frameworks available.</p>
         }
     </dl>
 }
-@if (Model.ActionName == "AddFramework")
+@if (Model.ActionName == "AddFramework" || Model.ActionName == "ViewSelected")
 {
     <form method="post">
         <div class="nhsuk-form-group">

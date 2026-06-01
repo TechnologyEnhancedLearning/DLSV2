@@ -438,6 +438,11 @@
                 competencyAssessmentService.InsertSelfAssessmentFramework(adminId, competencyAssessmentId, model.FrameworkId.Value);
                 return RedirectToAction("SelectFrameworkSources", new { competencyAssessmentId, actionName = "Summary" });
             }
+            else if (actionName == "ViewSelected")
+            {
+                competencyAssessmentService.InsertSelfAssessmentFramework(adminId, competencyAssessmentId, model.FrameworkId.Value);
+                return RedirectToAction("ViewSelectedCompetencies", new { competencyAssessmentId });
+            }
             else
             {
                 competencyAssessmentService.UpdateFrameworkLinksTaskStatus(model.CompetencyAssessmentId, model.TaskStatus ?? false, null);
@@ -484,7 +489,7 @@
             var linkedFrameworks = competencyAssessmentService.GetLinkedFrameworksForCompetencyAssessment(competencyAssessmentId);
             if (!linkedFrameworks.Any())
             {
-                return RedirectToAction("AddCompetenciesSelectFramework", new { competencyAssessmentId });
+                return RedirectToAction("SelectFrameworkSources", new { competencyAssessmentId, actionName = "ViewSelected" });
             }
             var adminId = GetAdminID();
             var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
@@ -496,7 +501,8 @@
             return View(model);
         }
         [Route("/Self-Assessment/{competencyAssessmentId}/Competencies/Add/SelectFramework")]
-        public IActionResult AddCompetenciesSelectFramework(int competencyAssessmentId)
+        [Route("/Self-Assessment/{competencyAssessmentId}/{actionName}/Competencies/Add/SelectFramework")]
+        public IActionResult AddCompetenciesSelectFramework(int competencyAssessmentId, string? actionName)
         {
             var linkedFrameworks = competencyAssessmentService.GetLinkedFrameworksForCompetencyAssessment(competencyAssessmentId);
             if (!linkedFrameworks.Any())
@@ -513,6 +519,7 @@
         }
         [HttpPost]
         [Route("/Self-Assessment/{competencyAssessmentId}/Competencies/Add/SelectFramework")]
+        [Route("/Self-Assessment/{competencyAssessmentId}/{actionName}/Competencies/Add/SelectFramework")]
         public IActionResult AddCompetenciesSelectFramework(AddCompetenciesSelectFrameworkFormData formdata)
         {
             if (!ModelState.IsValid)
