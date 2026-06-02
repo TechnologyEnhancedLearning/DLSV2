@@ -28,7 +28,7 @@
         public string VocabularyPlural { get; set; }
         public IEnumerable<FrameworkCompetencyGroup> GroupedCompetencies { get; set; }
         public IEnumerable<FrameworkCompetency> UngroupedCompetencies { get; set; }
-        [Required(ErrorMessage = "Select at least one competency")]
+        [Required]
         public int[] SelectedCompetencyIds { get; set; }
         public int FrameworkId { get; set; }
         public string? FrameworkName { get; set; }
