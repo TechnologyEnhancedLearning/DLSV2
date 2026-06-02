@@ -99,11 +99,7 @@
                     ON FC.FrameworkID = F.ID
                 WHERE FC.CompetencyID = C.ID),
             'Capability') AS Vocabulary,
-            CASE
-              WHEN (SELECT COUNT(*) FROM SelfAssessmentSupervisorRoles WHERE SelfAssessmentID = SAS.SelfAssessmentID) > 0  
-                THEN 1
-                ELSE 0
-            END AS HasDelegateNominatedRoles,
+            CAST(1 AS BIT) AS HasDelegateNominatedRoles,
             SAS.Optional,
             C.AlwaysShowDescription,
             AQ.ID AS Id,

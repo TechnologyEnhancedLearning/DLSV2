@@ -927,27 +927,6 @@
                 sessionEnrolOnCompetencyAssessment.CompleteByDate = null;
             }
 
-            var supervisorRoles =
-                supervisorService.GetSupervisorRolesBySelfAssessmentIdForSupervisor(sessionEnrolOnCompetencyAssessment.SelfAssessmentID.Value);
-            if (supervisorRoles.Count() > 1)
-            {
-                TempData["navigatedFrom"] = "EnrolDelegateSupervisorRole";
-                return RedirectToAction(
-                    "EnrolDelegateSupervisorRole",
-                    "Supervisor",
-                    new { supervisorDelegateId = supervisorDelegateId }
-                );
-            }
-            else if (supervisorRoles.Count() == 1)
-            {
-                sessionEnrolOnCompetencyAssessment.SelfAssessmentSupervisorRoleId = supervisorRoles.First().ID;
-                multiPageFormService.SetMultiPageFormData(
-                    sessionEnrolOnCompetencyAssessment,
-                    MultiPageFormDataFeature.EnrolDelegateOnProfileAssessment,
-                    TempData
-                );
-            }
-
             return RedirectToAction(
                 "EnrolDelegateSummary",
                 "Supervisor",
@@ -963,27 +942,7 @@
         )]
         public IActionResult EnrolDelegateSupervisorRole(int supervisorDelegateId)
         {
-            var sessionEnrolOnCompetencyAssessment = multiPageFormService.GetMultiPageFormData<SessionEnrolOnCompetencyAssessment>(MultiPageFormDataFeature.EnrolDelegateOnProfileAssessment, TempData).GetAwaiter().GetResult();
-            multiPageFormService.SetMultiPageFormData(
-                sessionEnrolOnCompetencyAssessment,
-                MultiPageFormDataFeature.EnrolDelegateOnProfileAssessment,
-                TempData
-            );
-            var supervisorDelegate =
-                supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminId(), 0);
-            var competencyAssessment = supervisorService.GetCompetencyAssessmentById((int)sessionEnrolOnCompetencyAssessment.SelfAssessmentID);
-            var supervisorRoles = supervisorService.GetSupervisorRolesForSelfAssessment(sessionEnrolOnCompetencyAssessment.SelfAssessmentID.Value);
-            var model = new EnrolDelegateSupervisorRoleViewModel()
-            {
-                SupervisorDelegateDetail = supervisorDelegate,
-                CompetencyAssessment = competencyAssessment,
-                SelfAssessmentSupervisorRoleId = sessionEnrolOnCompetencyAssessment.SelfAssessmentSupervisorRoleId,
-                SelfAssessmentSupervisorRoles = supervisorRoles
-            };
-            ViewBag.completeByDate = TempData["completeByDate"];
-            ViewBag.completeByMonth = TempData["completeByMonth"];
-            ViewBag.completeByYear = TempData["completeByYear"];
-            return View("EnrolDelegateSupervisorRole", model);
+            return RedirectToAction("EnrolDelegateSummary", "Supervisor", new { supervisorDelegateId });
         }
 
         [HttpPost]
@@ -994,27 +953,6 @@
             int selfAssessmentSupervisorRoleId
         )
         {
-            var sessionEnrolOnCompetencyAssessment = multiPageFormService.GetMultiPageFormData<SessionEnrolOnCompetencyAssessment>(MultiPageFormDataFeature.EnrolDelegateOnProfileAssessment, TempData).GetAwaiter().GetResult();
-            if (!ModelState.IsValid)
-            {
-                ModelState.ClearErrorsForAllFieldsExcept("SelfAssessmentSupervisorRoleId");
-                var supervisorDelegate =
-                supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminId(), 0);
-                var competencyAssessment = supervisorService.GetCompetencyAssessmentById((int)sessionEnrolOnCompetencyAssessment.SelfAssessmentID);
-                var supervisorRoles =
-                    supervisorService.GetSupervisorRolesForSelfAssessment(sessionEnrolOnCompetencyAssessment.SelfAssessmentID.Value);
-                model.SupervisorDelegateDetail = supervisorDelegate;
-                model.CompetencyAssessment = competencyAssessment;
-                model.SelfAssessmentSupervisorRoles = supervisorRoles;
-                return View("EnrolDelegateSupervisorRole", model);
-            }
-
-            sessionEnrolOnCompetencyAssessment.SelfAssessmentSupervisorRoleId = selfAssessmentSupervisorRoleId;
-            multiPageFormService.SetMultiPageFormData(
-                sessionEnrolOnCompetencyAssessment,
-                MultiPageFormDataFeature.EnrolDelegateOnProfileAssessment,
-                TempData
-            );
             return RedirectToAction(
                 "EnrolDelegateSummary",
                 "Supervisor",
@@ -1046,25 +984,12 @@
             var supervisorDelegate =
                 supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminId(), 0);
             var competencyAssessment = supervisorService.GetCompetencyAssessmentById((int)sessionEnrolOnCompetencyAssessment.SelfAssessmentID);
-            var supervisorRoleName = (sessionEnrolOnCompetencyAssessment.SelfAssessmentSupervisorRoleId == null
-                ? "Supervisor"
-                : supervisorService
-                    .GetSupervisorRoleById(sessionEnrolOnCompetencyAssessment.SelfAssessmentSupervisorRoleId.Value).RoleName);
-            var supervisorRoleCount = (sessionEnrolOnCompetencyAssessment.SelfAssessmentSupervisorRoleId == null
-                ? 0
-                : supervisorService
-                    .GetSupervisorRolesForSelfAssessment(sessionEnrolOnCompetencyAssessment.SelfAssessmentID.Value).Count());
-            var allowSupervisorRoleSelection = (sessionEnrolOnCompetencyAssessment.SelfAssessmentSupervisorRoleId == null
-                ? false : supervisorService
-                    .GetSupervisorRolesForSelfAssessment(sessionEnrolOnCompetencyAssessment.SelfAssessmentID.Value).FirstOrDefault().AllowSupervisorRoleSelection);
             var model = new EnrolDelegateSummaryViewModel()
             {
                 SupervisorDelegateDetail = supervisorDelegate,
                 CompetencyAssessment = competencyAssessment,
-                SupervisorRoleName = supervisorRoleName,
+                SupervisorRoleName = GetCurrentAdminSupervisorRoleName(),
                 CompleteByDate = sessionEnrolOnCompetencyAssessment.CompleteByDate,
-                SupervisorRoleCount = supervisorRoleCount,
-                AllowSupervisorRoleSelection = allowSupervisorRoleSelection
             };
             ViewBag.completeByDate = TempData["completeByDate"];
             ViewBag.completeByMonth = TempData["completeByMonth"];
@@ -1079,14 +1004,12 @@
             var sessionEnrolOnCompetencyAssessment = multiPageFormService.GetMultiPageFormData<SessionEnrolOnCompetencyAssessment>(MultiPageFormDataFeature.EnrolDelegateOnProfileAssessment, TempData).GetAwaiter().GetResult();
             var selfAssessmentId = sessionEnrolOnCompetencyAssessment.SelfAssessmentID;
             var completeByDate = sessionEnrolOnCompetencyAssessment.CompleteByDate;
-            var selfAssessmentSupervisorRoleId = sessionEnrolOnCompetencyAssessment.SelfAssessmentSupervisorRoleId;
             var loggedInUserId = User.GetUserId();
             var candidateAssessmentId = supervisorService.EnrolDelegateOnAssessment(
                 delegateUserId,
                 supervisorDelegateId,
                 selfAssessmentId.Value,
                 completeByDate,
-                selfAssessmentSupervisorRoleId,
                 GetAdminId(),
                 GetCentreId(),
                 (loggedInUserId == delegateUserId)
@@ -1112,55 +1035,34 @@
             var supervisorDelegate =
                 supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminId(), 0);
             var competencyAssessment = supervisorService.GetCompetencyAssessmentById(selfAssessmentId);
-            var supervisorRoles = supervisorService.GetSupervisorRolesBySelfAssessmentIdForSupervisor(selfAssessmentId);
 
-            if (supervisorRoles.Any() && supervisorRoles.Count() > 1)
+            var candidateAssessmentId = selfAssessmentService.GetCandidateAssessments(delegateUserId, selfAssessmentId).SingleOrDefault()?.Id;
+            if (candidateAssessmentId != null)
             {
-                var model = new EnrolDelegateSupervisorRoleViewModel()
+                var candidateAssessmentSupervisor = supervisorService.GetCandidateAssessmentSupervisor((int)candidateAssessmentId, supervisorDelegateId);
+                if (candidateAssessmentSupervisor != null && candidateAssessmentSupervisor.Removed == null)
                 {
-                    SupervisorDelegateDetail = supervisorDelegate,
-                    CompetencyAssessment = competencyAssessment,
-                    SelfAssessmentSupervisorRoleId = null,
-                    SelfAssessmentSupervisorRoles = supervisorRoles
-                };
-                return View("SelectDelegateSupervisorRole", model);
-            }
-            else
-            {
-
-                var candidateAssessmentId = selfAssessmentService.GetCandidateAssessments(delegateUserId, selfAssessmentId).SingleOrDefault()?.Id;
-                var roleId = supervisorRoles.Where(x => x.SelfAssessmentID == selfAssessmentId).Select(x => x.ID).FirstOrDefault();
-                if (candidateAssessmentId != null)
-                {
-                    var candidateAssessmentSupervisor = supervisorService.GetCandidateAssessmentSupervisor((int)candidateAssessmentId, supervisorDelegateId, roleId);
-                    if (candidateAssessmentSupervisor != null && candidateAssessmentSupervisor.Removed == null)
-                    {
-                        return RedirectToAction("StatusCode", "LearningSolutions", new { code = 410 });
-                    }
+                    return RedirectToAction("StatusCode", "LearningSolutions", new { code = 410 });
                 }
-
-                var sessionEnrolOnCompetencyAssessment = new SessionEnrolOnCompetencyAssessment()
-                {
-                    SelfAssessmentID = supervisorRoles.FirstOrDefault() != null ? supervisorRoles.FirstOrDefault().SelfAssessmentID : selfAssessmentId,
-                    SelfAssessmentSupervisorRoleId = supervisorRoles.FirstOrDefault() != null ? supervisorRoles.FirstOrDefault().ID : 0
-                };
-
-                multiPageFormService.SetMultiPageFormData(
-                    sessionEnrolOnCompetencyAssessment,
-                    MultiPageFormDataFeature.EnrolDelegateOnProfileAssessment,
-                    TempData
-                );
-                var supervisorRoleName = supervisorRoles.FirstOrDefault() != null ? supervisorRoles.FirstOrDefault().RoleName : "";
-                var model = new EnrolDelegateSummaryViewModel
-                {
-                    CompetencyAssessment = competencyAssessment,
-                    SupervisorDelegateDetail = supervisorDelegate,
-                    SupervisorRoleName = supervisorRoleName
-                };
-                return View("SelectDelegateSupervisorRoleSummary", new Tuple<EnrolDelegateSummaryViewModel, int?>(model, sessionEnrolOnCompetencyAssessment.SelfAssessmentSupervisorRoleId));
             }
 
+            var sessionEnrolOnCompetencyAssessment = new SessionEnrolOnCompetencyAssessment()
+            {
+                SelfAssessmentID = selfAssessmentId,
+            };
 
+            multiPageFormService.SetMultiPageFormData(
+                sessionEnrolOnCompetencyAssessment,
+                MultiPageFormDataFeature.EnrolDelegateOnProfileAssessment,
+                TempData
+            );
+            var model = new EnrolDelegateSummaryViewModel
+            {
+                CompetencyAssessment = competencyAssessment,
+                SupervisorDelegateDetail = supervisorDelegate,
+                SupervisorRoleName = GetCurrentAdminSupervisorRoleName()
+            };
+            return View("SelectDelegateSupervisorRoleSummary", new Tuple<EnrolDelegateSummaryViewModel, int?>(model, null));
 
         }
 
@@ -1170,67 +1072,29 @@
             var competencyAssessment = supervisorService.GetCompetencyAssessmentById(selfAssessmentId);
             var supervisorDelegate =
                 supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminId(), 0);
-            if (supervisorRole.SelfAssessmentSupervisorRoleId == null)
+            var model = new EnrolDelegateSummaryViewModel
             {
-                var supervisorRoles = supervisorService.GetSupervisorRolesForSelfAssessment(selfAssessmentId);
-                var model = new EnrolDelegateSupervisorRoleViewModel()
-                {
-                    SupervisorDelegateDetail = supervisorDelegate,
-                    CompetencyAssessment = competencyAssessment,
-                    SelfAssessmentSupervisorRoleId = null,
-                    SelfAssessmentSupervisorRoles = supervisorRoles
-                };
-                return View("SelectDelegateSupervisorRole", model);
-            }
-            else
-            {
-
-                var model = new EnrolDelegateSummaryViewModel
-                {
-                    CompetencyAssessment = competencyAssessment,
-                    SupervisorDelegateDetail = supervisorDelegate,
-                    SupervisorRoleName = supervisorRole.SelfAssessmentSupervisorRoleId == null
-                    ? "Supervisor" : supervisorService.GetSupervisorRoleById((int)supervisorRole.SelfAssessmentSupervisorRoleId).RoleName,
-                    SupervisorRoleCount = supervisorRole.SelfAssessmentSupervisorRoleId == null
-                        ? 0 : supervisorService.GetSupervisorRolesForSelfAssessment((int)supervisorRole.SelfAssessmentSupervisorRoleId).Count()
-
-                };
-                return View("SelectDelegateSupervisorRoleSummary", new Tuple<EnrolDelegateSummaryViewModel, int?>(model, supervisorRole.SelfAssessmentSupervisorRoleId));
-            }
+                CompetencyAssessment = competencyAssessment,
+                SupervisorDelegateDetail = supervisorDelegate,
+                SupervisorRoleName = GetCurrentAdminSupervisorRoleName(),
+            };
+            return View("SelectDelegateSupervisorRoleSummary", new Tuple<EnrolDelegateSummaryViewModel, int?>(model, null));
         }
 
 
         [HttpGet]
         public IActionResult QuickAddSupervisorConfirm(int? selfAssessmentSupervisorRoleId, int selfAssessmentId, int supervisorDelegateId, int delegateUserId)
         {
-            var supervisorDelegate = supervisorService.GetSupervisorDelegateDetailsById(supervisorDelegateId, GetAdminId(), 0);
-            if (!selfAssessmentSupervisorRoleId.HasValue)
+            var candidateAssessmentId = supervisorService.InsertCandidateAssessmentSupervisor(
+                delegateUserId,
+                supervisorDelegateId,
+                selfAssessmentId
+            );
+            if (candidateAssessmentId > 0 && User.GetUserId() == delegateUserId)
             {
-                var competencyAssessment = supervisorService.GetCompetencyAssessmentById(selfAssessmentId);
-                var supervisorRoles = supervisorService.GetSupervisorRolesForSelfAssessment(selfAssessmentId);
-                var model = new EnrolDelegateSupervisorRoleViewModel()
-                {
-                    SupervisorDelegateDetail = supervisorDelegate,
-                    CompetencyAssessment = competencyAssessment,
-                    SelfAssessmentSupervisorRoleId = null,
-                    SelfAssessmentSupervisorRoles = supervisorRoles
-                };
-                return View("SelectDelegateSupervisorRole", model);
+                supervisorService.UpdateCandidateAssessmentNonReportable(candidateAssessmentId);
             }
-            else
-            {
-                var candidateAssessmentId = supervisorService.InsertCandidateAssessmentSupervisor(
-                    delegateUserId,
-                    supervisorDelegateId,
-                    selfAssessmentId,
-                    selfAssessmentSupervisorRoleId.Value
-                );
-                if (candidateAssessmentId > 0 && User.GetUserId() == delegateUserId)
-                {
-                    supervisorService.UpdateCandidateAssessmentNonReportable(candidateAssessmentId);
-                }
-                return RedirectToAction("DelegateProfileAssessments", new { supervisorDelegateId = supervisorDelegateId });
-            }
+            return RedirectToAction("DelegateProfileAssessments", new { supervisorDelegateId = supervisorDelegateId });
         }
 
 
@@ -1470,6 +1334,14 @@
                 }
             }
             return existingId;
+        }
+
+        private string GetCurrentAdminSupervisorRoleName()
+        {
+            var loggedInAdminUser = userService.GetAdminUserById(GetAdminId());
+            return loggedInAdminUser.IsSupervisor ? "Supervisor" :
+                loggedInAdminUser.IsNominatedSupervisor ? "Nominated supervisor" :
+                "Supervisor";
         }
 
         public IActionResult ExportCandidateAssessment(int candidateAssessmentId, string delegateName, string selfAssessmentName, int delegateUserID)

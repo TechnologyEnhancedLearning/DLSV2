@@ -520,7 +520,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                         new { supervisorId, delegateUserId, adminEmail, centreId });
             }
 
-            if (candidateAssessmentId > 0 && supervisorDelegateId > 0 && selfAssessmentSupervisorRoleId > 0)
+            if (candidateAssessmentId > 0 && supervisorDelegateId > 0)
             {
                 int candidateAssessmentSupervisorsId = Convert.ToInt32(connection.ExecuteScalar(
                     @"SELECT COALESCE
@@ -531,9 +531,9 @@ namespace DigitalLearningSolutions.Data.DataServices
                 if (candidateAssessmentSupervisorsId == 0)
                 {
                     int numberOfAffectedRows = connection.Execute(
-                        @"INSERT INTO CandidateAssessmentSupervisors (CandidateAssessmentID, SupervisorDelegateId, SelfAssessmentSupervisorRoleID)
-                        VALUES (@candidateAssessmentId, @supervisorDelegateId, @selfAssessmentSupervisorRoleId)",
-                        new { candidateAssessmentId, supervisorDelegateId, selfAssessmentSupervisorRoleId }
+                        @"INSERT INTO CandidateAssessmentSupervisors (CandidateAssessmentID, SupervisorDelegateId)
+                        VALUES (@candidateAssessmentId, @supervisorDelegateId)",
+                        new { candidateAssessmentId, supervisorDelegateId }
                     );
                 }
             }
@@ -553,8 +553,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                   WHERE ID = @candidateAssessmentId
 
                 UPDATE CandidateAssessmentSupervisors SET Removed = NULL
-                 {((selfAssessmentSupervisorRoleId > 0) ? " ,SelfAssessmentSupervisorRoleID = @selfAssessmentSupervisorRoleID" : string.Empty)}
-                WHERE CandidateAssessmentID = @candidateAssessmentId AND SupervisorDelegateId = @supervisorDelegateId AND SelfAssessmentSupervisorRoleID = @selfAssessmentSupervisorRoleID
+                WHERE CandidateAssessmentID = @candidateAssessmentId AND SupervisorDelegateId = @supervisorDelegateId
 
                 COMMIT TRANSACTION";
 
