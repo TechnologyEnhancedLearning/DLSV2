@@ -11,7 +11,8 @@
         private const string LearningHubOpenApiKey = "LearningHubOpenAPIKey";
         private const string LearningHubOpenApiBaseUrl = "LearningHubOpenAPIBaseUrl";
         private const string PricingPageEnabled = "FeatureManagement:PricingPage";
-
+        private const string ShowDlsLoginButton = "FeatureManagement:ShowDlsLoginButton";
+        
         private const string LearningHubAuthBaseUrl = "BaseUrl";
         private const string LearningHubAuthLoginEndpoint = "LoginEndpoint";
         private const string LearningHubAuthLinkingEndpoint = "LinkingEndpoint";
@@ -118,7 +119,11 @@
             bool.TryParse(config[PricingPageEnabled], out bool isEnabled);
             return isEnabled;
         }
-
+        public static bool IsDlsLoginButtonShown(this IConfiguration config)
+        {
+            bool.TryParse(config[ShowDlsLoginButton], out bool isEnabled);
+            return isEnabled;
+        }
         public static int GetLearningHubSsoHashTolerance(this IConfiguration config)
         {
             int.TryParse(config[$"{LearningHubSsoSectionKey}:{LearningHubSsoToleranceKey}"], out int ssoHashTolerance);

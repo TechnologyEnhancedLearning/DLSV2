@@ -23,7 +23,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
             Frameworks = [.. frameworks
                 .Where(f => !excludedIds.Contains(f.ID))
                 .OrderBy(f => f.FrameworkName)];
-            AdditionalFrameworks = [.. additionalFrameworksIds.Select(id => frameworks.First(f => f.ID == id))];
+            AdditionalFrameworks = [.. additionalFrameworksIds.Select(id => frameworks.FirstOrDefault(f => f.ID == id))];
             ActionName = actionName;
         }
         public IEnumerable<BrandedFramework> Frameworks { get; set; }
