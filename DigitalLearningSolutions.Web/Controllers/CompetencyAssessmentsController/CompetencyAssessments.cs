@@ -586,6 +586,9 @@
                         competency.CompetencyFlags = competencyFlags.Where(f => f.CompetencyId == competency.CompetencyID);
                 }
                 var models = new AddCompetenciesViewModel(competencyAssessmentBase, groupedCompetencies, ungroupedCompetencies, frameworkId, framework.FrameworkName, model.SelectedCompetencyIds);
+                ModelState.Clear();
+                ModelState.AddModelError("SelectedCompetencyIds", $"You must select at least one {models.VocabularySingular}");
+                ViewBag.RequiredCheckboxMessage = "You must select at least one "+ models.VocabularySingular;
                 return View("AddCompetencies", models);
             }
             if (model.SelectedCompetencyIds != null)
