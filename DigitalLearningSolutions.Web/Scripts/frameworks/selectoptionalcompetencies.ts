@@ -4,7 +4,7 @@
   groups.forEach((group) => {
     const groupToggle =
       group.querySelector<HTMLInputElement>('input[name="GroupIds"]');
-
+    // All individual competency checkboxes in the group
     const childCheckboxes =
       group.querySelectorAll<HTMLInputElement>(
         'input[name="SelectedCompetencyIds"]',
