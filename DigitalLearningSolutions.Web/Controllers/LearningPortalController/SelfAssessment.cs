@@ -967,48 +967,7 @@
             return RedirectToAction("AddNewSupervisor", new { model.SelfAssessmentID });
         }
 
-        [ServiceFilter(typeof(IsCentreAuthorizedSelfAssessment))]
-        [Route(
-            "/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Supervisors/QuickAdd/{supervisorDelegateId}/Role"
-        )]
-        [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Supervisors/Add/Role")]
-        public IActionResult SetSupervisorRole(int selfAssessmentId, int? supervisorDelegateId)
-        {
-            if (supervisorDelegateId == null)
-            {
-                return RedirectToAction("AddSupervisorSummary", new { selfAssessmentId });
-            }
-
-            var delegateUserId = User.GetUserIdKnownNotNull();
-            var selfAssessment =
-                selfAssessmentService.GetSelfAssessmentForCandidateById(delegateUserId, selfAssessmentId);
-            if (selfAssessment == null)
-            {
-                return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
-            }
-
-            supervisorService.InsertCandidateAssessmentSupervisor(delegateUserId, (int)supervisorDelegateId, selfAssessmentId);
-            return RedirectToAction("ManageSupervisors", new { selfAssessmentId });
-        }
-
-        [HttpPost]
-        [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Supervisors/Add/Role")]
-        public IActionResult SetSupervisorRole(SetSupervisorRoleViewModel model)
-        {
-            if (model.SupervisorDelegateId == null)
-            {
-                return RedirectToAction("AddSupervisorSummary", new { model.SelfAssessmentID });
-            }
-
-            supervisorService.InsertCandidateAssessmentSupervisor(
-                User.GetUserIdKnownNotNull(),
-                (int)model.SupervisorDelegateId,
-                model.SelfAssessmentID
-            );
-            TempData.Clear();
-            return RedirectToAction("ManageSupervisors", new { model.SelfAssessmentID });
-        }
-
+        
         [ServiceFilter(typeof(IsCentreAuthorizedSelfAssessment))]
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Supervisors/Add/Summary")]
         [ResponseCache(CacheProfileName = "Never")]

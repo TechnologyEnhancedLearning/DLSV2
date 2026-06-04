@@ -159,7 +159,7 @@
                     WHERE (sd.Removed IS NULL) AND (cas.Removed IS NULL) AND (sd.DelegateUserID = @delegateUserId) AND (ca.SelfAssessmentID = @selfAssessmentId)
                         AND (sd.SupervisorAdminID IS NOT NULL) AND (sa.SupervisorSelfAssessmentReview = 1)
                         AND (cas.ID NOT IN (SELECT CandidateAssessmentSupervisorID FROM CandidateAssessmentSupervisorVerifications WHERE Verified IS NULL))
-                        AND au.Active = 1 AND (au.Supervisor = 1 or au.NominatedSupervisor = 1)
+                        AND au.Active = 1 AND au.Supervisor = 1 
                         AND (au.CategoryID = 0 OR au.CategoryID IN (select CategoryID from SelfAssessments where ID = @selfAssessmentId))
                 ORDER BY SupervisorName",
                 new { selfAssessmentId, delegateUserId }

@@ -375,7 +375,7 @@
                 IsSupervisorResultsReviewed = delegateSelfAssessment.IsSupervisorResultsReviewed,
                 SearchViewModel = searchModel,
                 CandidateAssessmentId = candidateAssessmentId,
-                ExportToExcelHide = delegateSelfAssessment.SupervisorRoleTitle?.Contains("Assessor") ?? false,
+                ExportToExcelHide = delegateSelfAssessment.SupervisorRoleTitle?.Contains("Nominated supervisor") ?? false,
             };
 
             var flags = frameworkService.GetSelectedCompetencyFlagsByCompetecyIds(reviewedCompetencies.Select(c => c.Id).ToArray());
@@ -927,32 +927,6 @@
                 sessionEnrolOnCompetencyAssessment.CompleteByDate = null;
             }
 
-            return RedirectToAction(
-                "EnrolDelegateSummary",
-                "Supervisor",
-                new { supervisorDelegateId = supervisorDelegateId }
-            );
-        }
-
-        [Route("/Supervisor/Staff/{supervisorDelegateId}/ProfileAssessment/Enrol/SupervisorRole")]
-        [ResponseCache(CacheProfileName = "Never")]
-        [TypeFilter(
-            typeof(RedirectToErrorEmptySessionData),
-            Arguments = new object[] { nameof(MultiPageFormDataFeature.EnrolDelegateOnProfileAssessment) }
-        )]
-        public IActionResult EnrolDelegateSupervisorRole(int supervisorDelegateId)
-        {
-            return RedirectToAction("EnrolDelegateSummary", "Supervisor", new { supervisorDelegateId });
-        }
-
-        [HttpPost]
-        [Route("/Supervisor/Staff/{supervisorDelegateId}/ProfileAssessment/Enrol/SupervisorRole")]
-        public IActionResult EnrolDelegateSetSupervisorRole(
-            EnrolDelegateSupervisorRoleViewModel model,
-            int supervisorDelegateId,
-            int selfAssessmentSupervisorRoleId
-        )
-        {
             return RedirectToAction(
                 "EnrolDelegateSummary",
                 "Supervisor",
