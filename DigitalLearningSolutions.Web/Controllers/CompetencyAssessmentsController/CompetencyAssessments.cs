@@ -1752,9 +1752,17 @@
         [Route("/Self-Assessment/{competencyAssessmentId}/Retire")]
         public IActionResult RetireCompetencyAssessment(RetireCompetencyAssessmentViewModel model, int competencyAssessmentId)
         {
+            if (model.Day is null || model.Month is null || model.Year is null)
+            {
+                ModelState.AddModelError(nameof(RetireCompetencyAssessmentViewModel.RetirementDate), "Please enter valid retirement date.");
+            }
             if (!ModelState.IsValid)
             {
-                return View("RetireCompetencyAssessment", model);
+                ModelState.Remove(nameof(model.Year));
+                ModelState.Remove(nameof(model.Month));
+                ModelState.Remove(nameof(model.Day));
+                if (!ModelState.IsValid)
+                    return View("RetireCompetencyAssessment", model);
             }
 
             model.RetirementDate = new DateTime(model.Year!.Value, model.Month!.Value, model.Day!.Value);

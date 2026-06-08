@@ -9,7 +9,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
     {
         public int CompetencyAssessmentId { get; set; }
 
-        [Required(ErrorMessage = "Enter a reason for retirement")]
+        [Required(ErrorMessage = "Please enter a reason for retirement")]
         [StringLength(2000, ErrorMessage = "Reason must be 2000 characters or fewer")]
         public string? RetirementReason { get; set; }
 
