@@ -722,10 +722,9 @@
                         ON cas.SupervisorDelegateId = sd.ID
                     INNER JOIN AdminUsers AS au
                         ON sd.SupervisorAdminID = au.AdminID
-                    LEFT OUTER JOIN SelfAssessmentSupervisorRoles AS sasr
-                        ON cas.SelfAssessmentSupervisorRoleID = sasr.ID
-                    WHERE ((ca.DelegateUserID = @delegateUserId) AND (ca.SelfAssessmentID = @selfAssessmentId) AND (sasr.SelfAssessmentReview = 1)
-                        OR (ca.DelegateUserID = @delegateUserId) AND (ca.SelfAssessmentID = @selfAssessmentId) AND (sasr.SelfAssessmentReview IS NULL))
+                    INNER JOIN SelfAssessments AS sa
+                        ON ca.SelfAssessmentID = sa.ID
+                    WHERE (ca.DelegateUserID = @delegateUserId) AND (ca.SelfAssessmentID = @selfAssessmentId) AND (sa.SupervisorSelfAssessmentReview = 1)
 						AND casv.SignedOff=1
                     ORDER BY casv.Requested DESC",
                 new { delegateUserId, selfAssessmentId }
