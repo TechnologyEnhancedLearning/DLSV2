@@ -324,7 +324,8 @@ namespace DigitalLearningSolutions.Data.DataServices
                 u.HasBeenPromptedForPrn,
                 u.ProfessionalRegistrationNumber,
                 da.CentreID AS DelegateCentreId,
-                ap.ArchivedDate AS CourseArchivedDate
+                ap.ArchivedDate AS CourseArchivedDate,
+                ap.DiagAssess
             FROM Customisations cu
             INNER JOIN Applications AS ap ON ap.ApplicationID = cu.ApplicationID
             INNER JOIN Progress AS pr ON pr.CustomisationID = cu.CustomisationID
@@ -1003,7 +1004,8 @@ namespace DigitalLearningSolutions.Data.DataServices
                         u.HasBeenPromptedForPrn,
                         u.ProfessionalRegistrationNumber,
                         da.CentreID,
-                        ap.ArchivedDate",
+                        ap.ArchivedDate,
+                        ap.DiagAssess",
                 new { progressId }
             );
         }
