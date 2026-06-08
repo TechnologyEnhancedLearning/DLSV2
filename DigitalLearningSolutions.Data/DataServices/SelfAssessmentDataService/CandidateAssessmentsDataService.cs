@@ -533,7 +533,7 @@
 				INNER JOIN Users AS u ON U.PrimaryEmail =  au.Email 
              WHERE
                 (ca.DelegateUserID = @DelegateUserID) AND (ca.SelfAssessmentID = @selfAssessmentId)
-                    AND (srsv.Verified IS NOT NULL)) Accessor
+                 AND (srsv.Superceded = 0) AND (srsv.Verified IS NOT NULL)) Accessor
                 ORDER BY AccessorName, AccessorPRN DESC",
                 new { selfAssessmentId, delegateUserID }
             );
