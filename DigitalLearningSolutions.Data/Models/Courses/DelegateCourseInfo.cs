@@ -52,6 +52,7 @@
             DelegateCentreId = delegateCourseInfo.DelegateCentreId;
             CourseAdminFields = delegateCourseInfo.CourseAdminFields;
             CourseArchivedDate = delegateCourseInfo.CourseArchivedDate;
+            DiagAssess = delegateCourseInfo.DiagAssess;
         }
 
         public DelegateCourseInfo(
@@ -143,6 +144,7 @@
         public int CustomisationCentreId { get; set; }
         public bool IsCourseActive { get; set; }
         public bool AllCentresCourse { get; set; }
+        public bool DiagAssess { get; set; }
         public int ProgressId { get; set; }
         public bool IsProgressLocked { get; set; }
         public DateTime? LastUpdated { get; set; }

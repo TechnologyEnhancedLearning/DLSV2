@@ -1430,11 +1430,34 @@ ORDER BY
         {
             var numberOfAffectedRows = connection.Execute(
                              @"INSERT INTO CompetencyAssessmentQuestionRoleRequirements
-                                     (SelfAssessmentID, CompetencyID, AssessmentQuestionID, LevelValue, LevelRAG)
-                                        SELECT sas.SelfAssessmentID, sas.CompetencyID, caq.AssessmentQuestionID, @levelValue AS LevelValue, @levelRAG AS LevelRAG
-                                        FROM   SelfAssessmentStructure AS sas INNER JOIN
-                                             CompetencyAssessmentQuestions AS caq ON sas.CompetencyID = caq.CompetencyID
-                                        WHERE (sas.SelfAssessmentID = @assessmentId) AND (caq.AssessmentQuestionID = @assessmentQuestionId);"
+                                (
+                                SelfAssessmentID,
+                                CompetencyID,
+                                AssessmentQuestionID,
+                                LevelValue,
+                                LevelRAG
+                                )
+                                SELECT DISTINCT
+                                sas.SelfAssessmentID,
+                                sas.CompetencyID,
+                                caq.AssessmentQuestionID,
+                                @levelValue,
+                                @levelRAG
+                                FROM SelfAssessmentStructure AS sas
+                                INNER JOIN CompetencyAssessmentQuestions AS caq
+                                 ON sas.CompetencyID = caq.CompetencyID
+                                WHERE
+                                sas.SelfAssessmentID = @assessmentId
+                                AND caq.AssessmentQuestionID = @assessmentQuestionId
+                                AND NOT EXISTS
+                                    (
+                                SELECT 1
+                                FROM CompetencyAssessmentQuestionRoleRequirements existing
+                                WHERE existing.SelfAssessmentID = sas.SelfAssessmentID
+                                AND existing.CompetencyID = sas.CompetencyID
+                                AND existing.AssessmentQuestionID = caq.AssessmentQuestionID
+                                AND existing.LevelValue = @levelValue
+                                );"
                          ,
                              new { assessmentId, assessmentQuestionId, levelValue, levelRAG }
                          );

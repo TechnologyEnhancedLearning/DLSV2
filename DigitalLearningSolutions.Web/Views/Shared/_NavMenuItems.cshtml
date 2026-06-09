@@ -32,11 +32,14 @@
 }
 else
 {
+    @if (Configuration.IsDlsLoginButtonShown())
+    {
   <li class="nhsuk-header__navigation-item @Html.GetSelectedCssClassIfTabSelected(NavMenuTab.LogIn)">
     <a class="nhsuk-header__navigation-link" asp-controller="Login" asp-action="Index">
       Log in
     </a>
   </li>
+    }
   <li class="nhsuk-header__navigation-item @Html.GetSelectedCssClassIfTabSelected(NavMenuTab.Register)">
     <a class="nhsuk-header__navigation-link" asp-controller="Register" asp-action="Start">
       Register

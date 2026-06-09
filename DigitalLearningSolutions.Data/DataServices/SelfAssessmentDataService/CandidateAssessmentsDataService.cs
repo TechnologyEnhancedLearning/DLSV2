@@ -202,24 +202,9 @@
                         SA.ManageOptionalCompetenciesPrompt,
                         CAST(CASE WHEN CA.SelfAssessmentProcessAgreed IS NOT NULL THEN 1 ELSE 0 END AS BIT) AS SelfAssessmentProcessAgreed,
                         CAST(CASE WHEN SA.SupervisorSelfAssessmentReview = 1 OR SA.SupervisorResultsReview = 1 THEN 1 ELSE 0 END AS BIT) AS IsSupervised,
-                        CASE
-                         WHEN (SELECT COUNT(*) FROM SelfAssessmentSupervisorRoles WHERE SelfAssessmentID = @selfAssessmentId AND AllowDelegateNomination = 1) > 0    
-                            THEN 1
-                            ELSE 0
-                        END AS HasDelegateNominatedRoles,
-                        COALESCE(
-                            (SELECT TOP (1) RoleName FROM SelfAssessmentSupervisorRoles
-                            WHERE (ResultsReview = 1) AND (SelfAssessmentID = @selfAssessmentId) AND
-                                   ((SELECT COUNT(*) AS Expr1 FROM SelfAssessmentSupervisorRoles AS SelfAssessmentSupervisorRoles_1
-                                   WHERE (ResultsReview = 1) AND (SelfAssessmentID = @selfAssessmentId)) = 1)),
-                            'Supervisor') AS VerificationRoleName,
-                        COALESCE(
-                            (SELECT TOP (1) RoleName FROM SelfAssessmentSupervisorRoles
-                            WHERE (SelfAssessmentReview = 1) AND (SelfAssessmentID = @selfAssessmentId) AND
-                                   ((SELECT COUNT(*) AS Expr1
-                                    FROM SelfAssessmentSupervisorRoles AS SelfAssessmentSupervisorRoles_1
-                                    WHERE (SelfAssessmentReview = 1) AND (SelfAssessmentID = @selfAssessmentId)) = 1)),
-                            'Supervisor') AS SignOffRoleName,
+                        CAST(CASE WHEN SA.SupervisorSelfAssessmentReview = 1 OR SA.SupervisorResultsReview = 1 THEN 1 ELSE 0 END AS BIT) AS HasDelegateNominatedRoles,
+                        'Supervisor' AS VerificationRoleName,
+                        'Supervisor' AS SignOffRoleName,
                         SA.SignOffRequestorStatement,
                         SA.ManageSupervisorsDescription,
                         CA.NonReportable,
@@ -286,16 +271,12 @@
                         ON cas.SupervisorDelegateId = sd.ID
                     INNER JOIN AdminUsers AS au
                         ON sd.SupervisorAdminID = au.AdminID
-                    LEFT OUTER JOIN SelfAssessmentSupervisorRoles AS sasr
-                        ON cas.SelfAssessmentSupervisorRoleID = sasr.ID
 						  INNER JOIN SelfAssessmentStructure AS SAS 
 						  ON CA.SelfAssessmentID = SAS.SelfAssessmentID
                     INNER JOIN CompetencyGroups AS CG 
 					ON SAS.CompetencyGroupID = CG.ID AND SAS.SelfAssessmentID =@selfAssessmentId
-                    WHERE ((ca.DelegateUserID = @delegateUserId) AND (ca.SelfAssessmentID = @selfAssessmentId) AND (sasr.SelfAssessmentReview = 1) AND
+                    WHERE ((ca.DelegateUserID = @delegateUserId) AND (ca.SelfAssessmentID = @selfAssessmentId) AND
                            (CG.ID =@competencyGroupId) AND (casv.Verified IS NULL))
-                        OR ((ca.DelegateUserID = @delegateUserId) AND (ca.SelfAssessmentID = @selfAssessmentId) AND
-                        (sasr.SelfAssessmentReview IS NULL) AND (CG.ID =@competencyGroupId) AND (casv.Verified IS NULL))
 						) AS casv;
 						",
                 new { selfAssessmentId, delegateUserId, competencyGroupId }
@@ -528,9 +509,7 @@
             LEFT OUTER JOIN AdminUsers AS au
                 ON sd.SupervisorAdminID = au.AdminID
             INNER JOIN DelegateAccounts da ON sd.DelegateUserID = da.UserID AND au.CentreID = da.CentreID AND da.Active=1
-            LEFT OUTER JOIN SelfAssessmentSupervisorRoles AS sasr
-                ON cas.SelfAssessmentSupervisorRoleID = sasr.ID
-				INNER JOIN Users AS u ON U.PrimaryEmail =  au.Email 
+			INNER JOIN Users AS u ON U.PrimaryEmail =  au.Email 
              WHERE
                 (ca.DelegateUserID = @DelegateUserID) AND (ca.SelfAssessmentID = @selfAssessmentId)
                     AND (srsv.Verified IS NOT NULL)) Accessor
@@ -570,14 +549,13 @@
              (ca1.ID = ca.ID) AND (caoc1.IncludedInSelfAssessment = 1) AND (NOT (sar1.Result IS NULL)) AND (sasrv.SignedOff = 1) OR
              (ca1.ID = ca.ID) AND (sas1.Optional = 0) AND (NOT (sar1.SupportingComments IS NULL)) AND (sasrv.SignedOff = 1) OR
              (ca1.ID = ca.ID) AND (caoc1.IncludedInSelfAssessment = 1) AND (NOT (sar1.SupportingComments IS NULL)) AND (sasrv.SignedOff = 1)) AS VerifiedCount
-                  FROM   NRPProfessionalGroups AS npg RIGHT OUTER JOIN
-             NRPSubGroups AS nsg RIGHT OUTER JOIN
-             SelfAssessmentSupervisorRoles AS sasr RIGHT OUTER JOIN
-             SelfAssessments AS sa INNER JOIN
-             CandidateAssessmentSupervisorVerifications AS casv INNER JOIN
+                  FROM CandidateAssessmentSupervisorVerifications AS casv INNER JOIN
              CandidateAssessmentSupervisors AS cas ON casv.CandidateAssessmentSupervisorID = cas.ID AND (casv.SignedOff = 1)  AND  (NOT(casv.Verified IS NULL)) AND cas.Removed IS NULL INNER JOIN
-             CandidateAssessments AS ca ON cas.CandidateAssessmentID = ca.ID ON sa.ID = ca.SelfAssessmentID ON sasr.ID = cas.SelfAssessmentSupervisorRoleID ON nsg.ID = sa.NRPSubGroupID ON npg.ID = sa.NRPProfessionalGroupID LEFT OUTER JOIN
-             NRPRoles AS nr ON sa.NRPRoleID = nr.ID
+             CandidateAssessments AS ca ON cas.CandidateAssessmentID = ca.ID INNER JOIN
+             SelfAssessments AS sa ON sa.ID = ca.SelfAssessmentID LEFT OUTER JOIN
+             NRPProfessionalGroups AS npg ON npg.ID = sa.NRPProfessionalGroupID LEFT OUTER JOIN
+             NRPSubGroups AS nsg ON nsg.ID = sa.NRPSubGroupID LEFT OUTER JOIN
+             NRPRoles AS nr ON nr.ID = sa.NRPRoleID
               WHERE (casv.ID = @CandidateAssessmentSupervisorVerificationsId)",
                 new { CandidateAssessmentSupervisorVerificationsId }
             );
