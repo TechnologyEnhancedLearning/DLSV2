@@ -1,5 +1,6 @@
 ﻿using DigitalLearningSolutions.Data.Models.CompetencyAssessments;
 using DigitalLearningSolutions.Web.Helpers;
+using System;
 
 namespace DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
 {
@@ -20,6 +21,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
             VocabularyPlural = FrameworkVocabularyHelper.VocabularyPlural(competencyAssessmentBase.Vocabulary);
             SelfAssessmentReviewID = competencyAssessmentBase.SelfAssessmentReviewID;
             SelfAssessmentCommentID = competencyAssessmentBase.SelfAssessmentCommentID;
+            RetirementDate = competencyAssessmentBase.RetirementDate;
         }
         public string CompetencyAssessmentName { get; set; }
         public int PublishStatusID { get; set; }
@@ -30,5 +32,6 @@ namespace DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
         public int? SelfAssessmentReviewID { get; set; }
         public int? SelfAssessmentCommentID { get; set; }
         public bool HasCompetencies { get; set; }
+        public DateTime? RetirementDate { get; set; }
     }
 }

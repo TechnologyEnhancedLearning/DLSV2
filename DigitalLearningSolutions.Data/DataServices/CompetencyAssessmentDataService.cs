@@ -116,6 +116,8 @@
         void InsertSelfAssessmentReview(int competencyAssessmentId, int selfAssessmentCollaboratorID, bool required);
         int InsertComment(int selfAssessmentID, int adminId, string comment, int? replyToCommentId);
         int InsertCompetencySelfAssessmentReview(int reviewId);
+        void RetireCompetencyAssessment(int competencyAssessmentId, DateTime? retirementDate, string retirementReason);
+
 
         //DELETE DATA
         bool RemoveFrameworkCompetenciesFromAssessment(int competencyAssessmentId, int frameworkId);
@@ -143,6 +145,8 @@
                 sa.ManageOptionalCompetenciesPrompt,
                 sa.IncludeLearnerDeclarationPrompt, sa.IncludesSignposting, sa.LinearNavigation, sa.UseDescriptionExpanders, sa.QuestionLabel, sa.ReviewerCommentsLabel,
                 sa.SupervisorSelfAssessmentReview, sa.SupervisorResultsReview, sar.ID AS SelfAssessmentReviewID, sa.SignOffSupervisorStatement, sa.SignOffRequestorStatement,
+                sa.RetirementReason,
+                sa.RetirementDate,
                 sar.SelfAssessmentCommentID";
 
         private const string SelfAssessmentFields =
@@ -1796,6 +1800,17 @@ ORDER BY
 
             return id;
         }
+        public void RetireCompetencyAssessment(int competencyAssessmentId, DateTime? retirementDate, string retirementReason)
+        {
+            // Example using Dapper
+            connection.Execute(
+                @"UPDATE SelfAssessments
+          SET RetirementDate = @retirementDate, RetirementReason = @retirementReason
+          WHERE ID = @competencyAssessmentId",
+                new { retirementDate, retirementReason, competencyAssessmentId }
+            );
+        }
+
         public bool UpdateCompetencyAssessmentReviewTaskStatus(int assessmentId, bool taskStatus)
         {
             var numberOfAffectedRows = connection.Execute(
