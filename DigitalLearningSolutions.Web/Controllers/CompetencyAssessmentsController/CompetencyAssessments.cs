@@ -775,8 +775,10 @@
         [Route("/Self-Assessment/{competencyAssessmentId}/{vocabularyPlural}/Optional/LearnerPrompt")]
         public IActionResult SetOptionalCompetencyLearnerPrompt(SetOptionalCompetencyLearnerPromptFormData model)
         {
-            if (!ModelState.IsValid)
+            if(string.IsNullOrWhiteSpace(model.ManageOptionalCompetenciesPrompt))
             {
+                ModelState.AddModelError(
+                nameof(model.ManageOptionalCompetenciesPrompt),"Enter a prompt");
                 var adminId = GetAdminID();
                 var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(model.ID, adminId);
                 var competencies = competencyAssessmentService.GetCompetenciesForCompetencyAssessment(model.ID);

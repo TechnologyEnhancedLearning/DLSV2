@@ -35,8 +35,10 @@
         Optional @Model.VocabularyPlural.ToLower() can be added to the assessment individually or as a group.
 </p>
 <form method="post" asp-action="SelectOptionalCompetencies">
+        @if (Model.CompetencyGroups.Any())
+        {
     <fieldset class="nhsuk-fieldset">
-
+           
         <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
          Which @Model.VocabularySingular.ToLower() groups and/or @Model.VocabularyPlural.ToLower() should be optional?
         </legend>
@@ -89,10 +91,16 @@
     <input type="hidden" asp-for="ManageOptionalCompetenciesPrompt" />
     <input type="hidden" asp-for="VocabularyPlural" />
     <input type="hidden" asp-for="VocabularySingular" />
+       
     <button class="nhsuk-button" type="submit">
         Save
-    </button>
-</form>
+            </button>
+        }
+        else
+        {
+            <p>No @Model.VocabularySingular.ToLower() has been added </p>
+        }
+    </form>
 
 <div class="nhsuk-back-link">
         <a class="nhsuk-back-link__link"  asp-action="ManageOptionalCompetencies" asp-route-vocabularyPlural="@Model.VocabularyPlural" asp-route-competencyAssessmentId="@Model.ID">
