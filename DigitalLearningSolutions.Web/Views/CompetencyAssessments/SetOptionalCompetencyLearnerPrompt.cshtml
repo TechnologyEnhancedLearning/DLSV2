@@ -1,7 +1,6 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
 @model SetOptionalCompetencyLearnerPromptViewModel;
 @{
-    var errorHasOccurred = !ViewData.ModelState.IsValid;
     ViewData["Title"] = $"Set optional {Model.VocabularyPlural.ToLower()} learner prompt";
     ViewData["Application"] = "Framework service";
 }
@@ -30,10 +29,6 @@
         @Model.CompetencyAssessmentName
         <span class="nhsuk-u-visually-hidden"> – </span>
     </span>Optional learner prompt
-        @if (errorHasOccurred)
-        {
-            <vc:error-summary order-of-property-names="@(new[] { nameof(Model.ManageOptionalCompetenciesPrompt) })" />
-        }
 </h1>
 
 <p>
