@@ -589,7 +589,7 @@
                 var models = new AddCompetenciesViewModel(competencyAssessmentBase, groupedCompetencies, ungroupedCompetencies, frameworkId, framework.FrameworkName, model.SelectedCompetencyIds);
                 ModelState.Clear();
                 ModelState.AddModelError("SelectedCompetencyIds", $"You must select at least one {models.VocabularySingular}");
-                ViewBag.RequiredCheckboxMessage = "You must select at least one "+ models.VocabularySingular;
+                ViewBag.RequiredCheckboxMessage = "You must select at least one " + models.VocabularySingular;
                 return View("AddCompetencies", models);
             }
             if (model.SelectedCompetencyIds != null)
@@ -660,7 +660,7 @@
         {
             if (model.TaskStatus == null)
             {
-             model.TaskStatus = false;
+                model.TaskStatus = false;
             }
             competencyAssessmentService.UpdateSelectCompetenciesTaskStatus(model.ID, model.TaskStatus.Value, null);
             return RedirectToAction("ManageCompetencyAssessment", new { competencyAssessmentId = model.ID });
@@ -958,7 +958,7 @@
                 return RedirectToAction("AssessmentWorkingGroup", "CompetencyAssessments", new { model.CompetencyAssessmentID, actionName = actionName });
 
             }
-            else if(actionName == "CollaboratorReview")
+            else if (actionName == "CollaboratorReview")
             {
                 return RedirectToAction("SendForReview", "CompetencyAssessments", new { model.CompetencyAssessmentID, actionName = actionName });
             }
@@ -1099,7 +1099,7 @@
                         var errModel = new OptionsLabelsViewModel(data);
                         errModel.ReviewerCommentsLabel = model.ReviewerCommentsLabel;
                         errModel.ReviewerCommentsLabelText = model.ReviewerCommentsLabelText;
-                        errModel.CompetencyAssessmentName  = model.CompetencyAssessmentName;
+                        errModel.CompetencyAssessmentName = model.CompetencyAssessmentName;
                         errModel.Error = true;
                         return View("CompetencyAssessmentOptions", errModel);
                     }
@@ -1369,7 +1369,7 @@
         public IActionResult SupervisorSignoffDeclaration(SupervisorSignoffDeclarationViewModel viewModel)
         {
             if (viewModel == null) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
-             if (viewModel.DeclarationValue == 1 && string.IsNullOrWhiteSpace(viewModel.CustomText))
+            if (viewModel.DeclarationValue == 1 && string.IsNullOrWhiteSpace(viewModel.CustomText))
             {
                 ModelState.AddModelError(nameof(viewModel.CustomText), "Please enter the custom declaration text");
                 return View(viewModel);
@@ -1762,9 +1762,16 @@
         [Route("/Self-Assessment/{competencyAssessmentId}/Retire")]
         public IActionResult RetireCompetencyAssessment(RetireCompetencyAssessmentViewModel model, int competencyAssessmentId)
         {
-            if (model.Day is null || model.Month is null || model.Year is null)
+            DateTime retirementDate;
+
+            if (model.Day is null || model.Month is null || model.Year is null ||
+                !DateTime.TryParse(
+                    $"{model.Year:D4}-{model.Month:D2}-{model.Day:D2}",
+                    out retirementDate))
             {
-                ModelState.AddModelError(nameof(RetireCompetencyAssessmentViewModel.RetirementDate), "Please enter valid retirement date.");
+                ModelState.AddModelError(
+                    nameof(RetireCompetencyAssessmentViewModel.RetirementDate),
+                    "Please enter a valid retirement date.");
             }
             if (!ModelState.IsValid)
             {
@@ -1776,7 +1783,7 @@
             }
 
             model.RetirementDate = new DateTime(model.Year!.Value, model.Month!.Value, model.Day!.Value);
-            
+
 
             var adminId = GetAdminID();
             competencyAssessmentService.RetireCompetencyAssessment(
@@ -1788,7 +1795,45 @@
 
             return RedirectToAction("ManageCompetencyAssessment", new { competencyAssessmentId = model.CompetencyAssessmentId });
         }
+        [Route("/Self-Assessment/{competencyAssessmentId}/RetirementDate/Confirm")]
+        public IActionResult ConfirmClearRetirementDate(int competencyAssessmentId)
+        {
+            if (competencyAssessmentId <= 0)
+            {
+                return StatusCode(500);
+            }
 
+            var adminId = GetAdminID();
+            var competencyAssessmentBase = new CompetencyAssessmentBase();
+
+            competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
+            var result = ValidateCompetencyAssessmentAndRole(competencyAssessmentId, adminId, "Self-assessment remove retirement date confirm", competencyAssessmentBase);
+            if (result.StatusCode != 200)
+                return result;
+
+            if (competencyAssessmentBase.RetirementDate == null)
+            {
+                return StatusCode(500);
+            }
+
+            var model = new ConfirmClearRetirementDateViewModel(competencyAssessmentBase);
+
+            return View("ConfirmClearRetirementDate", model);
+        }
+
+        [HttpPost]
+        [Route("/Self-Assessment/{competencyAssessmentId}/RetirementDate/Confirm")]
+        public IActionResult ConfirmClearRetirementDate(ConfirmClearRetirementDateViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View("ConfirmClearRetirementDate", model);
+            }
+            var adminId = GetAdminID();
+            competencyAssessmentService.RemoveRetirementDate(model.CompetencyAssessmentId, adminId);
+
+            return RedirectToAction("ManageCompetencyAssessment", new { competencyAssessmentId = model.CompetencyAssessmentId });
+        }
 
         private void SetManagesupervisionData(ManagesupervisionViewModel data)
         {
