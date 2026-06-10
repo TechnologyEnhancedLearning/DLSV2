@@ -2,26 +2,31 @@
   const groups = document.querySelectorAll<HTMLDivElement>('.nhsuk-checkboxes');
 
   groups.forEach((group) => {
-    const groupToggle = group.querySelector<HTMLInputElement>('input[name="GroupIds"]');
-    if (!groupToggle) return;
-
+    const groupToggle =
+      group.querySelector<HTMLInputElement>('input[name="GroupIds"]');
     // All individual competency checkboxes in the group
-    const childCheckboxes = group.querySelectorAll<HTMLInputElement>(
-      'input[name="SelectedCompetencyIds"]',
-    );
+    const childCheckboxes =
+      group.querySelectorAll<HTMLInputElement>(
+        'input[name="SelectedCompetencyIds"]',
+      );
 
-    const updateState = () => {
-      const isChecked = groupToggle.checked;
+    if (!groupToggle) {
+      return;
+    }
 
-      childCheckboxes.forEach((_, index) => {
-        childCheckboxes[index].checked = isChecked;
+    const setChildrenCheckedState = (checked: boolean) => {
+      childCheckboxes.forEach((checkboxElement) => {
+        const checkbox = checkboxElement;
+        checkbox.checked = checked;
       });
     };
 
-    // Run when the group checkbox changes
-    groupToggle.addEventListener('change', updateState);
+    if (groupToggle.checked) {
+      setChildrenCheckedState(true);
+    }
 
-    // Also run at page load in case some are pre-checked server-side
-    updateState();
+    groupToggle.addEventListener('change', () => {
+      setChildrenCheckedState(groupToggle.checked);
+    });
   });
 });
