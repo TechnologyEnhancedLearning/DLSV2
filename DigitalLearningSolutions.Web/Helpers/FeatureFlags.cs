@@ -16,6 +16,5 @@
         public const string LoginWithLearningHub = "LoginWithLearningHub";
         public const string TableauSelfAssessmentDashboards = "TableauSelfAssessmentDashboards";
         public const string ShowDlsLoginButton = "ShowDlsLoginButton";
-
     }
 }
