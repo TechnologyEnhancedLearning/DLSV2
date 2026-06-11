@@ -692,28 +692,10 @@
 
         public IActionResult QuickAddSupervisor(int selfAssessmentId, int supervisorDelegateId)
         {
-            var roles = supervisorService.GetDelegateNominatableSupervisorRolesForSelfAssessment(selfAssessmentId).ToArray();
-            if (roles.Count() > 1)
-            {
-                var sessionAddSupervisor = new SessionAddSupervisor()
-                {
-                    SelfAssessmentID = selfAssessmentId
-                };
-
-                multiPageFormService.SetMultiPageFormData(
-                    sessionAddSupervisor,
-                    MultiPageFormDataFeature.AddNewSupervisor,
-                    TempData
-                );
-                return RedirectToAction("SetSupervisorRole", new { selfAssessmentId, supervisorDelegateId });
-            }
-
-            int? supervisorRoleId = roles.First().ID;
             supervisorService.InsertCandidateAssessmentSupervisor(
                 User.GetUserIdKnownNotNull(),
                 supervisorDelegateId,
-                selfAssessmentId,
-                supervisorRoleId
+                selfAssessmentId
             );
             TempData.Clear();
             return RedirectToAction("ManageSupervisors", new { selfAssessmentId });
@@ -895,24 +877,6 @@
             }
             sessionAddSupervisor.SupervisorAdminId = model.SupervisorAdminID;
             sessionAddSupervisor.SupervisorEmail = supervisor.Email;
-            var roles = supervisorService.GetDelegateNominatableSupervisorRolesForSelfAssessment(model.SelfAssessmentID)
-                .ToArray();
-            if (roles.Count() > 1)
-            {
-                multiPageFormService.SetMultiPageFormData(
-                    sessionAddSupervisor,
-                    MultiPageFormDataFeature.AddNewSupervisor,
-                    TempData
-                );
-                return RedirectToAction("SetSupervisorRole", new { model.SelfAssessmentID });
-            }
-
-            if (roles.Count() != 1)
-            {
-                return RedirectToAction("AddSupervisorSummary", new { model.SelfAssessmentID });
-            }
-
-            sessionAddSupervisor.SelfAssessmentSupervisorRoleId = roles.First().ID;
             multiPageFormService.SetMultiPageFormData(
                 sessionAddSupervisor,
                 MultiPageFormDataFeature.AddNewSupervisor,
@@ -1003,114 +967,7 @@
             return RedirectToAction("AddNewSupervisor", new { model.SelfAssessmentID });
         }
 
-        [ServiceFilter(typeof(IsCentreAuthorizedSelfAssessment))]
-        [Route(
-            "/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Supervisors/QuickAdd/{supervisorDelegateId}/Role"
-        )]
-        [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Supervisors/Add/Role")]
-        public IActionResult SetSupervisorRole(int selfAssessmentId, int? supervisorDelegateId)
-        {
-            TempData.Keep("SearchString");
-            int? selfAssessmentSupervisorRoleId = null;
-            string selfAssessmentName;
-            var supervisorAdminId = 0;
-            if (supervisorDelegateId == null)
-            {
-                var sessionAddSupervisor = multiPageFormService.GetMultiPageFormData<SessionAddSupervisor>(MultiPageFormDataFeature.AddNewSupervisor, TempData).GetAwaiter().GetResult();
-                if (sessionAddSupervisor == null)
-                {
-                    return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
-                }
-
-                multiPageFormService.SetMultiPageFormData(
-                    sessionAddSupervisor,
-                    MultiPageFormDataFeature.AddNewSupervisor,
-                    TempData
-                );
-                supervisorAdminId = sessionAddSupervisor.SupervisorAdminId;
-                selfAssessmentName = sessionAddSupervisor.SelfAssessmentName;
-                selfAssessmentSupervisorRoleId = sessionAddSupervisor.SelfAssessmentSupervisorRoleId;
-                ViewBag.AddNewSupervisor = true;
-            }
-            else
-            {
-                var delegateUserId = User.GetUserIdKnownNotNull();
-                var selfAssessment =
-                    selfAssessmentService.GetSelfAssessmentForCandidateById(delegateUserId, selfAssessmentId);
-                if (selfAssessment == null)
-                {
-                    return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
-                }
-
-                selfAssessmentName = selfAssessment.Name;
-                var supervisorDelegate = supervisorService.GetSupervisorDelegateDetailsById(
-                    (int)supervisorDelegateId,
-                    0,
-                    delegateUserId
-                );
-                if (supervisorDelegate.SupervisorAdminID != null)
-                {
-                    supervisorAdminId = (int)supervisorDelegate.SupervisorAdminID;
-                }
-            }
-
-            var roles = supervisorService.GetDelegateNominatableSupervisorRolesForSelfAssessment(selfAssessmentId);
-            var supervisor = selfAssessmentService.GetSupervisorByAdminId(supervisorAdminId);
-            var setRoleModel = new SetSupervisorRoleViewModel
-            {
-                SelfAssessmentID = selfAssessmentId,
-                SupervisorDelegateId = supervisorDelegateId,
-                SelfAssessmentSupervisorRoles = roles,
-                Supervisor = supervisor,
-                SelfAssessmentName = selfAssessmentName,
-                CentreID = supervisor.CentreID
-            };
-            if (selfAssessmentSupervisorRoleId != null)
-            {
-                setRoleModel.SelfAssessmentSupervisorRoleId = (int)selfAssessmentSupervisorRoleId;
-            }
-
-            return View("SelfAssessments/SetSupervisorRole", setRoleModel);
-        }
-
-        [HttpPost]
-        [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Supervisors/Add/Role")]
-        public IActionResult SetSupervisorRole(SetSupervisorRoleViewModel model)
-        {
-            if (!ModelState.IsValid)
-            {
-                model.SelfAssessmentSupervisorRoles =
-                    supervisorService.GetSupervisorRolesForSelfAssessment(model.SelfAssessmentID);
-                return View("SelfAssessments/SetSupervisorRole", model);
-            }
-
-            if (model.SupervisorDelegateId == null)
-            {
-                var sessionAddSupervisor = multiPageFormService.GetMultiPageFormData<SessionAddSupervisor>(MultiPageFormDataFeature.AddNewSupervisor, TempData).GetAwaiter().GetResult();
-                if (sessionAddSupervisor == null)
-                {
-                    return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
-                }
-
-                sessionAddSupervisor.SelfAssessmentSupervisorRoleId = model.SelfAssessmentSupervisorRoleId;
-                multiPageFormService.SetMultiPageFormData(
-                    sessionAddSupervisor,
-                    MultiPageFormDataFeature.AddNewSupervisor,
-                    TempData
-                );
-                return RedirectToAction("AddSupervisorSummary", new { model.SelfAssessmentID });
-            }
-
-            supervisorService.InsertCandidateAssessmentSupervisor(
-                User.GetUserIdKnownNotNull(),
-                (int)model.SupervisorDelegateId,
-                model.SelfAssessmentID,
-                model.SelfAssessmentSupervisorRoleId
-            );
-            TempData.Clear();
-            return RedirectToAction("ManageSupervisors", new { model.SelfAssessmentID });
-        }
-
+        
         [ServiceFilter(typeof(IsCentreAuthorizedSelfAssessment))]
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Supervisors/Add/Summary")]
         [ResponseCache(CacheProfileName = "Never")]
@@ -1131,7 +988,6 @@
                 MultiPageFormDataFeature.AddNewSupervisor,
                 TempData
             );
-            var roles = supervisorService.GetDelegateNominatableSupervisorRolesForSelfAssessment(selfAssessmentId);
             var supervisor = selfAssessmentService.GetSupervisorByAdminId(sessionAddSupervisor.SupervisorAdminId);
             var distinctCentres = selfAssessmentService.GetValidSupervisorsForActivity(
                 selfAssessmentId,
@@ -1142,12 +998,7 @@
                 SelfAssessmentID = sessionAddSupervisor.SelfAssessmentID,
                 SelfAssessmentName = sessionAddSupervisor.SelfAssessmentName,
                 Supervisor = supervisor,
-                SelfAssessmentSupervisorRoleId = sessionAddSupervisor.SelfAssessmentSupervisorRoleId,
-                SelfAssessmentRoleName = sessionAddSupervisor.SelfAssessmentSupervisorRoleId == null
-                    ? "Supervisor"
-                    : supervisorService.GetSupervisorRoleById((int)sessionAddSupervisor.SelfAssessmentSupervisorRoleId)
-                        .RoleName,
-                RoleCount = roles.Count(),
+                SelfAssessmentRoleName = supervisor.SupervisorRoleName,
                 SupervisorAtCentre = supervisor.CentreName,
                 CentreCount = distinctCentres.Count()
             };
@@ -1185,8 +1036,7 @@
             supervisorService.InsertCandidateAssessmentSupervisor(
                 delegateUserId,
                 supervisorDelegateId,
-                sessionAddSupervisor.SelfAssessmentID,
-                sessionAddSupervisor.SelfAssessmentSupervisorRoleId
+                sessionAddSupervisor.SelfAssessmentID
             );
             TempData.Clear();
             frameworkNotificationService.SendDelegateSupervisorNominated(

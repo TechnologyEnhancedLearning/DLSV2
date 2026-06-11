@@ -53,12 +53,13 @@
         }
 
         <partial name="_DelegateProgressSummary" model="Model" />
-
-        <div class="nhsuk-inset-text">
-            <span class="nhsuk-u-visually-hidden">Information: </span>
-            <p class="nhsuk-body-l">Overall diagnostic score: <strong>@(Model.DiagnosticScore.HasValue ? $"{Model.DiagnosticScore}%" : "N/A")</strong></p>
-        </div>
-
+        @if(Model.DiagAssess)
+        {
+            <div class="nhsuk-inset-text">
+                <span class="nhsuk-u-visually-hidden">Information: </span>
+                <p class="nhsuk-body-l">Overall diagnostic score: <strong>@(Model.DiagnosticScore.HasValue ? $"{Model.DiagnosticScore}%" : "N/A")</strong></p>
+            </div>
+        }
         @foreach (var section in Model.Sections)
         {
             <partial name="_SectionProgress" model="section" />
