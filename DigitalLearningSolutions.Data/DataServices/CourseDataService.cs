@@ -953,7 +953,8 @@ namespace DigitalLearningSolutions.Data.DataServices
                         u.HasBeenPromptedForPrn,
                         u.ProfessionalRegistrationNumber,
                         da.CentreID,
-                        ap.ArchivedDate",
+                        ap.ArchivedDate,
+                        ap.DiagAssess",
             new { delegateId }
         );
         }
@@ -1062,7 +1063,8 @@ namespace DigitalLearningSolutions.Data.DataServices
                         u.HasBeenPromptedForPrn,
                         u.ProfessionalRegistrationNumber,
                         da.CentreID,
-                        ap.ArchivedDate",
+                        ap.ArchivedDate,
+                        ap.DiagAssess",
                 new { customisationId, centreId }
             );
         }
