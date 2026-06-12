@@ -38,7 +38,7 @@
             if (!canAccessSelfAssessment)
             {
                 logger.LogWarning(
-                    $"Attempt to display self assessment results for user {delegateUserId} with no self assessment"
+                    $"Attempt to display self-assessment results for user {delegateUserId} with no self-assessment"
                 );
                 context.Result = new RedirectToActionResult("AccessDenied", "LearningSolutions", new { });
             }

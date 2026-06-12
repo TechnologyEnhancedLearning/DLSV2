@@ -44,7 +44,7 @@
                 if (selfAssessment == null)
                 {
                     logger.LogWarning(
-                        $"Attempt to access self assessment {selfAssessmentId} by user {delegateUserId}, but no such assessment found"
+                        $"Attempt to access self-assessment {selfAssessmentId} by user {delegateUserId}, but no such assessment found"
                     );
                     context.Result = new RedirectToActionResult("StatusCode", "LearningSolutions", new { code = 403 });
                     return;
@@ -59,7 +59,7 @@
                 if (!selfAssessment.SelfAssessmentProcessAgreed && selfAssessment.IsSupervised)
                 {
                     logger.LogInformation(
-                        $"Redirecting user {delegateUserId} to agree process page for self assessment {selfAssessmentId}"
+                        $"Redirecting user {delegateUserId} to agree process page for self-assessment {selfAssessmentId}"
                     );
 
                     context.Result = new RedirectToActionResult(

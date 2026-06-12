@@ -31,7 +31,7 @@
             var selfAssessmentCategoryId = selfAssessmentService.GetSelfAssessmentCategoryId((selfAssessmentId));
             if (adminCategoryId > 0 && adminCategoryId != selfAssessmentCategoryId)
             {
-                logger.LogWarning($"Attempt to access restricted self assessment {selfAssessmentId} by user {controller.User.GetUserIdKnownNotNull()}");
+                logger.LogWarning($"Attempt to access restricted self-assessment {selfAssessmentId} by user {controller.User.GetUserIdKnownNotNull()}");
                 context.Result = new RedirectToActionResult("StatusCode", "LearningSolutions", new { code = 403 });
             }
         }

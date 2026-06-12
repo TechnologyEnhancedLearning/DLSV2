@@ -125,7 +125,7 @@
             if (candidateAssessmentIdIfAny == null)
             {
                 throw new InvalidOperationException(
-                    $"Cannot add resource to action plan as user {delegateUserId} is not enrolled on self assessment {selfAssessmentId}"
+                    $"Cannot add resource to action plan as user {delegateUserId} is not enrolled on self-assessment {selfAssessmentId}"
                 );
             }
 

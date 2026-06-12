@@ -754,7 +754,7 @@
 
             if (selfAssessmentID < 1)
             {
-                ModelState.AddModelError("selfAssessmentId", "You must select a self assessment");
+                ModelState.AddModelError("selfAssessmentId", "You must select a self-assessment");
                 multiPageFormService.SetMultiPageFormData(
                     sessionEnrolOnCompetencyAssessment,
                     MultiPageFormDataFeature.EnrolDelegateOnProfileAssessment,

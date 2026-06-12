@@ -9,9 +9,9 @@
         public int CentreId { get; set; }
         public string? CentreName { get; set; }
         public IEnumerable<SelfAssessmentForPublish>? SelfAssessments { get; set; }
-        [Required(ErrorMessage = "Please select at least one self assessment")]
+        [Required(ErrorMessage = "Please select at least one self-assessment")]
         public List<int> SelfAssessmentIds { get; set; }
-        [Required(ErrorMessage = "Please indicate whether learners will be allowed to self enrol on the self assessment(s)")]
+        [Required(ErrorMessage = "Please indicate whether learners will be allowed to self enrol on the self-assessment(s)")]
         public bool? EnableSelfEnrolment { get; set; }
     }
 }

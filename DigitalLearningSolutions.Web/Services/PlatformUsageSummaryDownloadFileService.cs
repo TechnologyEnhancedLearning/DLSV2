@@ -31,10 +31,10 @@
 
         private const string CourseEnrolments = "Course enrolments";
         private const string CourseCompletions = "Course completions";
-        private const string IndependentSelfAssessmentEnrolments = "Independent self assessment enrolments";
-        private const string IndependentSelfAssessmentCompletions = "Independent self assessment completions";
-        private const string SupervisedSelfAssessmentEnrolments = "Supervised self assessment enrolments";
-        private const string SupervisedSelfAssessmentCompletions = "Supervised self assessment completions";
+        private const string IndependentSelfAssessmentEnrolments = "Independent self-assessment enrolments";
+        private const string IndependentSelfAssessmentCompletions = "Independent self-assessment completions";
+        private const string SupervisedSelfAssessmentEnrolments = "Supervised self-assessment enrolments";
+        private const string SupervisedSelfAssessmentCompletions = "Supervised self-assessment completions";
         private readonly IPlatformReportsService platformReportsService;
         public PlatformUsageSummaryDownloadFileService(
             IPlatformReportsService platformReportsService

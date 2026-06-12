@@ -119,7 +119,7 @@
             controller = controller.WithMockTempData();
         }
 
-        [TestCase(1, "test", "Digital Capability Self Assessment Deprecated", 1)]
+        [TestCase(1, "test", "Digital Capability Self-Assessment Deprecated", 1)]
         [TestCase(1, "test", "IV Therapy Passport", 1)]
         public void ExportCandidateAssessment_should_return_file_object_with_file_name_is_equal_to_expectedFileName(int candidateAssessmentId, string delegateName, string selfAssessmentName, int delegateUserID)
         {

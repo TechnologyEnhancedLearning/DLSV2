@@ -57,7 +57,7 @@
         private const string AdminFieldOne = "Admin field 1";
         private const string AdminFieldTwo = "Admin field 2";
         private const string AdminFieldThree = "Admin field 3";
-        private const string SelfAssessmentName = "Self assessment name";
+        private const string SelfAssessmentName = "Self-assessment name";
         private const string PRN = "PRN";
         private const string Submitted = "Submitted";
         private const string SignedOff = "Signed off";
@@ -262,7 +262,7 @@
             FormatWorksheetColumns(workbook, emptyTable);
 
             //export self assessments
-            sheet = workbook.Worksheets.Add("Self Assessment Delegates");
+            sheet = workbook.Worksheets.Add("Self-Assessment Delegates");
             sheet.Outline.SummaryVLocation = XLOutlineSummaryVLocation.Top;
 
             emptyTable = new DataTable();

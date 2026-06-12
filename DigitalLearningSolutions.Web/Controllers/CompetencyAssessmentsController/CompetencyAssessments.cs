@@ -627,7 +627,7 @@
         {
             var adminId = GetAdminID();
             var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
-            var result = ValidateCompetencyAssessmentAndRole(competencyAssessmentId, adminId, "Move Competency In Self Assessment", competencyAssessmentBase);
+            var result = ValidateCompetencyAssessmentAndRole(competencyAssessmentId, adminId, "Move Competency In Self-Assessment", competencyAssessmentBase);
             if (result.StatusCode != 200)
                 return result;
             competencyAssessmentService.MoveCompetencyInSelfAssessment(competencyAssessmentId, competencyId, direction);
@@ -637,7 +637,7 @@
         {
             var adminId = GetAdminID();
             var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
-            var result = ValidateCompetencyAssessmentAndRole(competencyAssessmentId, adminId, "Move Competency Group In Self Assessment", competencyAssessmentBase);
+            var result = ValidateCompetencyAssessmentAndRole(competencyAssessmentId, adminId, "Move Competency Group In Self-Assessment", competencyAssessmentBase);
             if (result.StatusCode != 200)
                 return result;
             competencyAssessmentService.MoveCompetencyGroupInSelfAssessment(competencyAssessmentId, groupId, direction);
@@ -1286,7 +1286,7 @@
             }
             var adminId = GetAdminID();
             var baseData = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
-            var result = ValidateCompetencyAssessmentAndRole(competencyAssessmentId, adminId, "Supervised Self Assessment Signoff", baseData);
+            var result = ValidateCompetencyAssessmentAndRole(competencyAssessmentId, adminId, "Supervised Self-Assessment Signoff", baseData);
             if (result.StatusCode != 200)
                 return result;
             var model = new SupervisedSelfAssessmentSignoffViewModel(competencyAssessmentId, baseData.CompetencyAssessmentName, actionName);

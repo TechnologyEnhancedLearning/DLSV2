@@ -6,7 +6,7 @@ namespace DigitalLearningSolutions.Web.Tests.TestHelpers
     {
         public static CurrentSelfAssessment CreateDefaultSelfAssessment(
             int selfAssessmentId = 1,
-            string name = "self assessment",
+            string name = "self-assessment",
     string description = "description"
             )
         {

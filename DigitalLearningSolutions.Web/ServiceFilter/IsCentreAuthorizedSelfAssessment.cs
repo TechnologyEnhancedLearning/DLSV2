@@ -33,7 +33,7 @@
             {
                 if (!selfAssessmentService.IsCentreSelfAssessment(selfAssessmentId, centreId))
                 {
-                    logger.LogWarning($"Attempt to access restricted self assessment {selfAssessmentId} by user {controller.User.GetUserIdKnownNotNull()}");
+                    logger.LogWarning($"Attempt to access restricted self-assessment {selfAssessmentId} by user {controller.User.GetUserIdKnownNotNull()}");
                     context.Result = new RedirectToActionResult("AccessDenied", "LearningSolutions", new { code = 403 });
                 }
             }

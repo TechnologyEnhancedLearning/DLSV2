@@ -4,7 +4,7 @@
 @inject IConfiguration Configuration;
 @{
     var errorHasOccurred = !ViewData.ModelState.IsValid;
-    ViewData["Title"] = (errorHasOccurred ? "Error: " : "") + "Delegate Self Assessment - Confirm Remove";
+    ViewData["Title"] = (errorHasOccurred ? "Error: " : "") + "Delegate Self-Assessment - Confirm Remove";
     var cancelLinkRouteData = new Dictionary<string, string>();
     cancelLinkRouteData.Add("selfAssessmentId", Model.SelfAssessmentID.ToString());
 
@@ -30,12 +30,12 @@
         {
             <vc:error-summary order-of-property-names="@(new[] { nameof(Model.ActionConfirmed) })" />
         }
-        <h1 class="nhsuk-heading-xl">Remove from self assessment</h1>
+        <h1 class="nhsuk-heading-xl">Remove from self-assessment</h1>
     </div>
 </div>
 
 <vc:field-name-value-display display-name="Delegate" field-value="@Model.Name" />
-<vc:field-name-value-display display-name="Self Assessment" field-value="@Model.SelfAssessmentsName" />
+<vc:field-name-value-display display-name="Self-Assessment" field-value="@Model.SelfAssessmentsName" />
 <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-full">
 
@@ -43,12 +43,12 @@
         <form class="nhsuk-u-margin-bottom-3" asp-controller="ActivityDelegates">
 
             <vc:single-checkbox asp-for="@nameof(Model.ActionConfirmed)"
-                                label="I am sure that I wish to remove @Model.FirstName @Model.LastName from this self assessment."
-                                hint-text="This action will remove the delegate from the self assessment. Their progress will be archived but can be reinstated by enrolling them on the self assessment again." />
+                                label="I am sure that I wish to remove @Model.FirstName @Model.LastName from this self-assessment."
+                                hint-text="This action will remove the delegate from the self-assessment. Their progress will be archived but can be reinstated by enrolling them on the self-assessment again." />
 
 
             <button type="submit" class="nhsuk-button nhsuk-button--danger nhsuk-u-margin-top-4" asp-action="RemoveDelegateSelfAssessment">
-                Remove from self assessment
+                Remove from self-assessment
             </button>
             @Html.HiddenFor(m => m.CandidateAssessmentsId)
             @Html.HiddenFor(m => m.FirstName)

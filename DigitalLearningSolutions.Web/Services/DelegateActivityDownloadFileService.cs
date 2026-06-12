@@ -22,7 +22,7 @@ namespace DigitalLearningSolutions.Web.Services
     public class DelegateActivityDownloadFileService : IDelegateActivityDownloadFileService
     {
         public const string DelegatesSheetName = "Activity delegates";
-        private const string SelfAssessmentName = "Self assessment name";
+        private const string SelfAssessmentName = "Self-assessment name";
         private const string LastName = "Last name";
         private const string FirstName = "First name";
         private const string Email = "Email";

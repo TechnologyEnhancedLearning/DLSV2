@@ -63,7 +63,7 @@
             if (selfAssessment == null)
             {
                 logger.LogWarning(
-                    $"Attempt to display self assessment description for user {delegateUserId} with no self assessment"
+                    $"Attempt to display self-assessment description for user {delegateUserId} with no self-assessment"
                 );
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
             }
@@ -87,7 +87,7 @@
             if (selfAssessment == null)
             {
                 logger.LogWarning(
-                    $"Attempt to display self assessment process for user {delegateUserId} with no self assessment"
+                    $"Attempt to display self-assessment process for user {delegateUserId} with no self-assessment"
                 );
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
             }
@@ -114,7 +114,7 @@
             if (selfAssessment == null)
             {
                 logger.LogWarning(
-                    $"Attempt to display self assessment description for user {delegateUserId} with no self assessment"
+                    $"Attempt to display self-assessment description for user {delegateUserId} with no self-assessment"
                 );
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
             }
@@ -139,7 +139,7 @@
             if (assessment == null)
             {
                 logger.LogWarning(
-                    $"Attempt to display self assessment competency for user {delegateUserId} with no self assessment"
+                    $"Attempt to display self-assessment competency for user {delegateUserId} with no self-assessment"
                 );
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
             }
@@ -210,7 +210,7 @@
             if (assessment == null)
             {
                 logger.LogWarning(
-                    $"Attempt to set self assessment competency for user {delegateUserId} with no self assessment"
+                    $"Attempt to set self-assessment competency for user {delegateUserId} with no self-assessment"
                 );
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
             }
@@ -314,7 +314,7 @@
             if (assessment == null)
             {
                 logger.LogWarning(
-                    $"Attempt to set self assessment competency for candidate {delegateUserId} with no self assessment"
+                    $"Attempt to set self-assessment competency for candidate {delegateUserId} with no self-assessment"
                 );
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
             }
@@ -376,7 +376,7 @@
             if (assessment == null)
             {
                 logger.LogWarning(
-                    $"Attempt to display self assessment overview for user {delegateUserId} with no self assessment"
+                    $"Attempt to display self-assessment overview for user {delegateUserId} with no self-assessment"
                 );
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
             }
@@ -477,7 +477,7 @@
             if (assessment == null)
             {
                 logger.LogWarning(
-                    $"Attempt to display self assessment overview for user {delegateUserId} with no self assessment"
+                    $"Attempt to display self-assessment overview for user {delegateUserId} with no self-assessment"
                 );
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
             }
@@ -504,7 +504,7 @@
             if (assessment == null)
             {
                 logger.LogWarning(
-                    $"Attempt to display self assessment overview for user {delegateUserId} with no self assessment"
+                    $"Attempt to display self-assessment overview for user {delegateUserId} with no self-assessment"
                 );
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
             }
@@ -527,7 +527,7 @@
             if (assessment == null)
             {
                 logger.LogWarning(
-                    $"Attempt to display self assessment overview for user {delegateUserId} with no self assessment"
+                    $"Attempt to display self-assessment overview for user {delegateUserId} with no self-assessment"
                 );
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
             }
@@ -598,7 +598,7 @@
             if (assessment is { Id: 0 })
             {
                 logger.LogWarning(
-                    $"Attempt to set complete by date for user {delegateUserId} with no self assessment"
+                    $"Attempt to set complete by date for user {delegateUserId} with no self-assessment"
                 );
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
             }
