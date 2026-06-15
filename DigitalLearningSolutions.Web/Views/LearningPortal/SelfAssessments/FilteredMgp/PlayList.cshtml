@@ -6,7 +6,7 @@
   ViewData["SelfAssessmentTitle"] = "Competency Learning Resources";
 }
 @section breadcrumbs {
-  <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="SelfAssessment" asp-route-selfAssessmentId="@(ViewContext.RouteData.Values["selfAssessmentId"])">Self Assessment</a></li>
+  <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="SelfAssessment" asp-route-selfAssessmentId="@(ViewContext.RouteData.Values["selfAssessmentId"])">Self-Assessment</a></li>
   <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="RecommendedLearning" asp-action="RecommendedLearning" asp-route-selfAssessmentId="@(ViewContext.RouteData.Values["selfAssessmentId"])">Recommended Learning Resources</a></li>
   <li class="nhsuk-breadcrumb__item">Competency Learning Resources</li>
 }

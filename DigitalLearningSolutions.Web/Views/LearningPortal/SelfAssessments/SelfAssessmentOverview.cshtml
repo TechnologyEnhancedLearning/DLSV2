@@ -32,7 +32,7 @@
     var competencyQuestionsSummary = competencySummaries.Sum(c => (int)c["questionsCount"]);
     var competencyVerifiedSummary = competencySummaries.Sum(c => (int)c["verifiedCount"]);
     Layout = "SelfAssessments/_Layout";
-    ViewData["Title"] = "Self Assessment - Proficiencies";
+    ViewData["Title"] = "Self-Assessment - Proficiencies";
     ViewData["SelfAssessmentTitle"] = Model.SelfAssessment.Name;
 }
 <link rel="stylesheet" href="@Url.Content("~/css/learningPortal/selfAssessment.css")" asp-append-version="true">
@@ -93,7 +93,7 @@
                     </span>
                 </h3>
                 <p>
-                    Your self assessment does not contain enough optional @(Model.VocabPlural().ToLower()) to request sign off.
+                    Your self-assessment does not contain enough optional @(Model.VocabPlural().ToLower()) to request sign off.
                     Go to Manage optional @(Model.VocabPlural().ToLower()) to choose the optional @(Model.VocabPlural().ToLower()) that you wish to include.
                 </p>
             </div>
@@ -180,7 +180,7 @@
                    asp-route-selfAssessmentId="@Model.SelfAssessment.Id"
                    asp-action=@(Model.SelfAssessment.UnprocessedUpdates ? "SelfAssessmentResults" : "RecommendedLearning")
                    role="button">
-                    Submit self assessment
+                    Submit self-assessment
                 </a>
             }
         }

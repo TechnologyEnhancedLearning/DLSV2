@@ -1,7 +1,7 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.Supervisor;
 @model DelegateSelfAssessmentsViewModel;
 @{
-    ViewData["Title"] = "Self assessments";
+    ViewData["Title"] = "Self-assessments";
     ViewData["Application"] = "Supervisor";
     ViewData["HeaderPathName"] = "Supervisor";
 }
@@ -49,6 +49,6 @@ else
        asp-action="StartEnrolDelegateOnProfileAssessment"
        asp-route-supervisorDelegateId="@Model.SupervisorDelegateDetail.ID"
        asp-route-delegateUserId="@Model.SupervisorDelegateDetail.DelegateUserID">
-        Enrol on self assessment
+        Enrol on self-assessment
     </a>
 }

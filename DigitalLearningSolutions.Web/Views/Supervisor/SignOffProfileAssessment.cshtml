@@ -3,7 +3,7 @@
 @model SignOffProfileAssessmentViewModel;
 @{
     var errorHasOccurred = !ViewData.ModelState.IsValid;
-    ViewData["Title"] = "Sign-off Self Assessment";
+    ViewData["Title"] = "Sign-off Self-Assessment";
     ViewData["Application"] = "Supervisor";
     ViewData["HeaderPathName"] = "Supervisor";
 }
@@ -40,7 +40,7 @@
                     </a>
                 </li>
                 <li class="nhsuk-breadcrumb__item">
-                    Sign-off Self Assessment
+                    Sign-off Self-Assessment
                 </li>
             </ol>
         </div>
@@ -169,7 +169,7 @@
             <fieldset class="nhsuk-fieldset">
                 <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
                     <h2 class="nhsuk-fieldset__heading">
-                        Sign-off Self Assessment
+                        Sign-off Self-Assessment
                     </h2>
                 </legend>
                 <input type="hidden" asp-for="CandidateAssessmentSupervisorVerificationId" />
@@ -211,7 +211,7 @@
                         <div class="nhsuk-checkboxes__item">
                             <input class="nhsuk-checkboxes__input" id="optional-competencies" name="OptionalCompetenciesChecked" asp-for="OptionalCompetenciesChecked" type="checkbox">
                             <label class="nhsuk-label nhsuk-checkboxes__label" for="optional-competencies">
-                                I have reviewed the optional competencies included in this self assessment and confirm them to be appropriate to the learner’s role.
+                                I have reviewed the optional competencies included in this self-assessment and confirm them to be appropriate to the learner’s role.
                             </label>
                         </div>
                     </nhs-form-group>
