@@ -23,106 +23,106 @@
     </nav>
 }
 <div class="nhsuk-form-group">
-<h1 class="app-page-heading">
-    <span class="nhsuk-caption-xl">
-        @Model.CompetencyAssessmentName
-        <span class="nhsuk-u-visually-hidden"> – </span>
-    </span>
-  Manage optional @Model.VocabularyPlural.ToLower()
-  </h1>
-<p>
-Optional @Model.VocabularyPlural.ToLower() can be selected for inclusion in a self-assessment by a learner if required.
-</p>
-<dl class="nhsuk-summary-list">
-    <div class="nhsuk-summary-list__row">
-        <dt class="nhsuk-summary-list__key">
-            Optional @Model.VocabularyPlural.ToLower()
-        </dt>
-        <dd class="nhsuk-summary-list__value">
-            @if (!Model.SelectedCompetencyIds.Any())
-            {
-                <text>No @Model.VocabularyPlural.ToLower() have been made optional for this self-assessment.</text>
-            }
-            else
-            {
-                <text>
-                    @(Model.CompetencyGroups.Count(g =>
-                                    g.Any(c => c.GroupOptionalCompetencies)
-                                    )) optional @Model.VocabularySingular.ToLower() groups
-                                      <br />
-                    @(Model.CompetencyGroups
-                                    .Where(g => g.All(c => !c.GroupOptionalCompetencies))
-                                    .Sum(g => g.Count())) individual optional @Model.VocabularyPlural.ToLower() from
-                    @(Model.CompetencyGroups.Count(g =>
-                                    g.All(c => !c.GroupOptionalCompetencies)
-                                    )) groups
-            </text>
+    <h1 class="app-page-heading">
+        <span class="nhsuk-caption-xl">
+            @Model.CompetencyAssessmentName
+            <span class="nhsuk-u-visually-hidden"> – </span>
+        </span>
+        Manage optional @Model.VocabularyPlural.ToLower()
+    </h1>
+    <p>
+        Optional @Model.VocabularyPlural.ToLower() can be selected for inclusion in a self-assessment by a learner if required.
+    </p>
+    <dl class="nhsuk-summary-list">
+        <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+                Optional @Model.VocabularyPlural.ToLower()
+            </dt>
+            <dd class="nhsuk-summary-list__value">
+                @if (!Model.SelectedCompetencyIds.Any())
+                {
+                    <text>No @Model.VocabularyPlural.ToLower() have been made optional for this self-assessment.</text>
+                }
+                else
+                {
+                    <text>
+                        @(Model.CompetencyGroups.Count(g =>
+                                            g.Any(c => c.GroupOptionalCompetencies)
+                                            )) optional @Model.VocabularySingular.ToLower() groups
+                                              <br />
+                        @(Model.CompetencyGroups
+                                            .Where(g => g.All(c => !c.GroupOptionalCompetencies))
+                                            .Sum(g => g.Count())) individual optional @Model.VocabularyPlural.ToLower() from
+                        @(Model.CompetencyGroups.Count(g =>
+                                            g.All(c => !c.GroupOptionalCompetencies)
+                                            )) groups
+                </text>
 
-                        }
-        </dd>
+                                }
+            </dd>
+            @if (Model.UserRole > 1)
+            {
+                <dd class="nhsuk-summary-list__actions">
+                    <a class="nhsuk-link" asp-route-competencyAssessmentId="@Model.ID" asp-route-vocabularyPlural="@Model.VocabularyPlural" asp-action="SelectOptionalCompetencies">Change<span class="nhsuk-u-visually-hidden"> optional @Model.VocabularyPlural.ToLower()</span></a>
+                </dd>
+            }
+        </div>
+        @if (Model.SelectedCompetencyIds.Any())
+        {
+            <div class="nhsuk-summary-list__row">
+                <dt class="nhsuk-summary-list__key">
+                    Minimum optional @Model.VocabularyPlural.ToLower()
+                </dt>
+                <dd class="nhsuk-summary-list__value">
+                    @(Model.MinimumOptionalCompetencies == null | Model.MinimumOptionalCompetencies == 0 ? "No minimum set" : Model.MinimumOptionalCompetencies.ToString())
+                </dd>
+                @if (Model.UserRole > 1)
+                {
+                    <dd class="nhsuk-summary-list__actions">
+                        <a class="nhsuk-link" asp-route-competencyAssessmentId="@Model.ID" asp-route-vocabularyPlural="@Model.VocabularyPlural" asp-action="SetMinimumOptionalCompetencies">Change<span class="nhsuk-u-visually-hidden"> minimum optional @Model.VocabularyPlural.ToLower()</span></a>
+                    </dd>
+                }
+            </div>
+            <div class="nhsuk-summary-list__row">
+                <dt class="nhsuk-summary-list__key">
+                    Optional learner prompt
+                </dt>
+                <dd class="nhsuk-summary-list__value">
+                    @Html.Raw(Model.ManageOptionalCompetenciesPrompt == null ? "No learner prompt specified" : Model.ManageOptionalCompetenciesPrompt.ToString())
+                </dd>
+                @if (Model.UserRole > 1)
+                {
+                    <dd class="nhsuk-summary-list__actions">
+                        <a class="nhsuk-link" asp-route-competencyAssessmentId="@Model.ID" asp-route-vocabularyPlural="@Model.VocabularyPlural" asp-action="SetOptionalCompetencyLearnerPrompt">Change<span class="nhsuk-u-visually-hidden"> learner prompt</span></a>
+                    </dd>
+                }
+            </div>
+        }
+    </dl>
+    <form method="post">
+        <nhs-form-group>
+            <input type="hidden" asp-for="ID" />
+            <input type="hidden" asp-for="MinimumOptionalCompetencies" />
+            <input type="hidden" asp-for="ManageOptionalCompetenciesPrompt" />
+            <input type="hidden" asp-for="SelectedCompetencyIds" />
+            <input type="hidden" asp-for="GroupIds" />
+            <input type="hidden" asp-for="VocabularyPlural" />
+
+            <vc:single-checkbox asp-for="@nameof(Model.TaskStatus)" label="Mark this task as complete." hint-text="You will still be able to make changes after marking this task as complete."></vc:single-checkbox>
+        </nhs-form-group>
         @if (Model.UserRole > 1)
         {
-            <dd class="nhsuk-summary-list__actions">
-                    <a class="nhsuk-link" asp-route-competencyAssessmentId="@Model.ID" asp-route-vocabularyPlural="@Model.VocabularyPlural" asp-action="SelectOptionalCompetencies">Change<span class="nhsuk-u-visually-hidden"> optional @Model.VocabularyPlural.ToLower()</span></a>
-            </dd>
+            <button class="nhsuk-button" type="submit">
+                Save
+            </button>
         }
+    </form>
+    <div class="nhsuk-back-link">
+        <a class="nhsuk-back-link__link" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.ID">
+            <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
+            </svg>
+            Cancel
+        </a>
     </div>
-    @if (Model.SelectedCompetencyIds.Any())
-    {
-        <div class="nhsuk-summary-list__row">
-            <dt class="nhsuk-summary-list__key">
-                Minimum optional @Model.VocabularyPlural.ToLower()
-            </dt>
-            <dd class="nhsuk-summary-list__value">
-                @(Model.MinimumOptionalCompetencies == null | Model.MinimumOptionalCompetencies == 0 ? "No minimum set" : Model.MinimumOptionalCompetencies.ToString())
-            </dd>
-            @if (Model.UserRole > 1)
-            {
-                <dd class="nhsuk-summary-list__actions">
-                        <a class="nhsuk-link" asp-route-competencyAssessmentId="@Model.ID" asp-route-vocabularyPlural="@Model.VocabularyPlural" asp-action="SetMinimumOptionalCompetencies">Change<span class="nhsuk-u-visually-hidden"> minimum optional @Model.VocabularyPlural.ToLower()</span></a>
-                </dd>
-            }
-        </div>
-        <div class="nhsuk-summary-list__row">
-            <dt class="nhsuk-summary-list__key">
-                Optional learner prompt
-            </dt>
-            <dd class="nhsuk-summary-list__value">
-                @Html.Raw(Model.ManageOptionalCompetenciesPrompt == null ? "No learner prompt specified" : Model.ManageOptionalCompetenciesPrompt.ToString())
-            </dd>
-            @if (Model.UserRole > 1)
-            {
-                <dd class="nhsuk-summary-list__actions">
-                        <a class="nhsuk-link" asp-route-competencyAssessmentId="@Model.ID" asp-route-vocabularyPlural="@Model.VocabularyPlural" asp-action="SetOptionalCompetencyLearnerPrompt">Change<span class="nhsuk-u-visually-hidden"> learner prompt</span></a>
-                </dd>
-            }
-        </div>
-    }
-</dl>
-<form method="post">
-    <nhs-form-group>
-        <input type="hidden" asp-for="ID" />
-        <input type="hidden" asp-for="MinimumOptionalCompetencies" />
-        <input type="hidden" asp-for="ManageOptionalCompetenciesPrompt" />
-        <input type="hidden" asp-for="SelectedCompetencyIds" />
-        <input type="hidden" asp-for="GroupIds" />
-        <input type="hidden" asp-for="VocabularyPlural" />
-
-        <vc:single-checkbox asp-for="@nameof(Model.TaskStatus)" label="Mark this task as complete" hint-text="You will still be able to make changes after marking this task as complete."></vc:single-checkbox>
-    </nhs-form-group>
-    @if (Model.UserRole > 1)
-    {
-        <button class="nhsuk-button" type="submit">
-            Save
-        </button>
-    }
-</form>
-<div class="nhsuk-back-link">
-    <a class="nhsuk-back-link__link" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.ID">
-        <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-            <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
-        </svg>
-        Cancel
-    </a>
-</div>
 </div>
