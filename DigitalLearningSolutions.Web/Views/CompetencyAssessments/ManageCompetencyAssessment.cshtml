@@ -1,7 +1,7 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
 @model ManageCompetencyAssessmentViewModel
 @{
-    ViewData["Title"] = Model.PublishStatusID == 3 ? "Manage" : "Create" + " self-assessment";
+    ViewData["Title"] = Model.PublishStatusID == 3 ? "Manage self-assessment" : "Create self-assessment";
     ViewData["Application"] = "Framework service";
     var hasRetirement = Model.RetirementDate != null;
 }
