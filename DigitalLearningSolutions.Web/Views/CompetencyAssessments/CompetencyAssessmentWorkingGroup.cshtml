@@ -130,10 +130,7 @@
     @if (Model.UserRole > 1)
     {
         <vc:single-checkbox asp-for="@nameof(Model.CompetencyAssessmentTaskStatus)" label="Mark this task as complete." hint-text="You will still be able to make changes after marking this task as complete."></vc:single-checkbox>
-    }
 
-    @if (Model.UserRole > 1)
-    {
         <div class=" nhsuk-u-margin-top-6">
             @if (Model.ActionName == "CollaboratorReview")
             {
