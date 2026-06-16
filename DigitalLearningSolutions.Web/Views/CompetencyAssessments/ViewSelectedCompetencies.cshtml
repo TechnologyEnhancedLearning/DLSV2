@@ -211,14 +211,17 @@
     }
 }
 
-    
+
 
 
 <form method="post">
     <input name="ID" type="hidden" asp-for="ID" />
-    <nhs-form-group>
-        <vc:single-checkbox asp-for="@nameof(Model.TaskStatus)" label="Mark this task as complete" hint-text="You will still be able to make changes after marking this task as complete."></vc:single-checkbox>
-    </nhs-form-group>
+    @if (Model.UserRole > 1)
+    {
+        <nhs-form-group>
+            <vc:single-checkbox asp-for="@nameof(Model.TaskStatus)" label="Mark this task as complete" hint-text="You will still be able to make changes after marking this task as complete."></vc:single-checkbox>
+        </nhs-form-group>
+    }
     @if (Model.UserRole > 1)
     {
         <button class="nhsuk-button" type="submit">
