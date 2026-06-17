@@ -1083,7 +1083,7 @@
                     INNER JOIN AdminUsers AS au ON sc.AdminID = au.AdminID
                         AND sc.IsDeleted = 0
                       LEFT OUTER JOIN SelfAssessmentReviews sr ON sr.SelfAssessmentCollaboratorID = sc.ID AND sr.Archived IS NULL
-                    WHERE (sc.SelfAssessmentID = @competencyAssessmentId)",
+                    WHERE (sc.SelfAssessmentID = @competencyAssessmentId) AND sr.ReviewRequested IS NULL",
                 new { competencyAssessmentId }
             );
         }

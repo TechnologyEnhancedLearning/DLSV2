@@ -28,87 +28,101 @@
     </span>
     Send for review
 </h1>
-<h2>Who should review this self-assessment?</h2>
-@if (errorHasOccurred)
+
+@if (Model.Collaborators.Any())
 {
-    <vc:error-summary order-of-property-names="@(new[] { nameof(Model.UserChecked) })" />
-}
-<form method="post">
-    <table class="nhsuk-table-responsive">
-        <caption class="nhsuk-table__caption">
-            Select working group members who need to review the self-assessment "@Model.CompetencyAssessmentName" before it is published.
-            If sign-off is required form a user before the self-assessment is published, ensure that sign-off required column is checked.
-        </caption>
-        <thead role="rowgroup" class="nhsuk-table__head">
-            <tr role="row">
+    <h2>Who should review this self-assessment?</h2>
+    @if (errorHasOccurred)
+    {
+        <vc:error-summary order-of-property-names="@(new[] { nameof(Model.UserChecked) })" />
+    }
+    <form method="post">
+        <table class="nhsuk-table-responsive">
+            <caption class="nhsuk-table__caption">
+                Select working group members who need to review the self-assessment "@Model.CompetencyAssessmentName" before it is published.
+                If sign-off is required form a user before the self-assessment is published, ensure that sign-off required column is checked.
+            </caption>
+            <thead role="rowgroup" class="nhsuk-table__head">
+                <tr role="row">
 
-                <th role="columnheader" class="" scope="col">
-                    User
-                </th>
-                <th role="columnheader" class="" scope="col">
-                    Role
-                </th>
-                <th role="columnheader" class="" scope="col">
-                    Sign-off Required
-                </th>
-            </tr>
-        </thead>
-
-        <tbody class="nhsuk-table__body">
-            @foreach (var collaborator in Model.Collaborators)
-            {
-                <tr role="row" class="nhsuk-table__row collaborator-row">
-                    <td role="cell" class="nhsuk-table__cell">
-
-                        <span class="nhsuk-table-responsive__heading">User </span>
-                        <div class="nhsuk-checkboxes__item">
-                            <input class="nhsuk-checkboxes__input"
-                                   id="user-check-@collaborator.ID"
-                                   name="UserChecked" type="checkbox"
-                                   value="@collaborator.ID"
-                                   @(collaborator.SelfAssessmentReviewID.HasValue ? "checked" : "")>
-                            <label class="nhsuk-label nhsuk-checkboxes__label" for="user-check-@collaborator.ID">
-                                @collaborator.UserEmail @(collaborator.UserActive == true ? "" : "(inactive)")
-                            </label>
-                        </div>
-                    </td>
-                    <td role="cell" class="nhsuk-table__cell">
-                        <span class="nhsuk-table-responsive__heading">Role </span>
-                        <span class="framework-collaborator-role">
-                            <partial name="Shared/_RoleTag" model="collaborator" />
-                        </span>
-                    </td>
-                    <td role="cell" class="nhsuk-table__cell">
-                        <span class="nhsuk-table-responsive__heading">Sign-off Required </span>
-                        <div class="nhsuk-checkboxes__item">
-                            <input class="nhsuk-checkboxes__input"
-                                   id="sign-off-required-check-@collaborator.ID"
-                                   name="SignOffRequiredChecked"
-                                   type="checkbox"
-                                   value="@collaborator.ID"
-                                   @(collaborator.SignOffRequired == true ? "checked" : "")>
-                            <label class="nhsuk-label nhsuk-checkboxes__label" for="sign-off-required-@collaborator.ID">
-                                Required
-                            </label>
-                        </div>
-                    </td>
+                    <th role="columnheader" class="" scope="col">
+                        User
+                    </th>
+                    <th role="columnheader" class="" scope="col">
+                        Role
+                    </th>
+                    <th role="columnheader" class="" scope="col">
+                        Sign-off Required
+                    </th>
                 </tr>
-            }
-        </tbody>
-    </table>
-    <input type="hidden" asp-for="CompetencyAssessmentID" />
-    <input type="hidden" asp-for="PublishStatusID" />
-    <input type="hidden" asp-for="CompetencyAssessmentName" />
+            </thead>
 
+            <tbody class="nhsuk-table__body">
+                @foreach (var collaborator in Model.Collaborators)
+                {
+                    <tr role="row" class="nhsuk-table__row collaborator-row">
+                        <td role="cell" class="nhsuk-table__cell">
+
+                            <span class="nhsuk-table-responsive__heading">User </span>
+                            <div class="nhsuk-checkboxes__item">
+                                <input class="nhsuk-checkboxes__input"
+                                       id="user-check-@collaborator.ID"
+                                       name="UserChecked" type="checkbox"
+                                       value="@collaborator.ID"
+                                       @(collaborator.SelfAssessmentReviewID.HasValue ? "checked" : "")>
+                                <label class="nhsuk-label nhsuk-checkboxes__label" for="user-check-@collaborator.ID">
+                                    @collaborator.UserEmail @(collaborator.UserActive == true ? "" : "(inactive)")
+                                </label>
+                            </div>
+                        </td>
+                        <td role="cell" class="nhsuk-table__cell">
+                            <span class="nhsuk-table-responsive__heading">Role </span>
+                            <span class="framework-collaborator-role">
+                                <partial name="Shared/_RoleTag" model="collaborator" />
+                            </span>
+                        </td>
+                        <td role="cell" class="nhsuk-table__cell">
+                            <span class="nhsuk-table-responsive__heading">Sign-off Required </span>
+                            <div class="nhsuk-checkboxes__item">
+                                <input class="nhsuk-checkboxes__input"
+                                       id="sign-off-required-check-@collaborator.ID"
+                                       name="SignOffRequiredChecked"
+                                       type="checkbox"
+                                       value="@collaborator.ID"
+                                       @(collaborator.SignOffRequired == true ? "checked" : "")>
+                                <label class="nhsuk-label nhsuk-checkboxes__label" for="sign-off-required-@collaborator.ID">
+                                    Required
+                                </label>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <input type="hidden" asp-for="CompetencyAssessmentID" />
+        <input type="hidden" asp-for="PublishStatusID" />
+        <input type="hidden" asp-for="CompetencyAssessmentName" />
+
+        <div class="nhsuk-grid-row nhsuk-u-margin-top-4">
+            <div class="nhsuk-grid-column-full">
+                <button class="nhsuk-button" type="submit">Submit</button>
+                <a class="nhsuk-button nhsuk-button--secondary" role="button" asp-action="AssessmentWorkingGroup" asp-route-competencyAssessmentId="@Model.CompetencyAssessmentID" asp-route-actionName="CollaboratorReview">Manage working group</a>
+                <a class="nhsuk-button nhsuk-button--secondary" role="button" asp-action="PublishWithoutReview" asp-route-competencyAssessmentId="@Model.CompetencyAssessmentID">Skip and publish without review</a>
+            </div>
+        </div>
+
+    </form>
+}
+else
+{
+    <p>There are no members of the working group for this self-assessment who haven't already got an open review request. Use the <strong>Manage working group</strong> button below to add some more.</p>
     <div class="nhsuk-grid-row nhsuk-u-margin-top-4">
         <div class="nhsuk-grid-column-full">
-            <button class="nhsuk-button" type="submit">Submit</button>
             <a class="nhsuk-button nhsuk-button--secondary" role="button" asp-action="AssessmentWorkingGroup" asp-route-competencyAssessmentId="@Model.CompetencyAssessmentID" asp-route-actionName="CollaboratorReview">Manage working group</a>
             <a class="nhsuk-button nhsuk-button--secondary" role="button" asp-action="PublishWithoutReview" asp-route-competencyAssessmentId="@Model.CompetencyAssessmentID">Skip and publish without review</a>
         </div>
     </div>
-
-</form>
+}
 
 
 <div class="nhsuk-back-link">
