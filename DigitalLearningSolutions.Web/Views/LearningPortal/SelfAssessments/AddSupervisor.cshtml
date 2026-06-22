@@ -41,7 +41,7 @@
             <form method="get" role="search" asp-route-page="@Model.Page">
                 @if (errorHasOccurred)
                 {
-                    <vc:error-summary order-of-property-names="@(new[] {nameof(Model.SupervisorAdminID) })" />
+                    <vc:error-summary order-of-property-names="@(new[] { nameof(Model.SupervisorAdminID) })" />
                 }
                 <div class="nhsuk-grid-row">
                     <div class="nhsuk-grid-column-full">
@@ -82,10 +82,11 @@
                             <div id="searchable-elements" class="searchable-element nhsuk-u-padding-top-3 util-wrap-text">
                                 @foreach (var supervisor in Model.Supervisors)
                                 {
+                                    var role = supervisor.IsSupervisor ? "Supervisor" : "Nominated supervisor";
                                     <div class="nhsuk-radios__item">
                                         <input class="nhsuk-radios__input" id="supervisor-@supervisor.AdminID" name="SupervisorAdminID" type="radio" checked="@(supervisor.AdminID == Model.SupervisorAdminID)" value="@supervisor.AdminID" aria-describedby="supervisor-@supervisor.AdminID-item-hint">
                                         <label class="nhsuk-label nhsuk-radios__label util-wrap-text" for="supervisor-@supervisor.AdminID">
-                                            @supervisor.Forename @supervisor.Surname (@supervisor.CentreName)
+                                            @supervisor.Forename @supervisor.Surname (@supervisor.CentreName), @role
                                         </label>
                                         <div class="nhsuk-hint nhsuk-radios__hint util-wrap-text" id="supervisor-@supervisor.AdminID-item-hint">
                                             @supervisor.Email
@@ -120,6 +121,6 @@
 @if (Model.JavascriptSearchSortFilterPaginateEnabled)
 {
     @section scripts {
-    <script src="@Url.Content("~/js/LearningPortal/supervisorList.js")" asp-append-version="true"></script>
+        <script src="@Url.Content("~/js/LearningPortal/supervisorList.js")" asp-append-version="true"></script>
     }
 }
