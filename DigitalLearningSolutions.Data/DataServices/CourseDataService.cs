@@ -324,7 +324,8 @@ namespace DigitalLearningSolutions.Data.DataServices
                 u.HasBeenPromptedForPrn,
                 u.ProfessionalRegistrationNumber,
                 da.CentreID AS DelegateCentreId,
-                ap.ArchivedDate AS CourseArchivedDate
+                ap.ArchivedDate AS CourseArchivedDate,
+                ap.DiagAssess
             FROM Customisations cu
             INNER JOIN Applications AS ap ON ap.ApplicationID = cu.ApplicationID
             INNER JOIN Progress AS pr ON pr.CustomisationID = cu.CustomisationID
@@ -520,7 +521,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                         new { supervisorId, delegateUserId, adminEmail, centreId });
             }
 
-            if (candidateAssessmentId > 0 && supervisorDelegateId > 0 && selfAssessmentSupervisorRoleId > 0)
+            if (candidateAssessmentId > 0 && supervisorDelegateId > 0)
             {
                 int candidateAssessmentSupervisorsId = Convert.ToInt32(connection.ExecuteScalar(
                     @"SELECT COALESCE
@@ -531,9 +532,9 @@ namespace DigitalLearningSolutions.Data.DataServices
                 if (candidateAssessmentSupervisorsId == 0)
                 {
                     int numberOfAffectedRows = connection.Execute(
-                        @"INSERT INTO CandidateAssessmentSupervisors (CandidateAssessmentID, SupervisorDelegateId, SelfAssessmentSupervisorRoleID)
-                        VALUES (@candidateAssessmentId, @supervisorDelegateId, @selfAssessmentSupervisorRoleId)",
-                        new { candidateAssessmentId, supervisorDelegateId, selfAssessmentSupervisorRoleId }
+                        @"INSERT INTO CandidateAssessmentSupervisors (CandidateAssessmentID, SupervisorDelegateId)
+                        VALUES (@candidateAssessmentId, @supervisorDelegateId)",
+                        new { candidateAssessmentId, supervisorDelegateId }
                     );
                 }
             }
@@ -553,8 +554,7 @@ namespace DigitalLearningSolutions.Data.DataServices
                   WHERE ID = @candidateAssessmentId
 
                 UPDATE CandidateAssessmentSupervisors SET Removed = NULL
-                 {((selfAssessmentSupervisorRoleId > 0) ? " ,SelfAssessmentSupervisorRoleID = @selfAssessmentSupervisorRoleID" : string.Empty)}
-                WHERE CandidateAssessmentID = @candidateAssessmentId AND SupervisorDelegateId = @supervisorDelegateId AND SelfAssessmentSupervisorRoleID = @selfAssessmentSupervisorRoleID
+                WHERE CandidateAssessmentID = @candidateAssessmentId AND SupervisorDelegateId = @supervisorDelegateId
 
                 COMMIT TRANSACTION";
 
@@ -953,7 +953,8 @@ namespace DigitalLearningSolutions.Data.DataServices
                         u.HasBeenPromptedForPrn,
                         u.ProfessionalRegistrationNumber,
                         da.CentreID,
-                        ap.ArchivedDate",
+                        ap.ArchivedDate,
+                        ap.DiagAssess",
             new { delegateId }
         );
         }
@@ -1003,7 +1004,8 @@ namespace DigitalLearningSolutions.Data.DataServices
                         u.HasBeenPromptedForPrn,
                         u.ProfessionalRegistrationNumber,
                         da.CentreID,
-                        ap.ArchivedDate",
+                        ap.ArchivedDate,
+                        ap.DiagAssess",
                 new { progressId }
             );
         }
@@ -1061,7 +1063,8 @@ namespace DigitalLearningSolutions.Data.DataServices
                         u.HasBeenPromptedForPrn,
                         u.ProfessionalRegistrationNumber,
                         da.CentreID,
-                        ap.ArchivedDate",
+                        ap.ArchivedDate,
+                        ap.DiagAssess",
                 new { customisationId, centreId }
             );
         }

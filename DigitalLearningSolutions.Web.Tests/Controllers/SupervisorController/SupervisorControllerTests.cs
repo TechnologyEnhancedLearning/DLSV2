@@ -188,7 +188,7 @@
                 IsSupervisorResultsReviewed = delegateSelfAssessment.IsSupervisorResultsReviewed,
                 SearchViewModel = search,
                 CandidateAssessmentId = candidateAssessmentId,
-                ExportToExcelHide = delegateSelfAssessment.SupervisorRoleTitle?.Contains("Assessor") ?? false,
+                ExportToExcelHide = delegateSelfAssessment.SupervisorRoleTitle?.Contains("Nominated supervisor") ?? false,
                 SupervisorSignOffs = supervisorSignOffs,
                 CompetencySummaries = competencySummaries
             };
@@ -250,7 +250,7 @@
                 IsSupervisorResultsReviewed = delegateSelfAssessment.IsSupervisorResultsReviewed,
                 SearchViewModel = searchViewModel,
                 CandidateAssessmentId = candidateAssessmentId,
-                ExportToExcelHide = delegateSelfAssessment.SupervisorRoleTitle?.Contains("Assessor") ?? false,
+                ExportToExcelHide = delegateSelfAssessment.SupervisorRoleTitle?.Contains("Nominated supervisor") ?? false,
                 SupervisorSignOffs = supervisorSignOffs,
                 CompetencySummaries = competencySummaries
             };

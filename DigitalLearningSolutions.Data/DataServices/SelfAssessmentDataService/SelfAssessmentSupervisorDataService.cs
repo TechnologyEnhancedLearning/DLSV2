@@ -17,9 +17,13 @@
                 sd.SupervisorEmail,
                 sd.NotificationSent,
                 au.Forename + ' ' + au.Surname + (CASE WHEN au.Active = 1 THEN '' ELSE ' (Inactive)' END) AS SupervisorName,
-                COALESCE(sasr.RoleName, 'Supervisor') AS RoleName,
-                sasr.SelfAssessmentReview,
-                sasr.ResultsReview,
+                CASE
+                    WHEN au.Supervisor = 1 THEN 'Supervisor'
+                    WHEN au.NominatedSupervisor = 1 THEN 'Nominated supervisor'
+                    ELSE 'Supervisor'
+                END AS RoleName,
+                sa.SupervisorSelfAssessmentReview AS SelfAssessmentReview,
+                sa.SupervisorResultsReview AS ResultsReview,
                 sd.AddedByDelegate,
                 au.CentreName
             FROM SupervisorDelegates AS sd
@@ -30,8 +34,8 @@
             INNER JOIN AdminUsers AS au
                 ON sd.SupervisorAdminID = au.AdminID
             INNER JOIN DelegateAccounts da ON sd.DelegateUserID = da.UserID AND au.CentreID = da.CentreID AND da.Active=1
-            LEFT OUTER JOIN SelfAssessmentSupervisorRoles AS sasr
-                ON cas.SelfAssessmentSupervisorRoleID = sasr.ID";
+            INNER JOIN SelfAssessments sa
+                ON sa.ID = ca.SelfAssessmentID";
 
         private const string SelectSelfAssessmentSupervisorQuery =
             @"SELECT
@@ -41,13 +45,15 @@
                 sd.SupervisorEmail,
                 sd.NotificationSent,
                 COALESCE(au.Forename + ' ' + au.Surname + (CASE WHEN au.Active = 1 THEN '' ELSE ' (Inactive)' END), sd.SupervisorEmail) AS SupervisorName,
-                COALESCE(sasr.RoleName, 'Supervisor') AS RoleName,
-                sasr.SelfAssessmentReview,
-                sasr.ResultsReview,
+                CASE
+                    WHEN au.Supervisor = 1 THEN 'Supervisor'
+                    WHEN au.NominatedSupervisor = 1 THEN 'Nominated supervisor'
+                    ELSE 'Supervisor'
+                END AS RoleName,
+                sa.SupervisorSelfAssessmentReview AS SelfAssessmentReview,
+                sa.SupervisorResultsReview AS ResultsReview,
                 sd.AddedByDelegate,
-                au.CentreName,
-                sasr.AllowDelegateNomination,
-                sasr.AllowSupervisorRoleSelection
+                au.CentreName
             FROM SupervisorDelegates AS sd
             INNER JOIN CandidateAssessmentSupervisors AS cas
                 ON sd.ID = cas.SupervisorDelegateId
@@ -56,9 +62,8 @@
             LEFT OUTER JOIN AdminUsers AS au
                 ON sd.SupervisorAdminID = au.AdminID
             INNER JOIN DelegateAccounts da ON sd.DelegateUserID = da.UserID AND au.CentreID = da.CentreID AND da.Active=1
-            LEFT OUTER JOIN SelfAssessmentSupervisorRoles AS sasr
-                ON cas.SelfAssessmentSupervisorRoleID = sasr.ID
-		   LEFT OUTER JOIN SelfAssessments sa ON sa.id  = ca.SelfAssessmentID AND sa.CategoryID = au.CategoryID";
+            INNER JOIN SelfAssessments sa
+                ON sa.ID = ca.SelfAssessmentID";
 
         public SelfAssessmentSupervisor? GetSupervisorForSelfAssessmentId(int selfAssessmentId, int delegateUserId)
         {
@@ -94,7 +99,7 @@
                 @$"{SelectSelfAssessmentSupervisorQuery}
                     WHERE (sd.Removed IS NULL) AND (cas.Removed IS NULL) AND (sd.DelegateUserID = @delegateUserId)
                         AND (ca.SelfAssessmentID = @selfAssessmentId) AND (sd.SupervisorAdminID IS NOT NULL)
-                        AND (coalesce(sasr.ResultsReview, 1) = 1)
+                        AND (sa.SupervisorResultsReview = 1)
                         AND au.Active = 1 AND (au.Supervisor = 1 or au.NominatedSupervisor = 1)
                         AND (au.CategoryID = 0 OR au.CategoryID IN (select CategoryID from SelfAssessments where ID = @selfAssessmentId))
                     ORDER BY SupervisorName",
@@ -152,9 +157,9 @@
             return connection.Query<SelfAssessmentSupervisor>(
                 @$"{SelectSelfAssessmentSupervisorQuery}
                     WHERE (sd.Removed IS NULL) AND (cas.Removed IS NULL) AND (sd.DelegateUserID = @delegateUserId) AND (ca.SelfAssessmentID = @selfAssessmentId)
-                        AND (sd.SupervisorAdminID IS NOT NULL) AND (coalesce(sasr.SelfAssessmentReview, 1) = 1)
+                        AND (sd.SupervisorAdminID IS NOT NULL) AND (sa.SupervisorSelfAssessmentReview = 1)
                         AND (cas.ID NOT IN (SELECT CandidateAssessmentSupervisorID FROM CandidateAssessmentSupervisorVerifications WHERE Verified IS NULL))
-                        AND au.Active = 1 AND (au.Supervisor = 1 or au.NominatedSupervisor = 1)
+                        AND au.Active = 1 AND au.Supervisor = 1 
                         AND (au.CategoryID = 0 OR au.CategoryID IN (select CategoryID from SelfAssessments where ID = @selfAssessmentId))
                 ORDER BY SupervisorName",
                 new { selfAssessmentId, delegateUserId }
@@ -194,7 +199,9 @@
         public SupervisorComment? GetSupervisorComments(int delegateUserId, int resultId)
         {
             return connection.Query<SupervisorComment>(
-                @"SELECT TOP (1) sar.AssessmentQuestionID, sea.Name, au.Forename + ' ' + au.Surname AS SupervisorName, sasr.RoleName, sasv.Comments, sar.DelegateUserID, sar.CompetencyID, com.Name AS CompetencyName, sar.SelfAssessmentID, sasv.CandidateAssessmentSupervisorID, 
+                @"SELECT TOP (1) sar.AssessmentQuestionID, sea.Name, au.Forename + ' ' + au.Surname AS SupervisorName,
+                        CASE WHEN au.Supervisor = 1 THEN 'Supervisor' WHEN au.NominatedSupervisor = 1 THEN 'Nominated supervisor' ELSE 'Supervisor' END AS RoleName,
+                        sasv.Comments, sar.DelegateUserID, sar.CompetencyID, com.Name AS CompetencyName, sar.SelfAssessmentID, sasv.CandidateAssessmentSupervisorID, 
                         sasv.SelfAssessmentResultId, sasv.Verified, sar.ID, sstrc.CompetencyGroupID, sea.Vocabulary, sasv.SignedOff, sea.ReviewerCommentsLabel
                     FROM   SelfAssessmentResultSupervisorVerifications AS sasv INNER JOIN
                         SelfAssessmentResults AS sar ON sasv.SelfAssessmentResultId = sar.ID AND sasv.Superceded = 0 INNER JOIN
@@ -203,7 +210,6 @@
                         CandidateAssessmentSupervisors AS cas ON sasv.CandidateAssessmentSupervisorID = cas.ID INNER JOIN
                         SupervisorDelegates AS sd ON cas.SupervisorDelegateId = sd.ID INNER JOIN
                         AdminUsers AS au ON sd.SupervisorAdminID = au.AdminID INNER JOIN
-                        SelfAssessmentSupervisorRoles AS sasr ON cas.SelfAssessmentSupervisorRoleID = sasr.ID INNER JOIN
                         SelfAssessments AS sea ON sstrc.SelfAssessmentID = sea.ID
                     WHERE (sar.DelegateUserID = @delegateUserId) AND (sasv.SelfAssessmentResultId = @resultId)",
                 new { delegateUserId, resultId }
@@ -226,7 +232,9 @@
                         ProfileImage,
                         IsFrameworkDeveloper,
                         CentreName,
-                        CentreID
+                        CentreID,
+                        Supervisor AS IsSupervisor,
+                        NominatedSupervisor AS IsNominatedSupervisor
                         FROM AdminUsers
                         WHERE 
                         CentreID IN (SELECT DA.CentreID FROM DelegateAccounts DA
@@ -256,7 +264,9 @@
         public Administrator GetSupervisorByAdminId(int supervisorAdminId)
         {
             return connection.Query<Administrator>(
-                @"SELECT AdminID, Forename, Surname, Active, Email, ProfileImage, IsFrameworkDeveloper, CentreID, CentreName
+                @"SELECT AdminID, Forename, Surname, Active, Email, ProfileImage, IsFrameworkDeveloper, CentreID, CentreName,
+                        Supervisor AS IsSupervisor,
+                        NominatedSupervisor AS IsNominatedSupervisor
                     FROM AdminUsers
                     WHERE (AdminID = @supervisorAdminId)",
                 new { supervisorAdminId }
@@ -274,7 +284,11 @@
                         casv.CandidateAssessmentSupervisorID,
                         au.Forename + ' ' + au.Surname + (CASE WHEN au.Active = 1 THEN '' ELSE ' (Inactive)' END) AS SupervisorName,
                         au.Email AS SupervisorEmail,
-                        COALESCE(sasr.Rolename, 'Supervisor') AS SupervisorRoleName,
+                        CASE
+                            WHEN au.Supervisor = 1 THEN 'Supervisor'
+                            WHEN au.NominatedSupervisor = 1 THEN 'Nominated supervisor'
+                            ELSE 'Supervisor'
+                        END AS SupervisorRoleName,
                         casv.Requested,
                         casv.EmailSent,
                         casv.Verified,
@@ -290,10 +304,9 @@
                         ON cas.SupervisorDelegateId = sd.ID
                     INNER JOIN AdminUsers AS au
                         ON sd.SupervisorAdminID = au.AdminID
-                    LEFT OUTER JOIN SelfAssessmentSupervisorRoles AS sasr
-                        ON cas.SelfAssessmentSupervisorRoleID = sasr.ID
-                    WHERE (ca.DelegateUserID = @delegateUserId) AND (ca.SelfAssessmentID = @selfAssessmentId) AND (sasr.SelfAssessmentReview = 1)
-                        OR (ca.DelegateUserID = @delegateUserId) AND (ca.SelfAssessmentID = @selfAssessmentId) AND (sasr.SelfAssessmentReview IS NULL)
+                    INNER JOIN SelfAssessments AS sa
+                        ON ca.SelfAssessmentID = sa.ID
+                    WHERE (ca.DelegateUserID = @delegateUserId) AND (ca.SelfAssessmentID = @selfAssessmentId) AND (sa.SupervisorSelfAssessmentReview = 1)
                     ORDER BY casv.Requested DESC",
                 new { selfAssessmentId, delegateUserId }
             );
