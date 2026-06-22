@@ -32,7 +32,7 @@
                        asp-action="ManageCompetencyAssessment"
                        asp-route-competencyAssessmentId="@Model.CompetencyAssessmentId">Manage self-assessment</a>
                 </li>
-                <li class="nhsuk-breadcrumb__item">Retire self assessment</li>
+                <li class="nhsuk-breadcrumb__item">Retire self-assessment</li>
 
             </ol>
         </div>
@@ -48,7 +48,7 @@
 <form class="nhsuk-u-margin-bottom-3" method="post" asp-controller="CompetencyAssessments" asp-action="RetireCompetencyAssessment" asp-route-competencyAssessmentId="@Model.CompetencyAssessmentId">
     <nhs-form-group nhs-validation-for="RetirementDate">
   <vc:date-input id="retirement-date"
-                   label="This is the date when self assessment would be retired"
+                   label="This is the date when self-assessment would be retired"
                    day-id="Day"
                    month-id="Month"
                    year-id="Year"
