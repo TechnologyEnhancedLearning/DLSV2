@@ -10,7 +10,7 @@
     var errorHasOccurred = !ViewData.ModelState.IsValid;
 }
 
- @section NavMenuItems {
+@section NavMenuItems {
     <partial name="~/Views/Frameworks/Shared/_NavMenuItems.cshtml" />
 }
 <div class="nhsuk-grid-row">
@@ -20,11 +20,10 @@
             <vc:error-summary order-of-property-names="@(new[] { nameof(Model.Confirm) })" />
         }
         <h1 class="nhsuk-heading-l">Are you sure you would like to remove retirement date?</h1>
+        <h2 class="nhsuk-u-margin-bottom-8">Self-assessment: @Model.CompetencyAssessmentName</h2>
+
+        <p>Removing the retirement date will move the self-assessment back to the published state and remove all retirement warnings for learners and supervisors.</p>
     </div>
-    <div class="nhsuk-grid-column-full">
-      <h2 class="nhsuk-u-margin-bottom-8" >Self-assessment: @Model.CompetencyAssessmentName</h2>
-    </div>
-    <p>Removing the retirement date will move the self-assessment back to the published state and remove all retirement warnings for learners and supervisors.</p>
 </div>
 
 <div class="nhsuk-grid-row">

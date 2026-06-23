@@ -62,7 +62,7 @@
                     1 => "nhsuk-tag--grey",
                     2 => "nhsuk-tag--yellow",
                     3 => "nhsuk-tag--green",
-                    4 => "nhsuk-tag--red",
+                    4 => "nhsuk-tag--orange",
                     5 => "nhsuk-tag--red"
                 };
 
@@ -71,7 +71,7 @@
                     1 => "Draft",
                     2 => "In review",
                     3 => "Published",
-                    4 => "Scheduled For Retirement",
+                    4 => "Scheduled for retirement",
                     5 => "Retired"
                 };
             }
@@ -318,7 +318,7 @@
             {
                 <form asp-action="RetireCompetencyAssessment" asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]" method="get">
                     <button class="nhsuk-button nhsuk-button--warning" data-module="nhsuk-button" type="submit">
-                        Retire competency assessment
+                        Retire self-assessment
                     </button>
                 </form>
             }
