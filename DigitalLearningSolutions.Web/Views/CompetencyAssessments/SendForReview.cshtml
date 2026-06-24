@@ -68,8 +68,7 @@
                                 <input class="nhsuk-checkboxes__input"
                                        id="user-check-@collaborator.ID"
                                        name="UserChecked" type="checkbox"
-                                       value="@collaborator.ID"
-                                       @(collaborator.SelfAssessmentReviewID.HasValue ? "checked" : "")>
+                                       value="@collaborator.ID">
                                 <label class="nhsuk-label nhsuk-checkboxes__label" for="user-check-@collaborator.ID">
                                     @collaborator.UserEmail @(collaborator.UserActive == true ? "" : "(inactive)")
                                 </label>
@@ -88,8 +87,7 @@
                                        id="sign-off-required-check-@collaborator.ID"
                                        name="SignOffRequiredChecked"
                                        type="checkbox"
-                                       value="@collaborator.ID"
-                                       @(collaborator.SignOffRequired == true ? "checked" : "")>
+                                       value="@collaborator.ID">
                                 <label class="nhsuk-label nhsuk-checkboxes__label" for="sign-off-required-@collaborator.ID">
                                     Required
                                 </label>

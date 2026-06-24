@@ -1507,7 +1507,8 @@
         public IActionResult SendForReview(int competencyAssessmentId)
         {
             var adminId = GetAdminID();
-            var collaborators = competencyAssessmentService.GetCollaboratorsForCompetencyAssessmentId(competencyAssessmentId);
+            var collaborators = competencyAssessmentService.GetCollaboratorsForCompetencyAssessmentId(competencyAssessmentId)
+                .Where(c => c.ReviewRequested == null || c.ReviewComplete != null);
             var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
             var result = ValidateCompetencyAssessmentAndRole(competencyAssessmentId, adminId, "Send For Review", competencyAssessmentBase);
             if (result.StatusCode != 200)
