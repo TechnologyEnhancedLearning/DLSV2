@@ -2,7 +2,7 @@
 @model DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments.RetireCompetencyAssessmentViewModel
 @inject IClockUtility ClockUtility
 @{
-    ViewData["Title"] = "Retire competency assessment";
+    ViewData["Title"] = "Retire self-assessment";
     var errorHasOccurred = !ViewData.ModelState.IsValid;
     var exampleDate = ClockUtility.UtcToday;
     var hintTextLines = new List<string> { $"For example, {exampleDate.Day} {exampleDate.Month} {exampleDate.Year}" };
@@ -40,7 +40,7 @@
 }
 @if (errorHasOccurred)
 {
-    <vc:error-summary order-of-property-names="@(new[] { nameof(Model.RetirementDate), nameof(Model.RetirementReason)})" />
+    <vc:error-summary order-of-property-names="@(new[] { nameof(Model.RetirementDate), nameof(Model.RetirementReason) })" />
 }
 
 <h1>@ViewData["Title"]</h1>
