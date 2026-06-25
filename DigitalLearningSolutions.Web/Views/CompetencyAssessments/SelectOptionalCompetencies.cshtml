@@ -60,11 +60,7 @@
                         @foreach (var competency in competencyGroup)
                         {
                             <div class="nhsuk-checkboxes__item">
-                                <input class="nhsuk-checkboxes__input"
-                                data-group="@competencyGroup.Key"
-                                  id="competency-check-@competency.StructureId"
-                                  name="SelectedCompetencyIds"
-                                checked="@(competencyGroup.Any(x => x.GroupOptionalCompetencies) || competency.Optional ? "checked" : null)"type="checkbox" value="@competency.StructureId">
+                                <input class="nhsuk-checkboxes__input" data-group="@competencyGroup.Key" id="competency-check-@competency.StructureId" name="SelectedCompetencyIds" checked="@(Model.SelectedCompetencyIds != null ? Model.SelectedCompetencyIds.Contains((int)competency.CompetencyID) : false)" type="checkbox" value="@competency.StructureId">
                                 <label class="nhsuk-label nhsuk-checkboxes__label" for="competency-check-@competency.StructureId">
                                     @foreach (var flag in competency.CompetencyFlags)
                                     {
@@ -104,5 +100,5 @@
     </div>
 </div>
 @section scripts {
-    <script src="@Url.Content("~/js/selfAssessments/selectoptionalcompetencies.js")" asp-append-version="true"></script>
+    <script src="@Url.Content("~/js/frameworks/selectoptionalcompetencies.js")" asp-append-version="true"></script>
 }
