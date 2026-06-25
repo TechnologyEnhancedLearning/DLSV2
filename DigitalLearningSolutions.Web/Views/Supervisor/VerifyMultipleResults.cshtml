@@ -1,7 +1,7 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.Supervisor;
 @model ReviewSelfAssessmentViewModel;
 @{
-    ViewData["Title"] = "Review Self Assessment";
+    ViewData["Title"] = "Review Self-Assessment";
     ViewData["Application"] = "Supervisor";
     ViewData["HeaderPathName"] = "Supervisor";
 }
@@ -85,7 +85,7 @@
 <h2>Confirm Multiple Results for @Model.DelegateSelfAssessment.RoleName</h2>
 @if (Model.CompetencyGroups.Any())
 {
-    <h3>Tick each self assessment result that you wish to confirm and then click Submit</h3>
+    <h3>Tick each self-assessment result that you wish to confirm and then click Submit</h3>
     <form method="post">
         @foreach (var competencyGroup in Model.CompetencyGroups)
         {

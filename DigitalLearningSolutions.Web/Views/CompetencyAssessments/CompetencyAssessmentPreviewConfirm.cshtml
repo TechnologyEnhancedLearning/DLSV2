@@ -10,7 +10,7 @@
 }
 
 @section NavMenuItems {
-    <partial name="Shared/_NavMenuItems" />
+    <partial name="~/Views/Frameworks/Shared/_NavMenuItems.cshtml" />
 }
 @section NavBreadcrumbs {
     <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
@@ -29,7 +29,11 @@
     <div class="nhsuk-form-group" id="form-group">
         <form asp-action="PreviewConfirm" asp-route-competencyAssessmentId="@Model.CompetencyAssessmentId" asp-route-competencyGroupId="@Model.CompetencyAssessmentId">
             <div class="nhsuk-u-reading-width">
-                <h1 id="form-heading" class="nhsuk-fieldset__heading nhsuk-label--l">
+                <h1 class="app-page-heading">
+                    <span class="nhsuk-caption-xl">
+                        @Model.CompetencyAssessmentName
+                        <span class="nhsuk-u-visually-hidden"> – </span>
+                    </span>
                     Preview self-assessment
                 </h1>
                 <p class="nhsuk-body-l">

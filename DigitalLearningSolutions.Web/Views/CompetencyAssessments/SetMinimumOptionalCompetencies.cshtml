@@ -1,7 +1,7 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
 @model SetMinimumOptionalCompetenciesViewModel;
 @{
-    ViewData["Title"] = "Set minimum optional competencies";
+    ViewData["Title"] = $"Set minimum optional {Model.VocabularyPlural.ToLower()}";
     ViewData["Application"] = "Framework service";
 }
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
@@ -16,7 +16,7 @@
                 <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Frameworks" asp-action="Index">Home</a></li>
                 <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewCompetencyAssessments" asp-route-tabname="Mine">Self-assessments</a></li>
                 <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.ID">Manage self-assessment</a></li>
-                <li class="nhsuk-breadcrumb__item">Optional Competencies</li>
+                <li class="nhsuk-breadcrumb__item">Optional @Model.VocabularyPlural.ToLower()</li>
             </ol>
             <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.ID">Back to manage self-assessment</a></p>
         </div>
@@ -46,13 +46,16 @@
     </nhs-form-group>
     <input type="hidden" asp-for="ID" />
     <input type="hidden" asp-for="OptionalCompetenciesCount" />
+        <input type="hidden" asp-for="VocabularySingular" />
+        <input type="hidden" asp-for="VocabularyPlural" />
+    <hr class="nhsuk-section-break nhsuk-section-break--m" />
     <button class="nhsuk-button" type="submit">
         Save
     </button>
 </form>
 
 <div class="nhsuk-back-link">
-    <a class="nhsuk-back-link__link" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.ID">
+        <a class="nhsuk-back-link__link" asp-action="ManageOptionalCompetencies" asp-route-vocabularyPlural="@Model.VocabularyPlural" asp-route-competencyAssessmentId="@Model.ID">
         <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
             <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
         </svg>

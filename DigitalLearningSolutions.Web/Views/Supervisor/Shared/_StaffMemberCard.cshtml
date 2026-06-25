@@ -37,7 +37,7 @@
                     <div class="nhsuk-grid-column-full card-background">
                         @if (Model.LoggedInUserStyle() == "loggedinuser")
                         {
-                            <span><b>Test assessments:</b> Any self assessments you enrol yourself on will allow you to review platform content, without being included in reporting.</span>
+                            <span><b>Test assessments:</b> Any self-assessments you enrol yourself on will allow you to review platform content, without being included in reporting.</span>
                         }
                     </div>
                 </div>
@@ -131,7 +131,7 @@
        asp-controller="Supervisor"
        asp-action="DelegateProfileAssessments"
        asp-route-supervisorDelegateId="@Model.SupervisorDelegateDetail.ID">
-            View self assessments (@Model.SupervisorDelegateDetail.CandidateAssessmentCount)
+            View self-assessments (@Model.SupervisorDelegateDetail.CandidateAssessmentCount)
         </a>
     }
 </div>

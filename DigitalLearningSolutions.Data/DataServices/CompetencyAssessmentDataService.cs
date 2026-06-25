@@ -116,6 +116,8 @@
         void InsertSelfAssessmentReview(int competencyAssessmentId, int selfAssessmentCollaboratorID, bool required);
         int InsertComment(int selfAssessmentID, int adminId, string comment, int? replyToCommentId);
         int InsertCompetencySelfAssessmentReview(int reviewId);
+        void RetireCompetencyAssessment(int competencyAssessmentId, DateTime? retirementDate, string retirementReason);
+
 
         //DELETE DATA
         bool RemoveFrameworkCompetenciesFromAssessment(int competencyAssessmentId, int frameworkId);
@@ -143,6 +145,8 @@
                 sa.ManageOptionalCompetenciesPrompt,
                 sa.IncludeLearnerDeclarationPrompt, sa.IncludesSignposting, sa.LinearNavigation, sa.UseDescriptionExpanders, sa.QuestionLabel, sa.ReviewerCommentsLabel,
                 sa.SupervisorSelfAssessmentReview, sa.SupervisorResultsReview, sar.ID AS SelfAssessmentReviewID, sa.SignOffSupervisorStatement, sa.SignOffRequestorStatement,
+                sa.RetirementReason,
+                sa.RetirementDate,
                 sar.SelfAssessmentCommentID";
 
         private const string SelfAssessmentFields =
@@ -1106,7 +1110,7 @@
             }
 
             var adminId = (int?)connection.ExecuteScalar(
-                @"SELECT AdminID FROM AdminUsers WHERE Email = @userEmail AND Active = 1 AND CentreID = @centreID",
+                @"SELECT TOP 1 AdminID FROM AdminUsers WHERE Email = @userEmail AND Active = 1 ORDER BY CASE WHEN CentreID = @centreID THEN 0 ELSE 1 END",
                 new { userEmail, centreID }
             );
             if (adminId is null)
@@ -1426,11 +1430,34 @@ ORDER BY
         {
             var numberOfAffectedRows = connection.Execute(
                              @"INSERT INTO CompetencyAssessmentQuestionRoleRequirements
-                                     (SelfAssessmentID, CompetencyID, AssessmentQuestionID, LevelValue, LevelRAG)
-                                        SELECT sas.SelfAssessmentID, sas.CompetencyID, caq.AssessmentQuestionID, @levelValue AS LevelValue, @levelRAG AS LevelRAG
-                                        FROM   SelfAssessmentStructure AS sas INNER JOIN
-                                             CompetencyAssessmentQuestions AS caq ON sas.CompetencyID = caq.CompetencyID
-                                        WHERE (sas.SelfAssessmentID = @assessmentId) AND (caq.AssessmentQuestionID = @assessmentQuestionId);"
+                                (
+                                SelfAssessmentID,
+                                CompetencyID,
+                                AssessmentQuestionID,
+                                LevelValue,
+                                LevelRAG
+                                )
+                                SELECT DISTINCT
+                                sas.SelfAssessmentID,
+                                sas.CompetencyID,
+                                caq.AssessmentQuestionID,
+                                @levelValue,
+                                @levelRAG
+                                FROM SelfAssessmentStructure AS sas
+                                INNER JOIN CompetencyAssessmentQuestions AS caq
+                                 ON sas.CompetencyID = caq.CompetencyID
+                                WHERE
+                                sas.SelfAssessmentID = @assessmentId
+                                AND caq.AssessmentQuestionID = @assessmentQuestionId
+                                AND NOT EXISTS
+                                    (
+                                SELECT 1
+                                FROM CompetencyAssessmentQuestionRoleRequirements existing
+                                WHERE existing.SelfAssessmentID = sas.SelfAssessmentID
+                                AND existing.CompetencyID = sas.CompetencyID
+                                AND existing.AssessmentQuestionID = caq.AssessmentQuestionID
+                                AND existing.LevelValue = @levelValue
+                                );"
                          ,
                              new { assessmentId, assessmentQuestionId, levelValue, levelRAG }
                          );
@@ -1773,6 +1800,17 @@ ORDER BY
 
             return id;
         }
+        public void RetireCompetencyAssessment(int competencyAssessmentId, DateTime? retirementDate, string retirementReason)
+        {
+            // Example using Dapper
+            connection.Execute(
+                @"UPDATE SelfAssessments
+          SET RetirementDate = @retirementDate, RetirementReason = @retirementReason
+          WHERE ID = @competencyAssessmentId",
+                new { retirementDate, retirementReason, competencyAssessmentId }
+            );
+        }
+
         public bool UpdateCompetencyAssessmentReviewTaskStatus(int assessmentId, bool taskStatus)
         {
             var numberOfAffectedRows = connection.Execute(

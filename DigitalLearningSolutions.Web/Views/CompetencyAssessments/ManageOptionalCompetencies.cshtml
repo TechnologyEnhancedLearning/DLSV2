@@ -1,7 +1,7 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
 @model SelectOptionalCompetenciesViewModel;
 @{
-    ViewData["Title"] = "Manage optional competencies";
+    ViewData["Title"] = $"Manage optional {@Model.VocabularyPlural.ToLower()}";
     ViewData["Application"] = "Framework service";
 }
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
@@ -16,7 +16,7 @@
                 <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Frameworks" asp-action="Index">Home</a></li>
                 <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewCompetencyAssessments" asp-route-tabname="Mine">Self-assessments</a></li>
                 <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.ID">Manage self-assessment</a></li>
-                <li class="nhsuk-breadcrumb__item">Optional Competencies</li>
+                <li class="nhsuk-breadcrumb__item">Optional @Model.VocabularyPlural.ToLower()</li>
             </ol>
             <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.ID">Back to manage self-assessment</a></p>
         </div>
@@ -63,7 +63,7 @@ Optional @Model.VocabularyPlural.ToLower() can be selected for inclusion in a se
         @if (Model.UserRole > 1)
         {
             <dd class="nhsuk-summary-list__actions">
-                <a class="nhsuk-link" asp-route-competencyAssessmentId="@Model.ID" asp-action="SelectOptionalCompetencies">Change<span class="nhsuk-u-visually-hidden"> optional @Model.VocabularyPlural.ToLower()</span></a>
+                    <a class="nhsuk-link" asp-route-competencyAssessmentId="@Model.ID" asp-route-vocabularyPlural="@Model.VocabularyPlural" asp-action="SelectOptionalCompetencies">Change<span class="nhsuk-u-visually-hidden"> optional @Model.VocabularyPlural.ToLower()</span></a>
             </dd>
         }
     </div>
@@ -79,7 +79,7 @@ Optional @Model.VocabularyPlural.ToLower() can be selected for inclusion in a se
             @if (Model.UserRole > 1)
             {
                 <dd class="nhsuk-summary-list__actions">
-                    <a class="nhsuk-link" asp-route-competencyAssessmentId="@Model.ID" asp-action="SetMinimumOptionalCompetencies">Change<span class="nhsuk-u-visually-hidden"> minimum optional @Model.VocabularyPlural.ToLower()</span></a>
+                        <a class="nhsuk-link" asp-route-competencyAssessmentId="@Model.ID" asp-route-vocabularyPlural="@Model.VocabularyPlural" asp-action="SetMinimumOptionalCompetencies">Change<span class="nhsuk-u-visually-hidden"> minimum optional @Model.VocabularyPlural.ToLower()</span></a>
                 </dd>
             }
         </div>
@@ -93,7 +93,7 @@ Optional @Model.VocabularyPlural.ToLower() can be selected for inclusion in a se
             @if (Model.UserRole > 1)
             {
                 <dd class="nhsuk-summary-list__actions">
-                    <a class="nhsuk-link" asp-route-competencyAssessmentId="@Model.ID" asp-action="SetOptionalCompetencyLearnerPrompt">Change<span class="nhsuk-u-visually-hidden"> learner prompt</span></a>
+                        <a class="nhsuk-link" asp-route-competencyAssessmentId="@Model.ID" asp-route-vocabularyPlural="@Model.VocabularyPlural" asp-action="SetOptionalCompetencyLearnerPrompt">Change<span class="nhsuk-u-visually-hidden"> learner prompt</span></a>
                 </dd>
             }
         </div>
@@ -106,6 +106,8 @@ Optional @Model.VocabularyPlural.ToLower() can be selected for inclusion in a se
         <input type="hidden" asp-for="ManageOptionalCompetenciesPrompt" />
         <input type="hidden" asp-for="SelectedCompetencyIds" />
         <input type="hidden" asp-for="GroupIds" />
+        <input type="hidden" asp-for="VocabularyPlural" />
+
         <vc:single-checkbox asp-for="@nameof(Model.TaskStatus)" label="Mark this task as complete" hint-text="You will still be able to make changes after marking this task as complete."></vc:single-checkbox>
     </nhs-form-group>
     @if (Model.UserRole > 1)

@@ -90,7 +90,7 @@ namespace DigitalLearningSolutions.Web.Tests.TestHelpers
           string? roleName = null,
           bool supervisorSelfAssessmentReview = false,
           bool supervisorResultsReview = false,
-          string? supervisorRoleTitle = "Assessor",
+          string? supervisorRoleTitle = "Nominated supervisor",
           DateTime? signedOffDate = null,
           bool signedOff = false,
           DateTime? completeByDate = null,

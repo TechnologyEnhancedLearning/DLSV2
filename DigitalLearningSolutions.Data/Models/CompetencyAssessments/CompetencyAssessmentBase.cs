@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Data.Models.CompetencyAssessments
 {
+    using System;
     using System.ComponentModel.DataAnnotations;
     public class CompetencyAssessmentBase
     {
@@ -36,6 +37,9 @@
         public string? SignOffSupervisorStatement { get; set; }
         public int? SelfAssessmentReviewID { get; set; }
         public int? SelfAssessmentCommentID { get; set; }
+        public DateTime? RetirementDate { get; set; }
+        public string? RetirementReason { get; set; }
+
     }
 }
 

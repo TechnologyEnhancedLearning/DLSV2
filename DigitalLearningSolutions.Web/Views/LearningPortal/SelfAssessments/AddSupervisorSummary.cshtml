@@ -2,7 +2,7 @@
 @model AddSupervisorSummaryViewModel
 @{
     Layout = "SelfAssessments/_Layout";
-    ViewData["Title"] = "Self Assessment - Add New Supervisor - Summary";
+    ViewData["Title"] = "Self-Assessment - Add New Supervisor - Summary";
     ViewData["SelfAssessmentTitle"] = @Model.SelfAssessmentName;
 }
 @section breadcrumbs {
@@ -13,9 +13,9 @@
 @section mobilebacklink
 {
     <p class="nhsuk-breadcrumb__back">
-        <a class="nhsuk-breadcrumb__backlink" asp-action="SetSupervisorRole"
+        <a class="nhsuk-breadcrumb__backlink" asp-action="AddNewSupervisor"
            asp-route-selfAssessmentId="@Model.SelfAssessmentID">
-            Back to Choose supervisor role
+            Back to Choose supervisor
         </a>
     </p>
 }
@@ -44,12 +44,6 @@
             @Model.SelfAssessmentRoleName
         </dd>
         <dd class="nhsuk-summary-list__actions">
-            @if (@Model.RoleCount > 1)
-            {
-                <a asp-action="SetSupervisorRole" asp-route-selfAssessmentId="@Model.SelfAssessmentID">
-                    Change
-                </a>
-            }
         </dd>
     </div>
     <div class="nhsuk-summary-list__row">
