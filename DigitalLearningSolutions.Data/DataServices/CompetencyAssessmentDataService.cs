@@ -1110,7 +1110,7 @@
             }
 
             var adminId = (int?)connection.ExecuteScalar(
-                @"SELECT AdminID FROM AdminUsers WHERE Email = @userEmail AND Active = 1 AND CentreID = @centreID",
+                @"SELECT TOP 1 AdminID FROM AdminUsers WHERE Email = @userEmail AND Active = 1 ORDER BY CASE WHEN CentreID = @centreID THEN 0 ELSE 1 END",
                 new { userEmail, centreID }
             );
             if (adminId is null)

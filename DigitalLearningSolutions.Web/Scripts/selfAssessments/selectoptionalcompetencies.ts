@@ -32,5 +32,6 @@
 
     // Also run at page load in case some are pre-checked server-side
     updateState();
+
   });
 });

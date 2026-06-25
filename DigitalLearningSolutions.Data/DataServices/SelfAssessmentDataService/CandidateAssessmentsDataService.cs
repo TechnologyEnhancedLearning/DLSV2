@@ -206,7 +206,6 @@
                         'Supervisor' AS VerificationRoleName,
                         'Supervisor' AS SignOffRoleName,
                         SA.SignOffRequestorStatement,
-                        SA.ManageSupervisorsDescription,
                         CA.NonReportable,
 					 U.FirstName +' '+ U.LastName AS DelegateName,
                     SA.MinimumOptionalCompetencies,
@@ -234,7 +233,7 @@
                         CA.ID, CA.UserBookmark, CA.UnprocessedUpdates,
                         CA.LaunchCount, CA.SubmittedDate, SA.LinearNavigation, SA.UseDescriptionExpanders,
                         SA.ManageOptionalCompetenciesPrompt, SA.SupervisorSelfAssessmentReview, SA.SupervisorResultsReview,
-                        SA.ReviewerCommentsLabel,SA.EnforceRoleRequirementsForSignOff, SA.ManageSupervisorsDescription,CA.NonReportable,
+                        SA.ReviewerCommentsLabel,SA.EnforceRoleRequirementsForSignOff, CA.NonReportable,
                         U.FirstName , U.LastName,SA.MinimumOptionalCompetencies, CA.SelfAssessmentProcessAgreed, SA.IncludeLearnerDeclarationPrompt,
                         SA.RetirementDate",
                 new { delegateUserId, selfAssessmentId }

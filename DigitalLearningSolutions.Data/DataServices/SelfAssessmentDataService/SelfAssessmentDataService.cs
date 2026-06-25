@@ -245,7 +245,6 @@
                       ,[DescriptionLabel]
                       ,[EnforceRoleRequirementsForSignOff]
                       ,[ReviewerCommentsLabel]
-                      ,[ManageSupervisorsDescription]
                       ,[IncludeRequirementsFilters]
                       ,[MinimumOptionalCompetencies]
                       ,[RetirementDate]
