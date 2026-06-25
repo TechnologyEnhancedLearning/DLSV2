@@ -2,7 +2,7 @@
 @model DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments.RetireCompetencyAssessmentViewModel
 @inject IClockUtility ClockUtility
 @{
-    ViewData["Title"] = "Retire competency assessment";
+    ViewData["Title"] = "Retire self-assessment";
     var errorHasOccurred = !ViewData.ModelState.IsValid;
     var exampleDate = ClockUtility.UtcToday;
     var hintTextLines = new List<string> { $"For example, {exampleDate.Day} {exampleDate.Month} {exampleDate.Year}" };
@@ -40,20 +40,20 @@
 }
 @if (errorHasOccurred)
 {
-    <vc:error-summary order-of-property-names="@(new[] { nameof(Model.RetirementDate), nameof(Model.RetirementReason)})" />
+    <vc:error-summary order-of-property-names="@(new[] { nameof(Model.RetirementDate), nameof(Model.RetirementReason) })" />
 }
 
 <h1>@ViewData["Title"]</h1>
 
 <form class="nhsuk-u-margin-bottom-3" method="post" asp-controller="CompetencyAssessments" asp-action="RetireCompetencyAssessment" asp-route-competencyAssessmentId="@Model.CompetencyAssessmentId">
     <nhs-form-group nhs-validation-for="RetirementDate">
-  <vc:date-input id="retirement-date"
-                   label="This is the date when self assessment would be retired"
-                   day-id="Day"
-                   month-id="Month"
-                   year-id="Year"
-                   css-class="@(errorHasOccurred ? " nhsuk-u-margin-bottom-3" : "")"
-                   hint-text-lines="@hintTextLines" />
+        <vc:date-input id="retirement-date"
+                       label="This is the date when self assessment would be retired"
+                       day-id="Day"
+                       month-id="Month"
+                       year-id="Year"
+                       css-class="@(errorHasOccurred ? " nhsuk-u-margin-bottom-3" : "")"
+                       hint-text-lines="@hintTextLines" />
     </nhs-form-group>
     <nhs-form-group nhs-validation-for="RetirementReason">
         <vc:text-area asp-for="RetirementReason"
