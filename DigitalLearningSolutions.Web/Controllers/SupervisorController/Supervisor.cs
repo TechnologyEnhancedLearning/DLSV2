@@ -906,7 +906,7 @@
             {
                 var validationResult = OldDateValidator.ValidateDate(day, month, year);
                 if (!validationResult.DateValid)
-				{
+                {
                     return RedirectToAction("EnrolDelegateCompleteBy", new { supervisorDelegateId, day, month, year });
                 }
                 else
@@ -948,7 +948,7 @@
                 MultiPageFormDataFeature.EnrolDelegateOnProfileAssessment,
                 TempData
             );
-			
+
             var retirementDate = selfAssessmentService.GetSelfAssessmentById((int)sessionEnrolOnCompetencyAssessment.SelfAssessmentID).RetirementDate;
             if (retirementDate != null && !sessionEnrolOnCompetencyAssessment.ActionConfirmed)
             {
