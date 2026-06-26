@@ -21,18 +21,19 @@
             <vc:error-summary order-of-property-names="@(new[] { nameof(Model.ActionConfirmed) })" />
         }
         <h1 class="nhsuk-u-padding-bottom-3" id="page-heading">Confirm Enrolment</h1>
-        <p class="nhsuk-body-m">You are about to enrol learners on a retiring self-assessment.</p>
+        <p class="nhsuk-body-m">You are about to enrol a learner onto a self-assessment that is due to retire.</p>
         <p class="nhsuk-body-m nhsuk-u-font-weight-bold">Retirement date: @Model.RetirementDate?.ToString("dd/MM/yyyy")</p>
         <p class="nhsuk-body-m">Please note:</p>
         <ul>
-            <li>once enrolled, learners can continue to complete the self-assessment even after the retirement date</li>
-            <li>you may wish to consider enrolling them on an updated version, if available</li>
+            <li>Learners enrolled before the retirement date can continue to progress and complete this self-assessment after the retirement date.</li>
+            <li>No new learners can be enrolled onto this version after the retirement date.</li>
+            <li>An updated version of this self-assessment may be available and should be considered before enrolling a learner.</li>
         </ul>
-        <p class="nhsuk-body-m">To continue, you must acknowledge that you understand the self-assessment is being retired and you still wish to proceed.</p>
+        <p class="nhsuk-body-m">To continue, please confirm that you understand this version is being retired and that you still wish to proceed with enrolment.</p>
         <form method="post" asp-controller="Supervisor">
             <div class="nhsuk-checkboxes__item">
                 <vc:single-checkbox asp-for="@nameof(Model.ActionConfirmed)"
-                                    label=" I understand this self-assessment is being retired and I still want to enrol learners."
+                                    label=" I understand this self-assessment is being retired and I still wish to enrol the learner."
                                     hint-text="" />
             </div>
             <button type="submit" class="nhsuk-button nhsuk-button nhsuk-u-margin-top-4" asp-action="ConfirmRetiringSelfAssessment">
