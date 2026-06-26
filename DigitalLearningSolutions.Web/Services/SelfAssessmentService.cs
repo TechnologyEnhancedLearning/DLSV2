@@ -623,7 +623,7 @@
         {
             selfAssessmentDataService.RemoveReviewCandidateAssessmentOptionalCompetencies(id);
         }
-      public SelfAssessment GetSelfAssessmentRetirementDateById(int selfAssessmentId)
+        public SelfAssessment GetSelfAssessmentRetirementDateById(int selfAssessmentId)
         {
             return selfAssessmentDataService.GetSelfAssessmentRetirementDateById(selfAssessmentId);
         }
