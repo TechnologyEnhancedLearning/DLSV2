@@ -1,4 +1,4 @@
-﻿@using DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
+﻿﻿@using DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
 @model SelectOptionalCompetenciesViewModel;
 @{
     ViewData["Title"] = $"Select optional {Model.VocabularyPlural.ToLower()}";
@@ -42,11 +42,9 @@
         </legend>
         @foreach (var competencyGroup in Model.CompetencyGroups)
         {
-            @if (competencyGroup.Count() > 1)
+            @if (competencyGroup.Any(x => x.GroupId != 0))
             {
-
                 <div class="nhsuk-u-margin-bottom-6">
-
                         <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--m">
                         @competencyGroup.Key
                         </legend>
@@ -60,7 +58,11 @@
                         @foreach (var competency in competencyGroup)
                         {
                             <div class="nhsuk-checkboxes__item">
-                                <input class="nhsuk-checkboxes__input" data-group="@competencyGroup.Key" id="competency-check-@competency.StructureId" name="SelectedCompetencyIds" checked="@(Model.SelectedCompetencyIds != null ? Model.SelectedCompetencyIds.Contains((int)competency.CompetencyID) : false)" type="checkbox" value="@competency.StructureId">
+                                <input class="nhsuk-checkboxes__input"
+                                data-group="@competencyGroup.Key"
+                                  id="competency-check-@competency.StructureId"
+                                  name="SelectedCompetencyIds"
+                                checked="@(competencyGroup.Any(x => x.GroupOptionalCompetencies) || competency.Optional ? "checked" : null)"type="checkbox" value="@competency.StructureId">
                                 <label class="nhsuk-label nhsuk-checkboxes__label" for="competency-check-@competency.StructureId">
                                     @foreach (var flag in competency.CompetencyFlags)
                                     {
@@ -75,10 +77,39 @@
                             </div>
                         }
                     </div>
-                </div>
-            }
+                    </div>
+                }
+                else
+                {
+                    <div class="nhsuk-u-margin-bottom-6">
+                        
+                        <div class="nhsuk-checkboxes">
+                            @foreach (var competency in competencyGroup)
+                            {
+                                <div class="nhsuk-checkboxes__item">
+                                    <input class="nhsuk-checkboxes__input"
+                                           data-group="@competencyGroup.Key"
+                                           id="competency-check-@competency.StructureId"
+                                           name="SelectedCompetencyIds"
+                                           checked="@(competencyGroup.Any(x => x.GroupOptionalCompetencies) || competency.Optional ? "checked" : null)" type="checkbox" value="@competency.StructureId">
+                                    <label class="nhsuk-label nhsuk-checkboxes__label" for="competency-check-@competency.StructureId">
+                                        @foreach (var flag in competency.CompetencyFlags)
+                                        {
+                                            <span class="nhsuk-u-padding-right-2 @(ViewData["cssClass"]?.ToString())">
+                                                <strong class="nhsuk-tag @flag.FlagTagClass">
+                                                    @flag.FlagName
+                                                </strong>
+                                            </span>
+                                        }
+                                        @competency.CompetencyName
+                                    </label>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
 
-        }
+            }
     </fieldset>
     <input type="hidden" asp-for="ID" />
     <input type="hidden" asp-for="MinimumOptionalCompetencies" />
