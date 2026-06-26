@@ -787,7 +787,7 @@
             );
 
             var retirementDate = selfAssessmentService.GetSelfAssessmentById(selfAssessmentID).RetirementDate;
-            if (SelfAssessmentHelper.CheckRetirementDate(retirementDate))
+            if (retirementDate != null)
             {
                 return RedirectToAction("ConfirmRetiringSelfAssessment", "Supervisor", new { supervisorDelegateId });
             }
@@ -808,7 +808,7 @@
                    ).GetAwaiter().GetResult();
 
             var retirementDate = selfAssessmentService.GetSelfAssessmentById((int)sessionEnrolOnRoleProfile.SelfAssessmentID).RetirementDate;
-            if (!SelfAssessmentHelper.CheckRetirementDate((retirementDate)))
+            if (retirementDate == null)
             {
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 410 });
             }
@@ -872,7 +872,7 @@
             );
 
             var retirementDate = selfAssessmentService.GetSelfAssessmentById((int)sessionEnrolOnCompetencyAssessment.SelfAssessmentID).RetirementDate;
-            if (CheckRetirementDate(retirementDate) && !sessionEnrolOnCompetencyAssessment.ActionConfirmed)
+            if (retirementDate != null)
             {
                 return RedirectToAction("ConfirmRetiringSelfAssessment", "Supervisor", new { supervisorDelegateId });
             }
@@ -950,7 +950,7 @@
             );
 			
             var retirementDate = selfAssessmentService.GetSelfAssessmentById((int)sessionEnrolOnCompetencyAssessment.SelfAssessmentID).RetirementDate;
-            if (CheckRetirementDate(retirementDate) && !sessionEnrolOnCompetencyAssessment.ActionConfirmed)
+            if (retirementDate != null && !sessionEnrolOnCompetencyAssessment.ActionConfirmed)
             {
                 return RedirectToAction("ConfirmRetiringSelfAssessment", "Supervisor", new { supervisorDelegateId });
             }
@@ -1439,15 +1439,6 @@
                 viewResult.View.RenderAsync(viewContext);
                 return sw.GetStringBuilder().ToString();
             }
-        }
-        private bool CheckRetirementDate(DateTime? date)
-        {
-            if (date == null)
-                return false;
-
-            DateTime retirementOffsetDate = DateTime.Today.AddDays(14);
-            DateTime today = DateTime.Today;
-            return (date >= today && date <= retirementOffsetDate);
         }
     }
 }

@@ -166,7 +166,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
                    ).GetAwaiter().GetResult();
 
             var retirementDate = selfAssessmentService.GetSelfAssessmentById((int)sessionEnrol.AssessmentID).RetirementDate;
-            if (!SelfAssessmentHelper.CheckRetirementDate((retirementDate)))
+            if (retirementDate == null)
             {
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 410 });
             }
@@ -426,7 +426,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
             if (IsSelfAssessment)
             {
                 var retirementDate = selfAssessmentService.GetSelfAssessmentById(selfAssessmentId).RetirementDate;
-                return SelfAssessmentHelper.CheckRetirementDate(retirementDate) && !actionConfirmed;
+                return retirementDate != null && !actionConfirmed;
             }
             return false;
         }
