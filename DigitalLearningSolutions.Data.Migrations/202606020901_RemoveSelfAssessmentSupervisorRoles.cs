@@ -92,10 +92,15 @@ namespace DigitalLearningSolutions.Data.Migrations
                                 ADD CONSTRAINT [IX_CandidateAssessmentSupervisors_CandidateAssessmentID_SupervisorDelegateId]
                                 UNIQUE (CandidateAssessmentID, SupervisorDelegateId);
 
-
+IF EXISTS (
+    SELECT 1 FROM sys.columns 
+    WHERE Name = N'SelfAssessmentSupervisorRoleID' 
+      AND Object_ID = Object_ID(N'CandidateAssessmentSupervisors')
+)
+BEGIN
                             ALTER TABLE [CandidateAssessmentSupervisors]
                                 DROP COLUMN [SelfAssessmentSupervisorRoleID]
-
+END
 		                    IF OBJECT_ID('dbo.SelfAssessmentSupervisorRoles', 'U') IS NOT NULL 
 			                    DROP TABLE dbo.SelfAssessmentSupervisorRoles;
 
