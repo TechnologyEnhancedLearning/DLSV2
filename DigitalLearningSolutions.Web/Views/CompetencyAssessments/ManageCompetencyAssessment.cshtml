@@ -29,6 +29,10 @@
 <h1>@ViewData["Title"]</h1>
 
 <div class="nhsuk-u-reading-width">
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <partial name="_ErrorSummary" />
+    }
     <dl class="nhsuk-summary-list nhsuk-summary-list--no-border">
 
         <div class="nhsuk-summary-list__row">

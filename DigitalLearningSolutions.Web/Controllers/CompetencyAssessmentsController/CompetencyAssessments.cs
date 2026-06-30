@@ -1692,6 +1692,16 @@
 
             if (selfAssessmentService.CanDelegateAccessSelfAssessment(userId, competencyAssessmentId, centreId))
             {
+                var selfAssessment = selfAssessmentService.GetSelfAssessmentForCandidateById(candidateId, competencyAssessmentId);
+                if (selfAssessment == null)
+                {
+                    ModelState.Clear();
+                    ModelState.AddModelError("HasCompetencies", $"To preview this self-assessment, you must include some competencies that are not marked as optional.");
+                    bool hasCompetencies = competencyAssessmentService.GetCompetenciesForCompetencyAssessment(competencyAssessmentId).Any();
+                    var competencyAssessmentTaskStatus = competencyAssessmentService.GetCompetencyAssessmentTaskStatus(competencyAssessmentId, null);
+                    var model = new ManageCompetencyAssessmentViewModel(competencyAssessmentBase, competencyAssessmentTaskStatus, hasCompetencies);
+                    return View("ManageCompetencyAssessment", model);
+                }
                 return RedirectToAction("SelfAssessment", "LearningPortal", new { selfAssessmentId = competencyAssessmentId });
             }
             else
