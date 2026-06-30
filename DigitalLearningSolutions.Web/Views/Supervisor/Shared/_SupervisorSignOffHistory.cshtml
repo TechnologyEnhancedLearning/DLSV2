@@ -4,11 +4,11 @@
 @if (Model.Any())
 {
     <table role="table" class="nhsuk-table-responsive nhsuk-u-margin-bottom-4">
-        <caption class="nhsuk-table__caption"><h1>@Model.FirstOrDefault().SupervisorRoleName Sign-off History</h1></caption>
+        <caption class="nhsuk-table__caption"><h1>Supervisor Sign-off History</h1></caption>
         <thead role="rowgroup" class="nhsuk-table__head">
             <tr role="row">
                 <th role="columnheader" class="" scope="col">
-                    @Model.FirstOrDefault().SupervisorRoleName
+                    Supervisor
                 </th>
                 <th role="columnheader" class="" scope="col">
                     Status
@@ -23,7 +23,7 @@
             {
                 <tr role="row" class="nhsuk-table__row">
                     <td role="cell" class="nhsuk-table__cell">
-                        <span class="nhsuk-table-responsive__heading">@Model.FirstOrDefault().SupervisorRoleName </span>@supervisorSignOff.SupervisorName (@supervisorSignOff.SupervisorEmail)
+                        <span class="nhsuk-table-responsive__heading">Supervisor </span>@supervisorSignOff.SupervisorName (@supervisorSignOff.SupervisorEmail)
                     </td>
                     <td role="cell" class="nhsuk-table__cell">
                         <span class="nhsuk-table-responsive__heading">Status </span>

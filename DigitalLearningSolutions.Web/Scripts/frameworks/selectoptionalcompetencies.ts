@@ -2,31 +2,35 @@
   const groups = document.querySelectorAll<HTMLDivElement>('.nhsuk-checkboxes');
 
   groups.forEach((group) => {
-    const groupToggle =
-      group.querySelector<HTMLInputElement>('input[name="GroupIds"]');
+    const groupToggle = group.querySelector<HTMLInputElement>('input[name="GroupIds"]');
+    if (!groupToggle) return;
+
     // All individual competency checkboxes in the group
-    const childCheckboxes =
-      group.querySelectorAll<HTMLInputElement>(
-        'input[name="SelectedCompetencyIds"]',
-      );
+    const childCheckboxes = group.querySelectorAll<HTMLInputElement>(
+      'input[name="SelectedCompetencyIds"]',
+    );
 
-    if (!groupToggle) {
-      return;
-    }
+    const updateState = () => {
+      const isChecked = groupToggle.checked;
 
-    const setChildrenCheckedState = (checked: boolean) => {
-      childCheckboxes.forEach((checkboxElement) => {
-        const checkbox = checkboxElement;
-        checkbox.checked = checked;
+      childCheckboxes.forEach((cb) => {
+        if (isChecked) {
+          // eslint-disable-next-line no-param-reassign
+          cb.checked = true; // force selected
+          // eslint-disable-next-line no-param-reassign
+          cb.disabled = true; // lock them
+        } else {
+          // eslint-disable-next-line no-param-reassign
+          cb.disabled = false; // re-enable when group is unchecked
+          // optional: leave cb.checked unchanged
+        }
       });
     };
 
-    if (groupToggle.checked) {
-      setChildrenCheckedState(true);
-    }
+    // Run when the group checkbox changes
+    groupToggle.addEventListener('change', updateState);
 
-    groupToggle.addEventListener('change', () => {
-      setChildrenCheckedState(groupToggle.checked);
-    });
+    // Also run at page load in case some are pre-checked server-side
+    updateState();
   });
 });

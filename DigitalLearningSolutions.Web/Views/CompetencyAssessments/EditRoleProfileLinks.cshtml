@@ -247,7 +247,7 @@ else if (Model.ActionName == "Summary")
 {
     <form method="post">
         <nhs-form-group>
-            <vc:single-checkbox asp-for="@nameof(Model.TaskStatus)" label="Mark this task as complete" hint-text="You will still be able to make changes after marking this task as complete."></vc:single-checkbox>
+            <vc:single-checkbox asp-for="@nameof(Model.TaskStatus)" label="Mark this task as complete." hint-text="You will still be able to make changes after marking this task as complete."></vc:single-checkbox>
         </nhs-form-group>
         <input type="hidden" asp-for="ID" />
         <input type="hidden" asp-for="CompetencyAssessmentName" />

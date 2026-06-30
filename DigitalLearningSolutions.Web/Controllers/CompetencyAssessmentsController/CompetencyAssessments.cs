@@ -776,14 +776,7 @@
         [Route("/Self-Assessment/{competencyAssessmentId}/{vocabularyPlural}/Optional/LearnerPrompt")]
         public IActionResult SetOptionalCompetencyLearnerPrompt(SetOptionalCompetencyLearnerPromptFormData model)
         {
-            if (!ModelState.IsValid)
-            {
-                var adminId = GetAdminID();
-                var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(model.ID, adminId);
-                var competencies = competencyAssessmentService.GetCompetenciesForCompetencyAssessment(model.ID);
-                var viewModel = new SetOptionalCompetencyLearnerPromptViewModel(competencyAssessmentBase, competencies);
-                return View("SetOptionalCompetencyLearnerPrompt", viewModel);
-            }
+            
             competencyAssessmentService.UpdateManageOptionalCompetenciesPrompt(model.ID, model.ManageOptionalCompetenciesPrompt);
             return RedirectToAction("ManageOptionalCompetencies", new { competencyAssessmentId = model.ID, vocabularyPlural = model.VocabularyPlural });
         }
@@ -1507,7 +1500,8 @@
         public IActionResult SendForReview(int competencyAssessmentId)
         {
             var adminId = GetAdminID();
-            var collaborators = competencyAssessmentService.GetCollaboratorsForCompetencyAssessmentId(competencyAssessmentId);
+            var collaborators = competencyAssessmentService.GetCollaboratorsForCompetencyAssessmentId(competencyAssessmentId)
+                .Where(c => c.ReviewRequested == null || c.ReviewComplete != null);
             var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
             var result = ValidateCompetencyAssessmentAndRole(competencyAssessmentId, adminId, "Send For Review", competencyAssessmentBase);
             if (result.StatusCode != 200)
@@ -1692,6 +1686,16 @@
 
             if (selfAssessmentService.CanDelegateAccessSelfAssessment(userId, competencyAssessmentId, centreId))
             {
+                var selfAssessment = selfAssessmentService.GetSelfAssessmentForCandidateById(candidateId, competencyAssessmentId);
+                if (selfAssessment == null)
+                {
+                    ModelState.Clear();
+                    ModelState.AddModelError("HasCompetencies", $"To preview this self-assessment, you must include some competencies that are not marked as optional.");
+                    bool hasCompetencies = competencyAssessmentService.GetCompetenciesForCompetencyAssessment(competencyAssessmentId).Any();
+                    var competencyAssessmentTaskStatus = competencyAssessmentService.GetCompetencyAssessmentTaskStatus(competencyAssessmentId, null);
+                    var model = new ManageCompetencyAssessmentViewModel(competencyAssessmentBase, competencyAssessmentTaskStatus, hasCompetencies);
+                    return View("ManageCompetencyAssessment", model);
+                }
                 return RedirectToAction("SelfAssessment", "LearningPortal", new { selfAssessmentId = competencyAssessmentId });
             }
             else

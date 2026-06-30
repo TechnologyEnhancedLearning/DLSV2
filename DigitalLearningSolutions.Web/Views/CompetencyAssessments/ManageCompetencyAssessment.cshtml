@@ -1,7 +1,7 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
 @model ManageCompetencyAssessmentViewModel
 @{
-    ViewData["Title"] = Model.PublishStatusID == 3 ? "Manage" : "Create" + " self-assessment";
+    ViewData["Title"] = Model.PublishStatusID == 3 ? "Manage self-assessment" : "Create self-assessment";
     ViewData["Application"] = "Framework service";
     var hasRetirement = Model.RetirementDate != null;
 }
@@ -29,6 +29,10 @@
 <h1>@ViewData["Title"]</h1>
 
 <div class="nhsuk-u-reading-width">
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <partial name="_ErrorSummary" />
+    }
     <dl class="nhsuk-summary-list nhsuk-summary-list--no-border">
 
         <div class="nhsuk-summary-list__row">

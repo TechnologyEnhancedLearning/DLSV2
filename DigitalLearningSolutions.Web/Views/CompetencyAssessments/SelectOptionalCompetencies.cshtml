@@ -1,4 +1,4 @@
-﻿@using DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
+﻿﻿@using DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
 @model SelectOptionalCompetenciesViewModel;
 @{
     ViewData["Title"] = $"Select optional {Model.VocabularyPlural.ToLower()}";
@@ -35,18 +35,17 @@
         Optional @Model.VocabularyPlural.ToLower() can be added to the assessment individually or as a group.
 </p>
 <form method="post" asp-action="SelectOptionalCompetencies">
+        @if (Model.CompetencyGroups.Any())
+        {
     <fieldset class="nhsuk-fieldset">
-
         <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
          Which @Model.VocabularySingular.ToLower() groups and/or @Model.VocabularyPlural.ToLower() should be optional?
         </legend>
         @foreach (var competencyGroup in Model.CompetencyGroups)
         {
-            @if (competencyGroup.Count() > 1)
+            @if (competencyGroup.Any(x => x.GroupId != 0))
             {
-
                 <div class="nhsuk-u-margin-bottom-6">
-
                         <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--m">
                         @competencyGroup.Key
                         </legend>
@@ -79,10 +78,39 @@
                             </div>
                         }
                     </div>
-                </div>
-            }
+                    </div>
+                }
+                else
+                {
+                    <div class="nhsuk-u-margin-bottom-6">
+                        
+                        <div class="nhsuk-checkboxes">
+                            @foreach (var competency in competencyGroup)
+                            {
+                                <div class="nhsuk-checkboxes__item">
+                                    <input class="nhsuk-checkboxes__input"
+                                           data-group="@competencyGroup.Key"
+                                           id="competency-check-@competency.StructureId"
+                                           name="SelectedCompetencyIds"
+                                           checked="@(competencyGroup.Any(x => x.GroupOptionalCompetencies) || competency.Optional ? "checked" : null)" type="checkbox" value="@competency.StructureId">
+                                    <label class="nhsuk-label nhsuk-checkboxes__label" for="competency-check-@competency.StructureId">
+                                        @foreach (var flag in competency.CompetencyFlags)
+                                        {
+                                            <span class="nhsuk-u-padding-right-2 @(ViewData["cssClass"]?.ToString())">
+                                                <strong class="nhsuk-tag @flag.FlagTagClass">
+                                                    @flag.FlagName
+                                                </strong>
+                                            </span>
+                                        }
+                                        @competency.CompetencyName
+                                    </label>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
 
-        }
+            }
     </fieldset>
     <input type="hidden" asp-for="ID" />
     <input type="hidden" asp-for="MinimumOptionalCompetencies" />
@@ -91,8 +119,13 @@
     <input type="hidden" asp-for="VocabularySingular" />
     <button class="nhsuk-button" type="submit">
         Save
-    </button>
-</form>
+            </button>
+        }
+        else
+        {
+            <p>No @Model.VocabularySingular.ToLower() has been added </p>
+        }
+    </form>
 
 <div class="nhsuk-back-link">
         <a class="nhsuk-back-link__link"  asp-action="ManageOptionalCompetencies" asp-route-vocabularyPlural="@Model.VocabularyPlural" asp-route-competencyAssessmentId="@Model.ID">
@@ -104,5 +137,5 @@
     </div>
 </div>
 @section scripts {
-    <script src="@Url.Content("~/js/selfAssessments/selectoptionalcompetencies.js")" asp-append-version="true"></script>
+    <script src="@Url.Content("~/js/frameworks/selectoptionalcompetencies.js")" asp-append-version="true"></script>
 }
