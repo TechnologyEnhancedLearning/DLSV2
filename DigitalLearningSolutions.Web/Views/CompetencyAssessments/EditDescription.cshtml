@@ -46,12 +46,12 @@
                           populate-with-current-value="true"
                           spell-check="false" />
         </nhs-form-group>
-        <vc:single-checkbox asp-for="@nameof(Model.TaskStatus)" label="Mark this task as complete." hint-text="You will still be able to make changes after marking this task as complete."></vc:single-checkbox>
         <input name="ID" type="hidden" asp-for="ID" />
         <input name="CompetencyAssessmentName" type="hidden" asp-for="CompetencyAssessmentName" />
         <input name="userRole" type="hidden" asp-for="UserRole" />
         @if (Model.UserRole > 1)
         {
+            <vc:single-checkbox asp-for="@nameof(Model.TaskStatus)" label="Mark this task as complete." hint-text="You will still be able to make changes after marking this task as complete."></vc:single-checkbox>
             <button class="nhsuk-button" type="submit">
                 Save
             </button>

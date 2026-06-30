@@ -63,9 +63,6 @@
             <input type="text" id="category-field" name="Category" maxlength="100" class="nhsuk-input nhsuk-u-width-two-thirds" asp-for="Category" />
         </div>
     </nhs-form-group>
-    <nhs-form-group>
-        <vc:single-checkbox asp-for="@nameof(Model.TaskStatus)" label="Mark this task as complete." hint-text="You will still be able to make changes after marking this task as complete."></vc:single-checkbox>
-    </nhs-form-group>
     <input name="ID" type="hidden" asp-for="ID" />
     <input name="CompetencyAssessmentName" type="hidden" asp-for="CompetencyAssessmentName" />
     <input name="userRole" type="hidden" asp-for="UserRole" />
@@ -73,6 +70,9 @@
     <input name="Brand" type="hidden" asp-for="Brand" />
     @if (Model.UserRole > 1)
     {
+        <nhs-form-group>
+            <vc:single-checkbox asp-for="@nameof(Model.TaskStatus)" label="Mark this task as complete." hint-text="You will still be able to make changes after marking this task as complete."></vc:single-checkbox>
+        </nhs-form-group>
         <button class="nhsuk-button" type="submit">
             Save
         </button>
