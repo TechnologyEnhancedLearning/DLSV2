@@ -1696,7 +1696,7 @@
                 if (selfAssessment == null)
                 {
                     ModelState.Clear();
-                    ModelState.AddModelError("HasCompetencies", $"You need to add at least one required competency group.");
+                    ModelState.AddModelError("HasCompetencies", $"To preview this self-assessment, you must include some competencies that are not marked as optional.");
                     bool hasCompetencies = competencyAssessmentService.GetCompetenciesForCompetencyAssessment(competencyAssessmentId).Any();
                     var competencyAssessmentTaskStatus = competencyAssessmentService.GetCompetencyAssessmentTaskStatus(competencyAssessmentId, null);
                     var model = new ManageCompetencyAssessmentViewModel(competencyAssessmentBase, competencyAssessmentTaskStatus, hasCompetencies);
