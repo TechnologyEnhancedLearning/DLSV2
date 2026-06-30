@@ -872,7 +872,7 @@
             );
 
             var retirementDate = selfAssessmentService.GetSelfAssessmentById((int)sessionEnrolOnCompetencyAssessment.SelfAssessmentID).RetirementDate;
-            if (retirementDate != null)
+            if (retirementDate != null && !sessionEnrolOnCompetencyAssessment.ActionConfirmed)
             {
                 return RedirectToAction("ConfirmRetiringSelfAssessment", "Supervisor", new { supervisorDelegateId });
             }
