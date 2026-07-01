@@ -1324,7 +1324,7 @@
                 @"UPDATE SelfAssessments
                     SET 
                     [ManageOptionalCompetenciesPrompt] = @manageOptionalCompetenciesPrompt
-                    WHERE id = @selfAssessmentId AND ISNULL(ManageOptionalCompetenciesPrompt, '') <> @manageOptionalCompetenciesPrompt;"
+                    WHERE id = @selfAssessmentId;"
             ,
                 new { selfAssessmentId, manageOptionalCompetenciesPrompt }
             );
