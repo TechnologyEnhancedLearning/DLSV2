@@ -1321,7 +1321,7 @@
                 @"UPDATE SelfAssessments
                     SET 
                     [MinimumOptionalCompetencies] = @minimumOptionalCompetecies
-                    WHERE id = @selfAssessmentId AND ISNULL(MinimumOptionalCompetencies, 0) <> @minimumOptionalCompetecies;"
+                    WHERE id = @selfAssessmentId;"
             ,
                 new { selfAssessmentId, minimumOptionalCompetecies }
             );

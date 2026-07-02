@@ -729,6 +729,7 @@
                 return View("SelectOptionalCompetencies", viewModel);
             }
             competencyAssessmentService.UpdateOptionalCompetenciesInAssessment(model.ID, model.GroupIds ?? [], model.SelectedCompetencyIds ?? []);
+            competencyAssessmentService.UpdateMinimumOptionalCompetencies(model.ID, 0);
             return RedirectToAction("ManageOptionalCompetencies", new { competencyAssessmentId = model.ID, vocabularyPlural = model.VocabularyPlural });
         }
         [HttpGet]
