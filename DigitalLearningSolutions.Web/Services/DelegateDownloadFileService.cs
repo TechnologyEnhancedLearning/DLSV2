@@ -98,7 +98,7 @@
                 ClosedXmlHelper.RenameWorksheetColumn(workbook, "Answer" + promptNumber.ToString(), promptLabel);
                 if (prompt.Options.Count() > 0)
                 {
-                    ClosedXmlHelper.AddSheetToWorkbook(workbook, promptLabel, prompt.Options, TableTheme);
+                    ClosedXmlHelper.AddSheetToWorkbook(workbook, promptLabel.Substring(0,30), prompt.Options, TableTheme);
                     var worksheetNumber = workbook.Worksheets.Count;
                     var optionsCount = prompt.Options.Count();
                     //Ensure a blank value exists in the drop down list if the prompt is not mandatory
