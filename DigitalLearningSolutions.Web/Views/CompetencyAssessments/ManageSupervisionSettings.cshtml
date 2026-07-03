@@ -156,12 +156,14 @@
 
             </dl>
 
-            <nhs-form-group>
-                <vc:single-checkbox asp-for="@nameof(Model.TaskCompleteChecked)" label="Mark this task as complete." hint-text="You will still be able to make changes after marking this task as complete."></vc:single-checkbox>
-            </nhs-form-group>
+            @if (Model.UserRole > 1)
+            {
+                <nhs-form-group>
+                    <vc:single-checkbox asp-for="@nameof(Model.TaskCompleteChecked)" label="Mark this task as complete." hint-text="You will still be able to make changes after marking this task as complete."></vc:single-checkbox>
+                </nhs-form-group>
+            }
+
             <input type="hidden" asp-for="@Model.Signoff.CompetencyAssessmentId" />
-
-
 
             <div class="nhsuk-u-margin-top-8">
                 @if (Model.UserRole > 1)

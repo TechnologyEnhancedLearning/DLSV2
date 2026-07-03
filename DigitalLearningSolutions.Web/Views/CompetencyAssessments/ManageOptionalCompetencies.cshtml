@@ -107,11 +107,10 @@
             <input type="hidden" asp-for="SelectedCompetencyIds" />
             <input type="hidden" asp-for="GroupIds" />
             <input type="hidden" asp-for="VocabularyPlural" />
-
-            <vc:single-checkbox asp-for="@nameof(Model.TaskStatus)" label="Mark this task as complete." hint-text="You will still be able to make changes after marking this task as complete."></vc:single-checkbox>
         </nhs-form-group>
         @if (Model.UserRole > 1)
         {
+            <vc:single-checkbox asp-for="@nameof(Model.TaskStatus)" label="Mark this task as complete." hint-text="You will still be able to make changes after marking this task as complete."></vc:single-checkbox>
             <button class="nhsuk-button" type="submit">
                 Save
             </button>

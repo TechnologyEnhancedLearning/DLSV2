@@ -429,7 +429,10 @@
                 </dl>
             </div>
         </div>
-        <vc:single-checkbox asp-for="@nameof(Model.SelfAssessmentOptionsTaskStatus)" label="Mark this task as complete." hint-text="You will still be able to make changes after marking this task as complete."></vc:single-checkbox>
+        @if (Model.UserRole > 1)
+        {
+            <vc:single-checkbox asp-for="@nameof(Model.SelfAssessmentOptionsTaskStatus)" label="Mark this task as complete." hint-text="You will still be able to make changes after marking this task as complete."></vc:single-checkbox>
+        }
     }
     @if (index > 0 && Model.CurrentStep < (int)OptionLabel.Summary)
     {
