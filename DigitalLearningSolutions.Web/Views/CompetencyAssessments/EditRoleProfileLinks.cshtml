@@ -246,9 +246,6 @@ else if (Model.ActionName == "EditRole" && Model.SubGroupId != null)
 else if (Model.ActionName == "Summary")
 {
     <form method="post">
-        <nhs-form-group>
-            <vc:single-checkbox asp-for="@nameof(Model.TaskStatus)" label="Mark this task as complete." hint-text="You will still be able to make changes after marking this task as complete."></vc:single-checkbox>
-        </nhs-form-group>
         <input type="hidden" asp-for="ID" />
         <input type="hidden" asp-for="CompetencyAssessmentName" />
         <input type="hidden" asp-for="ProfessionalGroupId" />
@@ -261,6 +258,10 @@ else if (Model.ActionName == "Summary")
         <input type="hidden" asp-for="GroupName" />
         @if (Model.UserRole > 1)
         {
+            <nhs-form-group>
+                <vc:single-checkbox asp-for="@nameof(Model.TaskStatus)" label="Mark this task as complete." hint-text="You will still be able to make changes after marking this task as complete."></vc:single-checkbox>
+            </nhs-form-group>
+
             <button class="nhsuk-button" type="submit">
                 Save
             </button>
