@@ -51,8 +51,6 @@
                 () => centresService.UpdateCentreWebsiteDetails(
                     A<int>._,
                     A<string>._,
-                    A<double>._,
-                    A<double>._,
                     A<string>._,
                     A<string>._,
                     A<string>._,
@@ -71,23 +69,6 @@
             Fake.ClearRecordedCalls(mapsApiHelper);
             Fake.ClearRecordedCalls(logger);
             Fake.ClearRecordedCalls(imageResizeService);
-        }
-
-        [Test]
-        public void EditCentreWebsiteDetails_should_show_validation_error_to_user_when_given_invalid_postcode()
-        {
-            // Given
-            var model = new EditCentreWebsiteDetailsViewModel { CentrePostcode = "aaaaaaaaa" };
-            A.CallTo(() => mapsApiHelper.GeocodePostcode(A<string>._))
-                .Returns(new MapsResponse { Status = "ZERO_RESULTS" });
-
-            // When
-            var result = controller.EditCentreWebsiteDetails(model);
-
-            // Then
-            result.Should().BeViewResult().WithDefaultViewName()
-                .ModelAs<EditCentreWebsiteDetailsViewModel>();
-            Assert.IsFalse(controller.ModelState.IsValid);
         }
 
         [TestCase("OVER_DAILY_LIMIT")]
@@ -309,8 +290,6 @@
                 () => centresService.UpdateCentreWebsiteDetails(
                     A<int>._,
                     "AA123",
-                    latitude,
-                    longitude,
                     A<string>._,
                     A<string>._,
                     A<string>._,
