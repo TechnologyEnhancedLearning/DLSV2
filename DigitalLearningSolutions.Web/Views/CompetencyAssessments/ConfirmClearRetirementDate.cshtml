@@ -21,7 +21,7 @@
         }
         <h1 class="nhsuk-heading-l">Are you sure you would like to remove retirement date?</h1>
         <h2 class="nhsuk-u-margin-bottom-8">Self-assessment: @Model.CompetencyAssessmentName</h2>
-
+        <partial name="Shared/_PublishedSelfAssessmentWarning" model="new PublishedSelfAssessmentViewModel { UserRole = Model.UserRole, PublishStatusID = Model.PublishStatusID }" />
         <p>Removing the retirement date will move the self-assessment back to the published state and remove all retirement warnings for learners and supervisors.</p>
     </div>
 </div>
@@ -36,6 +36,8 @@
                                     hint-text="" />
             </div>
             <input type="hidden" asp-for="CompetencyAssessmentName" />
+            <input type="hidden" asp-for="PublishStatusID" />
+            <input type="hidden" asp-for="UserRole" />
             <button class="nhsuk-button" type="submit">
                 Submit
             </button>

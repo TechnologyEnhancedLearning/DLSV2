@@ -16,6 +16,7 @@
             SubGroupId = competencyAssessmentBase.NRPSubGroupID;
             RoleId = competencyAssessmentBase.NRPRoleID;
             UserRole = competencyAssessmentBase.UserRole;
+            PublishStatusID = competencyAssessmentBase.PublishStatusID;
             TaskStatus = taskStatus;
             ProfessionalGroups = professionalGroups;
             SubGroups = subGroups;
@@ -35,6 +36,7 @@
         public int? SubGroupId { get; set; }
         public int? RoleId { get; set; }
         public int UserRole { get; set; }
+        public int PublishStatusID { get; set; }
         public bool? TaskStatus { get; set; }
         public string? GroupName { get; set; }
         public string? SubGroupName { get; set; }

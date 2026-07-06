@@ -35,6 +35,7 @@
     </span>
     Select working group members
 </h1>
+<partial name="Shared/_PublishedSelfAssessmentWarning" model="new PublishedSelfAssessmentViewModel { UserRole = Model.UserRole, PublishStatusID = Model.PublishStatusID }" />
 <form method="post">
     <label class="nhsuk-label nhsuk-u-margin-top-6">
         <p>Add a user as a:</p>
@@ -146,6 +147,7 @@
             }
         </div>
     }
+    <input type="hidden" asp-for="PublishStatusID" />
     <div class="nhsuk-back-link">
         <a class="nhsuk-back-link__link" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.CompetencyAssessmentID">
             <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
