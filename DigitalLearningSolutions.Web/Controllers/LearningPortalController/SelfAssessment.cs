@@ -1743,7 +1743,7 @@
                 {
                     var nameTextLength = string.IsNullOrEmpty(model.CompetencySelfAssessmentCertificates.LearnerName) ? 0 : model.CompetencySelfAssessmentCertificates.LearnerName.Length;
                     var isPrnExist = !string.IsNullOrEmpty(model.CompetencySelfAssessmentCertificates.LearnerPRN);
-                    var fileName = $"Competency Certificate - {model.CompetencySelfAssessmentCertificates.LearnerName.Substring(0, nameTextLength >= 15 ? 15 : nameTextLength)}" + (isPrnExist ? $" - {model.CompetencySelfAssessmentCertificates.LearnerPRN}.pdf" : ".pdf");
+                    var fileName = $"{model.CompetencySelfAssessmentCertificates.SelfAssessment} - {model.CompetencySelfAssessmentCertificates.LearnerName.Substring(0, nameTextLength >= 15 ? 15 : nameTextLength)}" + (isPrnExist ? $" - {model.CompetencySelfAssessmentCertificates.LearnerPRN}.pdf" : ".pdf");
                     return File(pdfReportFile, FileHelper.GetContentTypeFromFileName(fileName), fileName);
                 }
             }
