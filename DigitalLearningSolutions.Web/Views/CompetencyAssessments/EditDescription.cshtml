@@ -31,6 +31,7 @@
         </span>
         Introductory description
     </h1>
+    <partial name="Shared/_PublishedSelfAssessmentWarning" model="new PublishedSelfAssessmentViewModel { UserRole = Model.UserRole, PublishStatusID = Model.PublishStatusID }" />
     <form method="post">
         @if (!ViewData.ModelState.IsValid)
         {
@@ -49,6 +50,7 @@
         <input name="ID" type="hidden" asp-for="ID" />
         <input name="CompetencyAssessmentName" type="hidden" asp-for="CompetencyAssessmentName" />
         <input name="userRole" type="hidden" asp-for="UserRole" />
+        <input name="publishStatusID" type="hidden" asp-for="PublishStatusID" />
         @if (Model.UserRole > 1)
         {
             <vc:single-checkbox asp-for="@nameof(Model.TaskStatus)" label="Mark this task as complete." hint-text="You will still be able to make changes after marking this task as complete."></vc:single-checkbox>

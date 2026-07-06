@@ -15,6 +15,8 @@ namespace DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
             FrameworkName = framework.FrameworkName;
             FrameworkId = framework.ID;
             Vocabulary = competencyAssessmentBase.Vocabulary ?? "proficiencies";
+            UserRole = competencyAssessmentBase.UserRole;
+            PublishStatusID = competencyAssessmentBase.PublishStatusID;
         }
         public int CompetencyAssessmentId { get; set; }
         public string? AssessmentName { get; set; }
@@ -24,6 +26,8 @@ namespace DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
         public string? Vocabulary { get; set; }
         [BooleanMustBeTrue(ErrorMessage = "You must confirm that you wish to remove this framework")]
         public bool Confirm { get; set; }
+        public int UserRole { get; set; }
+        public int PublishStatusID { get; set; }
 
     }
 }

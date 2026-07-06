@@ -1,4 +1,5 @@
 ﻿@using DigitalLearningSolutions.Data.Utilities
+@using DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
 @model DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments.RetireCompetencyAssessmentViewModel
 @inject IClockUtility ClockUtility
 @{
@@ -44,16 +45,16 @@
 }
 
 <h1>@ViewData["Title"]</h1>
-
+<partial name="Shared/_PublishedSelfAssessmentWarning" model="new PublishedSelfAssessmentViewModel { UserRole = Model.UserRole, PublishStatusID = Model.PublishStatusID }" />
 <form class="nhsuk-u-margin-bottom-3" method="post" asp-controller="CompetencyAssessments" asp-action="RetireCompetencyAssessment" asp-route-competencyAssessmentId="@Model.CompetencyAssessmentId">
     <nhs-form-group nhs-validation-for="RetirementDate">
-  <vc:date-input id="retirement-date"
-                   label="This is the date when self-assessment would be retired"
-                   day-id="Day"
-                   month-id="Month"
-                   year-id="Year"
-                   css-class="@(errorHasOccurred ? " nhsuk-u-margin-bottom-3" : "")"
-                   hint-text-lines="@hintTextLines" />
+        <vc:date-input id="retirement-date"
+                       label="This is the date when self-assessment would be retired"
+                       day-id="Day"
+                       month-id="Month"
+                       year-id="Year"
+                       css-class="@(errorHasOccurred ? " nhsuk-u-margin-bottom-3" : "")"
+                       hint-text-lines="@hintTextLines" />
     </nhs-form-group>
     <nhs-form-group nhs-validation-for="RetirementReason">
         <vc:text-area asp-for="RetirementReason"
@@ -65,7 +66,8 @@
                       populate-with-current-value="true"
                       spell-check="false" />
     </nhs-form-group>
-
+    <input type="hidden" asp-for="PublishStatusID" />
+    <input type="hidden" asp-for="UserRole" />
     <a class="nhsuk-button nhsuk-button--secondary" asp-controller="CompetencyAssessments" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.CompetencyAssessmentId" role="button">Back</a>
     <button class="nhsuk-button" type="submit">Submit</button>
 </form>

@@ -30,7 +30,7 @@
         </span>
         Self-assessment @Model.VocabularySingular.ToLower() role requirements
     </h1>
-
+    <partial name="Shared/_PublishedSelfAssessmentWarning" model="new PublishedSelfAssessmentViewModel { UserRole = Model.UserRole, PublishStatusID = Model.PublishStatusID }" />
     <p>
         Specify whether role requirements will be enforced for the self-assessment. When requirements are set, they must be met by the learner before the self-assessment can be signed off.
     </p>
@@ -97,6 +97,7 @@
             <input type="hidden" asp-for="Id" />
             <input type="hidden" asp-for="EnforceRoleRequirementsForSignOff" />
             <input type="hidden" asp-for="IncludeRequirementsFilters" />
+            <input type="hidden" asp-for="PublishStatusID" />
         </nhs-form-group>
         @if (Model.UserRole > 1)
         {

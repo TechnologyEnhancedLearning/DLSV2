@@ -30,6 +30,7 @@
         </span>
         Manage optional @Model.VocabularyPlural.ToLower()
     </h1>
+    <partial name="Shared/_PublishedSelfAssessmentWarning" model="new PublishedSelfAssessmentViewModel { UserRole = Model.UserRole, PublishStatusID = Model.PublishStatusID }" />
     <p>
         Optional @Model.VocabularyPlural.ToLower() can be selected for inclusion in a self-assessment by a learner if required.
     </p>
@@ -107,6 +108,7 @@
             <input type="hidden" asp-for="SelectedCompetencyIds" />
             <input type="hidden" asp-for="GroupIds" />
             <input type="hidden" asp-for="VocabularyPlural" />
+            <input type="hidden" asp-for="PublishStatusID" />
         </nhs-form-group>
         @if (Model.UserRole > 1)
         {
