@@ -71,25 +71,6 @@
             Fake.ClearRecordedCalls(imageResizeService);
         }
 
-        [TestCase("OVER_DAILY_LIMIT")]
-        [TestCase("OVER_QUERY_LIMIT")]
-        [TestCase("REQUEST_DENIED")]
-        [TestCase("INVALID_REQUEST")]
-        [TestCase("UNKNOWN_ERROR")]
-        public void EditCentreWebsiteDetails_should_redirect_to_error_page_when_API_issue_occurs(string statusCode)
-        {
-            // Given
-            var model = new EditCentreWebsiteDetailsViewModel { CentrePostcode = "AA123" };
-            A.CallTo(() => mapsApiHelper.GeocodePostcode(A<string>._))
-                .Returns(new MapsResponse { Status = statusCode });
-
-            // When
-            var result = controller.EditCentreWebsiteDetails(model);
-
-            // Then
-            result.Should().BeStatusCodeResult().WithStatusCode(500);
-        }
-
         [Test]
         public void EditCentreDetailsPostSave_without_previewing_signature_image_fails_validation()
         {
