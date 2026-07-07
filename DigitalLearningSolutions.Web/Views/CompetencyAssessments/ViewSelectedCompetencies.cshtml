@@ -34,6 +34,7 @@
     </span>
     Select @Model.VocabularyPlural.ToLower() to assess
 </h1>
+<partial name="Shared/_PublishedSelfAssessmentWarning" model="new PublishedSelfAssessmentViewModel { UserRole = Model.UserRole, PublishStatusID = Model.PublishStatusID }" />
 <h2>Linked frameworks</h2>
 <dl class="nhsuk-summary-list">
     @if (primaryFramework != null)
@@ -211,7 +212,8 @@
     }
 }
 <form method="post">
-    <input name="ID" type="hidden" asp-for="ID" />.
+    <input name="ID" type="hidden" asp-for="ID" />
+    <input type="hidden" asp-for="PublishStatusID" />
     @if (Model.UserRole > 1)
     {
         <nhs-form-group>

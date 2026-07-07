@@ -1,0 +1,16 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
+@model PublishedSelfAssessmentViewModel
+@if (Model.PublishStatusID > 2 && Model.UserRole > 1)
+{
+    <div class="nhsuk-warning-callout">
+        <h3 class="nhsuk-warning-callout__label">
+            <span role="text">
+                <span class="nhsuk-u-visually-hidden">Important: </span>
+                Self-assessment published and in use
+            </span>
+        </h3>
+        <p>This self-assessment has been published and may be in use.</p>
+        <p>You should make only minor changes to a published self-assessment.</p>
+        <p>Any meaningful or significant changes should be made to a new version of the self-assessment.</p>
+    </div>
+}

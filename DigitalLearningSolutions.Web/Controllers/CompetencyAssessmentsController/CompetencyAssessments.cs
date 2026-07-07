@@ -624,7 +624,7 @@
             {
                 return StatusCode(403);
             }
-            var model = new CompetencyGroupDeleteViewModel(competencyAssessmentId, competencyGroupId, competencyCount, competencyAssessmentBase.Vocabulary);
+            var model = new CompetencyGroupDeleteViewModel(competencyGroupId, competencyCount, competencyAssessmentBase);
 
             return View("RemoveCompetencyGroupConfirm", model);
         }
@@ -903,7 +903,8 @@
                 UserEmail = null,
                 Error = false,
                 ActionName = actionName,
-                UserRole = competencyAssessmentBase.UserRole
+                UserRole = competencyAssessmentBase.UserRole,
+                PublishStatusID = competencyAssessmentBase.PublishStatusID
             };
             if (TempData["CompetencyAssessmentError"] != null)
             {
@@ -986,6 +987,7 @@
             data.IsSupervisionSwitchedOn = competencyAssessmentBase.SupervisorSelfAssessmentReview && competencyAssessmentBase.SupervisorResultsReview;
             data.IsSignpostedLearning = competencyAssessmentService.HasCompetencyWithSignpostedLearning(competencyAssessmentId);
             data.UserRole = competencyAssessmentBase.UserRole;
+            data.PublishStatusID = competencyAssessmentBase.PublishStatusID;
 
             var taskStatus = competencyAssessmentService.GetCompetencyAssessmentTaskStatus(competencyAssessmentId, null);
             data.SelfAssessmentOptionsTaskStatus = taskStatus.SelfAssessmentOptionsTaskStatus;
@@ -1262,7 +1264,8 @@
                             competencyAssessmentBase.SignOffRequestorStatement,
                             this.config.GetLearnerDefaultText(),
                             this.config.GetSupervisorDefaultText(),
-                            competencyAssessmentBase.UserRole);
+                            competencyAssessmentBase.UserRole,
+                            competencyAssessmentBase.PublishStatusID);
 
             SetManagesupervisionData(model);
 
@@ -1286,6 +1289,8 @@
                 var data = GetManagesupervisionData();
                 data.Signoff.ActionName = actionName;
                 data.Signoff.CompetencyAssessmentName = data.CompetencyAssessmentName;
+                data.Signoff.UserRole = data.UserRole;
+                data.Signoff.PublishStatusID = data.PublishStatusID;
                 var models = new SupervisedSelfAssessmentSignoffViewModel(data.Signoff);
                 return View(models);
             }
@@ -1294,7 +1299,7 @@
             var result = ValidateCompetencyAssessmentAndRole(competencyAssessmentId, adminId, "Supervised Self Assessment Signoff", baseData);
             if (result.StatusCode != 200)
                 return result;
-            var model = new SupervisedSelfAssessmentSignoffViewModel(competencyAssessmentId, baseData.CompetencyAssessmentName, actionName);
+            var model = new SupervisedSelfAssessmentSignoffViewModel(baseData, actionName);
             return View("SupervisedSelfAssessmentSignoff", model);
         }
 
@@ -1348,6 +1353,8 @@
                 data.SupervisorDeclaration.DefaultText = this.config.GetSupervisorDefaultText();
                 data.SupervisorDeclaration.ActionName = actionName;
                 data.SupervisorDeclaration.CompetencyAssessmentName = baseData.CompetencyAssessmentName;
+                data.SupervisorDeclaration.UserRole = baseData.UserRole;
+                data.SupervisorDeclaration.PublishStatusID = baseData.PublishStatusID;
                 var models = new SupervisorSignoffDeclarationViewModel(data.SupervisorDeclaration);
                 return View(models);
             }
@@ -1403,6 +1410,8 @@
                 data.LearnerDeclaration.DefaultText = this.config.GetLearnerDefaultText();
                 data.LearnerDeclaration.ActionName = actionName;
                 data.LearnerDeclaration.CompetencyAssessmentName = baseData.CompetencyAssessmentName;
+                data.LearnerDeclaration.UserRole = baseData.UserRole;
+                data.LearnerDeclaration.PublishStatusID = baseData.PublishStatusID;
                 var models = new LearnerSignoffDeclarationViewModel(data.LearnerDeclaration);
                 models.CompetencyAssessmentId = competencyAssessmentId;
                 return View(models);
@@ -1456,7 +1465,8 @@
                                 baseData.SignOffRequestorStatement,
                                 this.config.GetLearnerDefaultText(),
                                 this.config.GetSupervisorDefaultText(),
-                                baseData.UserRole);
+                                baseData.UserRole,
+                                baseData.PublishStatusID);
 
                 model.TaskCompleteChecked = competencyAssessmentTaskStatus.SupervisorRolesTaskStatus;
                 SetManagesupervisionData(model);
@@ -1464,6 +1474,7 @@
             }
             var data = GetManagesupervisionData();
             data.UserRole = baseData.UserRole;
+            data.PublishStatusID = baseData.PublishStatusID;
             var dataModel = new ManagesupervisionViewModel(competencyAssessmentId, data, this.config.GetLearnerDefaultText(), this.config.GetSupervisorDefaultText());
             dataModel.TaskCompleteChecked = competencyAssessmentTaskStatus.SupervisorRolesTaskStatus;
             return View(dataModel);

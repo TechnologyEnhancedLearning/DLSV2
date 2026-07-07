@@ -27,7 +27,7 @@
 }
 
 <h1>@ViewData["Title"]</h1>
-
+<partial name="Shared/_PublishedSelfAssessmentWarning" model="new PublishedSelfAssessmentViewModel { UserRole = Model.UserRole, PublishStatusID = Model.PublishStatusID }" />
 <div class="nhsuk-u-reading-width">
     @if (!ViewData.ModelState.IsValid)
     {
@@ -266,7 +266,7 @@
                 <partial name="Shared/_TaskStatusTag" model="@Model.CompetencyAssessmentTaskStatus.SelfAssessmentOptionsTaskStatus" />
             </div>
         </li>
-        @if (Model.PublishStatusID != 3 && Model.UserRole > 1)
+        @if (Model.PublishStatusID < 3 && Model.UserRole > 1)
         {
             <li class="nhsuk-task-list__item">
 

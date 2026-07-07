@@ -38,6 +38,7 @@
                     </span>
                     Learner sign off declaration
                 </h1>
+                <partial name="Shared/_PublishedSelfAssessmentWarning" model="new PublishedSelfAssessmentViewModel { UserRole = Model.UserRole, PublishStatusID = Model.PublishStatusID }" />
                 <p class="nhsuk-hint">
                     This will be displayed to the learner is requesting supervisor signing off of their completed self-assessment
                 </p>
@@ -84,7 +85,8 @@
             </fieldset>
             <input type="hidden" asp-for="CompetencyAssessmentId" />
             <input type="hidden" asp-for="CompetencyAssessmentName" />
-
+            <input type="hidden" asp-for="UserRole" />
+            <input type="hidden" asp-for="PublishStatusID" />
             <div class="nhsuk-u-margin-top-4">
 
                 <a class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-left-3" asp-action="SupervisorSignoffDeclaration" asp-route-competencyAssessmentId="@Model.CompetencyAssessmentId" asp-route-actionName="Supervisor">

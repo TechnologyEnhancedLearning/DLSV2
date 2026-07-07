@@ -16,6 +16,7 @@
         }
 
         <h1 class="nhsuk-heading-xl">Remove framework source from @Model.AssessmentName</h1>
+        <partial name="Shared/_PublishedSelfAssessmentWarning" model="new PublishedSelfAssessmentViewModel { UserRole = Model.UserRole, PublishStatusID = Model.PublishStatusID }" />
     </div>
 </div>
 
@@ -30,6 +31,8 @@
             <input type="hidden" asp-for="AssessmentName" />
             <input type="hidden" asp-for="CompetencyCount" />
             <input type="hidden" asp-for="Vocabulary" />
+            <input type="hidden" asp-for="PublishStatusID" />
+            <input type="hidden" asp-for="UserRole" />
             <p>
                 This self-assessment has @Model.CompetencyCount @DisplayStringHelper.PluraliseStringIfRequired(@Model.Vocabulary.ToLower(), Model.CompetencyCount)
                 associated with it from the framework @Model.FrameworkName. Removing this
