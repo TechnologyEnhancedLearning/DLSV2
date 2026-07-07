@@ -63,8 +63,7 @@
                 ON sd.SupervisorAdminID = au.AdminID
             INNER JOIN DelegateAccounts da ON sd.DelegateUserID = da.UserID AND au.CentreID = da.CentreID AND da.Active=1
             INNER JOIN SelfAssessments sa
-                ON sa.ID = ca.SelfAssessmentID
-            INNER JOIN CentreSelfAssessments cs ON sa.ID = cs.SelfAssessmentID AND CS.CentreID = au.CentreID";
+                ON sa.ID = ca.SelfAssessmentID";
 
         public SelfAssessmentSupervisor? GetSupervisorForSelfAssessmentId(int selfAssessmentId, int delegateUserId)
         {
@@ -130,7 +129,6 @@
                 INNER JOIN CandidateAssessments AS ca ON cas.CandidateAssessmentID = ca.ID
                 INNER JOIN AdminUsers AS au ON sd.SupervisorAdminID = au.AdminID AND au.Active = 1
                 INNER JOIN DelegateAccounts da ON sd.DelegateUserID = da.UserID and au.CentreID = da.CentreID and da.Active=1
-                INNER JOIN CentreSelfAssessments cs ON  cs.SelfAssessmentID = @selfAssessmentId AND cs.CentreID = au.CentreID
                 WHERE (sd.Removed IS NULL) AND (cas.Removed IS NULL) AND (sd.SupervisorAdminID IS NOT NULL) AND (sd.DelegateUserID = @delegateUserId)
 		            AND (au.Supervisor = 1 OR au.NominatedSupervisor = 1) AND (au.Active = 1)
 		            AND (ca.SelfAssessmentID <> @selfAssessmentId)
