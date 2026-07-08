@@ -1,11 +1,11 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
 @model AllCompetencyAssessmentsViewModel
 
-<h1>All Competency Assessments</h1>
+<h1>All self-assessments</h1>
 @if (!Model.CompetencyAssessments.Any() && Model.SearchString == null)
 {
   <p class="nhsuk-u-margin-top-4" role="alert">
-    <b>There are no competency assessments in the system.</b>
+        <b>There are no self-assessments in the system.</b>
   </p>
 }
 else

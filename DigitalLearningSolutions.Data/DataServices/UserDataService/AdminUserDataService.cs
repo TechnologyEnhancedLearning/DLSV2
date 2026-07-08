@@ -1,10 +1,12 @@
 ﻿namespace DigitalLearningSolutions.Data.DataServices.UserDataService
 {
     using Dapper;
+    using DigitalLearningSolutions.Data.Extensions;
     using DigitalLearningSolutions.Data.Models.Centres;
     using DigitalLearningSolutions.Data.Models.User;
     using System;
     using System.Collections.Generic;
+    using System.Data;
     using System.Linq;
     using System.Threading.Tasks;
 
@@ -270,36 +272,56 @@
             bool isCentreManager
         )
         {
-            connection.Execute(
-                @"UPDATE AdminAccounts
-                        SET
-                            IsCentreAdmin = @isCentreAdmin,
-                            IsSupervisor = @isSupervisor,
-                            IsNominatedSupervisor = @isNominatedSupervisor,
-                            IsTrainer = @isTrainer,
-                            IsContentCreator = @isContentCreator,
-                            IsContentManager = @isContentManager,
-                            ImportOnly = @importOnly,
-                            CategoryID = CASE 
-                        WHEN @categoryID = 0 THEN NULL 
-                        ELSE @categoryID 
-                        END,
-                            IsCentreManager = @isCentreManager
-                        WHERE ID = @adminId",
-                new
+            connection.EnsureOpen();
+            using (var transaction = connection.BeginTransaction())
+            {
+                try
                 {
-                    isCentreAdmin,
-                    isSupervisor,
-                    isNominatedSupervisor,
-                    isTrainer,
-                    isContentCreator,
-                    isContentManager,
-                    importOnly,
-                    categoryId,
-                    adminId,
-                    isCentreManager
+                    connection.Execute(
+                        @"UPDATE AdminAccounts
+                                SET
+                                    IsCentreAdmin = @isCentreAdmin,
+                                    IsSupervisor = @isSupervisor,
+                                    IsNominatedSupervisor = @isNominatedSupervisor,
+                                    IsTrainer = @isTrainer,
+                                    IsContentCreator = @isContentCreator,
+                                    IsContentManager = @isContentManager,
+                                    ImportOnly = @importOnly,
+                                    CategoryID = CASE 
+                                WHEN @categoryID = 0 THEN NULL 
+                                ELSE @categoryID 
+                                END,
+                                    IsCentreManager = @isCentreManager
+                                WHERE ID = @adminId",
+                        new
+                        {
+                            isCentreAdmin,
+                            isSupervisor,
+                            isNominatedSupervisor,
+                            isTrainer,
+                            isContentCreator,
+                            isContentManager,
+                            importOnly,
+                            categoryId,
+                            adminId,
+                            isCentreManager
+                        }, transaction);
+
+                    if (!isSupervisor && isNominatedSupervisor)
+                    {
+                        DeletePendingSignOffRequestsForNominatedSupervisor(
+                           connection,
+                           transaction,
+                           adminId);
+                    }
+
+                    transaction.Commit();
                 }
-            );
+                catch
+                {
+                    transaction.Rollback();
+                }
+            }
         }
 
         public void DeactivateAdmin(int adminId)
@@ -530,43 +552,63 @@
             bool isWorkforceManager
         )
         {
-            connection.Execute(
-                @"UPDATE AdminAccounts
-                        SET
-                            IsCentreAdmin = @isCentreAdmin,
-                            IsSupervisor = @isSupervisor,
-                            IsNominatedSupervisor = @isNominatedSupervisor,
-                            IsTrainer = @isTrainer,
-                            IsContentCreator = @isContentCreator,
-                            IsContentManager = @isContentManager,
-                            ImportOnly = @importOnly,
-                            CategoryID = @categoryId,
-                            IsCentreManager = @isCentreManager,
-                            IsSuperAdmin = @isSuperAdmin,
-                            IsReportsViewer = @isReportsViewer,
-                            IsLocalWorkforceManager = @isLocalWorkforceManager,
-                            IsFrameworkDeveloper = @isFrameworkDeveloper,
-                            IsWorkforceManager = @isWorkforceManager
-                        WHERE ID = @adminId",
-                new
+            connection.EnsureOpen();
+            using (var transaction = connection.BeginTransaction())
+            {
+                try
                 {
-                    isCentreAdmin,
-                    isSupervisor,
-                    isNominatedSupervisor,
-                    isTrainer,
-                    isContentCreator,
-                    isContentManager,
-                    importOnly,
-                    categoryId,
-                    adminId,
-                    isCentreManager,
-                    isSuperAdmin,
-                    isReportsViewer,
-                    isLocalWorkforceManager,
-                    isFrameworkDeveloper,
-                    isWorkforceManager
+                    connection.Execute(
+                        @"UPDATE AdminAccounts
+                                SET
+                                    IsCentreAdmin = @isCentreAdmin,
+                                    IsSupervisor = @isSupervisor,
+                                    IsNominatedSupervisor = @isNominatedSupervisor,
+                                    IsTrainer = @isTrainer,
+                                    IsContentCreator = @isContentCreator,
+                                    IsContentManager = @isContentManager,
+                                    ImportOnly = @importOnly,
+                                    CategoryID = @categoryId,
+                                    IsCentreManager = @isCentreManager,
+                                    IsSuperAdmin = @isSuperAdmin,
+                                    IsReportsViewer = @isReportsViewer,
+                                    IsLocalWorkforceManager = @isLocalWorkforceManager,
+                                    IsFrameworkDeveloper = @isFrameworkDeveloper,
+                                    IsWorkforceManager = @isWorkforceManager
+                                WHERE ID = @adminId",
+                        new
+                        {
+                            isCentreAdmin,
+                            isSupervisor,
+                            isNominatedSupervisor,
+                            isTrainer,
+                            isContentCreator,
+                            isContentManager,
+                            importOnly,
+                            categoryId,
+                            adminId,
+                            isCentreManager,
+                            isSuperAdmin,
+                            isReportsViewer,
+                            isLocalWorkforceManager,
+                            isFrameworkDeveloper,
+                            isWorkforceManager
+                        }, transaction);
+
+                    if (!isSupervisor && isNominatedSupervisor)
+                    {
+                        DeletePendingSignOffRequestsForNominatedSupervisor(
+                           connection,
+                           transaction,
+                           adminId);
+                    }
+
+                    transaction.Commit();
                 }
-            );
+                catch
+                {
+                    transaction.Rollback();
+                }
+            }
         }
 
         public int GetUserIdFromAdminId(int adminId)
@@ -609,6 +651,34 @@
                     WHERE UserID = @currentUserIdForAdminAccount AND CentreID = @centreId",
                 new { currentUserIdForAdminAccount, newUserIdForAdminAccount, centreId }
             );
+        }
+
+        private static void DeletePendingSignOffRequestsForNominatedSupervisor(
+            IDbConnection connection,
+            IDbTransaction transaction,
+            int adminId)
+        {
+            connection.Execute(
+                @"DELETE casv
+                      FROM CandidateAssessmentSupervisorVerifications casv
+                      INNER JOIN CandidateAssessmentSupervisors cas
+                          ON casv.CandidateAssessmentSupervisorID = cas.ID
+                      INNER JOIN CandidateAssessments ca
+                          ON cas.CandidateAssessmentID = ca.ID
+                      INNER JOIN SupervisorDelegates sd
+                          ON cas.SupervisorDelegateId = sd.ID
+                      INNER JOIN AdminAccounts aa
+                          ON sd.SupervisorAdminID = aa.ID
+                      INNER JOIN SelfAssessments sa
+                          ON ca.SelfAssessmentID = sa.ID
+                      WHERE sd.SupervisorAdminID = @adminId
+                        AND casv.Verified IS NULL
+                        AND cas.Removed IS NULL
+                        AND sd.Removed IS NULL
+                        AND (aa.CategoryID IS NULL OR sa.CategoryID = aa.CategoryID)
+                        AND (aa.IsSupervisor = 0 AND aa.IsNominatedSupervisor = 1)",
+                new { adminId },
+                transaction);
         }
     }
 }

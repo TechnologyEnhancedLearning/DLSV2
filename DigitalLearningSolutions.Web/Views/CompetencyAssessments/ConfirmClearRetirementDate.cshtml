@@ -1,0 +1,53 @@
+﻿@using DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
+@using Microsoft.Extensions.Configuration
+@model ConfirmClearRetirementDateViewModel
+@inject IConfiguration Configuration
+
+@{
+    ViewData["Title"] = "Self-assessment - preview";
+    ViewData["Application"] = "Self-assessment service";
+    ViewData["HeaderPathName"] = "Self-assessment service";
+    var errorHasOccurred = !ViewData.ModelState.IsValid;
+}
+
+@section NavMenuItems {
+    <partial name="~/Views/Frameworks/Shared/_NavMenuItems.cshtml" />
+}
+<div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full">
+        @if (errorHasOccurred)
+        {
+            <vc:error-summary order-of-property-names="@(new[] { nameof(Model.Confirm) })" />
+        }
+        <h1 class="nhsuk-heading-l">Are you sure you would like to remove retirement date?</h1>
+        <h2 class="nhsuk-u-margin-bottom-8">Self-assessment: @Model.CompetencyAssessmentName</h2>
+
+        <p>Removing the retirement date will move the self-assessment back to the published state and remove all retirement warnings for learners and supervisors.</p>
+    </div>
+</div>
+
+<div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-full">
+        <form asp-action="ConfirmClearRetirementDate" asp-route-competencyAssessmentId="@Model.CompetencyAssessmentId">
+            <div class="nhsuk-form-group">
+
+                <vc:single-checkbox asp-for="@nameof(Model.Confirm)"
+                                    label="I am sure that I wish to remove retirement date."
+                                    hint-text="" />
+            </div>
+            <input type="hidden" asp-for="CompetencyAssessmentName" />
+            <button class="nhsuk-button" type="submit">
+                Submit
+            </button>
+        </form>
+
+        <div class="nhsuk-back-link">
+            <a class="nhsuk-back-link__link" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.CompetencyAssessmentId">
+                <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
+                </svg>
+                Cancel
+            </a>
+        </div>
+    </div>
+</div>

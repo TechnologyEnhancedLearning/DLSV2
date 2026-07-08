@@ -21,16 +21,17 @@
       <vc:error-summary order-of-property-names="@(new[] { nameof(Model.ActionConfirmed) })" />
     }
     <h1 id="page-heading">Confirm Enrolment</h1>
-            <p class="nhsuk-body-m">You are about to enrol on a retiring self-assessment</p>
+            <p class="nhsuk-body-m">You are about to enrol onto a self-assessment that is due to retire.</p>
             <p class="nhsuk-body-m">     Retirement date:   <strong>@Model.RetirementDate?.ToString("dd/MM/yyyy")</strong>  </p>
             
             <p class="nhsuk-body-m">Please note:</p>
             <ul class="nhsuk-list nhsuk-list--bullet">
-                <li>once enrolled you can continue to complete the self-assessment even after the retirement date</li>
-                <li>you may wish to consider enrolling on an updated version if available</li>
+                <li>Learners enrolled before the retirement date can continue to progress and complete this self-assessment after the retirement date.</li>
+                <li>No new learners can enrol on this version after the retirement date.</li>
+                <li>An updated version of this self-assessment may be available and should be considered before enrolling on this one.</li>
             </ul>
             <p class="nhsuk-body-m">If you are unsure about what to do, contact your supervisor or manager.</p>
-            <p class="nhsuk-body-m">To continue, you must acknowledge that you understand the self-assessment is retiring and still wish to enrol.</p>
+            <p class="nhsuk-body-m">To continue, please confirm that you understand this version is being retired and that you still wish to proceed with enrolment.</p>
 
             <p class="nhsuk-body-m">
                 <vc:single-checkbox asp-for="@nameof(Model.ActionConfirmed)"

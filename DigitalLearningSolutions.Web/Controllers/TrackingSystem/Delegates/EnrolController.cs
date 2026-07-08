@@ -166,7 +166,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
                    ).GetAwaiter().GetResult();
 
             var retirementDate = selfAssessmentService.GetSelfAssessmentById((int)sessionEnrol.AssessmentID).RetirementDate;
-            if (!SelfAssessmentHelper.CheckRetirementDate((retirementDate)))
+            if (retirementDate == null)
             {
                 return RedirectToAction("StatusCode", "LearningSolutions", new { code = 410 });
             }
@@ -300,16 +300,13 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
             }
             else
             {
-                var roles = supervisorService.GetSupervisorRolesBySelfAssessmentIdForSupervisor(sessionEnrol.AssessmentID.GetValueOrDefault()).ToArray();
                 var model = new EnrolSupervisorViewModel(
                     delegateId,
                     (int)sessionEnrol.DelegateUserID,
                     sessionEnrol.DelegateName,
                     sessionEnrol.IsSelfAssessment,
                    supervisorList,
-                   sessionEnrol.SupervisorID.GetValueOrDefault(),
-                   roles,
-                   sessionEnrol.SelfAssessmentSupervisorRoleId.GetValueOrDefault());
+                   sessionEnrol.SupervisorID.GetValueOrDefault());
                 return View(model);
             }
         }
@@ -320,7 +317,6 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
             var centreId = GetCentreId();
             var sessionEnrol = multiPageFormService.GetMultiPageFormData<SessionEnrolDelegate>(MultiPageFormDataFeature.EnrolDelegateInActivity, TempData).GetAwaiter().GetResult();
             var supervisorList = supervisorService.GetSupervisorForEnrolDelegate(centreId.Value, sessionEnrol.AssessmentCategoryID.Value);
-            var roles = supervisorService.GetSupervisorRolesBySelfAssessmentIdForSupervisor(sessionEnrol.AssessmentID.GetValueOrDefault()).ToArray();
 
             if (!ModelState.IsValid)
             {
@@ -330,28 +326,17 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
                     sessionEnrol.DelegateName,
                     sessionEnrol.IsSelfAssessment,
                    supervisorList,
-                   sessionEnrol.SupervisorID.GetValueOrDefault(),
-                   roles,
-                   sessionEnrol.SelfAssessmentSupervisorRoleId.GetValueOrDefault());
-                errormodel.SelectedSupervisorRoleId = model.SelectedSupervisorRoleId.Value;
+                   sessionEnrol.SupervisorID.GetValueOrDefault());
                 return View(errormodel);
             }
 
             if (model.SelectedSupervisor.HasValue && model.SelectedSupervisor.Value > 0)
             {
-                sessionEnrol.SupervisorName = supervisorList.FirstOrDefault(x => x.AdminId == model.SelectedSupervisor).Name;
+                var supervisor = supervisorList.FirstOrDefault(x => x.AdminId == model.SelectedSupervisor);
+                sessionEnrol.SupervisorName = supervisor.Name;
                 sessionEnrol.SupervisorID = model.SelectedSupervisor;
-                sessionEnrol.SupervisorEmail = supervisorList.FirstOrDefault(x => x.AdminId == model.SelectedSupervisor).Email;
-            }
-            if (model.SelectedSupervisorRoleId.HasValue && model.SelectedSupervisorRoleId.Value > 0)
-            {
-                sessionEnrol.SelfAssessmentSupervisorRoleName = roles.FirstOrDefault(x => x.ID == model.SelectedSupervisorRoleId).RoleName;
-            }
-            sessionEnrol.SelfAssessmentSupervisorRoleId = model.SelectedSupervisorRoleId;
-            if (roles.Count() == 1 && !string.IsNullOrEmpty(sessionEnrol.SupervisorName))
-            {
-                sessionEnrol.SelfAssessmentSupervisorRoleName = roles.FirstOrDefault().RoleName;
-                sessionEnrol.SelfAssessmentSupervisorRoleId = roles.FirstOrDefault().ID;
+                sessionEnrol.SupervisorEmail = supervisor.Email;
+                sessionEnrol.SelfAssessmentSupervisorRoleName = supervisor.RoleName;
             }
             multiPageFormService.SetMultiPageFormData(
                         sessionEnrol,
@@ -374,7 +359,6 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
                 return RedirectToAction("ConfirmRetiring", "Enrol", new { delegateId });
             }
 
-            var roles = supervisorService.GetSupervisorRolesBySelfAssessmentIdForSupervisor(sessionEnrol.AssessmentID.GetValueOrDefault()).ToArray();
             var clockUtility = new ClockUtility();
             var monthDiffrence = "";
             if (sessionEnrol.CompleteByDate.HasValue)
@@ -393,7 +377,6 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
             model.ValidFor = monthDiffrence;
             model.IsSelfAssessment = sessionEnrol.IsSelfAssessment;
             model.SupervisorRoleName = sessionEnrol.SelfAssessmentSupervisorRoleName;
-            model.RoleCount = roles.Count();
             ViewBag.actionConfirmed = sessionEnrol.ActionConfirmed;
             return View(model);
         }
@@ -415,7 +398,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
                     delegateId,
                     sessionEnrol.SupervisorID.GetValueOrDefault(),
                     sessionEnrol.SupervisorEmail,
-                    sessionEnrol.SelfAssessmentSupervisorRoleId.GetValueOrDefault(),
+                    0,
                     sessionEnrol.CompleteByDate,
                     (int)sessionEnrol.DelegateUserID,
                     centreId,
@@ -443,7 +426,7 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Delegates
             if (IsSelfAssessment)
             {
                 var retirementDate = selfAssessmentService.GetSelfAssessmentById(selfAssessmentId).RetirementDate;
-                return SelfAssessmentHelper.CheckRetirementDate(retirementDate) && !actionConfirmed;
+                return retirementDate != null && !actionConfirmed;
             }
             return false;
         }

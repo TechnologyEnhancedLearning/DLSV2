@@ -23,21 +23,6 @@
 <link rel="stylesheet" href="@Url.Content("~/css/learningPortal/selfAssessment.css")" asp-append-version="true">
 <h1>@Model.SelfAssessment.Name - Manage Supervisors</h1>
 
-@if (Model.SelfAssessment.ManageSupervisorsDescription != null)
-{
-    <div class="nhsuk-warning-callout">
-        <h3 class="nhsuk-warning-callout__label">
-            <span role="text">
-                <span class="nhsuk-u-visually-hidden">Important: </span>
-                How to choose your supervisors
-            </span>
-        </h3>
-        <p>
-            @Html.Raw(Model.SelfAssessment.ManageSupervisorsDescription)
-        </p>
-    </div>
-}
-
 @if (Model.Supervisors.Any())
 {
     <table class="nhsuk-table-responsive">
@@ -72,10 +57,7 @@
                     </td>
                     <td class="nhsuk-table__cell">
                         <span class="nhsuk-table-responsive__heading">Actions </span>
-                        @if (supervisor.AllowDelegateNomination || supervisor.AllowSupervisorRoleSelection)
-                        {
-                            <a asp-action="RemoveSupervisor" asp-route-selfAssessmentId="@Model.SelfAssessment.Id" asp-route-supervisorDelegateId="@supervisor.SupervisorDelegateID">Remove</a>
-                        }
+                        <a asp-action="RemoveSupervisor" asp-route-selfAssessmentId="@Model.SelfAssessment.Id" asp-route-supervisorDelegateId="@supervisor.SupervisorDelegateID">Remove</a>
                     </td>
                 </tr>
             }

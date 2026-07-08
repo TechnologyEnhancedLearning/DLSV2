@@ -7,5 +7,6 @@
         public int AssessmentID { get; set; }
         public int CompetencyID { get; set; }
         public int AssessmentQuestionID { get; set; }
+        public string VocabularySingular { get; set; }
     }
 }

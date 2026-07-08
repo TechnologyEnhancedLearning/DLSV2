@@ -235,6 +235,10 @@
 
             }
 
+            var learnerActivityTag = selfAssessmentDelegate.LaunchCount > 0
+                ? new SearchableTagViewModel(SelfAssessmentLearnerActivityFilterOptions.Started)
+         : new SearchableTagViewModel(SelfAssessmentLearnerActivityFilterOptions.NotStarted);
+            tags.Add(learnerActivityTag);
             return tags;
         }
         public static IEnumerable<SearchableTagViewModel> GetCurrentTagsForDelegateUser(

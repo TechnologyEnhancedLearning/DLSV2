@@ -1,8 +1,9 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
 @model ManageCompetencyAssessmentViewModel
 @{
-    ViewData["Title"] = Model.PublishStatusID == 3 ? "Manage" : "Create" + " competency assessment";
-    ViewData["Application"] = "Framework Service";
+    ViewData["Title"] = Model.PublishStatusID == 3 ? "Manage" : "Create" + " self-assessment";
+    ViewData["Application"] = "Framework service";
+    var hasRetirement = Model.RetirementDate != null;
 }
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
 @section NavMenuItems {
@@ -12,12 +13,13 @@
     <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
         <div class="nhsuk-width-container">
             <ol class="nhsuk-breadcrumb__list">
-                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewCompetencyAssessments" asp-route-tabname="Mine">Competency Assessments</a></li>
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Frameworks" asp-action="Index">Home</a></li>
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewCompetencyAssessments" asp-route-tabname="Mine">Self-assessments</a></li>
                 <li class="nhsuk-breadcrumb__item">@Model.CompetencyAssessmentName</li>
             </ol>
             <p class="nhsuk-breadcrumb__back">
                 <a class="nhsuk-breadcrumb__backlink" asp-action="ViewCompetencyAssessments" asp-route-tabname="Mine">
-                    <span class="nhsuk-u-visually-hidden">Back to &nbsp;</span>Competency Assessments
+                    <span class="nhsuk-u-visually-hidden">Back to &nbsp;</span>Self-assessments
                 </a>
             </p>
         </div>
@@ -54,10 +56,39 @@
             <dt class="nhsuk-summary-list__key">
                 Publish status
             </dt>
+            @{
+                var statusClass = Model.PublishStatusID switch
+                {
+                    1 => "nhsuk-tag--grey",
+                    2 => "nhsuk-tag--yellow",
+                    3 => "nhsuk-tag--green",
+                    4 => "nhsuk-tag--orange",
+                    5 => "nhsuk-tag--red"
+                };
+
+                var statusText = Model.PublishStatusID switch
+                {
+                    1 => "Draft",
+                    2 => "In review",
+                    3 => "Published",
+                    4 => "Scheduled for retirement",
+                    5 => "Retired"
+                };
+            }
+
             <dd class="nhsuk-summary-list__value">
-                <strong class="nhsuk-u-margin-right-3 nhsuk-tag @(Model.PublishStatusID == 1 ? "nhsuk-tag--grey" : Model.PublishStatusID == 2 ? "nhsuk-tag--yellow" : "nhsuk-tag--green")">
-                    @(Model.PublishStatusID == 1 ? "Draft" : Model.PublishStatusID == 2 ? "In review" : "Published")
+                <strong class="nhsuk-u-margin-right-3 nhsuk-tag @statusClass">
+                    @statusText
                 </strong>
+                @if (hasRetirement)
+                {
+                    <div>
+                        <span>Retirement date: @Model.RetirementDate?.ToString("dd/MM/yyyy")</span>
+                        <a asp-action="ConfirmClearRetirementDate" asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">
+                            Clear<span class="nhsuk-u-visually-hidden">Clear</span>
+                        </a>
+                    </div>
+                }
             </dd>
             @if (Model.SelfAssessmentReviewID != null && Model.SelfAssessmentCommentID is null)
             {
@@ -84,7 +115,7 @@
         <li class="nhsuk-task-list__item nhsuk-task-list__item--with-link">
             <div class="nhsuk-task-list__name-and-hint" aria-describedby="select-frameworks-status">
                 <a class="nhsuk-link nhsuk-task-list__link" asp-action="SelectFrameworkSources" asp-route-actionName="@(Model.CompetencyAssessmentTaskStatus.FrameworkLinksTaskStatus == null ? "AddFramework" : "Summary")" asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">
-                    Select (@Model.VocabularySingular) framework sources
+                    Select framework sources
                 </a>
             </div>
             <div class="nhsuk-task-list__status" id="select-frameworks-status">
@@ -94,7 +125,7 @@
         <li class="nhsuk-task-list__item nhsuk-task-list__item--with-link">
             <div class="nhsuk-task-list__name-and-hint" aria-describedby="description-status">
                 <a class="nhsuk-link nhsuk-task-list__link" asp-action="EditDescription" asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">
-                    Provide assessment introductory description
+                    Provide introductory description
                 </a>
             </div>
             <div class="nhsuk-task-list__status" id="description-status">
@@ -104,7 +135,7 @@
         <li class="nhsuk-task-list__item nhsuk-task-list__item--with-link">
             <div class="nhsuk-task-list__name-and-hint" aria-describedby="brand-status">
                 <a class="nhsuk-link nhsuk-task-list__link" asp-action="EditBranding" asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">
-                    Specify assessment provider and category
+                    Specify provider and category
                 </a>
             </div>
             <div class="nhsuk-task-list__status" id="brand-status">
@@ -114,7 +145,7 @@
         <li class="nhsuk-task-list__item nhsuk-task-list__item--with-link">
             <div class="nhsuk-task-list__name-and-hint" aria-describedby="vocabulary-status">
                 <a class="nhsuk-link nhsuk-task-list__link" asp-action="EditVocabulary" asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">
-                    Select assessment vocabulary (@Model.VocabularySingular)
+                    Select vocabulary
                 </a>
             </div>
             <div class="nhsuk-task-list__status" id="vocabulary-status">
@@ -134,7 +165,7 @@
         <li class="nhsuk-task-list__item nhsuk-task-list__item--with-link">
             <div class="nhsuk-task-list__name-and-hint" aria-describedby="national-profiles-status">
                 <a class="nhsuk-link nhsuk-task-list__link" asp-action="EditRoleProfileLinks" asp-route-actionName="@(Model.CompetencyAssessmentTaskStatus.NationalRoleProfileTaskStatus == null ? "EditGroup" : "Summary")" asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">
-                    Link assessment to National Role profiles
+                    Link to National Role profiles
                 </a>
             </div>
             <div class="nhsuk-task-list__status" id="national-profiles-status">
@@ -155,7 +186,7 @@
             else
             {
                 <div class="nhsuk-task-list__name-and-hint" aria-describedby="select-competencies-status">
-                    <a class="nhsuk-link nhsuk-task-list__link" asp-action="ViewSelectedCompetencies" asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">
+                    <a class="nhsuk-link nhsuk-task-list__link" asp-action="ViewSelectedCompetencies" asp-route-vocabularyPlural="@Model.VocabularyPlural" asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">
                         Select @Model.VocabularyPlural.ToLower() to assess
                     </a>
                 </div>
@@ -178,7 +209,7 @@
             else
             {
                 <div class="nhsuk-task-list__name-and-hint" aria-describedby="optional-competencies-status">
-                    <a class="nhsuk-link nhsuk-task-list__link" asp-action="ManageOptionalCompetencies" asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">
+                    <a class="nhsuk-link nhsuk-task-list__link" asp-action="ManageOptionalCompetencies" asp-route-vocabularyPlural="@Model.VocabularyPlural" asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">
                         Manage optional @Model.VocabularyPlural.ToLower()
                     </a>
                 </div>
@@ -279,4 +310,26 @@
             </li>
         }
     </ul>
+    @if (Model.UserRole > 1 && Model.PublishStatusID > 2)
+    {
+        <div class="nhsuk-u-margin-top-6">
+
+            @if (!hasRetirement)
+            {
+                <form asp-action="RetireCompetencyAssessment" asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]" method="get">
+                    <button class="nhsuk-button nhsuk-button--warning" data-module="nhsuk-button" type="submit">
+                        Retire self-assessment
+                    </button>
+                </form>
+            }
+            else if (hasRetirement)
+            {
+                <form asp-action="RetireCompetencyAssessment" asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]" method="get">
+                    <button class="nhsuk-button nhsuk-button--warning" data-module="nhsuk-button" type="submit">
+                        Manage retirement
+                    </button>
+                </form>
+            }
+        </div>
+    }
 </div>

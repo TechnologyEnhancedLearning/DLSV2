@@ -61,7 +61,7 @@
         public IActionResult EnrolOnSelfAssessment(int selfAssessmentId)
         {
            var selfAssessment = selfAssessmentService.GetSelfAssessmentRetirementDateById(selfAssessmentId);
-            if(CheckRetirementDate(selfAssessment.RetirementDate)) return RedirectToAction("ConfirmRetirement", new { selfAssessmentId });
+            if(selfAssessment.RetirementDate >= DateTime.Today) return RedirectToAction("ConfirmRetirement", new { selfAssessmentId });
             courseService.EnrolOnSelfAssessment(selfAssessmentId, User.GetUserIdKnownNotNull(), User.GetCentreIdKnownNotNull());
             return RedirectToAction("SelfAssessment", new { selfAssessmentId });
         }
@@ -87,14 +87,6 @@
              courseService.EnrolOnSelfAssessment(retirementViewModel.SelfAssessmentId, User.GetUserIdKnownNotNull(), User.GetCentreIdKnownNotNull());
             return RedirectToAction("SelfAssessment", new { retirementViewModel.SelfAssessmentId });
         }
-        private  bool CheckRetirementDate(DateTime? date)
-        {
-            if (date == null)
-                return false;
-
-            DateTime twoWeeksbeforeRetirementdate = DateTime.Today.AddDays(14);
-            DateTime today = DateTime.Today;
-            return (date >= today  && date <= twoWeeksbeforeRetirementdate);
-        }
+        
     }
 }
