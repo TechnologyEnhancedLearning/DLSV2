@@ -1,133 +1,134 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.Frameworks
 @model CompetencyAssessmentQuestionsViewModel;
 @{
-  ViewData["Title"] = "Competency Assessment Questions";
-  ViewData["Application"] = "Framework Service";
-  ViewData["HeaderPathName"] = "Framework Service";
+    ViewData["Title"] = "Self-assessment questions";
+    ViewData["Application"] = "Framework Service";
+    ViewData["HeaderPathName"] = "Framework Service";
 }
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
 @section NavMenuItems {
-  <partial name="Shared/_NavMenuItems" />
+    <partial name="Shared/_NavMenuItems" />
 }
-  @section NavBreadcrumbs {
-  <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
-    <div class="nhsuk-width-container">
-      <ol class="nhsuk-breadcrumb__list">
-        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFrameworks" asp-route-tabname="Mine">Frameworks</a></li>
-        <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFramework" asp-fragment="fc-@Model.FrameworkCompetencyId" asp-route-frameworkId="@Model.DetailFramework.ID" asp-route-tabname="Structure">Framework Structure</a></li>
-        <li class="nhsuk-breadcrumb__item">Competency Assessment Questions</li>
-      </ol>
-      <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ViewFramework" asp-fragment="fc-@Model.FrameworkCompetencyId" asp-route-frameworkId="@Model.DetailFramework.ID" asp-route-tabname="Structure">Back to Framework Structure</a></p>
-    </div>
-  </nav>
+@section NavBreadcrumbs {
+    <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+        <div class="nhsuk-width-container">
+            <ol class="nhsuk-breadcrumb__list">
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Frameworks" asp-action="Index">Home</a></li>
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFrameworks" asp-route-tabname="Mine">Frameworks</a></li>
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewFramework" asp-fragment="fc-@Model.FrameworkCompetencyId" asp-route-frameworkId="@Model.DetailFramework.ID" asp-route-tabname="Structure">Framework Structure</a></li>
+                <li class="nhsuk-breadcrumb__item">Self-assessment questions</li>
+            </ol>
+            <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ViewFramework" asp-fragment="fc-@Model.FrameworkCompetencyId" asp-route-frameworkId="@Model.DetailFramework.ID" asp-route-tabname="Structure">Back to Framework Structure</a></p>
+        </div>
+    </nav>
 }
-  <h1 class="truncate-overflow">@Model.CompetencyName</h1>
-  <h2>@Model.VocabSingular() assessment questions</h2>
-  <p class="nhsuk-body-l">Assessment questions listed here will be presented to users assessing themselves against this @Model.VocabSingular().ToLower().</p>
-  @if (Model.DetailFramework.PublishStatusID == 3)
+<h1 class="truncate-overflow">@Model.CompetencyName</h1>
+<h2>@Model.VocabSingular() assessment questions</h2>
+<p class="nhsuk-body-l">Assessment questions listed here will be presented to users assessing themselves against this @Model.VocabSingular().ToLower().</p>
+@if (Model.DetailFramework.PublishStatusID == 3)
 {
-  <partial name="Shared/_PublishedWarning" />
+    <partial name="Shared/_PublishedWarning" />
 }
 <div class="nhsuk-table__panel-with-heading-tab">
-  <h3 class="nhsuk-table__heading-tab">Assessment questions for @Model.VocabSingular().ToLower()</h3>
+    <h3 class="nhsuk-table__heading-tab">Assessment questions for @Model.VocabSingular().ToLower()</h3>
 
-  @if (Model.AssessmentQuestions.Any())
-  {
-    <table class="nhsuk-table-responsive">
-      <thead role="rowgroup" class="nhsuk-table__head">
-        <tr role="row">
-          <th role="columnheader" class="" scope="col">
-            Question
-          </th>
-          <th role="columnheader" class="" scope="col">
-            Input type/Range
-          </th>
-          <th role="columnheader" class="" scope="col">
-            Actions
-          </th>
-        </tr>
-      </thead>
+    @if (Model.AssessmentQuestions.Any())
+    {
+        <table class="nhsuk-table-responsive">
+            <thead role="rowgroup" class="nhsuk-table__head">
+                <tr role="row">
+                    <th role="columnheader" class="" scope="col">
+                        Question
+                    </th>
+                    <th role="columnheader" class="" scope="col">
+                        Input type/Range
+                    </th>
+                    <th role="columnheader" class="" scope="col">
+                        Actions
+                    </th>
+                </tr>
+            </thead>
 
-      <tbody class="nhsuk-table__body">
-        @foreach (var question in Model.AssessmentQuestions.Select((value, i) => new { i, value }))
-        {
-          <tr role="row" class="nhsuk-table__row collaborator-row">
-            <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
-              <span class="nhsuk-table-responsive__heading">Question </span>
-              <span class="framework-collaborator-user">
-                @question.value.Question
-              </span>
-            </td>
-            <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
-              <span class="nhsuk-table-responsive__heading">Input type/Range </span>
-              <span class="framework-collaborator-role">
-                @question.value.InputTypeName (@question.value.MinValue - @question.value.MaxValue)
-              </span>
-            </td>
-            <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
-              <span class="nhsuk-table-responsive__heading">Actions </span>
+            <tbody class="nhsuk-table__body">
+                @foreach (var question in Model.AssessmentQuestions.Select((value, i) => new { i, value }))
+                {
+                    <tr role="row" class="nhsuk-table__row collaborator-row">
+                        <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
+                            <span class="nhsuk-table-responsive__heading">Question </span>
+                            <span class="framework-collaborator-user">
+                                @question.value.Question
+                            </span>
+                        </td>
+                        <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
+                            <span class="nhsuk-table-responsive__heading">Input type/Range </span>
+                            <span class="framework-collaborator-role">
+                                @question.value.InputTypeName (@question.value.MinValue - @question.value.MaxValue)
+                            </span>
+                        </td>
+                        <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
+                            <span class="nhsuk-table-responsive__heading">Actions </span>
 
-              <a asp-action="RemoveCompetencyAssessmentQuestion" asp-route-frameworkId="@Model.DetailFramework.ID" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId" asp-route-assessmentQuestionId="@question.value.ID">
-                Remove
-              </a>
+                            <a asp-action="RemoveCompetencyAssessmentQuestion" asp-route-frameworkId="@Model.DetailFramework.ID" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId" asp-route-assessmentQuestionId="@question.value.ID">
+                                Remove
+                            </a>
 
-              @if (question.value.UserIsOwner)
-              {
-                <span>&nbsp;</span>
-                <a asp-action="StartAssessmentQuestionSession" asp-route-assessmentQuestionId="@question.value.ID" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId" asp-route-frameworkId="@Model.DetailFramework.ID">
-                  Edit
-                </a>
+                            @if (question.value.UserIsOwner)
+                            {
+                                <span>&nbsp;</span>
+                                <a asp-action="StartAssessmentQuestionSession" asp-route-assessmentQuestionId="@question.value.ID" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId" asp-route-frameworkId="@Model.DetailFramework.ID">
+                                    Edit
+                                </a>
 
-              }
-              @if (Model.AssessmentQuestions.Count() > 1)
-              {
-                <br />
-                <div class="status-tag">
-                  @if (question.i > 0)
-                  {
-                    <a asp-action="CompetencyAssessmentQuestionReorder" asp-route-direction="UP" asp-route-assessmentQuestionId="@question.value.ID" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId" asp-route-competencyId="@Model.CompetencyId" asp-route-frameworkId="@Model.DetailFramework.ID">
-                      Move up
-                    </a>
-                    <span>&nbsp;</span>
-                  }
-                  @if (question.i < Model.AssessmentQuestions.Count() - 1)
-                  {
-                    <a asp-action="CompetencyAssessmentQuestionReorder" asp-route-direction="DOWN" asp-route-assessmentQuestionId="@question.value.ID" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId" asp-route-competencyId="@Model.CompetencyId" asp-route-frameworkId="@Model.DetailFramework.ID">
-                      Move Down
-                    </a>
-                  }
-                </div>
-              }
-            </td>
-          </tr>
-        }
-      </tbody>
-    </table>
-  }
-  else
-  {
-    <p>No assessment questions have been added to this @Model.VocabSingular().ToLower().</p>
-  }
+                            }
+                            @if (Model.AssessmentQuestions.Count() > 1)
+                            {
+                                <br />
+                                <div class="status-tag">
+                                    @if (question.i > 0)
+                                    {
+                                        <a asp-action="CompetencyAssessmentQuestionReorder" asp-route-direction="UP" asp-route-assessmentQuestionId="@question.value.ID" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId" asp-route-competencyId="@Model.CompetencyId" asp-route-frameworkId="@Model.DetailFramework.ID">
+                                            Move up
+                                        </a>
+                                        <span>&nbsp;</span>
+                                    }
+                                    @if (question.i < Model.AssessmentQuestions.Count() - 1)
+                                    {
+                                        <a asp-action="CompetencyAssessmentQuestionReorder" asp-route-direction="DOWN" asp-route-assessmentQuestionId="@question.value.ID" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId" asp-route-competencyId="@Model.CompetencyId" asp-route-frameworkId="@Model.DetailFramework.ID">
+                                            Move Down
+                                        </a>
+                                    }
+                                </div>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>No assessment questions have been added to this @Model.VocabSingular().ToLower().</p>
+    }
 </div>
 <h3>Add a question</h3>
 <form method="post">
-  <div class="nhsuk-form-group">
-    <label class="nhsuk-label" for="select-question">
-      Add an existing assessment question to the @Model.VocabSingular().ToLower()
-    </label>
-    <select class="nhsuk-select nhsuk-u-width-three-quarters" id="select-question" asp-items="Model.QuestionSelectList" asp-for="assessmentQuestionId"></select>
-    <button class="nhsuk-button button-small" asp-route-addToExisting="False" asp-route-frameworkId="@Model.DetailFramework.ID">
-      Add
-    </button>
-  </div>
+    <div class="nhsuk-form-group">
+        <label class="nhsuk-label" for="select-question">
+            Add an existing assessment question to the @Model.VocabSingular().ToLower()
+        </label>
+        <select class="nhsuk-select nhsuk-u-width-three-quarters" id="select-question" asp-items="Model.QuestionSelectList" asp-for="assessmentQuestionId"></select>
+        <button class="nhsuk-button button-small" asp-route-addToExisting="False" asp-route-frameworkId="@Model.DetailFramework.ID">
+            Add
+        </button>
+    </div>
 </form>
 <div class="nhsuk-form-group">
-  <a class="nhsuk-button nhsuk-button--secondary" role="button" asp-action="StartAssessmentQuestionSession" asp-route-frameworkId="@Model.DetailFramework.ID" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId">
-    Add a new question
-  </a>
+    <a class="nhsuk-button nhsuk-button--secondary" role="button" asp-action="StartAssessmentQuestionSession" asp-route-frameworkId="@Model.DetailFramework.ID" asp-route-frameworkCompetencyId="@Model.FrameworkCompetencyId">
+        Add a new question
+    </a>
 </div>
 <div class=" nhsuk-u-margin-top-6">
-  <a class="nhsuk-button" role="button" asp-action="ViewFramework" asp-fragment="fc-@Model.FrameworkCompetencyId" asp-route-frameworkId="@Model.DetailFramework.ID" asp-route-tabname="Structure">
-    Done
-  </a>
+    <a class="nhsuk-button" role="button" asp-action="ViewFramework" asp-fragment="fc-@Model.FrameworkCompetencyId" asp-route-frameworkId="@Model.DetailFramework.ID" asp-route-tabname="Structure">
+        Done
+    </a>
 </div>

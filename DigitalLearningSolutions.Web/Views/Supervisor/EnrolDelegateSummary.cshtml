@@ -28,25 +28,14 @@
             </ol>
         </div>
         <p class="nhsuk-breadcrumb__back">
-            @if (ViewBag.navigatedFrom == "EnrolDelegateSupervisorRole")
-            {
-                <a class="nhsuk-breadcrumb__backlink" asp-controller="Supervisor"
-                   asp-action="EnrolDelegateSupervisorRole"
-                   asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]">
-                    Back to Enrol Delegate Supervisor Role
-                </a>
-            }
-            else
-            {
-                <a class="nhsuk-breadcrumb__backlink" asp-controller="Supervisor"
-                   asp-action="EnrolDelegateCompleteBy"
-                   asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]"
-                   asp-route-day="@ViewBag.completeByDate"
-                   asp-route-month="@ViewBag.completeByMonth"
-                   asp-route-year="@ViewBag.completeByYear">
-                    Back to Complete By Date
-                </a>
-            }
+            <a class="nhsuk-breadcrumb__backlink" asp-controller="Supervisor"
+               asp-action="EnrolDelegateCompleteBy"
+               asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]"
+               asp-route-day="@ViewBag.completeByDate"
+               asp-route-month="@ViewBag.completeByMonth"
+               asp-route-year="@ViewBag.completeByYear">
+                Back to Complete By Date
+            </a>
         </p>
     </nav>
 }
@@ -75,7 +64,7 @@
         <dd class="nhsuk-summary-list__actions">
 
             <a asp-action="EnrolDelegateOnProfileAssessment" asp-route-supervisorDelegateId="@Model.SupervisorDelegateDetail.ID">
-                Change<span class="nhsuk-u-visually-hidden"> competency assessment</span>
+                Change<span class="nhsuk-u-visually-hidden"> self-assessment</span>
             </a>
 
         </dd>

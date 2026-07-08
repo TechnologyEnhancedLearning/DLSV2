@@ -1,8 +1,8 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
 @model ManageCompetencyRoleRequirementsViewModel;
 @{
-    ViewData["Title"] = "Manage Role Requirements";
-    ViewData["Application"] = "Framework Service";
+    ViewData["Title"] = "Manage role requirements";
+    ViewData["Application"] = "Framework service";
 }
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
 @section NavMenuItems {
@@ -13,31 +13,40 @@
     <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
         <div class="nhsuk-width-container">
             <ol class="nhsuk-breadcrumb__list">
-                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewCompetencyAssessments" asp-route-tabname="Mine">Competency Assessments</a></li>
-                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.Id">Manage Competency Assessment</a></li>
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Frameworks" asp-action="Index">Home</a></li>
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewCompetencyAssessments" asp-route-tabname="Mine">Self-assessments</a></li>
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.Id">Manage self-assessment</a></li>
                 <li class="nhsuk-breadcrumb__item">Role Requirements</li>
             </ol>
-            <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.Id">Back to manage competency assessment</a></p>
+            <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.Id">Back to manage self-assessment</a></p>
         </div>
     </nav>
 }
-<h1>Self assessment @Model.VocabularySingular.ToLower() role requirements</h1>
-<p class="nhsuk-lede-text">
-    Specify whether role requirements will be enforced for the @Model.CompetencyAssessmentName self assessment. When requirements are set, they must be met by the learner before the self assessment can be signed off.
-</p>
+<div class="nhsuk-form-group">
+<h1 class="app-page-heading">
+    <span class="nhsuk-caption-xl">
+        @Model.CompetencyAssessmentName
+        <span class="nhsuk-u-visually-hidden"> – </span>
+        </span>
+        Self-assessment @Model.VocabularySingular.ToLower() role requirements
+    </h1>
+
+    <p>
+        Specify whether role requirements will be enforced for the self-assessment. When requirements are set, they must be met by the learner before the self-assessment can be signed off.
+    </p>
 <dl class="nhsuk-summary-list">
     <div class="nhsuk-summary-list__row">
         <dt class="nhsuk-summary-list__key">
-            Enforce role requirements for self assessment
+            Enforce role requirements
         </dt>
         <dd class="nhsuk-summary-list__value">
             @if (Model.EnforceRoleRequirementsForSignOff)
             {
-                <text>Yes. Enforce role requirements.</text>
+                <text>Yes.</text>
             }
             else
             {
-                <text>No. Do not enforce role requirements.</text>
+                <text>No.</text>
             }
         </dd>
         @if (Model.UserRole > 1)
@@ -49,16 +58,16 @@
     </div>
     <div class="nhsuk-summary-list__row">
         <dt class="nhsuk-summary-list__key">
-            Include requirement status filters
+           Role requirement filters
         </dt>
         <dd class="nhsuk-summary-list__value">
             @if (Model.IncludeRequirementsFilters)
             {
-                <text>Yes. Include filters.</text>
+                <text>Yes.</text>
             }
             else
             {
-                <text>No. Do not include filters.</text>
+                <text>No.</text>
             }
         </dd>
         @if (Model.UserRole > 1)
@@ -104,4 +113,5 @@
         </svg>
         Cancel
     </a>
+</div>
 </div>

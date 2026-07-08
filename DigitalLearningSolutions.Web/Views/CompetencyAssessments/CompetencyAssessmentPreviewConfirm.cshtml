@@ -4,23 +4,24 @@
 @inject IConfiguration Configuration
 
 @{
-    ViewData["Title"] = "Competency Assessment - Preview";
-    ViewData["Application"] = "Competency Assessment Service";
-    ViewData["HeaderPathName"] = "Competency Assessment Service";
+    ViewData["Title"] = "Self-assessment - preview";
+    ViewData["Application"] = "Self-assessment service";
+    ViewData["HeaderPathName"] = "Self-assessment service";
 }
 
 @section NavMenuItems {
-    <partial name="Shared/_NavMenuItems" />
+    <partial name="~/Views/Frameworks/Shared/_NavMenuItems.cshtml" />
 }
 @section NavBreadcrumbs {
     <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
         <div class="nhsuk-width-container">
             <ol class="nhsuk-breadcrumb__list">
-                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewCompetencyAssessments" asp-route-tabname="Mine">Competency Assessments</a></li>
-                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.CompetencyAssessmentId">Manage Competency Assessment</a></li>
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Frameworks" asp-action="Index">Home</a></li>
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewCompetencyAssessments" asp-route-tabname="Mine">Self-assessments</a></li>
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.CompetencyAssessmentId">Manage self-assessment</a></li>
                 <li class="nhsuk-breadcrumb__item">Confirm Preview</li>
             </ol>
-            <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.CompetencyAssessmentId">Back to manage competency assessment</a></p>
+            <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.CompetencyAssessmentId">Back to manage self-assessment</a></p>
         </div>
     </nav>
 }
@@ -28,11 +29,15 @@
     <div class="nhsuk-form-group" id="form-group">
         <form asp-action="PreviewConfirm" asp-route-competencyAssessmentId="@Model.CompetencyAssessmentId" asp-route-competencyGroupId="@Model.CompetencyAssessmentId">
             <div class="nhsuk-u-reading-width">
-                <h1 id="form-heading" class="nhsuk-fieldset__heading nhsuk-label--l">
-                    Preview self assessment
+                <h1 class="app-page-heading">
+                    <span class="nhsuk-caption-xl">
+                        @Model.CompetencyAssessmentName
+                        <span class="nhsuk-u-visually-hidden"> – </span>
+                    </span>
+                    Preview self-assessment
                 </h1>
                 <p class="nhsuk-body-l">
-                    To preview this self assessment, it must be made available to your current centre, @Model.CentreName, if it isn’t already. You will then be enrolled as a test learner to view the self-assessment as a learner would.
+                    To preview this self-assessment, it must be made available to your current centre, @Model.CentreName, if it isn’t already. You will then be enrolled as a test learner to view the self-assessment as a learner would.
                 </p>
             </div>
             <button class="nhsuk-button" type="submit">

@@ -1,6 +1,7 @@
 ﻿@using DigitalLearningSolutions.Data.Enums
 @using DigitalLearningSolutions.Data.Extensions
 @using DigitalLearningSolutions.Web.Extensions
+@using DigitalLearningSolutions.Web.Helpers
 @using Microsoft.Extensions.Configuration
 @inject IConfiguration Configuration
 
@@ -32,11 +33,13 @@
 }
 else
 {
+    <feature name="@(FeatureFlags.ShowDlsLoginButton)">
   <li class="nhsuk-header__navigation-item @Html.GetSelectedCssClassIfTabSelected(NavMenuTab.LogIn)">
     <a class="nhsuk-header__navigation-link" asp-controller="Login" asp-action="Index">
       Log in
     </a>
   </li>
+    </feature>
   <li class="nhsuk-header__navigation-item @Html.GetSelectedCssClassIfTabSelected(NavMenuTab.Register)">
     <a class="nhsuk-header__navigation-link" asp-controller="Register" asp-action="Start">
       Register

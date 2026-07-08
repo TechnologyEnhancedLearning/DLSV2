@@ -129,8 +129,8 @@
             var adminCategoryId = User.GetAdminCategoryId();
 
 
-            bool? isDelegateActive, isProgressLocked, removed, hasCompleted, submitted, signedOff;
-            isDelegateActive = isProgressLocked = removed = hasCompleted = submitted = signedOff = null;
+            bool? isDelegateActive, isProgressLocked, removed, hasCompleted, submitted, signedOff, started;
+            isDelegateActive = isProgressLocked = removed = hasCompleted = submitted = signedOff = started =null;
 
             string? answer1, answer2, answer3;
             answer1 = answer2 = answer3 = null;
@@ -181,6 +181,9 @@
 
                         if (filter.Contains("Answer3"))
                             answer3 = filterValue;
+
+                        if (filter.Contains("LearnerActivity"))
+                            started = filterValue;
                     }
                 }
             }
@@ -211,7 +214,7 @@
                 else
                 {
                     (selfAssessmentDelegatesData, resultCount) = selfAssessmentService.GetSelfAssessmentDelegatesPerPage(searchString ?? string.Empty, offSet, itemsPerPage ?? 0, sortBy, sortDirection,
-                    selfAssessmentId, centreId, isDelegateActive, removed, submitted, signedOff, adminCategoryId);
+                    selfAssessmentId, centreId, isDelegateActive, removed, submitted, signedOff, adminCategoryId, started);
 
                     if (selfAssessmentDelegatesData?.Delegates == null && resultCount == null)
                     {
@@ -223,7 +226,7 @@
                     {
                         page = 1; offSet = 0;
                         (selfAssessmentDelegatesData, resultCount) = selfAssessmentService.GetSelfAssessmentDelegatesPerPage(searchString ?? string.Empty, offSet, itemsPerPage ?? 0, sortBy, sortDirection,
-                            selfAssessmentId, centreId, isDelegateActive, removed, submitted, signedOff, adminCategoryId);
+                            selfAssessmentId, centreId, isDelegateActive, removed, submitted, signedOff, adminCategoryId, started);
                     }
 
                     var adminId = User.GetCustomClaimAsRequiredInt(CustomClaimTypes.UserAdminId);

@@ -10,5 +10,8 @@ namespace DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
         public string? ManageOptionalCompetenciesPrompt { get; set; }
         public int[] SelectedCompetencyIds { get; set; } = [];
         public int[] GroupIds { get; set; } = [];
+        public string VocabularySingular { get; set; }
+        public string VocabularyPlural { get; set; }
+
     }
 }

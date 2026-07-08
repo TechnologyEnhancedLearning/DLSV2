@@ -1,5 +1,6 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.CompetencyAssessmentsController
 {
+    using System;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Extensions;
     using DigitalLearningSolutions.Data.Models.CompetencyAssessments;
@@ -22,7 +23,7 @@
 
     public partial class CompetencyAssessmentsController
     {
-        [Route("/CompetencyAssessments/View/{tabname}/{page=1:int}")]
+        [Route("/Self-Assessment/View/{tabname}/{page=1:int}")]
         [SetSelectedTab(nameof(NavMenuTab.CompetencyAssessments))]
         public IActionResult ViewCompetencyAssessments(string tabname, string? searchString = null,
             string sortBy = CompetencyAssessmentSortByOptionTexts.CompetencyAssessmentName,
@@ -98,10 +99,10 @@
             return View("Index", model);
         }
 
-        [Route("/CompetencyAssessments/{actionName}/Name/{competencyAssessmentId}")]
-        [Route("/CompetencyAssessments/Framework/{frameworkId}/{actionName}/Name")]
-        [Route("/CompetencyAssessments/Framework/{frameworkId}/{competencyAssessmentId}/{actionName}/Name")]
-        [Route("/CompetencyAssessments/{actionName}/Name")]
+        [Route("/Self-Assessment/{actionName}/Name/{competencyAssessmentId}")]
+        [Route("/Self-Assessment/Framework/{frameworkId}/{actionName}/Name")]
+        [Route("/Self-Assessment/Framework/{frameworkId}/{competencyAssessmentId}/{actionName}/Name")]
+        [Route("/Self-Assessment/{actionName}/Name")]
         [SetSelectedTab(nameof(NavMenuTab.CompetencyAssessments))]
         public IActionResult CompetencyAssessmentName(string actionName, int competencyAssessmentId = 0, int? frameworkId = null)
         {
@@ -131,10 +132,10 @@
         }
 
         [HttpPost]
-        [Route("/CompetencyAssessments/{actionName}/Name/{competencyAssessmentId}")]
-        [Route("/CompetencyAssessments/Framework/{frameworkId}/{actionName}/Name")]
-        [Route("/CompetencyAssessments/Framework/{frameworkId}/{competencyAssessmentId}/{actionName}/Name")]
-        [Route("/CompetencyAssessments/{actionName}/Name")]
+        [Route("/Self-Assessment/{actionName}/Name/{competencyAssessmentId}")]
+        [Route("/Self-Assessment/Framework/{frameworkId}/{actionName}/Name")]
+        [Route("/Self-Assessment/Framework/{frameworkId}/{competencyAssessmentId}/{actionName}/Name")]
+        [Route("/Self-Assessment/{actionName}/Name")]
         [SetSelectedTab(nameof(NavMenuTab.CompetencyAssessments))]
         public IActionResult SaveProfileName(CompetencyAssessmentBase competencyAssessmentBase, string actionName, int competencyAssessmentId = 0, int? frameworkId = null)
         {
@@ -176,8 +177,8 @@
                 return RedirectToAction("ManageCompetencyAssessment", new { competencyAssessmentId, frameworkId });
             }
         }
-        [Route("/CompetencyAssessments/Framework/{frameworkId}/{competencyAssessmentId}/Manage")]
-        [Route("/CompetencyAssessments/{competencyAssessmentId}/Manage")]
+        [Route("/Self-Assessment/Framework/{frameworkId}/{competencyAssessmentId}/Manage")]
+        [Route("/Self-Assessment/{competencyAssessmentId}/Manage")]
         public IActionResult ManageCompetencyAssessment(int competencyAssessmentId, int? frameworkId = null)
         {
             var adminId = GetAdminID();
@@ -192,7 +193,7 @@
             return View("ManageCompetencyAssessment", model);
         }
 
-        [Route("/CompetencyAssessments/{competencyAssessmentId}/NationalRoleProfileLinks/{actionName}")]
+        [Route("/Self-Assessment/{competencyAssessmentId}/NationalRoleProfileLinks/{actionName}")]
         [SetSelectedTab(nameof(NavMenuTab.CompetencyAssessments))]
         public IActionResult EditRoleProfileLinks(int competencyAssessmentId = 0, string actionName = "EditGroup")
         {
@@ -219,7 +220,7 @@
         }
 
         [HttpPost]
-        [Route("/CompetencyAssessments/{competencyAssessmentId}/NationalRoleProfileLinks/{actionName}")]
+        [Route("/Self-Assessment/{competencyAssessmentId}/NationalRoleProfileLinks/{actionName}")]
         public IActionResult EditRoleProfileLinks(EditRoleProfileLinksViewModel model, string actionName, int competencyAssessmentId = 0)
         {
             var adminId = GetAdminID();
@@ -270,15 +271,15 @@
             }
         }
 
-        [Route("/CompetencyAssessments/SubGroup/{actionName}/{competencyAssessmentId}")]
-        [Route("/CompetencyAssessments/SubGroup/{actionName}")]
+        [Route("/Self-Assessment/SubGroup/{actionName}/{competencyAssessmentId}")]
+        [Route("/Self-Assessment/SubGroup/{actionName}")]
         [SetSelectedTab(nameof(NavMenuTab.CompetencyAssessments))]
         public IActionResult CompetencyAssessmentSubGroup(string actionName, int competencyAssessmentId = 0)
         {
             return View("SubGroup");
         }
 
-        [Route("/CompetencyAssessments/{competencyAssessmentId}/Description/")]
+        [Route("/Self-Assessment/{competencyAssessmentId}/Description/")]
         public IActionResult EditDescription(int competencyAssessmentId)
         {
             var adminId = GetAdminID();
@@ -291,7 +292,7 @@
             return View(model);
         }
         [HttpPost]
-        [Route("/CompetencyAssessments/{competencyAssessmentId}/Description/")]
+        [Route("/Self-Assessment/{competencyAssessmentId}/Description/")]
         public IActionResult SaveDescription(EditDescriptionViewModel model)
         {
             if (string.IsNullOrWhiteSpace(StringHelper.StripHtmlTags(model.Description)))
@@ -307,7 +308,7 @@
             competencyAssessmentService.UpdateIntroductoryTextTaskStatus(model.ID, model.TaskStatus ?? false);
             return RedirectToAction("ManageCompetencyAssessment", new { competencyAssessmentId = model.ID });
         }
-        [Route("/CompetencyAssessments/{competencyAssessmentId}/Branding/")]
+        [Route("/Self-Assessment/{competencyAssessmentId}/Branding/")]
         public IActionResult EditBranding(int competencyAssessmentId)
         {
             var centreId = GetCentreId();
@@ -322,7 +323,7 @@
             return View(model);
         }
         [HttpPost]
-        [Route("/CompetencyAssessments/{competencyAssessmentId}/Branding/")]
+        [Route("/Self-Assessment/{competencyAssessmentId}/Branding/")]
         public IActionResult EditBranding(EditBrandingViewModel model)
         {
             var adminId = GetAdminID();
@@ -349,7 +350,7 @@
             competencyAssessmentService.UpdateBrandingTaskStatus(model.ID, model.TaskStatus ?? false);
             return RedirectToAction("ManageCompetencyAssessment", new { competencyAssessmentId = model.ID });
         }
-        [Route("/CompetencyAssessments/{competencyAssessmentId}/Vocabulary/")]
+        [Route("/Self-Assessment/{competencyAssessmentId}/Vocabulary/")]
         public IActionResult EditVocabulary(int competencyAssessmentId)
         {
             var adminId = GetAdminID();
@@ -362,7 +363,7 @@
             return View(model);
         }
         [HttpPost]
-        [Route("/CompetencyAssessments/{competencyAssessmentId}/Vocabulary/")]
+        [Route("/Self-Assessment/{competencyAssessmentId}/Vocabulary/")]
         public IActionResult SaveVocabulary(EditVocabularyViewModel model)
         {
             if (!ModelState.IsValid)
@@ -374,11 +375,12 @@
             competencyAssessmentService.UpdateVocabularyTaskStatus(model.ID, model.TaskStatus ?? false);
             return RedirectToAction("ManageCompetencyAssessment", new { competencyAssessmentId = model.ID });
         }
-        [Route("/CompetencyAssessments/{competencyAssessmentId}/Frameworks/{actionName}")]
+        [Route("/Self-Assessment/{competencyAssessmentId}/Frameworks/{actionName}")]
         public IActionResult SelectFrameworkSources(int competencyAssessmentId, string actionName)
         {
             var adminId = GetAdminID();
-            var frameworks = frameworkService.GetAllFrameworks(adminId);
+            var frameworks = frameworkService.GetAllFrameworks(adminId).Where(f => f.PublishStatusID == 3)
+                            .ToList();
             var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
             if (competencyAssessmentBase == null)
             {
@@ -395,14 +397,15 @@
             return View(model);
         }
         [HttpPost]
-        [Route("/CompetencyAssessments/{competencyAssessmentId}/Frameworks/{actionName}")]
+        [Route("/Self-Assessment/{competencyAssessmentId}/Frameworks/{actionName}")]
         public IActionResult SelectFrameworkSources(SelectFrameworkSourcesFormData model, string actionName)
         {
             var adminId = GetAdminID();
             var competencyAssessmentId = model.CompetencyAssessmentId;
             if (!ModelState.IsValid)
             {
-                var frameworks = frameworkService.GetAllFrameworks(adminId);
+                var frameworks = frameworkService.GetAllFrameworks(adminId).Where(f => f.PublishStatusID == 3)
+                            .ToList();
                 var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
 
                 if (competencyAssessmentBase == null)
@@ -436,13 +439,18 @@
                 competencyAssessmentService.InsertSelfAssessmentFramework(adminId, competencyAssessmentId, model.FrameworkId.Value);
                 return RedirectToAction("SelectFrameworkSources", new { competencyAssessmentId, actionName = "Summary" });
             }
+            else if (actionName == "ViewSelected")
+            {
+                competencyAssessmentService.InsertSelfAssessmentFramework(adminId, competencyAssessmentId, model.FrameworkId.Value);
+                return RedirectToAction("ViewSelectedCompetencies", new { competencyAssessmentId });
+            }
             else
             {
                 competencyAssessmentService.UpdateFrameworkLinksTaskStatus(model.CompetencyAssessmentId, model.TaskStatus ?? false, null);
                 return RedirectToAction("ManageCompetencyAssessment", new { competencyAssessmentId = model.CompetencyAssessmentId });
             }
         }
-        [Route("/CompetencyAssessments/{competencyAssessmentId}/Frameworks/{frameworkId}/Remove")]
+        [Route("/Self-Assessment/{competencyAssessmentId}/Frameworks/{frameworkId}/Remove")]
         public IActionResult RemoveFramework(int frameworkId, int competencyAssessmentId)
         {
             var frameworkCompetencyCount = competencyAssessmentService.GetCompetencyCountByFrameworkId(competencyAssessmentId, frameworkId);
@@ -462,7 +470,7 @@
             return RedirectToAction("SelectFrameworkSources", new { competencyAssessmentId, actionName = "Summary" });
         }
         [HttpPost]
-        [Route("/CompetencyAssessments/{competencyAssessmentId}/Frameworks/{frameworkId}/Remove")]
+        [Route("/Self-Assessment/{competencyAssessmentId}/Frameworks/{frameworkId}/Remove")]
         public IActionResult RemoveFramework(ConfirmRemoveFrameworkSourceViewModel model)
         {
             if (!ModelState.IsValid)
@@ -474,15 +482,15 @@
             competencyAssessmentService.RemoveSelfAssessmentFramework(model.CompetencyAssessmentId, model.FrameworkId, adminId);
             return RedirectToAction("SelectFrameworkSources", new { model.CompetencyAssessmentId, actionName = "Summary" });
         }
-        [Route("/CompetencyAssessments/{competencyAssessmentId}/Competencies")]
+        [Route("/Self-Assessment/{competencyAssessmentId}/Competencies")]
         public IActionResult ViewSelectedCompetencies(int competencyAssessmentId)
         {
 
             var competencies = competencyAssessmentService.GetCompetenciesForCompetencyAssessment(competencyAssessmentId);
             var linkedFrameworks = competencyAssessmentService.GetLinkedFrameworksForCompetencyAssessment(competencyAssessmentId);
-            if (!competencies.Any())
+            if (!linkedFrameworks.Any())
             {
-                return RedirectToAction("AddCompetenciesSelectFramework", new { competencyAssessmentId });
+                return RedirectToAction("SelectFrameworkSources", new { competencyAssessmentId, actionName = "ViewSelected" });
             }
             var adminId = GetAdminID();
             var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
@@ -493,8 +501,9 @@
             var model = new ViewSelectedCompetenciesViewModel(competencyAssessmentBase, competencies, linkedFrameworks, competencyAssessmentTaskStatus.SelectCompetenciesTaskStatus);
             return View(model);
         }
-        [Route("/CompetencyAssessments/{competencyAssessmentId}/Competencies/Add/SelectFramework")]
-        public IActionResult AddCompetenciesSelectFramework(int competencyAssessmentId)
+        [Route("/Self-Assessment/{competencyAssessmentId}/Competencies/Add/SelectFramework")]
+        [Route("/Self-Assessment/{competencyAssessmentId}/{actionName}/Competencies/Add/SelectFramework")]
+        public IActionResult AddCompetenciesSelectFramework(int competencyAssessmentId, string? actionName)
         {
             var linkedFrameworks = competencyAssessmentService.GetLinkedFrameworksForCompetencyAssessment(competencyAssessmentId);
             if (!linkedFrameworks.Any())
@@ -510,7 +519,8 @@
             return View(model);
         }
         [HttpPost]
-        [Route("/CompetencyAssessments/{competencyAssessmentId}/Competencies/Add/SelectFramework")]
+        [Route("/Self-Assessment/{competencyAssessmentId}/Competencies/Add/SelectFramework")]
+        [Route("/Self-Assessment/{competencyAssessmentId}/{actionName}/Competencies/Add/SelectFramework")]
         public IActionResult AddCompetenciesSelectFramework(AddCompetenciesSelectFrameworkFormData formdata)
         {
             if (!ModelState.IsValid)
@@ -528,7 +538,7 @@
                 return RedirectToAction("AddCompetencies", new { competencyAssessmentId = formdata.ID, frameworkId = formdata.FrameworkId });
             }
         }
-        [Route("/CompetencyAssessments/{competencyAssessmentId}/Competencies/Add/{frameworkId}")]
+        [Route("/Self-Assessment/{competencyAssessmentId}/Competencies/Add/{frameworkId}")]
         public IActionResult AddCompetencies(int competencyAssessmentId, int frameworkId)
         {
             var adminId = GetAdminID();
@@ -555,12 +565,32 @@
             return View(model);
         }
         [HttpPost]
-        [Route("/CompetencyAssessments/{competencyAssessmentId}/Competencies/Add/{frameworkId}")]
+        [Route("/Self-Assessment/{competencyAssessmentId}/Competencies/Add/{frameworkId}")]
         public IActionResult AddComptencies(AddCompetenciesFormData model, int competencyAssessmentId, int frameworkId)
         {
             if (!ModelState.IsValid)
             {
-                //reload model and view
+                var adminId = GetAdminID();
+                var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
+                var framework = frameworkService.GetBaseFrameworkByFrameworkId(frameworkId, adminId);
+                var groupedCompetencies = frameworkService.GetFrameworkCompetencyGroups(frameworkId, competencyAssessmentId);
+                var ungroupedCompetencies = frameworkService.GetFrameworkCompetenciesUngrouped(frameworkId, competencyAssessmentId);
+                var competencyIds = ungroupedCompetencies.Select(c => c.CompetencyID).ToArray();
+                var competencyFlags = frameworkService.GetSelectedCompetencyFlagsByCompetecyIds(competencyIds);
+                foreach (var competency in ungroupedCompetencies)
+                    competency.CompetencyFlags = competencyFlags.Where(f => f.CompetencyId == competency.CompetencyID);
+                foreach (var group in groupedCompetencies)
+                {
+                    competencyIds = group.FrameworkCompetencies.Select(c => c.CompetencyID).ToArray();
+                    competencyFlags = frameworkService.GetSelectedCompetencyFlagsByCompetecyIds(competencyIds);
+                    foreach (var competency in group.FrameworkCompetencies)
+                        competency.CompetencyFlags = competencyFlags.Where(f => f.CompetencyId == competency.CompetencyID);
+                }
+                var models = new AddCompetenciesViewModel(competencyAssessmentBase, groupedCompetencies, ungroupedCompetencies, frameworkId, framework.FrameworkName, model.SelectedCompetencyIds);
+                ModelState.Clear();
+                ModelState.AddModelError("SelectedCompetencyIds", $"You must select at least one {models.VocabularySingular}");
+                ViewBag.RequiredCheckboxMessage = "You must select at least one " + models.VocabularySingular;
+                return View("AddCompetencies", models);
             }
             if (model.SelectedCompetencyIds != null)
             {
@@ -573,14 +603,14 @@
             }
             return RedirectToAction("ViewSelectedCompetencies", new { competencyAssessmentId });
         }
-        [Route("/CompetencyAssessments/{competencyAssessmentId}/Competencies/Delete/{competencyId}")]
+        [Route("/Self-Assessment/{competencyAssessmentId}/Competencies/Delete/{competencyId}")]
         public IActionResult DeleteCompetency(int competencyAssessmentId, int competencyId)
         {
             competencyAssessmentService.RemoveCompetencyFromAssessment(competencyAssessmentId, competencyId);
             return RedirectToAction("ViewSelectedCompetencies", new { competencyAssessmentId });
         }
 
-        [Route("/CompetencyAssessments/{competencyAssessmentId}/CompetencyGroup/Delete/{competencyGroupId}/{competencyCount}/Confirm")]
+        [Route("/Self-Assessment/{competencyAssessmentId}/CompetencyGroup/Delete/{competencyGroupId}/{competencyCount}/Confirm")]
         public IActionResult DeleteCompetencyGroupConfirm(int competencyAssessmentId, int competencyGroupId, int competencyCount)
         {
             var adminId = GetAdminID();
@@ -604,8 +634,6 @@
             competencyAssessmentService.RemoveCompetencyGroupFromAssessment(competencyAssessmentId, competencyGroupId);
             return RedirectToAction("ViewSelectedCompetencies", new { competencyAssessmentId });
         }
-
-
         public IActionResult MoveCompetencyInSelfAssessment(int competencyAssessmentId, int competencyId, string direction)
         {
             var adminId = GetAdminID();
@@ -627,7 +655,7 @@
             return new RedirectResult(Url.Action("ViewSelectedCompetencies", new { competencyAssessmentId }) + "#group-" + groupId.ToString());
         }
         [HttpPost]
-        [Route("/CompetencyAssessments/{competencyAssessmentId}/Competencies")]
+        [Route("/Self-Assessment/{competencyAssessmentId}/Competencies")]
         public IActionResult ViewSelectedCompetencies(ViewSelectedCompetenciesFormData model)
         {
             if (model.TaskStatus == null)
@@ -638,7 +666,7 @@
             return RedirectToAction("ManageCompetencyAssessment", new { competencyAssessmentId = model.ID });
         }
         [HttpGet]
-        [Route("/CompetencyAssessments/{competencyAssessmentId}/Competencies/Optional/Manage")]
+        [Route("/Self-Assessment/{competencyAssessmentId}/{vocabularyPlural}/Optional/Manage")]
         public IActionResult ManageOptionalCompetencies(int competencyAssessmentId)
         {
             var adminId = GetAdminID();
@@ -656,7 +684,7 @@
             return View(model);
         }
         [HttpPost]
-        [Route("/CompetencyAssessments/{competencyAssessmentId}/Competencies/Optional/Manage")]
+        [Route("/Self-Assessment/{competencyAssessmentId}/{vocabularyPlural}/Optional/Manage")]
         public IActionResult ManageOptionalCompetencies(ViewSelectedCompetenciesFormData model)
         {
             if (model.TaskStatus == null)
@@ -667,7 +695,7 @@
             return RedirectToAction("ManageCompetencyAssessment", new { competencyAssessmentId = model.ID });
         }
         [HttpGet]
-        [Route("/CompetencyAssessments/{competencyAssessmentId}/Competencies/Optional/Select")]
+        [Route("/Self-Assessment/{competencyAssessmentId}/{vocabularyPlural}/Optional/Select")]
         public IActionResult SelectOptionalCompetencies(int competencyAssessmentId)
         {
             var adminId = GetAdminID();
@@ -685,7 +713,7 @@
             return View(model);
         }
         [HttpPost]
-        [Route("/CompetencyAssessments/{competencyAssessmentId}/Competencies/Optional/Select")]
+        [Route("/Self-Assessment/{competencyAssessmentId}/{vocabularyPlural}/Optional/Select")]
         public IActionResult SelectOptionalCompetencies(SelectOptionalCompetenciesFormData model)
         {
             if (!ModelState.IsValid)
@@ -701,10 +729,10 @@
                 return View("SelectOptionalCompetencies", viewModel);
             }
             competencyAssessmentService.UpdateOptionalCompetenciesInAssessment(model.ID, model.GroupIds ?? [], model.SelectedCompetencyIds ?? []);
-            return RedirectToAction("ManageOptionalCompetencies", new { competencyAssessmentId = model.ID });
+            return RedirectToAction("ManageOptionalCompetencies", new { competencyAssessmentId = model.ID, vocabularyPlural = model.VocabularyPlural });
         }
         [HttpGet]
-        [Route("/CompetencyAssessments/{competencyAssessmentId}/Competencies/Optional/SetMinimum")]
+        [Route("/Self-Assessment/{competencyAssessmentId}/{vocabularyPlural}/Optional/SetMinimum")]
         public IActionResult SetMinimumOptionalCompetencies(int competencyAssessmentId)
         {
             var adminId = GetAdminID();
@@ -717,7 +745,7 @@
             return View("SetMinimumOptionalCompetencies", viewModel);
         }
         [HttpPost]
-        [Route("/CompetencyAssessments/{competencyAssessmentId}/Competencies/Optional/SetMinimum")]
+        [Route("/Self-Assessment/{competencyAssessmentId}/{vocabularyPlural}/Optional/SetMinimum")]
         public IActionResult SetMinimumOptionalCompetencies(SetMinimumOptionalCompetenciesFormData model)
         {
             if (!ModelState.IsValid)
@@ -729,10 +757,10 @@
                 return View("SetMinimumOptionalCompetencies", viewModel);
             }
             competencyAssessmentService.UpdateMinimumOptionalCompetencies(model.ID, model.MinimumOptionalCompetencies ?? 0);
-            return RedirectToAction("ManageOptionalCompetencies", new { competencyAssessmentId = model.ID });
+            return RedirectToAction("ManageOptionalCompetencies", new { competencyAssessmentId = model.ID, vocabularyPlural = model.VocabularyPlural });
         }
         [HttpGet]
-        [Route("/CompetencyAssessments/{competencyAssessmentId}/Competencies/Optional/LearnerPrompt")]
+        [Route("/Self-Assessment/{competencyAssessmentId}/{vocabularyPlural}/Optional/LearnerPrompt")]
         public IActionResult SetOptionalCompetencyLearnerPrompt(int competencyAssessmentId)
         {
             var adminId = GetAdminID();
@@ -745,22 +773,15 @@
             return View("SetOptionalCompetencyLearnerPrompt", viewModel);
         }
         [HttpPost]
-        [Route("/CompetencyAssessments/{competencyAssessmentId}/Competencies/Optional/LearnerPrompt")]
+        [Route("/Self-Assessment/{competencyAssessmentId}/{vocabularyPlural}/Optional/LearnerPrompt")]
         public IActionResult SetOptionalCompetencyLearnerPrompt(SetOptionalCompetencyLearnerPromptFormData model)
         {
-            if (!ModelState.IsValid)
-            {
-                var adminId = GetAdminID();
-                var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(model.ID, adminId);
-                var competencies = competencyAssessmentService.GetCompetenciesForCompetencyAssessment(model.ID);
-                var viewModel = new SetOptionalCompetencyLearnerPromptViewModel(competencyAssessmentBase, competencies);
-                return View("SetOptionalCompetencyLearnerPrompt", viewModel);
-            }
+            
             competencyAssessmentService.UpdateManageOptionalCompetenciesPrompt(model.ID, model.ManageOptionalCompetenciesPrompt);
-            return RedirectToAction("ManageOptionalCompetencies", new { competencyAssessmentId = model.ID });
+            return RedirectToAction("ManageOptionalCompetencies", new { competencyAssessmentId = model.ID, vocabularyPlural = model.VocabularyPlural });
         }
 
-        [Route("/CompetencyAssessments/Framework/{frameworkId}/{competencyAssessmentId}/Features")]
+        [Route("/Self-Assessment/Framework/{frameworkId}/{competencyAssessmentId}/Features")]
         public IActionResult CompetencyAssessmentFeatures(int competencyAssessmentId, int? frameworkId = null)
         {
             var adminId = GetAdminID();
@@ -777,7 +798,7 @@
             return View(baseModel);
         }
         [HttpPost]
-        [Route("/CompetencyAssessments/Framework/{frameworkId}/{competencyAssessmentId}/Features")]
+        [Route("/Self-Assessment/Framework/{frameworkId}/{competencyAssessmentId}/Features")]
         public IActionResult CompetencyAssessmentFeatures(CompetencyAssessmentFeaturesViewModel featuresViewModel)
         {
             if (featuresViewModel == null) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 500 });
@@ -785,7 +806,7 @@
             return RedirectToAction("CompetencyAssessmentSummary", new { competencyAssessmentId = featuresViewModel.ID, featuresViewModel.FrameworkId });
         }
 
-        [Route("/CompetencyAssessments/Framework/{frameworkId}/{competencyAssessmentId}/Summary")]
+        [Route("/Self-Assessment/Framework/{frameworkId}/{competencyAssessmentId}/Summary")]
         public IActionResult CompetencyAssessmentSummary(int competencyAssessmentId, int? frameworkId = null)
         {
             if (competencyAssessmentService.GetSelfAssessmentStructure(competencyAssessmentId) != 0) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 410 });
@@ -796,7 +817,7 @@
             return View(data);
         }
         [HttpPost]
-        [Route("/CompetencyAssessments/Framework/{frameworkId}/{competencyAssessmentId}/Summary")]
+        [Route("/Self-Assessment/Framework/{frameworkId}/{competencyAssessmentId}/Summary")]
         public IActionResult CompetencyAssessmentSummary(CompetencyAssessmentFeaturesViewModel competency)
         {
             var data = GetcompetencyAssessmentFeaturesData();
@@ -819,7 +840,7 @@
             return RedirectToAction("ManageCompetencyAssessment", new { competencyAssessmentId = competency.ID, competency.FrameworkId });
         }
 
-        [Route("/CompetencyAssessments/{competencyAssessmentId}/Frameworks/{frameworkId}/Make")]
+        [Route("/Self-Assessment/{competencyAssessmentId}/Frameworks/{frameworkId}/Make")]
         public IActionResult ConfirmMaKePrimaryFramework(int frameworkId, int competencyAssessmentId)
         {
             var adminId = GetAdminID();
@@ -832,7 +853,7 @@
             return View("ConfirmMaKePrimaryFramework", model);
         }
         [HttpPost]
-        [Route("/CompetencyAssessments/{competencyAssessmentId}/Frameworks/{frameworkId}/Make")]
+        [Route("/Self-Assessment/{competencyAssessmentId}/Frameworks/{frameworkId}/Make")]
         public IActionResult ConfirmMaKePrimaryFramework(ConfirmMakePrimaryFrameworkViewModel model)
         {
             if (!ModelState.IsValid)
@@ -861,7 +882,7 @@
         }
 
 
-        [Route("/CompetencyAssessments/{competencyAssessmentId}/{actionName}")]
+        [Route("/Self-Assessment/{competencyAssessmentId}/{actionName}")]
         public IActionResult AssessmentWorkingGroup(int competencyAssessmentId, string actionName)
         {
             var adminId = GetAdminID();
@@ -875,6 +896,7 @@
             var model = new WorkingGroupCollaboratorsViewModel()
             {
                 CompetencyAssessmentID = competencyAssessmentId,
+                CompetencyAssessmentName = competencyAssessmentBase.CompetencyAssessmentName,
                 Collaborators = collaborators,
                 CompetencyAssessmentTaskStatus = taskStatus.WorkingGroupTaskStatus,
                 UserEmail = null,
@@ -890,11 +912,12 @@
         }
 
         [HttpPost]
-        [Route("/CompetencyAssessments/{competencyAssessmentId}/{actionName}")]
+        [Route("/Self-Assessment/{competencyAssessmentId}/{actionName}")]
         public IActionResult AssessmentWorkingGroup(WorkingGroupCollaboratorsViewModel model, bool canModify, string actionName)
         {
             int? centreID = GetCentreId();
-            if (actionName == "Collaborators" || actionName == "CollaboratorReview")
+
+            if (actionName == "Collaborators")
             {
                 var collaboratorId = competencyAssessmentService.AddCollaboratorToCompetencyAssessment(model.CompetencyAssessmentID, model.UserEmail, canModify, centreID);
                 if (collaboratorId > 0)
@@ -928,6 +951,10 @@
                 return RedirectToAction("AssessmentWorkingGroup", "CompetencyAssessments", new { model.CompetencyAssessmentID, actionName = actionName });
 
             }
+            else if (actionName == "CollaboratorReview")
+            {
+                return RedirectToAction("SendForReview", "CompetencyAssessments", new { model.CompetencyAssessmentID, actionName = actionName });
+            }
             else
             {
                 competencyAssessmentService.UpdateWorkingGroupTaskStatus(model.CompetencyAssessmentID, model.CompetencyAssessmentTaskStatus ?? false, null);
@@ -935,7 +962,7 @@
             }
         }
 
-        [Route("/CompetencyAssessments/{competencyAssessmentId}/ConfigureOptions")]
+        [Route("/Self-Assessment/{competencyAssessmentId}/ConfigureOptions")]
         public IActionResult ConfigureOptions(int competencyAssessmentId)
         {
             var data = new OptionsLabelsViewModel();
@@ -972,7 +999,7 @@
             return RedirectToAction("OptionsLabels", "CompetencyAssessments", new { competencyAssessmentId, step });
         }
 
-        [Route("/CompetencyAssessments/{competencyAssessmentId}/OptionsLabels/{step}")]
+        [Route("/Self-Assessment/{competencyAssessmentId}/OptionsLabels/{step}")]
         public IActionResult OptionsLabels(int competencyAssessmentId, int step)
         {
             if (step < (int)OptionLabel.Declaration || step > (int)OptionLabel.Summary)
@@ -996,12 +1023,13 @@
 
             data.CurrentStep = step;
             var model = new OptionsLabelsViewModel(data);
+            model.CompetencyAssessmentName = competencyAssessmentBase.CompetencyAssessmentName;
 
             return View("CompetencyAssessmentOptions", model);
         }
 
         [HttpPost]
-        [Route("/CompetencyAssessments/{competencyAssessmentId}/OptionsLabels/{step}")]
+        [Route("/Self-Assessment/{competencyAssessmentId}/OptionsLabels/{step}")]
         public IActionResult OptionsLabels(OptionsLabelsViewModel model)
         {
             var adminId = GetAdminID();
@@ -1041,6 +1069,7 @@
                         var errModel = new OptionsLabelsViewModel(data);
                         errModel.QuestionLabel = model.QuestionLabel;
                         errModel.QuestionLabelText = model.QuestionLabelText;
+                        errModel.CompetencyAssessmentName = model.CompetencyAssessmentName;
                         errModel.Error = true;
                         return View("CompetencyAssessmentOptions", errModel);
                     }
@@ -1063,6 +1092,7 @@
                         var errModel = new OptionsLabelsViewModel(data);
                         errModel.ReviewerCommentsLabel = model.ReviewerCommentsLabel;
                         errModel.ReviewerCommentsLabelText = model.ReviewerCommentsLabelText;
+                        errModel.CompetencyAssessmentName = model.CompetencyAssessmentName;
                         errModel.Error = true;
                         return View("CompetencyAssessmentOptions", errModel);
                     }
@@ -1108,7 +1138,7 @@
         }
 
         [HttpGet]
-        [Route("/CompetencyAssessments/{competencyAssessmentId}/RoleRequirements/")]
+        [Route("/Self-Assessment/{competencyAssessmentId}/RoleRequirements/")]
         public IActionResult ManageCompetencyRoleRequirements(int competencyAssessmentId)
         {
             var adminId = GetAdminID();
@@ -1122,7 +1152,7 @@
             return View("ManageCompetencyRoleRequirements", model);
         }
         [HttpPost]
-        [Route("/CompetencyAssessments/{competencyAssessmentId}/RoleRequirements/")]
+        [Route("/Self-Assessment/{competencyAssessmentId}/RoleRequirements/")]
         public IActionResult ManageCompetencyRoleRequirements(ManageCompetencyRoleRequirementsFormData model)
         {
             var adminId = GetAdminID();
@@ -1134,7 +1164,7 @@
             return RedirectToAction("ManageCompetencyAssessment", new { competencyAssessmentId = model.Id });
         }
         [HttpGet]
-        [Route("/CompetencyAssessments/{competencyAssessmentId}/RoleRequirements/Enforce")]
+        [Route("/Self-Assessment/{competencyAssessmentId}/RoleRequirements/Enforce")]
         public IActionResult EditEnforceRoleRequirementsForSignOff(int competencyAssessmentId)
         {
             var adminId = GetAdminID();
@@ -1146,7 +1176,7 @@
             return View("EnforceRoleRequirementsForSignOff", model);
         }
         [HttpGet]
-        [Route("/CompetencyAssessments/{competencyAssessmentId}/RoleRequirements/IncludeFilters")]
+        [Route("/Self-Assessment/{competencyAssessmentId}/RoleRequirements/IncludeFilters")]
         public IActionResult EditIncludeRequirementsFilters(int competencyAssessmentId)
         {
             var adminId = GetAdminID();
@@ -1169,7 +1199,7 @@
             return RedirectToAction("ManageCompetencyRoleRequirements", new { competencyAssessmentId = model.Id });
         }
         [HttpGet]
-        [Route("/CompetencyAssessments/{competencyAssessmentId}/RoleRequirements/Edit")]
+        [Route("/Self-Assessment/{competencyAssessmentId}/RoleRequirements/Edit")]
         public IActionResult EditCompetencyRoleRequirements(int competencyAssessmentId)
         {
             var adminId = GetAdminID();
@@ -1182,7 +1212,7 @@
             return View("EditCompetencyRoleRequirements", model);
         }
         [HttpGet]
-        [Route("/CompetencyAssessments/{competencyAssessmentId}/RoleRequirements/Edit/Competency/{competencyId}/Question/{assessmentQuestionId}")]
+        [Route("/Self-Assessment/{competencyAssessmentId}/RoleRequirements/Edit/Competency/{competencyId}/Question/{assessmentQuestionId}")]
         public IActionResult EditQuestionResponseRoleRequirements(int competencyAssessmentId, int competencyId, int assessmentQuestionId)
         {
             var adminId = GetAdminID();
@@ -1196,7 +1226,7 @@
             return View("EditQuestionResponseRoleRequirements", model);
         }
         [HttpPost]
-        [Route("/CompetencyAssessments/{competencyAssessmentId}/RoleRequirements/Edit/Competency/{competencyId}/Question/{assessmentQuestionId}")]
+        [Route("/Self-Assessment/{competencyAssessmentId}/RoleRequirements/Edit/Competency/{competencyId}/Question/{assessmentQuestionId}")]
         public IActionResult EditQuestionResponseRoleRequirements(EditQuestionResponseRoleRequirementsFormData model)
         {
             var adminId = GetAdminID();
@@ -1215,7 +1245,7 @@
 
             return RedirectToAction("EditCompetencyRoleRequirements", new { competencyAssessmentId = model.Id });
         }
-        [Route("/CompetencyAssessments/{competencyAssessmentId}/SupervisorRoles")]
+        [Route("/Self-Assessment/{competencyAssessmentId}/SupervisorRoles")]
         public IActionResult SupervisorRoles(int competencyAssessmentId)
         {
             var adminId = GetAdminID();
@@ -1246,14 +1276,15 @@
             return RedirectToAction("SupervisedSelfAssessmentSignoff", "CompetencyAssessments", new { competencyAssessmentId });
         }
 
-        [Route("/CompetencyAssessments/{competencyAssessmentId}/Supervised")]
-        [Route("/CompetencyAssessments/{competencyAssessmentId}/{actionName}/Supervised")]
+        [Route("/Self-Assessment/{competencyAssessmentId}/Supervised")]
+        [Route("/Self-Assessment/{competencyAssessmentId}/{actionName}/Supervised")]
         public IActionResult SupervisedSelfAssessmentSignoff(int competencyAssessmentId, string? actionName)
         {
             if (actionName == "Signoff")
             {
                 var data = GetManagesupervisionData();
                 data.Signoff.ActionName = actionName;
+                data.Signoff.CompetencyAssessmentName = data.CompetencyAssessmentName;
                 var models = new SupervisedSelfAssessmentSignoffViewModel(data.Signoff);
                 return View(models);
             }
@@ -1267,20 +1298,10 @@
         }
 
         [HttpPost]
-        [Route("/CompetencyAssessments/{competencyAssessmentId}/Supervised")]
+        [Route("/Self-Assessment/{competencyAssessmentId}/Supervised")]
         public IActionResult SupervisedSelfAssessmentSignoff(SupervisedSelfAssessmentSignoffViewModel supervisedSelf)
         {
             if (supervisedSelf == null) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
-            if (supervisedSelf.Signoff == null)
-            {
-                ModelState.AddModelError(nameof(supervisedSelf.Signoff), "Please select a Supervisor signs off self assessment option");
-                return View(supervisedSelf);
-            }
-            if (supervisedSelf.Confirm == null && supervisedSelf.SignoffText == "Yes")
-            {
-                ModelState.AddModelError(nameof(supervisedSelf.Confirm), "Please select a Supervisor or nominated supervisor confirm individual assessment option");
-                return View(supervisedSelf);
-            }
             if (supervisedSelf.SignoffText == "No")
             {
                 var model = new ManagesupervisionViewModel(supervisedSelf);
@@ -1310,8 +1331,8 @@
             }
         }
 
-        [Route("/CompetencyAssessments/{competencyAssessmentId}/SupervisorDeclaration")]
-        [Route("/CompetencyAssessments/{competencyAssessmentId}/{actionName}/SupervisorDeclaration")]
+        [Route("/Self-Assessment/{competencyAssessmentId}/SupervisorDeclaration")]
+        [Route("/Self-Assessment/{competencyAssessmentId}/{actionName}/SupervisorDeclaration")]
         public IActionResult SupervisorSignoffDeclaration(int competencyAssessmentId, string? actionName)
         {
             var adminId = GetAdminID();
@@ -1325,6 +1346,7 @@
                 data.CompetencyAssessmentId = competencyAssessmentId;
                 data.SupervisorDeclaration.DefaultText = this.config.GetSupervisorDefaultText();
                 data.SupervisorDeclaration.ActionName = actionName;
+                data.SupervisorDeclaration.CompetencyAssessmentName = baseData.CompetencyAssessmentName;
                 var models = new SupervisorSignoffDeclarationViewModel(data.SupervisorDeclaration);
                 return View(models);
             }
@@ -1336,16 +1358,11 @@
         }
 
         [HttpPost]
-        [Route("/CompetencyAssessments/{competencyAssessmentId}/SupervisorDeclaration")]
+        [Route("/Self-Assessment/{competencyAssessmentId}/SupervisorDeclaration")]
         public IActionResult SupervisorSignoffDeclaration(SupervisorSignoffDeclarationViewModel viewModel)
         {
             if (viewModel == null) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
-            if (viewModel.DeclarationValue == null)
-            {
-                ModelState.AddModelError(nameof(viewModel.DeclarationValue), "Please select a declaration option");
-                return View(viewModel);
-            }
-            else if (viewModel.DeclarationValue == 1 && string.IsNullOrWhiteSpace(viewModel.CustomText))
+            if (viewModel.DeclarationValue == 1 && string.IsNullOrWhiteSpace(viewModel.CustomText))
             {
                 ModelState.AddModelError(nameof(viewModel.CustomText), "Please enter the custom declaration text");
                 return View(viewModel);
@@ -1369,8 +1386,8 @@
             return RedirectToAction("LearnerSignoffDeclaration", "CompetencyAssessments", new { viewModel.CompetencyAssessmentId });
         }
 
-        [Route("/CompetencyAssessments/{competencyAssessmentId}/LearnerDeclaration")]
-        [Route("/CompetencyAssessments/{competencyAssessmentId}/{actionName}/LearnerDeclaration")]
+        [Route("/Self-Assessment/{competencyAssessmentId}/LearnerDeclaration")]
+        [Route("/Self-Assessment/{competencyAssessmentId}/{actionName}/LearnerDeclaration")]
         public IActionResult LearnerSignoffDeclaration(int competencyAssessmentId, string? actionName)
         {
             var adminId = GetAdminID();
@@ -1384,6 +1401,7 @@
                 data.CompetencyAssessmentId = competencyAssessmentId;
                 data.LearnerDeclaration.DefaultText = this.config.GetLearnerDefaultText();
                 data.LearnerDeclaration.ActionName = actionName;
+                data.LearnerDeclaration.CompetencyAssessmentName = baseData.CompetencyAssessmentName;
                 var models = new LearnerSignoffDeclarationViewModel(data.LearnerDeclaration);
                 models.CompetencyAssessmentId = competencyAssessmentId;
                 return View(models);
@@ -1396,16 +1414,11 @@
         }
 
         [HttpPost]
-        [Route("/CompetencyAssessments/{competencyAssessmentId}/LearnerDeclaration")]
+        [Route("/Self-Assessment/{competencyAssessmentId}/LearnerDeclaration")]
         public IActionResult LearnerSignoffDeclaration(LearnerSignoffDeclarationViewModel viewModel)
         {
             if (viewModel == null) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
-            if (viewModel.DeclarationValue == null)
-            {
-                ModelState.AddModelError(nameof(viewModel.DeclarationValue), "Please select a declaration option");
-                return View(viewModel);
-            }
-            else if (viewModel.DeclarationValue == 1 && string.IsNullOrWhiteSpace(viewModel.CustomText))
+            if (viewModel.DeclarationValue == 1 && string.IsNullOrWhiteSpace(viewModel.CustomText))
             {
                 ModelState.AddModelError(nameof(viewModel.CustomText), "Please enter the custom declaration text");
                 return View(viewModel);
@@ -1423,8 +1436,8 @@
             return RedirectToAction("ManageSupervisionSettings", "CompetencyAssessments", new { viewModel.CompetencyAssessmentId });
         }
 
-        [Route("/CompetencyAssessments/{competencyAssessmentId}/SupervisionSettings")]
-        [Route("/CompetencyAssessments/{competencyAssessmentId}/{actionName}/SupervisionSettings")]
+        [Route("/Self-Assessment/{competencyAssessmentId}/SupervisionSettings")]
+        [Route("/Self-Assessment/{competencyAssessmentId}/{actionName}/SupervisionSettings")]
         public IActionResult ManageSupervisionSettings(int competencyAssessmentId, string? actionName)
         {
             var adminId = GetAdminID();
@@ -1457,8 +1470,8 @@
         }
 
         [HttpPost]
-        [Route("/CompetencyAssessments/{competencyAssessmentId}/SupervisionSettings")]
-        [Route("/CompetencyAssessments/{competencyAssessmentId}/{actionName}/SupervisionSettings")]
+        [Route("/Self-Assessment/{competencyAssessmentId}/SupervisionSettings")]
+        [Route("/Self-Assessment/{competencyAssessmentId}/{actionName}/SupervisionSettings")]
         public IActionResult ManageSupervisionSettings(ManagesupervisionViewModel viewModel)
         {
             if (viewModel == null) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
@@ -1483,7 +1496,7 @@
             return RedirectToAction("ManageCompetencyAssessment", new { competencyAssessmentId = viewModel.CompetencyAssessmentId });
         }
         [HttpGet]
-        [Route("/CompetencyAssessments/{competencyAssessmentId}/SendForReview")]
+        [Route("/Self-Assessment/{competencyAssessmentId}/SendForReview")]
         public IActionResult SendForReview(int competencyAssessmentId)
         {
             var adminId = GetAdminID();
@@ -1496,7 +1509,7 @@
             return View(model);
         }
         [HttpPost]
-        [Route("/CompetencyAssessments/{competencyAssessmentId}/SendForReview")]
+        [Route("/Self-Assessment/{competencyAssessmentId}/SendForReview")]
         public IActionResult SendForReview(SendForReviewViewModel send)
         {
             var adminId = GetAdminID();
@@ -1514,7 +1527,7 @@
             {
                 var required = send.SignOffRequiredChecked.IndexOf(collaborator) != -1;
                 competencyAssessmentService.InsertSelfAssessmentReview(send.CompetencyAssessmentID, collaborator, required);
-                frameworkNotificationService.SendReviewRequestForCompetencyAssessment(collaborator, adminId, required, false, User.GetCentreIdKnownNotNull());
+                selfAssessmentNotificationService.SendReviewRequestForSelfAssessment(collaborator, adminId, required, false, User.GetCentreIdKnownNotNull());
             }
             competencyAssessmentService.UpdateCompetencyAssessmentPublishStatus(send.CompetencyAssessmentID, 2, adminId);
             var taskStatus = competencyAssessmentService.GetCompetencyAssessmentTaskStatus(send.CompetencyAssessmentID, null);
@@ -1526,7 +1539,7 @@
 
         }
         [HttpGet]
-        [Route("/CompetencyAssessments/{competencyAssessmentId}/PublishWithoutReview")]
+        [Route("/Self-Assessment/{competencyAssessmentId}/PublishWithoutReview")]
         public IActionResult PublishWithoutReview(int competencyAssessmentId)
         {
             var adminId = GetAdminID();
@@ -1538,7 +1551,7 @@
             return View(model);
         }
         [HttpPost]
-        [Route("/CompetencyAssessments/{competencyAssessmentId}/PublishWithoutReview")]
+        [Route("/Self-Assessment/{competencyAssessmentId}/PublishWithoutReview")]
         public IActionResult PublishWithoutReview(PublishWithoutReviewViewModel publish)
         {
             if (!ModelState.IsValid)
@@ -1557,7 +1570,7 @@
             return RedirectToAction("ManageCompetencyAssessment", new { competencyAssessmentId = publish.CompetencyAssessmentID });
         }
         [HttpGet]
-        [Route("/CompetencyAssessments/{competencyAssessmentId}/{selfAssessmentReviewId}/Review")]
+        [Route("/Self-Assessment/{competencyAssessmentId}/{selfAssessmentReviewId}/Review")]
         public IActionResult SubmitReview(int competencyAssessmentId, int selfAssessmentReviewId)
         {
             var adminId = GetAdminID();
@@ -1570,7 +1583,7 @@
             return View(model);
         }
         [HttpPost]
-        [Route("/CompetencyAssessments/{competencyAssessmentId}/{selfAssessmentReviewId}/Review")]
+        [Route("/Self-Assessment/{competencyAssessmentId}/{selfAssessmentReviewId}/Review")]
         public IActionResult SubmitReview(SubmitReviewViewModel submit)
         {
             var adminId = GetAdminID();
@@ -1601,11 +1614,11 @@
             }
             commentId = competencyAssessmentService.InsertComment(submit.CompetencyAssessmentID, adminId, submit.SelfAssessmentReview.Comment, null);
             competencyAssessmentService.UpdateSelfAssessmentReview(submit.CompetencyAssessmentID, submit.SelfAssessmentReview.ID, submit.SelfAssessmentReview.SignedOff, commentId);
-            frameworkNotificationService.SendCompetencyAssessmentsReviewOutcomeNotification(submit.SelfAssessmentReview.ID, centreId);
+            selfAssessmentNotificationService.SendSelfAssessmentsReviewOutcomeNotification(submit.SelfAssessmentReview.ID, centreId);
             return RedirectToAction("ManageCompetencyAssessment", new { competencyAssessmentId = submit.CompetencyAssessmentID });
         }
         [HttpGet]
-        [Route("/CompetencyAssessments/{competencyAssessmentId}/PublishReview")]
+        [Route("/Self-Assessment/{competencyAssessmentId}/PublishReview")]
         public IActionResult PublishReview(int competencyAssessmentId)
         {
             var adminId = GetAdminID();
@@ -1633,7 +1646,7 @@
         public IActionResult ResendRequest(int reviewId, int competencyAssessmentId, int competencyAssessmentCollaboratorId, bool required)
         {
             var adminId = GetAdminID();
-            frameworkNotificationService.SendReviewRequestForCompetencyAssessment(competencyAssessmentCollaboratorId, adminId, required, true, User.GetCentreIdKnownNotNull());
+            selfAssessmentNotificationService.SendReviewRequestForSelfAssessment(competencyAssessmentCollaboratorId, adminId, required, true, User.GetCentreIdKnownNotNull());
             competencyAssessmentService.UpdateReviewRequestedDate(reviewId);
             return RedirectToAction("PublishReview", new { competencyAssessmentId });
         }
@@ -1643,7 +1656,7 @@
             competencyAssessmentService.InsertCompetencySelfAssessmentReview(reviewId);
             var review = competencyAssessmentService.GetSelfAssessmentReviewNotification(reviewId);
             if (review == null) return StatusCode(404);
-            frameworkNotificationService.SendReviewRequestForCompetencyAssessment(review.SelfAssessmentCollaboratorID, adminId, review.SignOffRequired, false, User.GetCentreIdKnownNotNull());
+            selfAssessmentNotificationService.SendReviewRequestForSelfAssessment(review.SelfAssessmentCollaboratorID, adminId, review.SignOffRequired, false, User.GetCentreIdKnownNotNull());
             return RedirectToAction("PublishReview", new { competencyAssessmentId });
         }
         public IActionResult RemoveRequest(int competencyAssessmentId, int reviewId)
@@ -1652,7 +1665,7 @@
             return RedirectToAction("PublishReview", new { competencyAssessmentId });
         }
 
-        [Route("/CompetencyAssessments/{competencyAssessmentId}/Preview")]
+        [Route("/Self-Assessment/{competencyAssessmentId}/Preview")]
         public IActionResult CompetencyAssessmentPreview(int competencyAssessmentId = 0)
         {
             var adminId = GetAdminID();
@@ -1680,7 +1693,7 @@
             }
         }
 
-        [Route("/CompetencyAssessments/{competencyAssessmentId}/Preview/Confirm")]
+        [Route("/Self-Assessment/{competencyAssessmentId}/Preview/Confirm")]
         public IActionResult PreviewConfirm(int competencyAssessmentId)
         {
             if (competencyAssessmentId <= 0)
@@ -1704,13 +1717,13 @@
                 return StatusCode(500);
             }
 
-            var model = new CompetencyAssessmentPreviewViewModel(competencyAssessmentId, centreId, centreName);
+            var model = new CompetencyAssessmentPreviewViewModel(competencyAssessmentId, competencyAssessmentBase.CompetencyAssessmentName, centreId, centreName);
 
             return View("CompetencyAssessmentPreviewConfirm", model);
         }
 
         [HttpPost]
-        [Route("/CompetencyAssessments/{competencyAssessmentId}/Preview/Confirm")]
+        [Route("/Self-Assessment/{competencyAssessmentId}/Preview/Confirm")]
         public IActionResult PreviewConfirm(CompetencyAssessmentPreviewViewModel model)
         {
             var adminId = GetAdminID();
@@ -1724,6 +1737,95 @@
             enrolService.EnrolOnActivitySelfAssessment(model.CompetencyAssessmentId, candidateId, 0, userEmail, 0, null, userId, centreId, adminId, true);
 
             return RedirectToAction("SelfAssessment", "LearningPortal", new { selfAssessmentId = model.CompetencyAssessmentId });
+        }
+
+        [HttpGet]
+        [Route("/Self-Assessment/{competencyAssessmentId}/Retire")]
+        public IActionResult RetireCompetencyAssessment(int competencyAssessmentId)
+        {
+            var adminId = GetAdminID();
+            var assessment = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
+            if (assessment == null) return StatusCode(404);
+
+            var model = new RetireCompetencyAssessmentViewModel(competencyAssessmentId, assessment);
+            return View("RetireCompetencyAssessment", model);
+        }
+
+        [HttpPost]
+        [Route("/Self-Assessment/{competencyAssessmentId}/Retire")]
+        public IActionResult RetireCompetencyAssessment(RetireCompetencyAssessmentViewModel model, int competencyAssessmentId)
+        {
+            DateTime retirementDate;
+
+            if (model.Day is null || model.Month is null || model.Year is null ||
+                !DateTime.TryParse(
+                    $"{model.Year:D4}-{model.Month:D2}-{model.Day:D2}",
+                    out retirementDate))
+            {
+                ModelState.AddModelError(
+                    nameof(RetireCompetencyAssessmentViewModel.RetirementDate),
+                    "Please enter a valid retirement date.");
+            }
+            if (!ModelState.IsValid)
+            {
+                ModelState.Remove(nameof(model.Year));
+                ModelState.Remove(nameof(model.Month));
+                ModelState.Remove(nameof(model.Day));
+                if (!ModelState.IsValid)
+                    return View("RetireCompetencyAssessment", model);
+            }
+
+            model.RetirementDate = new DateTime(model.Year!.Value, model.Month!.Value, model.Day!.Value);
+
+
+            var adminId = GetAdminID();
+            competencyAssessmentService.RetireCompetencyAssessment(
+                model.CompetencyAssessmentId,
+                model.RetirementDate,
+                model.RetirementReason!,
+                adminId
+            );
+
+            return RedirectToAction("ManageCompetencyAssessment", new { competencyAssessmentId = model.CompetencyAssessmentId });
+        }
+        [Route("/Self-Assessment/{competencyAssessmentId}/RetirementDate/Confirm")]
+        public IActionResult ConfirmClearRetirementDate(int competencyAssessmentId)
+        {
+            if (competencyAssessmentId <= 0)
+            {
+                return StatusCode(500);
+            }
+
+            var adminId = GetAdminID();
+            var competencyAssessmentBase = new CompetencyAssessmentBase();
+
+            competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
+            var result = ValidateCompetencyAssessmentAndRole(competencyAssessmentId, adminId, "Self-assessment remove retirement date confirm", competencyAssessmentBase);
+            if (result.StatusCode != 200)
+                return result;
+
+            if (competencyAssessmentBase.RetirementDate == null)
+            {
+                return StatusCode(500);
+            }
+
+            var model = new ConfirmClearRetirementDateViewModel(competencyAssessmentBase);
+
+            return View("ConfirmClearRetirementDate", model);
+        }
+
+        [HttpPost]
+        [Route("/Self-Assessment/{competencyAssessmentId}/RetirementDate/Confirm")]
+        public IActionResult ConfirmClearRetirementDate(ConfirmClearRetirementDateViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View("ConfirmClearRetirementDate", model);
+            }
+            var adminId = GetAdminID();
+            competencyAssessmentService.RemoveRetirementDate(model.CompetencyAssessmentId, adminId);
+
+            return RedirectToAction("ManageCompetencyAssessment", new { competencyAssessmentId = model.CompetencyAssessmentId });
         }
 
         private void SetManagesupervisionData(ManagesupervisionViewModel data)

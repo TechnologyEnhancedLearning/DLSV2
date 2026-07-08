@@ -2,35 +2,36 @@
 @model CompetencyAssessmentsViewModel
 
 @{
-  ViewData["Title"] = (string)ViewContext.RouteData.Values["tabname"] == "Mine" ? "My Competency Assessments" : "All Competency Assessments";
-  ViewData["Application"] = "Framework Service";
+    ViewData["Title"] = (string)ViewContext.RouteData.Values["tabname"] == "Mine" ? "My self-assessments" : "All self-assessments";
+    ViewData["Application"] = "Framework service";
 }
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
 @section NavMenuItems {
-  <partial name="~/Views/Frameworks/Shared/_NavMenuItems.cshtml" />
+    <partial name="~/Views/Frameworks/Shared/_NavMenuItems.cshtml" />
 }
-  @section NavBreadcrumbs {
-  <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
-    <div class="nhsuk-width-container">
-      <ol class="nhsuk-breadcrumb__list">
-        <li class="nhsuk-breadcrumb__item">Competency Assessments</li>
-      </ol>
-    </div>
-  </nav>
+@section NavBreadcrumbs {
+    <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+        <div class="nhsuk-width-container">
+            <ol class="nhsuk-breadcrumb__list">
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Frameworks" asp-action="Index">Home</a></li>
+                <li class="nhsuk-breadcrumb__item">Self-assessments</li>
+            </ol>
+        </div>
+    </nav>
 }
-  @if (Model.IsWorkforceContributor | Model.IsWorkforceManager)
+@if (Model.IsWorkforceContributor | Model.IsWorkforceManager)
 {
-  <partial name="_SecondaryTabsNavMenu" model="Model.TabNavLinks" />
+    <partial name="_SecondaryTabsNavMenu" model="Model.TabNavLinks" />
 }
 <div class="nhsuk-grid-row">
-  <div class="nhsuk-grid-column-full">
-    @if ((string)ViewContext.RouteData.Values["tabname"] == "Mine")
-    {
+    <div class="nhsuk-grid-column-full">
+        @if ((string)ViewContext.RouteData.Values["tabname"] == "Mine")
+        {
             <partial name="_MyCompetencyAssessments.cshtml" model="Model.MyCompetencyAssessmentsViewModel" />
-    }
-    else if ((string)ViewContext.RouteData.Values["tabname"] == "All")
-    {
+        }
+        else if ((string)ViewContext.RouteData.Values["tabname"] == "All")
+        {
             <partial name="_AllCompetencyAssessments.cshtml" model="Model.AllCompetencyAssessmentsViewModel" />
-    }
-  </div>
+        }
+    </div>
 </div>

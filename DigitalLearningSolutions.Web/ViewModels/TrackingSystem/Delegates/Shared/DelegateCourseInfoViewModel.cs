@@ -94,6 +94,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Share
             CourseName = info.CourseName;
             IsCourseActive = info.IsCourseActive;
             CourseArchivedDate = info.CourseArchivedDate;
+            DiagAssess = info.DiagAssess;
         }
 
         public DelegateAccessRoute AccessedVia { get; set; }
@@ -127,7 +128,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Share
         public string CourseDelegatesDisplayName { get; set; }
         public DateTime? CourseArchivedDate { get; set; }
         public bool IsCourseActive { get; set; }
-
+        public bool DiagAssess { get; set; }
         public string? PassRateDisplayString =>
             TotalAttempts != 0 ? PassRate + "%" : null;
 

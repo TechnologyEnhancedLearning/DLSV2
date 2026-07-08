@@ -3,7 +3,7 @@
 @model ConfirmChangePrimaryFrameworkViewModel;
 @{
     var errorHasOccurred = !ViewData.ModelState.IsValid;
-    ViewData["Title"] = "Competency Assessments - Change primary framework";
+    ViewData["Title"] = "Self-assessments - change primary framework";
 }
 <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-full">
@@ -24,7 +24,7 @@
             <input type="hidden" asp-for="AssessmentName" />
             <input type="hidden" asp-for="UserRole" />
             <input type="hidden" asp-for="Vocabulary" />
-      
+
             <vc:single-checkbox asp-for="@nameof(Model.Confirm)"
                                 label="I am sure that I wish to change the primary framework to @Model.FrameworkName "
                                 hint-text="" />

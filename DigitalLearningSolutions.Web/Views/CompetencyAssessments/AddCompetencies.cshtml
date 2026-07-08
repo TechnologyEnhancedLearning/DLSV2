@@ -1,8 +1,11 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
 @model AddCompetenciesViewModel;
 @{
-    ViewData["Title"] = "Add Competencies to Self Assessment";
-    ViewData["Application"] = "Framework Service";
+    ViewData["Title"] = $"Add {@Model.VocabularyPlural.ToLower()} to self-assessment";
+    ViewData["Application"] = "Framework service";
+    var errorHasOccurred = !ViewData.ModelState.IsValid;
+    var noSelection = Model.SelectedCompetencyIds == null || !Model.SelectedCompetencyIds.Any();
+    var isFirst = true;
 }
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
 @section NavMenuItems {
@@ -13,24 +16,37 @@
     <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
         <div class="nhsuk-width-container">
             <ol class="nhsuk-breadcrumb__list">
-                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewCompetencyAssessments" asp-route-tabname="Mine">Competency Assessments</a></li>
-                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.ID">Manage Competency Assessment</a></li>
-                <li class="nhsuk-breadcrumb__item">Select Framework Sources</li>
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Frameworks" asp-action="Index">Home</a></li>
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewCompetencyAssessments" asp-route-tabname="Mine">Self-assessments</a></li>
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.ID">Manage self-assessment</a></li>
+                <li class="nhsuk-breadcrumb__item">Select framework sources</li>
             </ol>
-            <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.ID">Back to manage competency assessment</a></p>
+            <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.ID">Back to manage self-assessment</a></p>
         </div>
     </nav>
 }
 
 <form method="post">
+    @if (errorHasOccurred)
+    {
+        <vc:error-summary order-of-property-names="@(new[] { nameof(Model.SelectedCompetencyIds)})" />
+    }
     <nhs-form-group nhs-validation-for="SelectedCompetencyIds">
         <fieldset class="nhsuk-fieldset">
             <legend class="nhsuk-fieldset__legend">
-                <h1>
-                    Add @Model.VocabularyPlural.ToLower() to assessment from @Model.FrameworkName
+                <h1 class="app-page-heading">
+                <span class="nhsuk-caption-xl">
+                    @Model.CompetencyAssessmentName
+                    <span class="nhsuk-u-visually-hidden"> – </span>
+                </span>
+                    Add @Model.VocabularyPlural.ToLower() to assessment
                 </h1>
             </legend>
-
+            <div class="nhsuk-u-padding-top-1 nhsuk-u-padding-bottom-3">
+                <span class="error-message--margin-bottom-1 nhsuk-error-message">
+                    <span>@ViewBag.RequiredCheckboxMessage</span>
+                </span>
+            </div>
             @if (Model.GroupedCompetencies.Count() > 0)
             {
                 @foreach (var competencyGroup in Model.GroupedCompetencies)
@@ -38,9 +54,9 @@
                     @if (competencyGroup.FrameworkCompetencies.Count() > 0)
                     {
                         <div class="nhsuk-u-margin-bottom-6">
-                            <h3>
+                            <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--m">
                                 @competencyGroup.Name
-                            </h3>
+                            </legend>
                             @if (competencyGroup.FrameworkCompetencies.Count() > 1)
                             {
                                 <div class="nhsuk-grid-row nhsuk-u-margin-top-3 nhsuk-u-margin-bottom-1 js-only-block">
@@ -53,8 +69,18 @@
                             <div class="nhsuk-checkboxes">
                                 @foreach (var competency in competencyGroup.FrameworkCompetencies)
                                 {
+                                    var shouldAutofocus = noSelection && isFirst;
+                                    isFirst = false;
                                     <div class="nhsuk-checkboxes__item">
-                                        <input class="nhsuk-checkboxes__input select-all-checkbox" data-group="@competencyGroup.CompetencyGroupID" id="competency-check-@competencyGroup.CompetencyGroupID-@competency.CompetencyID" name="SelectedCompetencyIds" checked="@(Model.SelectedCompetencyIds != null ? Model.SelectedCompetencyIds.Contains((int)competency.CompetencyID) : false)" type="checkbox" value="@competency.CompetencyID">
+                                        <input class="nhsuk-checkboxes__input select-all-checkbox"
+                                        data-group="@competencyGroup.CompetencyGroupID"
+                                        id="competency-check-@competencyGroup.CompetencyGroupID-@competency.CompetencyID"
+                                        name="SelectedCompetencyIds"
+                                        checked="@(Model.SelectedCompetencyIds != null ?
+                                        Model.SelectedCompetencyIds.Contains((int)competency.CompetencyID) : false)"
+                                        type="checkbox"
+                                         @(shouldAutofocus ? "autofocus" : "")
+                                        value="@competency.CompetencyID">
                                         <label class="nhsuk-label nhsuk-checkboxes__label" for="competency-check-@competencyGroup.CompetencyGroupID-@competency.CompetencyID">
                                             @foreach (var flag in competency.CompetencyFlags)
                                             {

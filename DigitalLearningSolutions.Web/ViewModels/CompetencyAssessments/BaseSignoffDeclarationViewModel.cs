@@ -10,7 +10,7 @@
 
         public int CompetencyAssessmentId { get; set; }
         public string? CompetencyAssessmentName { get; set; }
-        public int? DeclarationValue { get; set; }
+        public int DeclarationValue { get; set; } = 0;
         public string? ActionName { get; set; }
         public string? CustomText { get; set; }
         public string? DefaultText { get; set; }

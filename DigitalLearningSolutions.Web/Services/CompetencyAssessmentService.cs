@@ -5,6 +5,7 @@ using DigitalLearningSolutions.Web.Models;
 using DigitalLearningSolutions.Web.ViewModels.Frameworks;
 using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Reports;
 using DocumentFormat.OpenXml.Drawing.Charts;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -122,6 +123,9 @@ namespace DigitalLearningSolutions.Web.Services
         void RemoveCollaboratorFromCompetencyAssessment(int competencyAssessmentId, int id);
         CompetencyAssessmentCollaboratorNotification? GetCollaboratorNotification(int id, int invitedByAdminId);
         bool HasCompetencyWithSignpostedLearning(int competencyAssessmentId);
+        void RetireCompetencyAssessment(int competencyAssessmentId, DateTime? RetirementDate, string retirementReason, int adminId);
+        void RemoveRetirementDate(int competencyAssessmentId, int adminId);
+
     }
     public class CompetencyAssessmentService : ICompetencyAssessmentService
     {
@@ -589,5 +593,27 @@ namespace DigitalLearningSolutions.Web.Services
         {
            return competencyAssessmentDataService.UpdateCompetencyAssessmentReviewTaskStatus(assessmentId, taskStatus);
         }
+        public void RetireCompetencyAssessment(int competencyAssessmentId, DateTime? RetirementDate, string retirementReason, int adminId)
+        {
+            // Persist retirement info
+            competencyAssessmentDataService.RetireCompetencyAssessment(competencyAssessmentId, RetirementDate, retirementReason);
+
+            // Update publish status
+            var today = DateTime.UtcNow.Date;
+            int status;
+            if (RetirementDate > today)
+                status = 4; // Scheduled for retirement (amber)
+            else
+                status = 5; // Retired (red)
+
+            competencyAssessmentDataService.UpdateCompetencyAssessmentPublishStatus(competencyAssessmentId, status, adminId);
+        }
+        public void RemoveRetirementDate(int competencyAssessmentId, int adminId)
+        {
+            competencyAssessmentDataService.RetireCompetencyAssessment(competencyAssessmentId, null, null);
+
+            competencyAssessmentDataService.UpdateCompetencyAssessmentPublishStatus(competencyAssessmentId, 3, adminId);
+        }       
+
     }
 }
