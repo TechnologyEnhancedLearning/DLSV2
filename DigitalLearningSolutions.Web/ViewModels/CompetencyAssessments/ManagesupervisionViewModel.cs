@@ -35,6 +35,7 @@
             LearnerDeclaration = model.LearnerDeclaration;
             LearnerDeclaration.DefaultText = learnerDefaultText.Replace("{{CompetencyAssessmentName}}", CompetencyAssessmentName);
             UserRole = model.UserRole;
+            PublishStatusID = model.PublishStatusID;
         }
         public ManagesupervisionViewModel(int competencyAssessmentId, string competencyAssessmentName,
                 bool supervisorResultsReview,
@@ -43,7 +44,8 @@
                 string? signOffRequestorStatement,
                 string learnerDefaultText,
                 string supervisorDefaultText,
-                int userRole)
+                int userRole,
+                int publishStatusID)
         {
             CompetencyAssessmentId = competencyAssessmentId;
             CompetencyAssessmentName = competencyAssessmentName;
@@ -61,6 +63,7 @@
             LearnerDeclaration.CompetencyAssessmentName = competencyAssessmentName;
             LearnerDeclaration.CompetencyAssessmentId = competencyAssessmentId;
             UserRole = userRole;
+            PublishStatusID = publishStatusID;
         }
         public SupervisedSelfAssessmentSignoffViewModel Signoff { get; set; } = new SupervisedSelfAssessmentSignoffViewModel();
         public SupervisorSignoffDeclarationViewModel SupervisorDeclaration { get; set; } = new SupervisorSignoffDeclarationViewModel();
@@ -69,6 +72,7 @@
         public int CompetencyAssessmentId { get; set; }
         public string CompetencyAssessmentName { get; set; } = string.Empty;
         public int UserRole { get; set; }
+        public int PublishStatusID { get; set; }
 
     }
 }

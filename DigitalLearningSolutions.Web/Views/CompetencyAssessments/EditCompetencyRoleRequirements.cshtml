@@ -32,68 +32,69 @@
         </span>
         @Model.VocabularySingular role requirements
     </h1>
+    <partial name="Shared/_PublishedSelfAssessmentWarning" model="new PublishedSelfAssessmentViewModel { UserRole = Model.UserRole, PublishStatusID = Model.PublishStatusID }" />
     <p>
         Manage role requirements self-assessment questions.
-</p>
+    </p>
 @foreach (var group in Model.GroupedCompetencyWithAssessmentRoleRequirements)
 {
-    <h2><span class="nhsuk-u-visually-hidden">@Model.VocabularySingular group: </span>@group.GroupName</h2>
-    <table class="nhsuk-table nhsuk-table--striped">
-        <thead class="nhsuk-table__head">
-            <tr class="nhsuk-table__row">
-                <th class="nhsuk-table__header" scope="col">@Model.VocabularySingular</th>
-                <th class="nhsuk-table__header" scope="col">Assessment question </th>
-                <th>Role requirements</th>
-                <th class="nhsuk-table__header" scope="col">Actions</th>
-            </tr>
-        </thead>
-        <tbody class="nhsuk-table__body">
-            @foreach (var competency in group.Competencies)
-            {
+        <h2><span class="nhsuk-u-visually-hidden">@Model.VocabularySingular group: </span>@group.GroupName</h2>
+        <table class="nhsuk-table nhsuk-table--striped">
+            <thead class="nhsuk-table__head">
                 <tr class="nhsuk-table__row">
-                    <td rowspan="@competency.Questions.Count()" class="nhsuk-table__cell">
-                        <p class="@(!string.IsNullOrWhiteSpace(competency.Description) ? "nhsuk-u-font-weight-bold" : "") nhsuk-u-margin-bottom-0">
-                            @competency.Name
-                        </p>
-                        @if (!string.IsNullOrWhiteSpace(competency.Description))
-                        {
-                            <p class="nhsuk-u-margin-top-2">
-                                @(Html.Raw(competency.Description))
-                            </p>
-                        }
-                    </td>
-                    @await Html.PartialAsync(
-                    "~/Views/CompetencyAssessments/Shared/_RoleRequirementQuestionCells.cshtml",
-                        new RoleRequirementQuestionCellsViewModel
-                        {
-                            AssessmentQuestion = competency.Questions.First(),
-                            AssessmentID = Model.Id,
-                            CompetencyID = competency.CompetencyID,
-                            AssessmentQuestionID = competency.Questions.First().AssessmentQuestionID,
-                            VocabularySingular = Model.VocabularySingular
-                        }
-                        )
-        </tr>
-        @foreach (var question in competency.Questions.Skip(1))
+                    <th class="nhsuk-table__header" scope="col">@Model.VocabularySingular</th>
+                    <th class="nhsuk-table__header" scope="col">Assessment question </th>
+                    <th>Role requirements</th>
+                    <th class="nhsuk-table__header" scope="col">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="nhsuk-table__body">
+                @foreach (var competency in group.Competencies)
                 {
                     <tr class="nhsuk-table__row">
+                        <td rowspan="@competency.Questions.Count()" class="nhsuk-table__cell">
+                            <p class="@(!string.IsNullOrWhiteSpace(competency.Description) ? "nhsuk-u-font-weight-bold" : "") nhsuk-u-margin-bottom-0">
+                                @competency.Name
+                            </p>
+                            @if (!string.IsNullOrWhiteSpace(competency.Description))
+                            {
+                                <p class="nhsuk-u-margin-top-2">
+                                    @(Html.Raw(competency.Description))
+                                </p>
+                            }
+                        </td>
                         @await Html.PartialAsync(
                         "~/Views/CompetencyAssessments/Shared/_RoleRequirementQuestionCells.cshtml",
-                        new RoleRequirementQuestionCellsViewModel
-                        {
-                            AssessmentQuestion = question,
-                            AssessmentID = Model.Id,
-                            CompetencyID = competency.CompetencyID,
-                            AssessmentQuestionID = question.AssessmentQuestionID,
-                            VocabularySingular = Model.VocabularySingular
+                                new RoleRequirementQuestionCellsViewModel
+                                {
+                                    AssessmentQuestion = competency.Questions.First(),
+                                    AssessmentID = Model.Id,
+                                    CompetencyID = competency.CompetencyID,
+                                    AssessmentQuestionID = competency.Questions.First().AssessmentQuestionID,
+                                    VocabularySingular = Model.VocabularySingular
+                                }
+                                )
+            </tr>
+            @foreach (var question in competency.Questions.Skip(1))
+                    {
+                        <tr class="nhsuk-table__row">
+                            @await Html.PartialAsync(
+                            "~/Views/CompetencyAssessments/Shared/_RoleRequirementQuestionCells.cshtml",
+                                new RoleRequirementQuestionCellsViewModel
+                                {
+                                    AssessmentQuestion = question,
+                                    AssessmentID = Model.Id,
+                                    CompetencyID = competency.CompetencyID,
+                                    AssessmentQuestionID = question.AssessmentQuestionID,
+                                    VocabularySingular = Model.VocabularySingular
 
+                                }
+                                )
+            </tr>
                         }
-                        )
-        </tr>
                 }
-            }
-        </tbody>
-    </table>
+            </tbody>
+        </table>
 }
     <div class="nhsuk-u-margin-top-4">
         <a class="nhsuk-button" asp-action="ManageCompetencyRoleRequirements" asp-route-competencyAssessmentId="@Model.Id">

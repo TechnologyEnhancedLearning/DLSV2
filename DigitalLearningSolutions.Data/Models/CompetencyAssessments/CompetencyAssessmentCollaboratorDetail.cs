@@ -1,4 +1,6 @@
-﻿namespace DigitalLearningSolutions.Data.Models.CompetencyAssessments
+﻿using System;
+
+namespace DigitalLearningSolutions.Data.Models.CompetencyAssessments
 {
     public class CompetencyAssessmentCollaboratorDetail : CompetencyAssessmentCollaborator
     {
@@ -7,5 +9,7 @@
         public string? CompetencyAssessmentRole { get; set; }
         public int? SelfAssessmentReviewID { get; set; }
         public bool SignOffRequired { get; set; }
+        public DateTime? ReviewRequested { get; set; }
+        public DateTime? ReviewComplete { get; set; }
     }
 }

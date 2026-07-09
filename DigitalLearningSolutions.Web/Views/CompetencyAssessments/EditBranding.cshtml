@@ -29,6 +29,7 @@
     </span>
     Provider and category
 </h1>
+<partial name="Shared/_PublishedSelfAssessmentWarning" model="new PublishedSelfAssessmentViewModel { UserRole = Model.UserRole, PublishStatusID = Model.PublishStatusID }" />
 <p>This will be visible to users when they browse the self-assessment. It will help them to identify where it is from and what it contains.</p>
 <form method="post">
     @if (!ViewData.ModelState.IsValid)
@@ -63,16 +64,17 @@
             <input type="text" id="category-field" name="Category" maxlength="100" class="nhsuk-input nhsuk-u-width-two-thirds" asp-for="Category" />
         </div>
     </nhs-form-group>
-    <nhs-form-group>
-        <vc:single-checkbox asp-for="@nameof(Model.TaskStatus)" label="Mark this task as complete" hint-text="You will still be able to make changes after marking this task as complete."></vc:single-checkbox>
-    </nhs-form-group>
     <input name="ID" type="hidden" asp-for="ID" />
     <input name="CompetencyAssessmentName" type="hidden" asp-for="CompetencyAssessmentName" />
     <input name="userRole" type="hidden" asp-for="UserRole" />
+    <input type="hidden" asp-for="PublishStatusID" />
     <input name="Category" type="hidden" asp-for="Category" />
     <input name="Brand" type="hidden" asp-for="Brand" />
     @if (Model.UserRole > 1)
     {
+        <nhs-form-group>
+            <vc:single-checkbox asp-for="@nameof(Model.TaskStatus)" label="Mark this task as complete." hint-text="You will still be able to make changes after marking this task as complete."></vc:single-checkbox>
+        </nhs-form-group>
         <button class="nhsuk-button" type="submit">
             Save
         </button>

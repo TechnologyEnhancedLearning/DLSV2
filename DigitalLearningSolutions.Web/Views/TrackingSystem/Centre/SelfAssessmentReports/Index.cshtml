@@ -3,7 +3,7 @@
 @using DigitalLearningSolutions.Web.Helpers
 @model SelfAssessmentReportsViewModel
 @{
-    ViewData["Title"] = "Self assessment reports";
+    ViewData["Title"] = "Self-Assessment Reports";
     var routeData = (new Dictionary<string, string>() { { "source", "TrackingSystem" } });
 
     if (string.Equals(Context.Request.Query["tableaulink"], "true", StringComparison.OrdinalIgnoreCase))
@@ -28,10 +28,10 @@
         @if (Model.ShowTableauLink && Model.SelfAssessmentSelects.Any())
         {
             <vc:action-link asp-controller="SelfAssessmentReports"
-                            asp-all-route-data="routeData" asp-action="TableauCompetencyDashboard" link-text="View Tableau supervised self assessments dashboard" />
+                            asp-all-route-data="routeData" asp-action="TableauCompetencyDashboard" link-text="View Tableau supervised self-assessments dashboard" />
         }
         <h2>Excel learner activity reports</h2>
-        <p class="nhsuk-lede-text">Download Excel competency self assessments activity reports for your centre.</p>
+        <p class="nhsuk-lede-text">Download Excel competency self-assessments activity reports for your centre.</p>
         <ul>
             @if ((Model.DSATreportIsPublish) && ((Model.AdminCategoryId == null) || (Model.AdminCategoryId == Model.CategoryId)))
             {

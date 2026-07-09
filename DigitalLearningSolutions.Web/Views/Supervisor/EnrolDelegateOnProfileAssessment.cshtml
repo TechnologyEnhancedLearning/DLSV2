@@ -52,16 +52,16 @@
     <partial name="Shared/_StaffDetails" model="Model.SupervisorDelegateDetail" />
   </div>
 </details>
-<h2>Enrol on Self Assessment</h2>
+<h2>Enrol on Self-Assessment</h2>
 @if (Model.CompetencyAssessments.Any())
 {
-  <h3>Choose a self assessment</h3>
+  <h3>Choose a self-assessment</h3>
   <form method="post">
     <table class="nhsuk-table-responsive">
       <thead role="rowgroup" class="nhsuk-table__head">
         <tr role="row">
           <th role="columnheader" class="" scope="col">
-            Self assessment
+            Self-assessment
           </th>
           <th role="columnheader" class="" scope="col">
             Brand
@@ -79,7 +79,7 @@
         {
           <tr role="row" class="nhsuk-table__row collaborator-row">
             <td role="cell" class="nhsuk-table__cell">
-              <span class="nhsuk-table-responsive__heading">Self assessment </span>
+              <span class="nhsuk-table-responsive__heading">Self-assessment </span>
               <div class="nhsuk-radios__item">
                 <input class="nhsuk-radios__input" id="role-profile-check-@competencyAssessment.ID" asp-for="SessionEnrolOnCompetencyAssessment.SelfAssessmentID" name="SelfAssessmentID" type="radio" value="@competencyAssessment.ID">
                 <label class="nhsuk-label nhsuk-radios__label" for="role-profile-check-@competencyAssessment.ID">
@@ -111,8 +111,8 @@
 }
 else
 {
-  <h3>No self assessments available</h3>
-  <p>No self assessments are available for enrolment for this member of staff.</p>
+  <h3>No self-assessments available</h3>
+  <p>No self-assessments are available for enrolment for this member of staff.</p>
 }
 
 <div class="nhsuk-back-link">

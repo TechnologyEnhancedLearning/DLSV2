@@ -1,7 +1,7 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
 @model ManageCompetencyAssessmentViewModel
 @{
-    ViewData["Title"] = Model.PublishStatusID == 3 ? "Manage" : "Create" + " self-assessment";
+    ViewData["Title"] = Model.PublishStatusID == 3 ? "Manage self-assessment" : "Create self-assessment";
     ViewData["Application"] = "Framework service";
     var hasRetirement = Model.RetirementDate != null;
 }
@@ -27,8 +27,12 @@
 }
 
 <h1>@ViewData["Title"]</h1>
-
+<partial name="Shared/_PublishedSelfAssessmentWarning" model="new PublishedSelfAssessmentViewModel { UserRole = Model.UserRole, PublishStatusID = Model.PublishStatusID }" />
 <div class="nhsuk-u-reading-width">
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <partial name="_ErrorSummary" />
+    }
     <dl class="nhsuk-summary-list nhsuk-summary-list--no-border">
 
         <div class="nhsuk-summary-list__row">
@@ -262,7 +266,7 @@
                 <partial name="Shared/_TaskStatusTag" model="@Model.CompetencyAssessmentTaskStatus.SelfAssessmentOptionsTaskStatus" />
             </div>
         </li>
-        @if (Model.PublishStatusID != 3 && Model.UserRole > 1)
+        @if (Model.PublishStatusID < 3 && Model.UserRole > 1)
         {
             <li class="nhsuk-task-list__item">
 

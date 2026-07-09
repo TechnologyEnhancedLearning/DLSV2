@@ -23,24 +23,13 @@ namespace DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Delegates.Enrol
             DelegateId = delegateId;
             DelegateUserId = delegateUserId;
             DelegateName = delegateName;
-            LearningItems = PopulateItems(learningItems, selectedActivity);
+            LearningItems = learningItems;
         }
 
         public int DelegateId { get; set; }
         public int DelegateUserId { get; set; }
         public string? DelegateName { get; set; }
-        public int? SelectedActivity { get; set; } = 0;
-
-        public IEnumerable<SelectListItem> LearningItems { get; set; }
-
-        private static IEnumerable<SelectListItem> PopulateItems(
-            IEnumerable<AvailableCourse> learningItems, int selectedActivity
-        )
-        {
-            var LearningItemIdNames = learningItems.Select(s => (s.Id, s.Name));
-            return SelectListHelper.MapOptionsToSelectListItems(
-                LearningItemIdNames, selectedActivity
-           );
-        }
+        public int SelectedActivity { get; set; } = 0;
+        public IEnumerable<AvailableCourse> LearningItems { get; set; }
     }
 }
