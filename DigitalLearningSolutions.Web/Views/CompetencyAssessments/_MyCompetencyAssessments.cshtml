@@ -1,6 +1,6 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
 @model MyCompetencyAssessmentsViewModel
-
+<link rel="stylesheet" href="@Url.Content("~/css/selfAssessment/viewSelfAssessments.css")" asp-append-version="true">
 <h1>My self-assessments</h1>
 @if (!Model.CompetencyAssessments.Any() && Model.SearchString == null)
 {
