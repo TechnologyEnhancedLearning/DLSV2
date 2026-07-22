@@ -1684,7 +1684,6 @@
             var adminId = GetAdminID();
             var userId = (int)User.GetUserId();
             var centreId = (int)GetCentreId();
-            var candidateId = User.GetCandidateIdKnownNotNull();
             var competencyAssessmentBase = new CompetencyAssessmentBase();
 
             if (competencyAssessmentId <= 0)
@@ -1698,7 +1697,7 @@
 
             if (selfAssessmentService.CanDelegateAccessSelfAssessment(userId, competencyAssessmentId, centreId))
             {
-                var selfAssessment = selfAssessmentService.GetSelfAssessmentForCandidateById(candidateId, competencyAssessmentId);
+                var selfAssessment = selfAssessmentService.GetSelfAssessmentForCandidateById(userId, competencyAssessmentId);
                 if (selfAssessment == null)
                 {
                     ModelState.Clear();
