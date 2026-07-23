@@ -728,16 +728,18 @@
         {
             return connection.Query<Competency>(
                @"SELECT sas.ID AS StructureId, sas.CompetencyID, f.ID AS FrameworkId, f.FrameworkName, cg.ID AS GroupId, cg.Name AS GroupName, c.Name AS CompetencyName, c.Description AS CompetencyDescription, sas.Optional, sas.GroupOptionalCompetencies
-                    FROM   SelfAssessmentStructure AS sas INNER JOIN
-                                Competencies AS c ON sas.CompetencyID = c.ID LEFT JOIN
-                                CompetencyGroups AS cg ON sas.CompetencyGroupID = cg.ID INNER JOIN
-                                FrameworkCompetencies ON c.ID = FrameworkCompetencies.CompetencyID INNER JOIN
-                                Frameworks AS f ON FrameworkCompetencies.FrameworkID = f.ID INNER JOIN
-                                SelfAssessmentFrameworks ON f.ID = SelfAssessmentFrameworks.FrameworkId AND sas.SelfAssessmentID = SelfAssessmentFrameworks.SelfAssessmentId
-                    WHERE (sas.SelfAssessmentID = @competencyAssessmentId)
-                    ORDER BY sas.Ordering", new { competencyAssessmentId }
+             FROM   SelfAssessmentStructure AS sas INNER JOIN
+                         Competencies AS c ON sas.CompetencyID = c.ID LEFT JOIN
+                         CompetencyGroups AS cg ON sas.CompetencyGroupID = cg.ID INNER JOIN
+                         FrameworkCompetencies ON c.ID = FrameworkCompetencies.CompetencyID INNER JOIN
+                         Frameworks AS f ON FrameworkCompetencies.FrameworkID = f.ID INNER JOIN
+                         SelfAssessmentFrameworks ON f.ID = SelfAssessmentFrameworks.FrameworkId AND sas.SelfAssessmentID = SelfAssessmentFrameworks.SelfAssessmentId
+             WHERE (sas.SelfAssessmentID = @competencyAssessmentId)
+             AND ((SELECT COUNT(*) FROM CompetencyAssessmentQuestions caq WHERE caq.CompetencyID = c.ID) > 0)
+             ORDER BY sas.Ordering", new { competencyAssessmentId }
            );
         }
+
 
         public IEnumerable<LinkedFramework> GetLinkedFrameworksForCompetencyAssessment(int competencyAssessmentId)
         {
