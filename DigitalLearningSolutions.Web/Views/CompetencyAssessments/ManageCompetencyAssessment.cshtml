@@ -1,7 +1,7 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
 @model ManageCompetencyAssessmentViewModel
 @{
-    ViewData["Title"] = Model.PublishStatusID == 3 ? "Manage self-assessment" : "Create self-assessment";
+    ViewData["Title"] = Model.PublishStatusID > 2 ? "Manage self-assessment" : "Create self-assessment";
     ViewData["Application"] = "Framework service";
     var hasRetirement = Model.RetirementDate != null;
 }
@@ -88,9 +88,12 @@
                 {
                     <div>
                         <span>Retirement date: @Model.RetirementDate?.ToString("dd/MM/yyyy")</span>
-                        <a asp-action="ConfirmClearRetirementDate" asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">
-                            Clear<span class="nhsuk-u-visually-hidden">Clear</span>
-                        </a>
+                        @if (Model.UserRole > 1)
+                        {
+                            <a asp-action="ConfirmClearRetirementDate" asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">
+                                Clear<span class="nhsuk-u-visually-hidden">Clear</span>
+                            </a>
+                        }
                     </div>
                 }
             </dd>

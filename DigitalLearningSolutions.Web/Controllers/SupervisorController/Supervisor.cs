@@ -754,7 +754,7 @@
 
             if (selfAssessmentID < 1)
             {
-                ModelState.AddModelError("selfAssessmentId", "You must select a self assessment");
+                ModelState.AddModelError("selfAssessmentId", "You must select a self-assessment");
                 multiPageFormService.SetMultiPageFormData(
                     sessionEnrolOnCompetencyAssessment,
                     MultiPageFormDataFeature.EnrolDelegateOnProfileAssessment,
@@ -1412,7 +1412,11 @@
                 {
                     var nameTextLength = string.IsNullOrEmpty(model.CompetencySelfAssessmentCertificates.LearnerName) ? 0 : model.CompetencySelfAssessmentCertificates.LearnerName.Length;
                     var isPrnExist = !string.IsNullOrEmpty(model.CompetencySelfAssessmentCertificates.LearnerPRN);
-                    var fileName = $"Competency Certificate - {model.CompetencySelfAssessmentCertificates.LearnerName.Substring(0, nameTextLength >= 15 ? 15 : nameTextLength)}" + (isPrnExist ? $" - {model.CompetencySelfAssessmentCertificates.LearnerPRN}.pdf" : ".pdf");
+                    var selfAssessmentName = model.CompetencySelfAssessmentCertificates.SelfAssessment ?? string.Empty;
+                    var shortSelfAssessment = selfAssessmentName[..Math.Min(50, selfAssessmentName.Length)];
+                    var learnerName = model.CompetencySelfAssessmentCertificates.LearnerName ?? string.Empty;
+                    var shortLearnerName = learnerName[..Math.Min(15, learnerName.Length)];
+                    var fileName = $"{shortSelfAssessment} - {shortLearnerName}" + (isPrnExist ? $" - {model.CompetencySelfAssessmentCertificates.LearnerPRN}.pdf" : ".pdf");
                     return File(pdfReportFile, FileHelper.GetContentTypeFromFileName(fileName), fileName);
                 }
             }

@@ -31,7 +31,7 @@
     <h2>Supervisor Sign-off</h2>
     <partial name="../../Supervisor/Shared/_SupervisorSignOffSummary.cshtml" model="Model.SupervisorSignOffs"
              view-data="@(new ViewDataDictionary(ViewData) { { "IsAllCompetencyConfirmed", competencySummaries.Sum(c => (int)c["questionsCount"]) == competencySummaries.Sum(c => (int)c["verifiedCount"]) },
-                                 { "IsOngoingSelfAssessment", latestResult > latestSignoff }})" />
+                                              { "IsOngoingSelfAssessment", latestResult > latestSignoff }})" />
     @if (Model.AllQuestionsVerifiedOrNotRequired)
     {
         @if (!Model.SupervisorSignOffs.Any())
@@ -70,8 +70,8 @@
     else
     {
         <p class="nhsuk-body-l">
-            All required @Model.SelfAssessment.Vocabulary.ToLower() self-assessments must be completed and confirmed,
-            before requesting supervisor sign off of the @Model.SelfAssessment.Name.
+            All required @Model.VocabPlural().ToLower() must be completed and confirmed,
+            before requesting supervisor sign-off of the @Model.SelfAssessment.Name.
         </p>
     }
 </div>
