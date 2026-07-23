@@ -1,0 +1,12 @@
+﻿@use "nhse-tel-frontend/packages/core/all" as *;
+
+@media (max-width: 56.24em) {
+  .nhsuk-table-responsive .nhsuk-table__body .nhsuk-table__row td {
+    justify-content: flex-start;
+    text-align: left;
+  }
+
+  .nhsuk-table-responsive .nhsuk-table__body .nhsuk-table-responsive__heading {
+    flex: 0 0 8.5em;
+  }
+}
