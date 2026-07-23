@@ -240,7 +240,7 @@
                             var selfAssessedCount = questions.Count(q => q.Result.HasValue);
                             var verifiedCount = questions.Count(q => !((q.Result == null || q.Verified == null || q.SignedOff != true) && q.Required));
 
-                            saDelegate.Progress = "Self assessed: " + selfAssessedCount + " / " + questions.Count() + Environment.NewLine +
+                            saDelegate.Progress = "Self-assessed: " + selfAssessedCount + " / " + questions.Count() + Environment.NewLine +
                                                 "Confirmed: " + verifiedCount + " / " + questions.Count();
                         }
                         saDelegate.StartedDate = (DateTime)DateHelper.GetLocalDateTime(saDelegate.StartedDate);

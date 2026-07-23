@@ -3,7 +3,7 @@
 @using DigitalLearningSolutions.Web.Helpers
 @model SelfAssessmentReportsViewModel
 @{
-    ViewData["Title"] = "Self-Assessment Reports";
+    ViewData["Title"] = "Self-assessment reports";
     var routeData = (new Dictionary<string, string>() { { "source", "TrackingSystem" } });
 
     if (string.Equals(Context.Request.Query["tableaulink"], "true", StringComparison.OrdinalIgnoreCase))
