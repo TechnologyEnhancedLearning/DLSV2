@@ -2747,20 +2747,24 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[SendExpiredTBCReminders]    Script Date: 11/03/2025 13:13:15 ******/
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GetAssessmentResultsByDelegate]    Script Date: 31/05/2026 09:59:14 ******/
         ///SET ANSI_NULLS ON
         ///GO
         ///
         ///SET QUOTED_IDENTIFIER ON
         ///GO
         ///
+        ///
         ///-- =============================================
-        ///-- Author:		Kevin Whittaker
-        ///-- Create date: 17/08/2018
-        ///-- Description:	Uses DB mail to send reminders to delegates on courses with a TBC date within 1 month.
+        ///-- Author:		Auldrin Possa
+        ///-- Create date: 30/11/2023
+        ///-- Description:	Returns assessment results for a delegate
         ///-- =============================================
-        ///ALTER PROCEDURE [dbo].[SendExpiredTBCReminders]
-        ///	-- Add the parameters for the stor [rest of string was truncated]&quot;;.
+        ///ALTER   PROCEDURE [dbo].[GetAssessmentResultsByDelegate]
+        ///	@selfAssessmentId as Int = 0,
+        ///	@delegateId as int = 0
+        ///AS
+        ///BEG [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string TD_5638_Alter_GetAssessmentResultsByDelegate_Up {
             get {
@@ -2769,20 +2773,22 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[SendExpiredTBCReminders]    Script Date: 11/03/2025 13:13:15 ******/
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GetCandidateAssessmentResultsById]    Script Date: 31/05/2026 09:49:33 ******/
         ///SET ANSI_NULLS ON
         ///GO
         ///
         ///SET QUOTED_IDENTIFIER ON
         ///GO
         ///
+        ///
         ///-- =============================================
-        ///-- Author:		Kevin Whittaker
-        ///-- Create date: 17/08/2018
-        ///-- Description:	Uses DB mail to send reminders to delegates on courses with a TBC date within 1 month.
+        ///-- Author:		Auldrin Possa
+        ///-- Create date: 30/11/2023
+        ///-- Description:	Returns candidate assessment results by candidateAssessmentId
         ///-- =============================================
-        ///ALTER PROCEDURE [dbo].[SendExpiredTBCReminders]
-        ///	-- Add the parameters for the stor [rest of string was truncated]&quot;;.
+        ///ALTER   PROCEDURE [dbo].[GetCandidateAssessmentResultsById]
+        ///	@candidateAssessmentId as Int = 0,
+        ///	 [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string TD_5638_Alter_GetCandidateAssessmentResultsById_Up {
             get {
@@ -2990,6 +2996,62 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         internal static string TD_6866_AlterViewAdminUsersAddAdminUserId_Up {
             get {
                 return ResourceManager.GetString("TD_6866_AlterViewAdminUsersAddAdminUserId_Up", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[usp_GetSelfAssessmentReport]    Script Date: 08/07/2026 11:35:45 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///ALTER   PROCEDURE [dbo].[usp_GetSelfAssessmentReport]
+        ///    @SelfAssessmentID INT,
+        ///    @CentreID INT
+        ///AS
+        ///BEGIN
+        ///    SET NOCOUNT ON;
+        ///
+        ///    -- Step 1: Materialize the LatestAssessmentResults into a temp table
+        ///    IF OBJECT_ID(&apos;tempdb..#LatestAssessmentResults&apos;) IS NOT NULL
+        ///        DROP TABLE #LatestAssessmentResults;
+        ///
+        ///    SELECT
+        ///      [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_7397_Alter_usp_GetSelfAssessmentReport_Down {
+            get {
+                return ResourceManager.GetString("TD_7397_Alter_usp_GetSelfAssessmentReport_Down", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[usp_GetSelfAssessmentReport]    Script Date: 08/07/2026 11:35:45 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///ALTER   PROCEDURE [dbo].[usp_GetSelfAssessmentReport]
+        ///    @SelfAssessmentID INT,
+        ///    @CentreID INT
+        ///AS
+        ///BEGIN
+        ///    SET NOCOUNT ON;
+        ///
+        ///    -- Step 1: Materialize the LatestAssessmentResults into a temp table
+        ///    IF OBJECT_ID(&apos;tempdb..#LatestAssessmentResults&apos;) IS NOT NULL
+        ///        DROP TABLE #LatestAssessmentResults;
+        ///
+        ///    SELECT
+        ///		s.D [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_7397_Alter_usp_GetSelfAssessmentReport_Up {
+            get {
+                return ResourceManager.GetString("TD_7397_Alter_usp_GetSelfAssessmentReport_Up", resourceCulture);
             }
         }
         

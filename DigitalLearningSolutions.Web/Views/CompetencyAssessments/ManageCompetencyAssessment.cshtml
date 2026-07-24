@@ -1,7 +1,7 @@
 ﻿@using DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
 @model ManageCompetencyAssessmentViewModel
 @{
-    ViewData["Title"] = Model.PublishStatusID == 3 ? "Manage self-assessment" : "Create self-assessment";
+    ViewData["Title"] = Model.PublishStatusID > 2 ? "Manage self-assessment" : "Create self-assessment";
     ViewData["Application"] = "Framework service";
     var hasRetirement = Model.RetirementDate != null;
 }
@@ -27,7 +27,7 @@
 }
 
 <h1>@ViewData["Title"]</h1>
-
+<partial name="Shared/_PublishedSelfAssessmentWarning" model="new PublishedSelfAssessmentViewModel { UserRole = Model.UserRole, PublishStatusID = Model.PublishStatusID }" />
 <div class="nhsuk-u-reading-width">
     @if (!ViewData.ModelState.IsValid)
     {
@@ -88,9 +88,12 @@
                 {
                     <div>
                         <span>Retirement date: @Model.RetirementDate?.ToString("dd/MM/yyyy")</span>
-                        <a asp-action="ConfirmClearRetirementDate" asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">
-                            Clear<span class="nhsuk-u-visually-hidden">Clear</span>
-                        </a>
+                        @if (Model.UserRole > 1)
+                        {
+                            <a asp-action="ConfirmClearRetirementDate" asp-route-competencyAssessmentId="@ViewContext.RouteData.Values["competencyAssessmentId"]">
+                                Clear<span class="nhsuk-u-visually-hidden">Clear</span>
+                            </a>
+                        }
                     </div>
                 }
             </dd>
@@ -266,7 +269,7 @@
                 <partial name="Shared/_TaskStatusTag" model="@Model.CompetencyAssessmentTaskStatus.SelfAssessmentOptionsTaskStatus" />
             </div>
         </li>
-        @if (Model.PublishStatusID != 3 && Model.UserRole > 1)
+        @if (Model.PublishStatusID < 3 && Model.UserRole > 1)
         {
             <li class="nhsuk-task-list__item">
 

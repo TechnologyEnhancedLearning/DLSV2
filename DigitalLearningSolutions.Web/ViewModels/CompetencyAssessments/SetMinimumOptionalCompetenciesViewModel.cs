@@ -13,11 +13,13 @@
             CompetencyAssessmentName = competencyAssessmentBase.CompetencyAssessmentName;
             MinimumOptionalCompetencies = competencyAssessmentBase.MinimumOptionalCompetencies;
             UserRole = competencyAssessmentBase.UserRole;
+            PublishStatusID = competencyAssessmentBase.PublishStatusID;
             VocabularySingular = FrameworkVocabularyHelper.VocabularySingular(competencyAssessmentBase.Vocabulary);
             VocabularyPlural = FrameworkVocabularyHelper.VocabularyPlural(competencyAssessmentBase.Vocabulary);
             OptionalCompetenciesCount = competencies.Count(c => c.Optional == true);
         }
         public string CompetencyAssessmentName { get; set; }
         public int UserRole { get; set; }
+        public int PublishStatusID { get; set; }
     }
 }

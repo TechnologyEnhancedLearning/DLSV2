@@ -13,10 +13,12 @@
             CompetencyAssessmentName = competencyAssessmentBase.CompetencyAssessmentName;
             ManageOptionalCompetenciesPrompt = competencyAssessmentBase.ManageOptionalCompetenciesPrompt;
             UserRole = competencyAssessmentBase.UserRole;
+            PublishStatusID = competencyAssessmentBase.PublishStatusID;
             VocabularySingular = FrameworkVocabularyHelper.VocabularySingular(competencyAssessmentBase.Vocabulary);
             VocabularyPlural = FrameworkVocabularyHelper.VocabularyPlural(competencyAssessmentBase.Vocabulary);
         }
         public string CompetencyAssessmentName { get; set; }
         public int UserRole { get; set; }
+        public int PublishStatusID { get; set; }
     }
 }

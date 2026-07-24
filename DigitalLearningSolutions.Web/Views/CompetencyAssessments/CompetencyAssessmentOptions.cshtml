@@ -84,7 +84,7 @@
         <div class="nhsuk-form-group">
             <fieldset class="nhsuk-fieldset" aria-describedby="example-hints-hint">
                 <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
-                    <h1 class="app-page-heading">
+                    <h1 class="app-page-heading nhsuk-u-margin-bottom-0">
                         <span class="nhsuk-caption-xl">
                             @Model.CompetencyAssessmentName
                             <span class="nhsuk-u-visually-hidden"> – </span>
@@ -92,6 +92,7 @@
                         Display learner declaration?
                     </h1>
                 </legend>
+                <partial name="Shared/_PublishedSelfAssessmentWarning" model="new PublishedSelfAssessmentViewModel { UserRole = Model.UserRole, PublishStatusID = Model.PublishStatusID }" />
                 <div id="example-hints-hint" class="nhsuk-hint">
                     Do you want to prompt learners to agree to the self-assessment process when they first start the self-assessment?
                 </div>
@@ -118,7 +119,7 @@
         <div class="nhsuk-form-group">
             <fieldset class="nhsuk-fieldset" aria-describedby="example-hints-hint">
                 <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
-                    <h1 class="app-page-heading">
+                    <h1 class="app-page-heading nhsuk-u-margin-bottom-0">
                         <span class="nhsuk-caption-xl">
                             @Model.CompetencyAssessmentName
                             <span class="nhsuk-u-visually-hidden"> – </span>
@@ -126,6 +127,7 @@
                         Include signposting?
                     </h1>
                 </legend>
+                <partial name="Shared/_PublishedSelfAssessmentWarning" model="new PublishedSelfAssessmentViewModel { UserRole = Model.UserRole, PublishStatusID = Model.PublishStatusID }" />
                 <div id="example-hints-hint" class="nhsuk-hint">
                     Do you want to display signposted learning content when a learner submits their self-assessment results?
                 </div>
@@ -152,7 +154,7 @@
         <div class="nhsuk-form-group">
             <fieldset class="nhsuk-fieldset" aria-describedby="example-hints-hint">
                 <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
-                    <h1 class="app-page-heading">
+                    <h1 class="app-page-heading nhsuk-u-margin-bottom-0">
                         <span class="nhsuk-caption-xl">
                             @Model.CompetencyAssessmentName
                             <span class="nhsuk-u-visually-hidden"> – </span>
@@ -160,6 +162,7 @@
                         Use linear navigation?
                     </h1>
                 </legend>
+                <partial name="Shared/_PublishedSelfAssessmentWarning" model="new PublishedSelfAssessmentViewModel { UserRole = Model.UserRole, PublishStatusID = Model.PublishStatusID }" />
                 <div id="example-hints-hint" class="nhsuk-hint">
                     Do you want the learner to work through @Model.VocabularyPlural.ToLower() using next and previous links? If not, the learner will navigate between @Model.VocabularyPlural.ToLower() using the @Model.VocabularySingular.ToLower() menu.
                 </div>
@@ -186,7 +189,7 @@
         <div class="nhsuk-form-group">
             <fieldset class="nhsuk-fieldset" aria-describedby="example-hints-hint">
                 <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
-                    <h1 class="app-page-heading">
+                    <h1 class="app-page-heading nhsuk-u-margin-bottom-0">
                         <span class="nhsuk-caption-xl">
                             @Model.CompetencyAssessmentName
                             <span class="nhsuk-u-visually-hidden"> – </span>
@@ -194,6 +197,7 @@
                         Use description expanders?
                     </h1>
                 </legend>
+                <partial name="Shared/_PublishedSelfAssessmentWarning" model="new PublishedSelfAssessmentViewModel { UserRole = Model.UserRole, PublishStatusID = Model.PublishStatusID }" />
                 <div id="example-hints-hint" class="nhsuk-hint">
                     Do you want to show @Model.VocabularySingular.ToLower() descriptions using expanders? If not, the description will be displayed on the page without the user needing to expand it.
                 </div>
@@ -220,7 +224,7 @@
         <div class="nhsuk-form-group">
             <fieldset class="nhsuk-fieldset" aria-describedby="example-hints-hint">
                 <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
-                    <h1 class="app-page-heading">
+                    <h1 class="app-page-heading nhsuk-u-margin-bottom-0">
                         <span class="nhsuk-caption-xl">
                             @Model.CompetencyAssessmentName
                             <span class="nhsuk-u-visually-hidden"> – </span>
@@ -228,6 +232,7 @@
                         Custom question label
                     </h1>
                 </legend>
+                <partial name="Shared/_PublishedSelfAssessmentWarning" model="new PublishedSelfAssessmentViewModel { UserRole = Model.UserRole, PublishStatusID = Model.PublishStatusID }" />
                 <div id="example-hints-hint" class="nhsuk-hint">
                     Do you want to specify a custom label for self-assessment questions? If not, they will be labelled as “question”.
                 </div>
@@ -266,7 +271,7 @@
         <div class="nhsuk-form-group">
             <fieldset class="nhsuk-fieldset" aria-describedby="example-hints-hint">
                 <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
-                    <h1 class="app-page-heading">
+                    <h1 class="app-page-heading nhsuk-u-margin-bottom-0">
                         <span class="nhsuk-caption-xl">
                             @Model.CompetencyAssessmentName
                             <span class="nhsuk-u-visually-hidden"> – </span>
@@ -274,6 +279,7 @@
                         Reviewer comments label
                     </h1>
                 </legend>
+                <partial name="Shared/_PublishedSelfAssessmentWarning" model="new PublishedSelfAssessmentViewModel { UserRole = Model.UserRole, PublishStatusID = Model.PublishStatusID }" />
                 <div id="example-hints-hint" class="nhsuk-hint">
                     Do you want to specify a custom supervisor comments prompt? If not, they will be labelled as “Reviewer comments”.
                 </div>
@@ -318,7 +324,7 @@
                         <span class="nhsuk-u-visually-hidden"> – </span>
                     </span>Summary
                 </h1>
-
+                <partial name="Shared/_PublishedSelfAssessmentWarning" model="new PublishedSelfAssessmentViewModel { UserRole = Model.UserRole, PublishStatusID = Model.PublishStatusID }" />
 
                 <dl class="nhsuk-summary-list word-break">
                     @if (Model.IsSupervisionSwitchedOn)
