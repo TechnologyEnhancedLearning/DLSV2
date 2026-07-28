@@ -478,7 +478,8 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///-- Create date: 15/10/2021
         ///-- Description:	Reorders the CompetencyAssessmentQuestions - moving the given competency question up or down.
         ///-- =============================================
-        ///CREATE OR ALTER   PROCEDURE [dbo].[ReorderCompetencyAssessmentQuestion]        /// [rest of string was truncated]&quot;;.
+        ///CREATE OR ALTER   PROCEDURE [dbo].[ReorderCompetencyAssessmentQuestion]
+        /// [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string DLSV2_379_ReorderCompetencyAssessmentQuestionsSP {
             get {
@@ -1504,7 +1505,8 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///	@EmailProfileName nvarchar(100),
         ///	@TestOnly bit
         ///AS
-        ///BEGIN        /// [rest of string was truncated]&quot;;.
+        ///BEGIN
+        /// [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string TD_3190_SendOneMonthSelfAssessmentTBCRemindersSP {
             get {
@@ -3055,6 +3057,23 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
             }
         }
         
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static string TD_7501_Alter_GetAssessmentResultsByDelegate_Down {
+            get {
+                return ResourceManager.GetString("TD_7501_Alter_GetAssessmentResultsByDelegate_Down", resourceCulture);
+            }
+        }
+
+        internal static string TD_7501_Alter_GetAssessmentResultsByDelegate_Up
+        {
+            get
+            {
+                return ResourceManager.GetString("TD_7501_Alter_GetAssessmentResultsByDelegate_Up", resourceCulture);
+            }
+        }
+
         /// <summary>
         ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GetActiveAvailableCustomisationsForCentreFiltered_V6]    Script Date: 29/09/2022 19:11:04 ******/
         ///SET ANSI_NULLS ON
