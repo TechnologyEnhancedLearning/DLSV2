@@ -151,18 +151,10 @@
 
         private const string SelfAssessmentFields =
             @", sa.CategoryID, sa.CreatedDate,
-                 (SELECT BrandName
-                 FROM    Brands
-                 WHERE (BrandID = sa.BrandID)) AS Brand,
-                 (SELECT CategoryName
-                 FROM    CourseCategories
-                 WHERE (CourseCategoryID = sa.CategoryID)) AS Category,
-                 (SELECT [Name]
-                 FROM    SelfAssessments AS sa2
-                 WHERE (ID = sa.ParentSelfAssessmentID)) AS ParentSelfAssessment,
-                 (SELECT Forename + ' ' + Surname + (CASE WHEN Active = 1 THEN '' ELSE ' (Inactive)' END) AS Expr1
-                 FROM  AdminUsers
-                 WHERE (AdminID = sa.CreatedByAdminID)) AS Owner,
+                 b.BrandName AS Brand,
+                 cc.CategoryName AS Category,
+                 sa2.[Name] AS ParentSelfAssessment,
+                 auOwner.Forename + ' ' + auOwner.Surname + (CASE WHEN auOwner.Active = 1 THEN '' ELSE ' (Inactive)' END) AS Owner,
                  sa.Archived,
                  sa.LastEdit,
                 STUFF((
@@ -175,19 +167,20 @@
                         saf2.SelfAssessmentId = sa.ID AND saf2.RemovedDate IS NULL
                     FOR XML PATH(''), TYPE).value('.', 'NVARCHAR(MAX)'), 1, 2, ''
                 ) AS LinkedFrameworks,
-                 (SELECT ProfessionalGroup
-                 FROM    NRPProfessionalGroups
-                 WHERE (ID = sa.NRPProfessionalGroupID)) AS NRPProfessionalGroup,
-                 (SELECT SubGroup
-                 FROM    NRPSubGroups
-                 WHERE (ID = sa.NRPSubGroupID)) AS NRPSubGroup,
-                 (SELECT RoleProfile
-                 FROM    NRPRoles
-                 WHERE (ID = sa.NRPRoleID)) AS NRPRole, sar.ID AS SelfAssessmentReviewID";
+                 npg.ProfessionalGroup AS NRPProfessionalGroup,
+                 nsg.SubGroup AS NRPSubGroup,
+                 nr.RoleProfile AS NRPRole, sar.ID AS SelfAssessmentReviewID";
 
         private const string SelfAssessmentBaseTables =
             @"SelfAssessments AS sa LEFT OUTER JOIN
-             SelfAssessmentCollaborators AS sac ON sac.SelfAssessmentID = sa.ID AND sac.AdminID = @adminId AND sac.IsDeleted = 0";
+             SelfAssessmentCollaborators AS sac ON sac.SelfAssessmentID = sa.ID AND sac.AdminID = @adminId AND sac.IsDeleted = 0
+             LEFT OUTER JOIN Brands AS b ON b.BrandID = sa.BrandID
+             LEFT OUTER JOIN CourseCategories AS cc ON cc.CourseCategoryID = sa.CategoryID
+             LEFT OUTER JOIN SelfAssessments AS sa2 ON sa2.ID = sa.ParentSelfAssessmentID
+             LEFT OUTER JOIN AdminUsers AS auOwner ON auOwner.AdminID = sa.CreatedByAdminID
+             LEFT OUTER JOIN NRPProfessionalGroups AS npg ON npg.ID = sa.NRPProfessionalGroupID
+             LEFT OUTER JOIN NRPSubGroups AS nsg ON nsg.ID = sa.NRPSubGroupID
+             LEFT OUTER JOIN NRPRoles AS nr ON nr.ID = sa.NRPRoleID";
 
         private const string SelfAssessmentTables =
             @" LEFT OUTER JOIN
@@ -320,29 +313,12 @@
 
         public bool UpdateCompetencyRoleProfileLinks(int competencyAssessmentId, int adminId, int? professionalGroupId, int? subGroupId, int? roleId)
         {
-            var result = connection.ExecuteScalar(
-                @"SELECT COUNT(*) FROM SelfAssessments WHERE ID = @competencyAssessmentId AND NRPProfessionalGroupID = @professionalGroupId AND NRPSubGroupID = @subGroupId AND NRPRoleID = @roleId",
-                new { competencyAssessmentId, professionalGroupId, subGroupId, roleId }
-            );
-            int sameCount = Convert.ToInt32(result);
-            if (sameCount > 0)
-            {
-                //same so don't update:
-                return false;
-            }
-
-            //needs updating:
             var numberOfAffectedRows = connection.Execute(
                 @"UPDATE SelfAssessments SET NRPProfessionalGroupID = @professionalGroupId, NRPSubGroupID = @subGroupId, NRPRoleID = @roleId, UpdatedByAdminID = @adminId
-                    WHERE ID = @competencyAssessmentId",
+                    WHERE ID = @competencyAssessmentId AND (NRPProfessionalGroupID <> @professionalGroupId OR NRPSubGroupID <> @subGroupId OR NRPRoleID <> @roleId)",
                 new { adminId, competencyAssessmentId, professionalGroupId, subGroupId, roleId }
             );
-            if (numberOfAffectedRows > 0)
-            {
-                return true;
-            }
-
-            return false;
+            return numberOfAffectedRows > 0;
         }
         public bool UpdateCompetencyAssessmentBranding(
             int competencyAssessmentId,
@@ -950,7 +926,6 @@
                     END
                     FROM SelfAssessments s
                     INNER JOIN Frameworks F ON F.ID = @frameworkId
-                    INNER JOIN AdminUsers AU ON F.OwnerAdminID = AU.AdminID
                     INNER JOIN SelfAssessmentTaskStatus sts ON s.ID = sts.SelfAssessmentId
                     WHERE s.ID = @selfAssessmentId;",
                 new { selfAssessmentId, frameworkId }
@@ -1184,31 +1159,32 @@
                     au.Active AS UserActive,
                     CASE WHEN sc.CanModify = 1 THEN 'Contributor' ELSE 'Reviewer' END AS CompetencyAssessmentRole,
                     sa.[Name] AS CompetencyAssessmentName,
-                    (SELECT Forename + ' ' + Surname + (CASE WHEN Active = 1 THEN '' ELSE ' (Inactive)' END) AS Expr1 FROM AdminUsers AS au1 WHERE (AdminID = @invitedByAdminId)) AS InvitedByName,
-                    (SELECT Email FROM AdminUsers AS au2 WHERE (AdminID = @invitedByAdminId)) AS InvitedByEmail,
+                    auInvitedBy.Forename + ' ' + auInvitedBy.Surname + (CASE WHEN auInvitedBy.Active = 1 THEN '' ELSE ' (Inactive)' END) AS InvitedByName,
+                    auInvitedBy.Email AS InvitedByEmail,
                     sr.ID AS SelfAssessmentReviewID
                 FROM SelfAssessmentCollaborators AS sc
                     INNER JOIN SelfAssessments AS sa ON sc.SelfAssessmentID = sa.ID
                     INNER JOIN AdminUsers AS au ON sc.AdminID = au.AdminID
                     LEFT JOIN SelfAssessmentReviews AS sr 
-					    ON sr.SelfAssessmentID = sa.ID AND sr.SelfAssessmentCollaboratorID = sc.ID
+                        ON sr.SelfAssessmentID = sa.ID AND sr.SelfAssessmentCollaboratorID = sc.ID
                         AND sr.ReviewComplete IS NULL AND sr.Archived IS NULL
-                WHERE (sc.ID = @id) AND (sc.IsDeleted=0)",
-                new { invitedByAdminId, id }
-            ).FirstOrDefault();
+                    LEFT JOIN AdminUsers AS auInvitedBy ON auInvitedBy.AdminID = @invitedByAdminId
+                WHERE sc.ID = @id AND sc.IsDeleted = 0",
+                new { invitedByAdminId, id }).FirstOrDefault();
         }
 
         public bool HasCompetencyWithSignpostedLearning(int competencyAssessmentId)
         {
-            int hasSignpostedLearning = connection.QueryFirstOrDefault<int>(
-                @"SELECT count(*) FROM SelfAssessmentStructure sas INNER JOIN 
-			        CompetencyLearningResources clr ON sas.CompetencyID = clr.CompetencyID AND
-			        clr.RemovedDate IS NULL
-		        WHERE sas.SelfAssessmentID = @competencyAssessmentId",
+            var hasSignpostedLearning = connection.QueryFirstOrDefault<int?>(
+                @"SELECT TOP(1) 1 FROM SelfAssessmentStructure sas INNER JOIN 
+		        CompetencyLearningResources clr ON sas.CompetencyID = clr.CompetencyID AND
+		        clr.RemovedDate IS NULL
+	        WHERE sas.SelfAssessmentID = @competencyAssessmentId",
                 new { competencyAssessmentId });
 
-            return hasSignpostedLearning > 0;
+            return hasSignpostedLearning.HasValue;
         }
+
         public bool UpdateCompetencyAssessmentOptions(
             bool includeLearnerDeclarationPrompt,
             bool includesSignposting,
