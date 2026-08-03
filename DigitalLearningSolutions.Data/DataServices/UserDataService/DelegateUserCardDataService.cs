@@ -40,7 +40,12 @@
                 '' AS ProfessionalRegistrationNumber,
                 NULL AS AdminID";
         private const string DelegateUserCardSelectQuery =
-            @"SELECT
+            @"WITH ActiveAdminAccounts AS (
+                SELECT UserID, CentreID, ID
+                FROM AdminAccounts
+                WHERE Active = 1
+            )
+            SELECT
                 da.ID,
                 da.CandidateNumber,
                 c.CentreName,
@@ -67,20 +72,21 @@
                 da.Active,
                 u.HasBeenPromptedForPrn,
                 u.ProfessionalRegistrationNumber,
-                (SELECT ID
-                    FROM AdminAccounts aa
-                        WHERE aa.UserID = da.UserID
-                            AND aa.CentreID = da.CentreID
-                            AND aa.Active = 1
-                ) AS AdminID
+                aaa.ID AS AdminID
             FROM DelegateAccounts AS da
             INNER JOIN Centres AS c ON c.CentreID = da.CentreID
             INNER JOIN Users AS u ON u.ID = da.UserID
             LEFT JOIN UserCentreDetails AS ucd ON ucd.UserID = da.UserID AND ucd.CentreID = da.CentreID
-            INNER JOIN JobGroups AS jg ON jg.JobGroupID = u.JobGroupID";
+            INNER JOIN JobGroups AS jg ON jg.JobGroupID = u.JobGroupID
+            LEFT JOIN ActiveAdminAccounts AS aaa ON aaa.UserID = da.UserID AND aaa.CentreID = da.CentreID";
 
         private const string DelegateUserSelectQuery =
-            @"SELECT
+            @"WITH ActiveAdminAccounts AS (
+                SELECT UserID, CentreID, ID
+                FROM AdminAccounts
+                WHERE Active = 1
+            )
+            SELECT
 				da.ID,
 				da.Active AS DelegateActive,
 				da.CandidateNumber,
@@ -112,14 +118,14 @@
 				u.ProfessionalRegistrationNumber,
                 u.PrimaryEmail,
                 ucd.Email,
-				(SELECT ID
-					FROM AdminAccounts aa
-						WHERE aa.UserID = da.UserID
-							AND aa.CentreID = da.CentreID
-							AND aa.Active = 1
-				) AS AdminID ";
+				aaa.ID AS AdminID ";
         private const string DelegateUserExportSelectQuery =
-            @"SELECT
+            @"WITH ActiveAdminAccounts AS (
+                SELECT UserID, CentreID, ID
+                FROM AdminAccounts
+                WHERE Active = 1
+            )
+            SELECT
                 da.ID,
                 da.CandidateNumber,
                 c.CentreName,
@@ -147,12 +153,7 @@
                 da.Active,
                 u.HasBeenPromptedForPrn,
                 u.ProfessionalRegistrationNumber,
-                (SELECT ID
-                    FROM AdminAccounts aa
-                        WHERE aa.UserID = da.UserID
-                            AND aa.CentreID = da.CentreID
-                            AND aa.Active = 1
-                ) AS AdminID
+                aaa.ID AS AdminID
                 ,u.PrimaryEmail
 				,ucd.Email
 				,da.Active as DelegateActive
@@ -160,12 +161,14 @@
             INNER JOIN Centres AS c ON c.CentreID = da.CentreID
             INNER JOIN Users AS u ON u.ID = da.UserID
             LEFT JOIN UserCentreDetails AS ucd ON ucd.UserID = da.UserID AND ucd.CentreID = da.CentreID
-            INNER JOIN JobGroups AS jg ON jg.JobGroupID = u.JobGroupID";
+            INNER JOIN JobGroups AS jg ON jg.JobGroupID = u.JobGroupID
+            LEFT JOIN ActiveAdminAccounts AS aaa ON aaa.UserID = da.UserID AND aaa.CentreID = da.CentreID";
         private const string DelegateUserFromTable = @" FROM DelegateAccounts AS da WITH (NOLOCK)
 			INNER JOIN Centres AS c WITH (NOLOCK) ON c.CentreID = da.CentreID
 			INNER JOIN Users AS u WITH (NOLOCK) ON u.ID = da.UserID
 			LEFT JOIN UserCentreDetails AS ucd WITH (NOLOCK) ON ucd.UserID = da.UserID AND ucd.CentreID = da.CentreID
-			INNER JOIN JobGroups AS jg WITH (NOLOCK) ON jg.JobGroupID = u.JobGroupID ";
+			INNER JOIN JobGroups AS jg WITH (NOLOCK) ON jg.JobGroupID = u.JobGroupID
+			LEFT JOIN ActiveAdminAccounts AS aaa WITH (NOLOCK) ON aaa.UserID = da.UserID AND aaa.CentreID = da.CentreID ";
         private string DelegatewhereConditon = $@" Where ((CentreID = @centreId) OR (@centreId= 0))
                             AND ( FirstName + ' ' + LastName + ' ' + PrimaryEmail + ' ' + COALESCE(Email, '') + ' ' + COALESCE(CandidateNumber, '') LIKE N'%' + @searchString + N'%')
 					        AND ((@isActive = 'Any') OR (@isActive = 'true' AND DelegateActive = 1) OR (@isActive = 'false' AND DelegateActive = 0))
@@ -352,17 +355,26 @@
 
             if (sortBy == "SearchableName")
                 orderBy = " ORDER BY LTRIM(LastName) " + sortDirection + ", LTRIM(FirstName) ";
-            else if(sortBy == "LastAccessed")
+            else if (sortBy == "LastAccessed")
                 orderBy = " ORDER BY LastAccessed " + sortDirection;
             else
                 orderBy = " ORDER BY DateRegistered " + sortDirection;
 
             orderBy += " OFFSET " + offSet + " ROWS FETCH NEXT " + itemsPerPage + " ROWS ONLY ";
 
-            var mainSql = "SELECT * FROM ( " + DelegateUserSelectQuery + DelegateUserFromTable + " ) D " + DelegatewhereConditon + orderBy;
+            var mainSql = "SELECT D.*, COUNT(*) OVER() AS TotalCount FROM ( " + DelegateUserSelectQuery + DelegateUserFromTable + " ) D " + DelegatewhereConditon + orderBy;
 
-            IEnumerable<DelegateUserCard> delegateUserCard = connection.Query<DelegateUserCard>(
+            var delegateUserCards = new List<DelegateUserCard>();
+            int resultCount = 0;
+
+            connection.Query<DelegateUserCard, int, DelegateUserCard>(
                 mainSql,
+                (delegateUserCard, totalCount) =>
+                {
+                    resultCount = resultCount == 0 ? totalCount : resultCount;
+                    delegateUserCards.Add(delegateUserCard);
+                    return delegateUserCard;
+                },
                 new
                 {
                     searchString,
@@ -386,39 +398,11 @@
                     answer5,
                     answer6
                 },
+                splitOn: "TotalCount",
                 commandTimeout: 3000
             );
 
-            var delegateCountQuery = @$"SELECT  COUNT(*) AS Matches FROM ( " + DelegateUserSelectQuery + DelegateUserFromTable + " ) D " + DelegatewhereConditon;
-
-            int ResultCount = connection.ExecuteScalar<int>(
-                delegateCountQuery,
-                new
-                {
-                    searchString,
-                    offSet,
-                    itemsPerPage,
-                    sortBy,
-                    sortDirection,
-                    centreId,
-                    isActive,
-                    isPasswordSet,
-                    isAdmin,
-                    isUnclaimed,
-                    isEmailVerified,
-                    registrationType,
-                    jobGroupId,
-                    groupId,
-                    answer1,
-                    answer2,
-                    answer3,
-                    answer4,
-                    answer5,
-                    answer6,
-                },
-                commandTimeout: 3000
-            );
-            return (delegateUserCard, ResultCount);
+            return (delegateUserCards, resultCount);
         }
 
         public List<DelegateUserCard> GetDelegatesNotRegisteredForGroupByGroupId(int groupId, int centreId)
