@@ -13,35 +13,64 @@
     <title>NHS Certificate</title>
 
     <style>
-        .certificate {
-            width: 100%;
-            justify-content: start;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            -webkit-print-color-adjust: exact;
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
+        html, body {
+            margin: 0;
+            padding: 0;
+            background-color: white;
+        }
+
+        @@page {
+            size: A4;
+            margin: 0;
+        }
+
+        .certificate {
+            width: 210mm;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+            margin: 0;
+            padding: 0;
+            display: block;
+        }
             .certificate .pg-1 {
+                box-sizing: border-box;
                 background-color: white;
-                display: block;
-                background-color: white;
-                width: 100%;
-                display: block;
+                width: 210mm;
+                height: 280mm;
+                max-height: 290mm;
+                margin: 0;
+                padding: 0 0 1.2rem 0;
+                position: relative;
                 display: flex;
                 flex-direction: column;
-                width: 100%;
-                max-width: 210mm;
-                min-height: 293mm;
-                margin: 0;
-                position: relative;
-                background: white;
-                height: 100%;
+                justify-content: space-between;
+                overflow: hidden;
+                page-break-inside: avoid;
+                break-inside: avoid;
+                page-break-before: avoid;
+                break-before: avoid;
             }
+
+                .certificate .pg-1 .body {
+                    padding: 20px 50px;
+                    flex-grow: 1;
+                    flex-shrink: 1;
+                    overflow: hidden;
+                }
 
                 .certificate .pg-1 .head {
                     background-color: #0063B7;
                     color: white;
-                    padding: 50px;
+                    padding: 40px 50px;
                     position: relative;
+                    flex-shrink: 0;
                 }
 
                     .certificate .pg-1 .head .logo {
@@ -63,34 +92,27 @@
             transform: rotate(45deg);
         }
 
-        .certificate .pg-1 .body {
-            padding: 50px;
-            flex: 0;
-        }
-
         .certificate .pg-1 .footer {
-            padding: 50px;
-            align-items: center;
+            padding: 20px 50px;
             display: flex;
-            flex: 1;
-            justify-content: flex-start;
-            align-items: end;
+            justify-content: space-between;
+            align-items: flex-end;
+            flex-shrink: 0;
         }
 
         .footer p.blue, .pg-1 h3 {
             color: #0063B7;
         }
 
-
         .footer-logo {
             display: flex;
             align-items: baseline;
-            max-height: 190px;
+            max-height: 80px;
             margin-left: 2rem;
         }
 
             .footer-logo img {
-                max-width: 18rem;
+                max-width: 12rem;
                 height: auto;
             }
 
@@ -120,8 +142,6 @@
             flex-direction: column;
             width: 100%;
             margin: 0;
-            position: relative;
-            background: white;
         }
 
             .pg-2 .body {
@@ -156,29 +176,24 @@
         .pg-2 .foot-note {
             padding: 0 50px;
         }
-
         .certificate h1 {
-            font-size: 2rem;
+            font-size: 1.8rem;
             line-height: 1.25;
             display: block;
             font-weight: 600;
             margin-top: 0;
-            margin-bottom: 40px;
+            margin-bottom: 25px;
         }
 
         @@media (min-width: 40.0625em) {
             .certificate h1 {
-                font-size: 3rem;
-                line-height: 1.16667;
-            }
-
-            .certificate h1 {
-                margin-bottom: 48px;
+                font-size: 2.2rem;
+                margin-bottom: 30px;
             }
         }
 
         .certificate h2 {
-            font-size: 1.5rem;
+            font-size: 1.4rem;
             line-height: 1.33333;
             display: block;
             font-weight: 600;
@@ -186,31 +201,19 @@
             margin-bottom: 16px;
         }
 
-        @@media (min-width: 40.0625em) {
-            .certificate h2 {
-                font-size: 2rem;
-                line-height: 1.25;
-            }
-
-            .certificate h2 {
-                margin-bottom: 24px;
-            }
-        }
-
         .certificate p {
             display: block;
             margin-top: 0;
-            margin-bottom: 16px;
-            font-size: 1rem;
-            line-height: 1.5;
+            margin-bottom: 12px;
+            font-size: 0.95rem;
+            line-height: 1.4;
             color: inherit;
         }
 
         @@media (min-width: 40.0625em) {
             .certificate p {
-                margin-bottom: 24px;
-                font-size: 1.1875rem;
-                line-height: 1.47368;
+                margin-bottom: 16px;
+                font-size: 1.1rem;
             }
         }
 
@@ -218,8 +221,6 @@
             font-size: 1rem;
             line-height: 1.5;
             margin-bottom: 16px;
-            list-style-type: none;
-            margin-top: 0;
             list-style-type: disc;
             padding-left: 20px;
         }
@@ -228,25 +229,43 @@
                 margin-bottom: 8px;
             }
 
-                .certificate ul > li:last-child {
-                    margin-bottom: 0;
-                }
-
-        @@media (min-width: 40.0625em) {
-            .certificate ul {
-                font-size: 1.1875rem;
-                line-height: 1.47368;
-            }
-
-            .certificate ul {
-                margin-bottom: 24px;
-            }
-
-                .certificate ul > li {
-                    margin-bottom: 8px;
-                }
+        .certificate .nhsuk-body-s {
+            font-size: 0.85rem;
+            line-height: 1.5;
+            margin-bottom: 8px !important;
         }
 
+        .pagebreak {
+            page-break-before: always;
+            break-before: page;
+            clear: both;
+            height: 0;
+            margin: 0;
+            padding: 0;
+        }
+
+        @@page {
+            size: A4;
+            margin: 0;
+        }
+
+        @@media print {
+            html, body {
+                width: 210mm;
+                height: 297mm;
+                margin: 0;
+                padding: 0;
+            }
+
+            .certificate .pg-1 {
+                height: 296mm;
+            }
+
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+        }
         .certificate .nhsuk-u-font-size-16 {
             font-size: 0.875rem !important;
             line-height: 1.71429 !important;
@@ -371,38 +390,12 @@
                 margin-bottom: 8px !important;
             }
         }
-
-        .pag
-        .pagebreak {
-            page-break-before: always;
-        }
-
-        @@page {
-            size: A4;
-            margin: 0;
-            padding: 0;
-            margin-top: 0in;
-            margin-left: 0in;
-            border: 0px;
-        }
-
-        @@media print {
-            html, body {
-                width: 210mm;
-                height: 297mm;
-            }
-
-            * {
-                box-sizing: border-box
-            }
-        }
     </style>
 
 </head>
 <body>
     <div class="certificate">
         <partial name="_SelfAssessmentCertificateFirstPage.cshtml" model=Model />
-        <div class="pagebreak"></div>
         <partial name="_SelfAssessmentCertificateSecondPage.cshtml" model=Model />
     </div>
 </body>
