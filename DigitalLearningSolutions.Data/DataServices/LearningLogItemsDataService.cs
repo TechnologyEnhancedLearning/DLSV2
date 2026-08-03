@@ -67,6 +67,30 @@
 
         private readonly ILogger<LearningLogItemsDataService> logger;
 
+        private readonly object activityTypeIdLock = new();
+        private int? learningHubResourceActivityTypeId;
+
+        private int LearningHubResourceActivityTypeId
+        {
+            get
+            {
+                if (learningHubResourceActivityTypeId == null)
+                {
+                    lock (activityTypeIdLock)
+                    {
+                        if (learningHubResourceActivityTypeId == null)
+                        {
+                            learningHubResourceActivityTypeId = connection.ExecuteScalar<int>(
+                                @"SELECT TOP 1 ID FROM ActivityTypes WHERE TypeLabel = @learningHubResourceActivityLabel",
+                                new { learningHubResourceActivityLabel = LearningHubResourceActivityLabel });
+                        }
+                    }
+                }
+
+                return learningHubResourceActivityTypeId.Value;
+            }
+        }
+
         public LearningLogItemsDataService(IDbConnection connection, ILogger<LearningLogItemsDataService> logger)
         {
             this.connection = connection;
@@ -79,11 +103,10 @@
                 $@"SELECT
                         {LearningLogItemColumns}
                     FROM LearningLogItems l
-                    INNER JOIN ActivityTypes a ON a.ID = l.ActivityTypeID
                     INNER JOIN LearningResourceReferences AS lrr ON lrr.ID = l.LearningResourceReferenceID
                     WHERE LoggedById = @delegateUserId
-                    AND a.TypeLabel = '{LearningHubResourceActivityLabel}'",
-                new { delegateUserId }
+                      AND l.ActivityTypeID = @learningHubResourceActivityTypeId",
+                new { delegateUserId, learningHubResourceActivityTypeId = LearningHubResourceActivityTypeId }
             );
         }
 
@@ -93,11 +116,10 @@
                 $@"SELECT
                         {LearningLogItemColumns}
                     FROM LearningLogItems l
-                    INNER JOIN ActivityTypes a ON a.ID = l.ActivityTypeID
                     INNER JOIN LearningResourceReferences AS lrr ON lrr.ID = l.LearningResourceReferenceID
-                    WHERE a.TypeLabel = '{LearningHubResourceActivityLabel}'
-                    AND LearningLogItemID = @learningLogItemId",
-                new { learningLogItemId }
+                    WHERE l.ActivityTypeID = @learningHubResourceActivityTypeId
+                      AND LearningLogItemID = @learningLogItemId",
+                new { learningLogItemId, learningHubResourceActivityTypeId = LearningHubResourceActivityTypeId }
             );
         }
 
@@ -137,7 +159,7 @@
                         @activityName,
                         @resourceLink,
                         @learningResourceReferenceId,
-                        (SELECT TOP 1 ID FROM ActivityTypes WHERE TypeLabel = 'Learning Hub Resource'),
+                        @learningHubResourceActivityTypeId,
                         NULL,
                         NULL,
                         0,
@@ -150,7 +172,15 @@
                         NULL,
                         NULL,
                         NULL)",
-                new { addedDate, delegateUserId, activityName, resourceLink, learningResourceReferenceId }
+                new
+                {
+                    addedDate,
+                    delegateUserId,
+                    activityName,
+                    resourceLink,
+                    learningResourceReferenceId,
+                    learningHubResourceActivityTypeId = LearningHubResourceActivityTypeId
+                }
             );
 
             return learningLogItemId;
