@@ -29,21 +29,18 @@
     <tbody class="nhsuk-table__body">
         @foreach (var competencyAssessment in Model)
         {
-        <tr role="row" class="nhsuk-table__row framework-row">
-            <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
-                <span class="nhsuk-table-responsive__heading">Self-assessment </span>
-                <span class="roleprofile-brand">
-                    @competencyAssessment.Brand,
-                </span>
-                <span class="framework-name nhsuk-u-font-weight-bold">
-                    @competencyAssessment.CompetencyAssessmentName
-                </span>
-            </td>
-            <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
-                <span class="nhsuk-table-responsive__heading">Framework links </span>
-                <span class="roleprofile-linkage">
-                    @Html.Raw((competencyAssessment.LinkedFrameworks ?? string.Empty)
-                                        .Replace(",", ",<br />"))
+            <tr role="row" class="nhsuk-table__row framework-row">
+                <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
+                    <span class="nhsuk-table-responsive__heading">Self-assessment </span>
+                    <span class="self-assessment-name">
+                        <span class="roleprofile-brand">@competencyAssessment.Brand.Trim(),</span>&nbsp;<span class="framework-name nhsuk-u-font-weight-bold">@competencyAssessment.CompetencyAssessmentName.Trim()</span>
+                    </span>
+                </td>
+                <td role="cell" class="nhsuk-table__cell nhsuk-u-font-size-16">
+                    <span class="nhsuk-table-responsive__heading">Framework links </span>
+                    <span class="roleprofile-linkage">
+                        @Html.Raw(string.Join(",<br />",
+                        (competencyAssessment.LinkedFrameworks ?? string.Empty).Split(',').Select(x => x.Trim())))
                 </span>
             </td>
             <td role="cell" class="nhsuk-u-text-align-left nhsuk-u-font-size-16">
