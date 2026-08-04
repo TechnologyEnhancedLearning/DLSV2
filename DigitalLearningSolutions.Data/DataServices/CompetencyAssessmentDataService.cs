@@ -735,11 +735,10 @@
                          Frameworks AS f ON FrameworkCompetencies.FrameworkID = f.ID INNER JOIN
                          SelfAssessmentFrameworks ON f.ID = SelfAssessmentFrameworks.FrameworkId AND sas.SelfAssessmentID = SelfAssessmentFrameworks.SelfAssessmentId
              WHERE (sas.SelfAssessmentID = @competencyAssessmentId)
-             AND ((SELECT COUNT(*) FROM CompetencyAssessmentQuestions caq WHERE caq.CompetencyID = c.ID) > 0)
+             AND EXISTS (SELECT 1 FROM CompetencyAssessmentQuestions caq WHERE caq.CompetencyID = c.ID)
              ORDER BY sas.Ordering", new { competencyAssessmentId }
            );
         }
-
 
         public IEnumerable<LinkedFramework> GetLinkedFrameworksForCompetencyAssessment(int competencyAssessmentId)
         {
