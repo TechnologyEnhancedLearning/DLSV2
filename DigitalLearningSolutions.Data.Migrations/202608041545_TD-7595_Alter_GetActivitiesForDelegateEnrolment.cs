@@ -2,7 +2,7 @@
 {
      using FluentMigrator;
 
-    [Migration(202607081170)]
+    [Migration(202608051170)]
     public class _202608041545_TD_7595_Alter_GetActivitiesForDelegateEnrolment : Migration
     {
         public override void Up()
