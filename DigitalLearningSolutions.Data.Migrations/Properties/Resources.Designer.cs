@@ -19,7 +19,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "18.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -3052,6 +3052,49 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         internal static string TD_7397_Alter_usp_GetSelfAssessmentReport_Up {
             get {
                 return ResourceManager.GetString("TD_7397_Alter_usp_GetSelfAssessmentReport_Up", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 
+        ////****** Object:  StoredProcedure [dbo].[StoreDiagScoreSCO]    Script Date: 05/08/2026 08:51:11 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 08/08/2018
+        ///-- Description:	Updates the diagnostic score for a delegate using ProgressID and TutorialID to identify ASPProgress record to update
+        ///-- =============================================
+        ///ALTER PROCEDURE [dbo].[StoreDiagScoreSCO]
+        ///	@score int,
+        ///	@pro [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_7596_Alter_StoreDiagScoreSCO_Down {
+            get {
+                return ResourceManager.GetString("TD-7596-Alter_StoreDiagScoreSCO_Down", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[StoreDiagScoreSCO]    Script Date: 05/08/2026 08:51:11 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 08/08/2018
+        ///-- Description:	Updates the diagnostic score for a delegate using ProgressID and TutorialID to identify ASPProgress record to update
+        ///-- =============================================
+        ///ALTER PROCEDURE [dbo].[StoreDiagScoreSCO]
+        ///	@score INT,
+        ///	@progr [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_7596_Alter_StoreDiagScoreSCO_Up {
+            get {
+                return ResourceManager.GetString("TD-7596-Alter_StoreDiagScoreSCO_Up", resourceCulture);
             }
         }
         
