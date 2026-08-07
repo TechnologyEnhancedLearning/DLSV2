@@ -391,24 +391,30 @@
                 search = search.Trim();
             }
 
-            string BaseSelectQuery = $@"SELECT aa.ID, aa.UserID, aa.CentreID, aa.Active, aa.IsCentreAdmin, aa.IsReportsViewer, aa.IsSuperAdmin, aa.IsCentreManager, 
-		                                aa.LastAccessed, aa.IsContentManager, aa.IsContentCreator, aa.IsSupervisor, aa.IsTrainer, aa.CategoryID, aa.IsFrameworkDeveloper, aa.IsFrameworkContributor,aa.ImportOnly,
-		                                aa.IsWorkforceManager, aa.IsWorkforceContributor, aa.IsLocalWorkforceManager, aa.IsNominatedSupervisor,
-		                                u.ID, u.PrimaryEmail, u.FirstName, u.LastName, u.Active, u.FailedLoginCount,
-		                                c.CentreID, c.CentreName,
-		                                ucd.ID, ucd.Email, ucd.EmailVerified, ucd.CentreID,
-                         (SELECT count(*)
-                         FROM (
-                                SELECT TOP 1 AdminSessions.AdminID FROM AdminSessions WHERE AdminSessions.AdminID = aa.ID
-	                            UNION ALL
-                                SELECT TOP 1 FrameworkCollaborators.AdminID FROM FrameworkCollaborators WHERE FrameworkCollaborators.AdminID = aa.ID
-	                            UNION ALL
-                                SELECT TOP 1 SupervisorDelegates.SupervisorAdminID FROM SupervisorDelegates WHERE SupervisorDelegates.SupervisorAdminID = aa.ID
-                            ) AS tempTable) AS AdminIdReferenceCount
+            string BaseSelectQuery = $@"WITH AdminReferenceCounts AS (
+                                    SELECT AdminID, SUM(AdminReferenceCount) AS AdminIdReferenceCount
+                                    FROM (
+                                        SELECT DISTINCT AdminID, 1 AS AdminReferenceCount FROM AdminSessions
+                                        UNION ALL
+                                        SELECT DISTINCT AdminID, 1 AS AdminReferenceCount FROM FrameworkCollaborators
+                                        UNION ALL
+                                        SELECT DISTINCT SupervisorAdminID AS AdminID, 1 AS AdminReferenceCount FROM SupervisorDelegates
+                                    ) AS AdminReferenceRows
+                                    GROUP BY AdminID
+                                )
+                                SELECT aa.ID, aa.UserID, aa.CentreID, aa.Active, aa.IsCentreAdmin, aa.IsReportsViewer, aa.IsSuperAdmin, aa.IsCentreManager, 
+							        aa.LastAccessed, aa.IsContentManager, aa.IsContentCreator, aa.IsSupervisor, aa.IsTrainer, aa.CategoryID, aa.IsFrameworkDeveloper, aa.IsFrameworkContributor,aa.ImportOnly,
+							        aa.IsWorkforceManager, aa.IsWorkforceContributor, aa.IsLocalWorkforceManager, aa.IsNominatedSupervisor,
+							        u.ID, u.PrimaryEmail, u.FirstName, u.LastName, u.Active, u.FailedLoginCount,
+							        c.CentreID, c.CentreName,
+							        ucd.ID, ucd.Email, ucd.EmailVerified, ucd.CentreID,
+                                    COALESCE(arc.AdminIdReferenceCount, 0) AS AdminIdReferenceCount,
+                                    COUNT(*) OVER() AS TotalCount
                                     FROM   AdminAccounts AS aa INNER JOIN
                                     Users AS u ON aa.UserID = u.ID INNER JOIN
                                     Centres AS c ON aa.CentreID = c.CentreID LEFT OUTER JOIN
-                                    UserCentreDetails AS ucd ON u.ID = ucd.UserID AND c.CentreID = ucd.CentreID";
+                                    UserCentreDetails AS ucd ON u.ID = ucd.UserID AND c.CentreID = ucd.CentreID
+                                    LEFT JOIN AdminReferenceCounts AS arc ON arc.AdminID = aa.ID";
 
             string condition = $@" WHERE ((@adminId = 0) OR (aa.ID = @adminId)) AND 
                                 (u.FirstName + ' ' + u.LastName + ' ' + u.PrimaryEmail + ' ' + COALESCE(ucd.Email, '') + ' ' + COALESCE(u.ProfessionalRegistrationNumber, '') LIKE N'%' + @search + N'%') AND 
@@ -426,30 +432,30 @@
                             OFFSET @offset ROWS
                             FETCH NEXT @rows ROWS ONLY";
 
-            IEnumerable<AdminEntity> adminEntity = connection.Query<AdminAccount, UserAccount, Centre, UserCentreDetails, int, AdminEntity>(
+            var adminEntities = new List<AdminEntity>();
+            int resultCount = 0;
+
+            connection.Query<AdminAccount, UserAccount, Centre, UserCentreDetails, int, int, AdminEntity>(
                 sql,
-                (adminAccount, userAccount, centre, userCentreDetails, adminIdReferenceCount) => new AdminEntity(
-                    adminAccount,
-                    userAccount,
-                    centre,
-                    userCentreDetails,
-                    adminIdReferenceCount
-                ),
+                (adminAccount, userAccount, centre, userCentreDetails, adminIdReferenceCount, totalCount) =>
+                {
+                    resultCount = resultCount == 0 ? totalCount : resultCount;
+                    var adminEntity = new AdminEntity(
+                        adminAccount,
+                        userAccount,
+                        centre,
+                        userCentreDetails,
+                        adminIdReferenceCount
+                    );
+                    adminEntities.Add(adminEntity);
+                    return adminEntity;
+                },
                 new { adminId, search, centreId, userStatus, failedLoginThreshold, role, offset, rows },
-                splitOn: "ID,ID,CentreID,ID,AdminIdReferenceCount",
+                splitOn: "ID,ID,CentreID,ID,AdminIdReferenceCount,TotalCount",
                 commandTimeout: 3000
             );
 
-            int ResultCount = connection.ExecuteScalar<int>(
-                            @$"SELECT  COUNT(*) AS Matches
-                            FROM   AdminAccounts AS aa INNER JOIN
-                            Users AS u ON aa.UserID = u.ID INNER JOIN
-                            Centres AS c ON aa.CentreID = c.CentreID LEFT OUTER JOIN
-                            UserCentreDetails AS ucd ON u.ID = ucd.UserID AND c.CentreID = ucd.CentreID {condition}",
-                new { adminId, search, centreId, userStatus, failedLoginThreshold, role },
-                commandTimeout: 3000
-            );
-            return (adminEntity, ResultCount);
+            return (adminEntities, resultCount);
         }
         public int RessultCount(int adminId, string search, int? centreId, string userStatus, int failedLoginThreshold, string role)
         {
