@@ -418,7 +418,7 @@ INNER JOIN JobGroups AS jg WITH (NOLOCK) ON jg.JobGroupID = u.JobGroupID
 
             if (delegateUserCards.Any())
             {
-                resultCount = delegateUserCards.First().TotalCount;
+                resultCount = delegateUserCards.Count();
             }
             return (delegateUserCards, resultCount);
         }
