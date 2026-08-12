@@ -3102,6 +3102,62 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[usp_GetSelfAssessmentReport]    Script Date: 12/08/2026 08:38:44 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///CREATE OR ALTER   PROCEDURE [dbo].[usp_GetSelfAssessmentReport]
+        ///    @SelfAssessmentID INT,
+        ///    @CentreID INT
+        ///AS
+        ///BEGIN
+        ///    SET NOCOUNT ON;
+        ///
+        ///    -- Step 1: Materialize the LatestAssessmentResults into a temp table
+        ///    IF OBJECT_ID(&apos;tempdb..#LatestAssessmentResults&apos;) IS NOT NULL
+        ///        DROP TABLE #LatestAssessmentResults;
+        ///
+        ///    SEL [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_7640_Alter_usp_GetSelfAssessmentReport_Down {
+            get {
+                return ResourceManager.GetString("TD_7640_Alter_usp_GetSelfAssessmentReport_Down", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///ALTER PROCEDURE [dbo].usp_GetSelfAssessmentReport
+        ///    @SelfAssessmentID INT,
+        ///    @CentreID INT
+        ///AS
+        ///BEGIN
+        ///    SET NOCOUNT ON;
+        ///
+        ///    /* Aggregate result detail before joining it to the report rows. */
+        ///    SELECT
+        ///        ca.ID AS CandidateAssessmentID,
+        ///        COUNT(DISTINCT CASE
+        ///            WHEN sas.Optional = 1 THEN s.CompetencyID
+        ///        END) AS OptionalProficienciesAssessed,
+        ///        COUNT(DISTINCT CASE
+        ///            WHEN caq.Required = 1 AN [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_7640_Alter_usp_GetSelfAssessmentReport_Up {
+            get {
+                return ResourceManager.GetString("TD_7640_Alter_usp_GetSelfAssessmentReport_Up", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GetActiveAvailableCustomisationsForCentreFiltered_V6]    Script Date: 29/09/2022 19:11:04 ******/
         ///SET ANSI_NULLS ON
         ///GO
