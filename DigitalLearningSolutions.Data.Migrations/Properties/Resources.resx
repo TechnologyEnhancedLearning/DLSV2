@@ -559,4 +559,10 @@
   <data name="TD_7592_Alter_GetNotificationsForAdminUser_Up" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Scripts\TD-7592-Alter_GetNotificationsForAdminUser_Up.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
   </data>
+  <data name="TD_7590_Alter_GetAssessmentResultByDelegate_Down" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Scripts\TD-7592-Alter_GetNotificationsForAdminUser_Down.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
+  </data>
+  <data name="TD_7590_Alter_GetAssessmentResultByDelegate_Up" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Scripts\TD-7592-Alter_GetNotificationsForAdminUser_Up.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
+  </data>
 </root>

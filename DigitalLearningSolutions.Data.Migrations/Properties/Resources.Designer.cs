@@ -3072,6 +3072,52 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///ALTER PROCEDURE [dbo].[GetNotificationsForAdminUser]
         ///	-- Add the parameters for the stored procedur [rest of string was truncated]&quot;;.
         /// </summary>
+        internal static string TD_7590_Alter_GetAssessmentResultByDelegate_Down {
+            get {
+                return ResourceManager.GetString("TD_7590_Alter_GetAssessmentResultByDelegate_Down", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GetNotificationsForAdminUser]    Script Date: 03/08/2026 15:54:52 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 04/09/2018
+        ///-- Description:	Gets available notification and admin user subscription status.
+        ///-- =============================================
+        ///ALTER PROCEDURE [dbo].[GetNotificationsForAdminUser]
+        ///	-- Add the parameters for the stored procedur [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_7590_Alter_GetAssessmentResultByDelegate_Up {
+            get {
+                return ResourceManager.GetString("TD_7590_Alter_GetAssessmentResultByDelegate_Up", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GetNotificationsForAdminUser]    Script Date: 03/08/2026 15:54:52 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 04/09/2018
+        ///-- Description:	Gets available notification and admin user subscription status.
+        ///-- =============================================
+        ///ALTER PROCEDURE [dbo].[GetNotificationsForAdminUser]
+        ///	-- Add the parameters for the stored procedur [rest of string was truncated]&quot;;.
+        /// </summary>
         internal static string TD_7592_Alter_GetNotificationsForAdminUser_Down {
             get {
                 return ResourceManager.GetString("TD_7592_Alter_GetNotificationsForAdminUser_Down", resourceCulture);
