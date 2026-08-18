@@ -1746,10 +1746,8 @@
                     var nameTextLength = string.IsNullOrEmpty(model.CompetencySelfAssessmentCertificates.LearnerName) ? 0 : model.CompetencySelfAssessmentCertificates.LearnerName.Length;
                     var isPrnExist = !string.IsNullOrEmpty(model.CompetencySelfAssessmentCertificates.LearnerPRN);
                     var selfAssessmentName = model.CompetencySelfAssessmentCertificates.SelfAssessment ?? string.Empty;
-                    var shortSelfAssessment = selfAssessmentName[..Math.Min(50, selfAssessmentName.Length)];
                     var learnerName = model.CompetencySelfAssessmentCertificates.LearnerName ?? string.Empty;
-                    var shortLearnerName = learnerName[..Math.Min(15, learnerName.Length)];
-                    var fileName = $"Certificate - {shortSelfAssessment} - {shortLearnerName}" + (isPrnExist ? $" - {model.CompetencySelfAssessmentCertificates.LearnerPRN}" : "");
+                    var fileName = $"Certificate - {selfAssessmentName} - {learnerName}" + (isPrnExist ? $" - {model.CompetencySelfAssessmentCertificates.LearnerPRN}" : "");
                     if (fileName.Length > MaxFileNameLength)
                     {
                         fileName = fileName[..MaxFileNameLength];
