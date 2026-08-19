@@ -3102,6 +3102,52 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[uspReturnSectionsForCandCust_V2]    Script Date: 17/08/2026 15:16:08 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 15/08/2013
+        ///-- Description:	Gets section table for learning menu
+        ///-- =============================================
+        ///ALTER PROCEDURE [dbo].[uspReturnSectionsForCandCust_V2]
+        ///	-- Add the parameters for the stored procedure here
+        ///	@ProgressID In [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_7599_Alter_uspReturnSectionsForCandCust_V2_Down {
+            get {
+                return ResourceManager.GetString("TD_7599_Alter_uspReturnSectionsForCandCust_V2_Down", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[uspReturnSectionsForCandCust_V2]    Script Date: 17/08/2026 15:16:08 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 15/08/2013
+        ///-- Description:	Gets section table for learning menu
+        ///-- =============================================
+        ///ALTER PROCEDURE [dbo].[uspReturnSectionsForCandCust_V2]
+        ///	-- Add the parameters for the stored procedure here
+        ///	@ProgressID In [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_7599_Alter_uspReturnSectionsForCandCust_V2_Up {
+            get {
+                return ResourceManager.GetString("TD_7599_Alter_uspReturnSectionsForCandCust_V2_Up", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GetActiveAvailableCustomisationsForCentreFiltered_V6]    Script Date: 29/09/2022 19:11:04 ******/
         ///SET ANSI_NULLS ON
         ///GO
