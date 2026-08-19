@@ -39,6 +39,7 @@ namespace DigitalLearningSolutions.Web
     using Microsoft.Extensions.Hosting;
     using Microsoft.FeatureManagement;
     using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+    using Microsoft.OpenApi.Models;
     using Serilog;
     using System;
     using System.Collections.Generic;
@@ -179,6 +180,27 @@ namespace DigitalLearningSolutions.Web
                         );
                     }
                 );
+
+            services.AddSwaggerGen(
+                options =>
+                {
+                    options.SwaggerDoc(
+                        "v1",
+                        new OpenApiInfo
+                        {
+                            Title = "Digital Learning Solutions API",
+                            Version = "v1",
+                            Description = "Proof-of-concept API endpoints for Digital Learning Solutions.",
+                        }
+                    );
+                    options.DocInclusionPredicate(
+                        (_, description) => description.RelativePath?.StartsWith("api/", StringComparison.OrdinalIgnoreCase) == true
+                    );
+                    options.IncludeXmlComments(
+                        Path.Combine(AppContext.BaseDirectory, "DigitalLearningSolutions.Web.xml")
+                    );
+                }
+            );
 
             if (env.IsDevelopment())
             {
@@ -593,14 +615,16 @@ namespace DigitalLearningSolutions.Web
             app.UseMiddleware<DLSIPRateLimitMiddleware>();
             app.Use(async (context, next) =>
             {
-                context.Response.Headers.Add("content-security-policy",
-                    "default-src 'self'; " +
-                    $"script-src 'self' 'nonce-random772362' https://script.hotjar.com https://www.google-analytics.com https://static.hotjar.com https://www.googletagmanager.com https://cdnjs.cloudflare.com {tableauServerUrl} 'unsafe-hashes' 'sha256-oywvD6W6okwID679n4cvPJtWLowSS70Pz87v1ryS0DU=' 'sha256-kbHtQyYDQKz4SWMQ8OHVol3EC0t3tHEJFPCSwNG9NxQ' 'sha256-YoDy5WvNzQHMq2kYTFhDYiGnEgPrvAY5Il6eUu/P4xY=' 'sha256-/n13APBYdqlQW71ZpWflMB/QoXNSUKDxZk1rgZc+Jz8='   'sha256-+6WnXIl4mbFTCARd8N3COQmT3bJJmo32N8q8ZSQAIcU=' 'sha256-VQKp2qxuvQmMpqE/U/ASQ0ZQ0pIDvC3dgQPPCqDlvBo=';" +
-                    "style-src 'self' 'unsafe-inline' https://use.fontawesome.com; " +
-                    "font-src https://script.hotjar.com https://assets.nhs.uk/; " +
-                    "connect-src 'self' http: ws:; " +
-                    "img-src 'self' data: https:; " +
-                    "frame-src 'self' https:");
+                var contentSecurityPolicy = context.Request.Path.StartsWithSegments("/swagger")
+                    ? "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:;"
+                    : "default-src 'self'; " +
+                      $"script-src 'self' 'nonce-random772362' https://script.hotjar.com https://www.google-analytics.com https://static.hotjar.com https://www.googletagmanager.com https://cdnjs.cloudflare.com {tableauServerUrl} 'unsafe-hashes' 'sha256-oywvD6W6okwID679n4cvPJtWLowSS70Pz87v1ryS0DU=' 'sha256-kbHtQyYDQKz4SWMQ8OHVol3EC0t3tHEJFPCSwNG9NxQ' 'sha256-YoDy5WvNzQHMq2kYTFhDYiGnEgPrvAY5Il6eUu/P4xY=' 'sha256-/n13APBYdqlQW71ZpWflMB/QoXNSUKDxZk1rgZc+Jz8='   'sha256-+6WnXIl4mbFTCARd8N3COQmT3bJJmo32N8q8ZSQAIcU=' 'sha256-VQKp2qxuvQmMpqE/U/ASQ0ZQ0pIDvC3dgQPPCqDlvBo=';" +
+                      "style-src 'self' 'unsafe-inline' https://use.fontawesome.com; " +
+                      "font-src https://script.hotjar.com https://assets.nhs.uk/; " +
+                      "connect-src 'self' http: ws:; " +
+                      "img-src 'self' data: https:; " +
+                      "frame-src 'self' https:";
+                context.Response.Headers.Add("content-security-policy", contentSecurityPolicy);
                 context.Response.Headers.Add("Referrer-Policy", "no-referrer");
                 context.Response.Headers.Add("Strict-Transport-Security", "max-age=31536000; includeSubDomains");
                 context.Response.Headers.Add("X-Content-Type-Options", "nosniff");
@@ -619,6 +643,10 @@ namespace DigitalLearningSolutions.Web
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                app.UseSwagger();
+                app.UseSwaggerUI(
+                    options => options.SwaggerEndpoint("./v1/swagger.json", "Digital Learning Solutions API v1")
+                );
             }
 
 
@@ -655,7 +683,10 @@ namespace DigitalLearningSolutions.Web
 
             app.UseEndpoints(
                 endpoints =>
-                    endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}")
+                {
+                    endpoints.MapControllers();
+                    endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}");
+                }
             );
 
             migrationRunner.MigrateUp();
