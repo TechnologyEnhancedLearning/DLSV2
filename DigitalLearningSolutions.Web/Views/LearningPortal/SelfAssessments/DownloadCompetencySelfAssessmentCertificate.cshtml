@@ -11,8 +11,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NHS Certificate</title>
-
-    <style>
+       <style>
         .certificate {
             width: 100%;
             justify-content: start;
@@ -40,7 +39,7 @@
                 .certificate .pg-1 .head {
                     background-color: #0063B7;
                     color: white;
-                    padding: 50px;
+                        padding: 30px 40px;
                     position: relative;
                 }
 
@@ -52,7 +51,21 @@
                         .certificate .pg-1 .head .logo img {
                             width: 100px;
                         }
+            /* Multi-column wrapper to allow twice as many competencies on Page 1 */
+            .competencies-grid {
+                column-count: 2;
+                column-gap: 20px;
+                margin-top: 8px;
+                padding-left: 15px;
+            }
 
+            .competency-item {
+                break-inside: avoid;
+                page-break-inside: avoid;
+                font-size: 0.8rem !important;
+                line-height: 1.25 !important;
+                margin-bottom: 4px !important;
+            }
         .fancy-box {
             width: 50px;
             height: 50px;
@@ -64,17 +77,16 @@
         }
 
         .certificate .pg-1 .body {
-            padding: 50px;
-            flex: 0;
+                padding: 20px 40px;
+                flex: 1 1 auto;
+                overflow: hidden;
         }
 
         .certificate .pg-1 .footer {
-            padding: 50px;
-            align-items: center;
-            display: flex;
-            flex: 1;
-            justify-content: flex-start;
-            align-items: end;
+                padding: 15px 40px 10px 40px;
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-end;
         }
 
         .footer p.blue, .pg-1 h3 {
@@ -97,6 +109,8 @@
         .strips {
             display: flex;
             padding: 0.5rem 0;
+            position: relative;
+            top: -10px;
         }
 
         .strip-green {
@@ -396,13 +410,12 @@
                 box-sizing: border-box
             }
         }
-    </style>
+    </style> 
 
 </head>
 <body>
     <div class="certificate">
         <partial name="_SelfAssessmentCertificateFirstPage.cshtml" model=Model />
-        <div class="pagebreak"></div>
         <partial name="_SelfAssessmentCertificateSecondPage.cshtml" model=Model />
     </div>
 </body>
