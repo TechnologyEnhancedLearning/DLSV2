@@ -2,7 +2,7 @@
 {
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents;
-    using NHSUKViewComponents.Web.ViewModels;
+    using NHSETELViewComponents.ViewModels;
 
     public class AdminRoleInputs
     {

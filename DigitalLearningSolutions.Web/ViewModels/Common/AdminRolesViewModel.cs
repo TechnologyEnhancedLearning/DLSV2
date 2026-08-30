@@ -5,7 +5,7 @@
     using DigitalLearningSolutions.Web.ViewModels.Common.ViewComponents;
     using DigitalLearningSolutions.Web.ViewModels.TrackingSystem.Centre.Administrator;
     using Microsoft.AspNetCore.Mvc.Rendering;
-    using NHSUKViewComponents.Web.ViewModels;
+    using NHSETELViewComponents.ViewModels;
 
 
     public abstract class AdminRolesViewModel : AdminRolesFormData
