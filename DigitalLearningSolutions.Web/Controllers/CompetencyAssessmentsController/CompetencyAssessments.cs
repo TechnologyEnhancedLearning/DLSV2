@@ -779,7 +779,7 @@
         {
             if (model.ManageOptionalCompetenciesPrompt?.Length > 1000)
             {
-                ModelState.AddModelError(nameof(model.ManageOptionalCompetenciesPrompt), "Prompt text must be 1000 characters or fewer");
+                ModelState.AddModelError(nameof(model.ManageOptionalCompetenciesPrompt), "Prompt text cannot exceed 1000 characters.");
                 return View("SetOptionalCompetencyLearnerPrompt", model);
             }
             competencyAssessmentService.UpdateManageOptionalCompetenciesPrompt(model.ID, model.ManageOptionalCompetenciesPrompt);
