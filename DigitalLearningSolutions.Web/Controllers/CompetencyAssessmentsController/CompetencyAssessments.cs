@@ -1849,7 +1849,11 @@
 
             return RedirectToAction("ManageCompetencyAssessment", new { competencyAssessmentId = model.CompetencyAssessmentId });
         }
-
+        public IActionResult CancelCompetencyAssessment(int competencyAssessmentId, int frameworkId)
+        {
+            competencyAssessmentService.CancelCompetencyAssessment(competencyAssessmentId, frameworkId);
+            return RedirectToAction("ViewFramework", "Frameworks", new { frameworkId, tabname = "Structure" });
+        }
         private void SetManagesupervisionData(ManagesupervisionViewModel data)
         {
             multiPageFormService.SetMultiPageFormData(

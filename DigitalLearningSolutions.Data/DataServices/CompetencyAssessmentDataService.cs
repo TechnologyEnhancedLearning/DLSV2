@@ -129,6 +129,7 @@
         CompetencyAssessmentCollaboratorNotification? GetCollaboratorNotification(int id, int invitedByAdminId);
         bool HasCompetencyWithSignpostedLearning(int competencyAssessmentId);
         bool DeleteCompetencyAssessmentQuestionRoleRequirement(int assessmentId, int? competencyId, int assessmentQuestionId, int levelValue);
+        bool CancelCompetencyAssessment(int selfAssessmentId, int frameworkId);
     }
 
     public class CompetencyAssessmentDataService : ICompetencyAssessmentDataService
@@ -1816,6 +1817,42 @@ ORDER BY
                 return false;
             }
             return true;
+        }
+        public bool CancelCompetencyAssessment(int selfAssessmentId, int frameworkId)
+        {
+            connection.EnsureOpen();
+
+            using (var transaction = connection.BeginTransaction())
+            {
+                var numberOfAffectedRows = connection.Execute(
+                    @"DELETE FROM SelfAssessmentFrameworks
+              WHERE SelfAssessmentId = @selfAssessmentId
+                AND FrameworkId = @frameworkId",
+                    new { selfAssessmentId, frameworkId },
+                    transaction: transaction
+                );
+
+                var numberOfAffectedSelfAssessments = connection.Execute(
+                    @"DELETE FROM SelfAssessments
+              WHERE Id = @selfAssessmentId",
+                    new { selfAssessmentId },
+                    transaction: transaction
+                );
+
+                if (numberOfAffectedRows < 1 || numberOfAffectedSelfAssessments < 1)
+                {
+                    logger.LogWarning(
+                        "Failed to delete SelfAssessmentFrameworks or SelfAssessments. " +
+                        $"selfAssessmentId: {selfAssessmentId}, frameworkId: {frameworkId}"
+                    );
+
+                    transaction.Rollback();
+                    return false;
+                }
+
+                transaction.Commit();
+                return true;
+            }
         }
     }
 }
