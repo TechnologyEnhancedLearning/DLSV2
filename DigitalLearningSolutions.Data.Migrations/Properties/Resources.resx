@@ -553,4 +553,10 @@
   <data name="TD_7397_Alter_usp_GetSelfAssessmentReport_Up" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Scripts\TD-7397-Alter_usp_GetSelfAssessmentReport_Up.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
   </data>
+  <data name="TD_7501_Alter_GetAssessmentResultsByDelegate_Down" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\TD_7501_Alter_GetAssessmentResultsByDelegate_Down.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
+  </data>
+  <data name="TD_7501_Alter_GetAssessmentResultsByDelegate_Up" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\TD_7501_Alter_GetAssessmentResultsByDelegate_Up.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
 </root>
