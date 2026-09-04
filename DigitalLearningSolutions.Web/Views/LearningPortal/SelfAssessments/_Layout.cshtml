@@ -7,6 +7,10 @@
 @{
     var userResearchUrl = Configuration["UserResearchUrl"];
     Context.Request.Cookies.TryGetValue("Dls-cookie-consent", out string cookieConsent);
+    var selfAssessmentId = ViewContext.RouteData.Values["selfAssessmentId"];
+    var headerPath = selfAssessmentId == null
+        ? $"{Configuration["AppRootPath"]}/LearningPortal/Current"
+        : $"{Configuration["AppRootPath"]}/LearningPortal/SelfAssessment/{selfAssessmentId}";
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -58,8 +62,8 @@
             <div class="nhsuk-header__container">
                 <div class="nhsuk-header__logo nhsuk-header__transactional--logo">
                     <a class="nhsuk-header__link"
-                       href="/"
-                       aria-label="NHS homepage">
+                       href="@headerPath"
+                       aria-label="NHS Digital Learning Solutions - @(ViewData["SelfAssessmentTitle"])">
                         <svg class="nhsuk-logo" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="NHS Logo" focusable="false" viewBox="0 0 40 16" height="40" width="100">
                             <title>NHS</title>
                             <path class="nhsuk-logo__background" fill="#005eb8" d="M0 0h40v16H0z"></path>
@@ -68,7 +72,7 @@
                         </svg>
                     </a>
                     <div class="nhsuk-header__transactional-service-name">
-                        <a class="nhsuk-header__transactional-service-name--link" href="/">@ViewData["SelfAssessmentTitle"]</a>
+                        <a class="nhsuk-header__transactional-service-name--link" href="@headerPath">@ViewData["SelfAssessmentTitle"]</a>
                         <sup class="header-beta">Beta</sup>
                     </div>
                 </div>

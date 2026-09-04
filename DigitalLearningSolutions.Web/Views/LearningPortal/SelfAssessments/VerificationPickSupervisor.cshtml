@@ -3,7 +3,7 @@
 @{
     var errorHasOccurred = !ViewData.ModelState.IsValid;
     Layout = "SelfAssessments/_Layout";
-    ViewData["Title"] = "Self Assessment - New Confirmation Request - Choose Supervisor";
+    ViewData["Title"] = "Self-Assessment - New Confirmation Request - Choose Supervisor";
     ViewData["SelfAssessmentTitle"] = @Model.SelfAssessment.Name;
 }
 @section breadcrumbs {
@@ -75,7 +75,7 @@
 }
 else
 {
-    <p>There are no supervisors identified who can confirm @Model.VocabPlural().ToLower() for this self assessment.</p>
+    <p>There are no supervisors identified who can confirm @Model.VocabPlural().ToLower() for this self-assessment.</p>
     <div class="nhsuk-action-link">
         <a class="nhsuk-action-link__link" asp-action="ManageSupervisors" asp-route-selfAssessmentId="@Model.SelfAssessment.Id">
             <svg class="nhsuk-icon nhsuk-icon__arrow-right-circle" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">

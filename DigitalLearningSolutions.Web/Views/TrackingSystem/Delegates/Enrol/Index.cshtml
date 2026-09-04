@@ -17,16 +17,26 @@
         <h1 class="nhsuk-heading-xl">Enrol delegate on activity - step 1</h1>
         <vc:field-name-value-display display-name="Delegate" field-value="@Model.DelegateName" />
         <form method="post" class="nhsuk-u-margin-bottom-3">
+            <label class="nhsuk-label" asp-for="SelectedActivity">Choose an activity:</label>
+            <div class="nhsuk-form-group">
+                <select asp-for="SelectedActivity" class="nhsuk-select nhsuk-u-width-one-half">
+                    <option value="">--Select--</option>
 
-            <vc:select-list asp-for="@nameof(Model.SelectedActivity)"
-                            label="Choose an activity:"
-                            value="@Model.SelectedActivity"
-                            hint-text=""
-                            required="true"
-                            css-class="nhsuk-u-width-one-half"
-                            default-option="--Select--"
-                            select-list-options="@Model.LearningItems" />
+                    <optgroup label="Course">
+                        @foreach (var item in Model.LearningItems.Where(x => !x.IsSelfAssessment))
+                        {
+                            <option value="@item.Id">@item.Name</option>
+                        }
+                    </optgroup>
 
+                    <optgroup label="Self-assessment">
+                        @foreach (var item in Model.LearningItems.Where(x => x.IsSelfAssessment))
+                        {
+                            <option value="@item.Id">@item.Name</option>
+                        }
+                    </optgroup>
+                </select>
+            </div>
             <input class="nhsuk-button" type="submit" value="Next" />
         </form>
         <vc:cancel-link asp-controller="ViewDelegate" asp-action="Index" asp-all-route-data="@routeParamsForCancelLink" />

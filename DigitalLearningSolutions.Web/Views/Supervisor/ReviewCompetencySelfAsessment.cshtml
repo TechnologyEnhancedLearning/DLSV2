@@ -2,7 +2,7 @@
 @model ReviewCompetencySelfAsessmentViewModel;
 @{
     var errorHasOccurred = !ViewData.ModelState.IsValid;
-    ViewData["Title"] = $"Review {Model.Competency.Vocabulary} Self Assessment";
+    ViewData["Title"] = $"Review {Model.Competency.Vocabulary} Self-Assessment";
     ViewData["Application"] = "Supervisor";
     ViewData["HeaderPathName"] = "Supervisor";
 }
@@ -55,7 +55,7 @@
         <partial name="Shared/_StaffDetails" model="Model.SupervisorDelegate" />
     </div>
 </details>
-<h2>@Model.Competency.Vocabulary Self Assessment Result</h2>
+<h2>@Model.Competency.Vocabulary Self-Assessment Result</h2>
 <dl class="nhsuk-summary-list">
 
     <div class="nhsuk-summary-list__row">
@@ -183,7 +183,7 @@
                 <fieldset class="nhsuk-fieldset">
                     <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
                         <h2 class="nhsuk-fieldset__heading">
-                            Confirm Self Assessment of @Model.Competency.Vocabulary
+                            Confirm Self-Assessment of @Model.Competency.Vocabulary
                         </h2>
                     </legend>
                     <input name="ResultSupervisorVerificationId" type="hidden" asp-for="ResultSupervisorVerificationId" />

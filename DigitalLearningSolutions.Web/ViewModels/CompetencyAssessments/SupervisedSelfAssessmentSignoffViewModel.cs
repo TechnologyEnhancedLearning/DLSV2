@@ -1,14 +1,18 @@
-﻿namespace DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
+﻿using DigitalLearningSolutions.Data.Models.CompetencyAssessments;
+
+namespace DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
 {
     public class SupervisedSelfAssessmentSignoffViewModel
     {
         public SupervisedSelfAssessmentSignoffViewModel()
         { }
-        public SupervisedSelfAssessmentSignoffViewModel(int id, string competencyAssessmentName, string? actionName)
+        public SupervisedSelfAssessmentSignoffViewModel(CompetencyAssessmentBase competencyAssessmentBase, string? actionName)
         {
-            CompetencyAssessmentId = id;
-            CompetencyAssessmentName = competencyAssessmentName;
+            CompetencyAssessmentId = competencyAssessmentBase.ID;
+            CompetencyAssessmentName = competencyAssessmentBase.CompetencyAssessmentName;
             this.ActionName = actionName;
+            UserRole = competencyAssessmentBase.UserRole;
+            PublishStatusID = competencyAssessmentBase.PublishStatusID;
         }
         public SupervisedSelfAssessmentSignoffViewModel(SupervisedSelfAssessmentSignoffViewModel model)
         {
@@ -17,6 +21,8 @@
             Confirm = model.Confirm;
             Signoff = model.Signoff;
             ActionName = model.ActionName;
+            UserRole = model.UserRole;
+            PublishStatusID = model.PublishStatusID;
         }
         public int CompetencyAssessmentId { get; set; }
         public string CompetencyAssessmentName { get; set; } = string.Empty;
@@ -25,5 +31,7 @@
         public string? ActionName { get; set; }
         public string SignoffText => Signoff == 1 ? "Yes" : "No";
         public string ConfirmText => Confirm == 1 ? "Yes" : "No";
+        public int UserRole { get; set; }
+        public int PublishStatusID { get; set; }
     }
 }

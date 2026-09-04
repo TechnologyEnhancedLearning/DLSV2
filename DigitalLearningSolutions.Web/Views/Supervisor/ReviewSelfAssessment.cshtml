@@ -108,7 +108,7 @@
         }
         @if (Model.DelegateSelfAssessment.SignOffRequested > 0 && Model.CompetencySummaries.VerifiedCount == Model.CompetencySummaries.QuestionsCount)
         {
-            <a role="button" asp-action="SignOffProfileAssessment" asp-route-candidateAssessmentId="@Model.DelegateSelfAssessment.ID" asp-route-supervisorDelegateId="@Model.SupervisorDelegateDetail.ID" class="nhsuk-button">Sign-off self assessment</a>
+            <a role="button" asp-action="SignOffProfileAssessment" asp-route-candidateAssessmentId="@Model.DelegateSelfAssessment.ID" asp-route-supervisorDelegateId="@Model.SupervisorDelegateDetail.ID" class="nhsuk-button">Sign-off self-assessment</a>
         }
         @if ((Model.DelegateSelfAssessment.ResultsVerificationRequests > 1) && Model.CompetencySummaries.VerifiedCount < Model.CompetencySummaries.QuestionsCount)
         {
@@ -224,7 +224,7 @@
 @if (Model.SupervisorSignOffs.Any())
 {
     <div class="nhsuk-u-margin-top-4">
-        <h3>Self Assessment Sign-off Status</h3>
+        <h3>Self-Assessment Sign-off Status</h3>
         <partial name="Shared/_SupervisorSignOffSummary" model="@Model.SupervisorSignOffs" view-data="@(new ViewDataDictionary(ViewData) { { "IsAllCompetencyConfirmed", true },
 { "IsOngoingSelfAssessment", !Model.DelegateSelfAssessment.SignedOff }})" />
     </div>

@@ -36,6 +36,7 @@
                 <p>
                     This action will remove the @Model.VocabularySingular.ToLower() group and the @Model.CompetencyCount @(Model.CompetencyCount > 1 ? Model.VocabularyPlural.ToLower() : Model.VocabularySingular.ToLower()) it contains.
                 </p>
+                <partial name="Shared/_PublishedSelfAssessmentWarning" model="new PublishedSelfAssessmentViewModel { UserRole = Model.UserRole, PublishStatusID = Model.PublishStatusID }" />
                 <p>
                     Are you sure that you wish to proceed?
                 </p>

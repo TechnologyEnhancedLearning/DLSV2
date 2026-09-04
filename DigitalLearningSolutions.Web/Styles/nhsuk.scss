@@ -1,4 +1,4 @@
-﻿@use "nhse-tel-frontend/packages/nhsuk" as *;
+﻿@use "nhsuk-frontend/packages/nhsuk" as *;
 
 .nhsuk-u-margin-right-auto {
   margin-right: auto;
@@ -128,6 +128,13 @@ input[type=file].nhsuk-input--error {
     word-break: break-word;
     @include word-break-ie-fix;
   }
+}
+
+.nhsuk-width-container,
+.nhsuk-header__container,
+.nhsuk-header__navigation-list,
+.nhsuk-header__drop-down .nhsuk-header__navigation-link {
+  max-width: 1200px !important;
 }
 
 .nhsuk-tag {

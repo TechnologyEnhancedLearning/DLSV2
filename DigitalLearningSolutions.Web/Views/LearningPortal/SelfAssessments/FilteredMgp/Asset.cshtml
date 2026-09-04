@@ -8,7 +8,7 @@
 
 @section breadcrumbs {
   <li class="nhsuk-breadcrumb__item">
-    <a class="nhsuk-breadcrumb__link" asp-action="SelfAssessment" asp-route-selfAssessmentId="@(ViewContext.RouteData.Values["selfAssessmentId"])">Self Assessment</a>
+    <a class="nhsuk-breadcrumb__link" asp-action="SelfAssessment" asp-route-selfAssessmentId="@(ViewContext.RouteData.Values["selfAssessmentId"])">Self-Assessment</a>
   </li>
   <li class="nhsuk-breadcrumb__item">
     <a class="nhsuk-breadcrumb__link" asp-controller="RecommendedLearning" asp-action="RecommendedLearning" asp-route-selfAssessmentId="@(ViewContext.RouteData.Values["selfAssessmentId"])">Recommended Learning Resources</a>

@@ -14,5 +14,6 @@
         public bool Error { get; set; }
         public string? ActionName { get; set; }
         public int UserRole { get; set; }
+        public int PublishStatusID { get; set; }
     }
 }

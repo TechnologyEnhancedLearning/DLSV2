@@ -1,4 +1,5 @@
 ﻿@using DigitalLearningSolutions.Data.Models.CompetencyAssessments;
+@using DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
 @model CompetencyAssessmentBase;
 @{
     ViewData["Title"] = "New self-assessments";
@@ -51,6 +52,7 @@ else
             <span class="nhsuk-u-visually-hidden"> – </span>
         </span>Edit self-assessment name
     </h1>
+    <partial name="Shared/_PublishedSelfAssessmentWarning" model="new PublishedSelfAssessmentViewModel { UserRole = Model.UserRole, PublishStatusID = Model.PublishStatusID }" />
 }
 <form method="post">
     <div class="nhsuk-u-reading-width">
@@ -97,10 +99,6 @@ else
         }
         else
         {
-            @if (Model.PublishStatusID == 3)
-            {
-                <partial name="Shared/_PublishedWarning" />
-            }
             <button class="nhsuk-button" type="submit">
                 Save
             </button>

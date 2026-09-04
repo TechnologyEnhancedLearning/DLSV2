@@ -105,34 +105,11 @@ namespace DigitalLearningSolutions.Web.Controllers.TrackingSystem.Centre.Configu
             }
 
             model.CentrePostcode = model.CentrePostcode!.Trim();
-            var mapsResponse = mapsApiHelper.GeocodePostcode(model.CentrePostcode).Result;
-
-            if (mapsResponse.HasNoResults())
-            {
-                ModelState.AddModelError(nameof(model.CentrePostcode), "Enter a UK postcode");
-                return View(model);
-            }
-
-            if (mapsResponse.ApiErrorOccurred())
-            {
-                logger.LogWarning
-                (
-                    $"Failed Maps API call when trying to get postcode {model.CentrePostcode} " +
-                    $"- status of {mapsResponse.Status} - error message: {mapsResponse.ErrorMessage}"
-                );
-                return new StatusCodeResult(500);
-            }
-
-            var latitude = double.Parse(mapsResponse.Results[0].Geometry.Location.Latitude);
-            var longitude = double.Parse(mapsResponse.Results[0].Geometry.Location.Longitude);
-
             var centreId = User.GetCentreIdKnownNotNull();
 
             centresService.UpdateCentreWebsiteDetails(
                 centreId,
                 model.CentrePostcode,
-                latitude,
-                longitude,
                 model.CentreTelephone,
                 model.CentreEmail!,
                 model.OpeningHours,

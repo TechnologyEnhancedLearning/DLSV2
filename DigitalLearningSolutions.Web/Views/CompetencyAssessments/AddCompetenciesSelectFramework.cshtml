@@ -28,6 +28,7 @@
         <span class="nhsuk-u-visually-hidden"> – </span>
     </span>Select framework source
 </h1>
+<partial name="Shared/_PublishedSelfAssessmentWarning" model="new PublishedSelfAssessmentViewModel { UserRole = Model.UserRole, PublishStatusID = Model.PublishStatusID }" />
 <form method="post">
     @if (!ViewData.ModelState.IsValid)
     {
@@ -56,6 +57,7 @@
         <span nhs-validation-for="FrameworkId"></span>
     </div>
     <input type="hidden" asp-for="@Model.ID" />
+    <input type="hidden" asp-for="PublishStatusID" />
     @if (Model.UserRole > 1)
     {
         <button type="submit" class="nhsuk-button">Next</button>

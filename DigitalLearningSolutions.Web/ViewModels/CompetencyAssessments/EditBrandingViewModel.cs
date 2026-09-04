@@ -15,6 +15,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
             Brand = competencyAssessment.Brand;
             Category = competencyAssessment.Category;
             UserRole = competencyAssessment.UserRole;
+            PublishStatusID = competencyAssessment.PublishStatusID;
             BrandSelectList = brandSelectList;
             CategorySelectList = categorySelectList;
             TaskStatus = taskStatus;
@@ -26,6 +27,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
         public string? Brand { get; set; }
         public string? Category { get; set; }
         public int UserRole { get; set; }
+        public int PublishStatusID { get; set; }
         public bool? TaskStatus { get; set; }
         public SelectList? BrandSelectList { get; set; }
         public SelectList? CategorySelectList { get; set; }

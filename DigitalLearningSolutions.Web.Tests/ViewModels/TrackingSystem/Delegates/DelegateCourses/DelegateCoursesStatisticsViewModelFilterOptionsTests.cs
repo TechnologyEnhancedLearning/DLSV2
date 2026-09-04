@@ -104,7 +104,7 @@
                     FilterStatus.Default
                 ),
                 new FilterOptionModel(
-                    "Self assessment",
+                    "Self-assessment",
                     "Type" + FilteringHelper.Separator + "SelfAssessment" + FilteringHelper.Separator +
                     "true",
                     FilterStatus.Default

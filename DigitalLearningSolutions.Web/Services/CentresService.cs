@@ -83,8 +83,6 @@
         void UpdateCentreWebsiteDetails(
             int centreId,
             string postcode,
-            double latitude,
-            double longitude,
             string? telephone,
             string email,
             string? openingHours,
@@ -256,9 +254,9 @@
         {
             return centresDataService.UpdateContractTypeandCenter(centreId, contractTypeID, delegateUploadSpace, serverSpaceBytesInc, contractReviewDate);
         }
-        public void UpdateCentreWebsiteDetails(int centreId, string postcode, double latitude, double longitude, string? telephone, string email, string? openingHours, string? webAddress, string? organisationsCovered, string? trainingVenues, string? otherInformation)
+        public void UpdateCentreWebsiteDetails(int centreId, string postcode,  string? telephone, string email, string? openingHours, string? webAddress, string? organisationsCovered, string? trainingVenues, string? otherInformation)
         {
-            centresDataService.UpdateCentreWebsiteDetails(centreId, postcode, latitude, longitude, telephone, email, openingHours, webAddress, organisationsCovered, trainingVenues, otherInformation);
+            centresDataService.UpdateCentreWebsiteDetails(centreId, postcode, telephone, email, openingHours, webAddress, organisationsCovered, trainingVenues, otherInformation);
         }
 
         public void UpdateCentreDetails(int centreId, string? notifyEmail, string bannerText, byte[]? centreSignature, byte[]? centreLogo)

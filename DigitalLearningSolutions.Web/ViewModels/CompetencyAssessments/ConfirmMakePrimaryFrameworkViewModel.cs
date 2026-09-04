@@ -7,7 +7,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
     public class ConfirmMakePrimaryFrameworkViewModel
     {
         public ConfirmMakePrimaryFrameworkViewModel()
-        {}
+        { }
         public ConfirmMakePrimaryFrameworkViewModel(CompetencyAssessmentBase competencyAssessmentBase, DetailFramework framework)
         {
             CompetencyAssessmentId = competencyAssessmentBase.ID;
@@ -15,6 +15,8 @@ namespace DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
             FrameworkName = framework.FrameworkName;
             FrameworkId = framework.ID;
             Vocabulary = competencyAssessmentBase.Vocabulary;
+            UserRole = competencyAssessmentBase.UserRole;
+            PublishStatusID = competencyAssessmentBase.PublishStatusID;
         }
         public int CompetencyAssessmentId { get; set; }
         public int UserRole { get; set; }
@@ -29,5 +31,6 @@ namespace DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
         public bool VocabularyStatus { get; set; }
         public bool WorkingGroupStatus { get; set; }
         public bool AllframeworkCompetenciesStatus { get; set; }
+        public int PublishStatusID { get; set; }
     }
 }

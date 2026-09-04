@@ -27,12 +27,14 @@ namespace DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
         .SelectMany(g => g.Competencies)
         .SelectMany(c => c.Questions)
         .Count(q => q.Responses.Any(r => r.LevelRAG != null));
+            PublishStatusID = competencyAssessmentBase.PublishStatusID;
         }
         public string CompetencyAssessmentName { get; set; }
         public int UserRole { get; set; }
         public string VocabularySingular { get; set; }
         public string VocabularyPlural { get; set; }
         public int CountCompetencyRequirements { get; set; }
-       
+        public int PublishStatusID { get; set; }
+
     }
 }

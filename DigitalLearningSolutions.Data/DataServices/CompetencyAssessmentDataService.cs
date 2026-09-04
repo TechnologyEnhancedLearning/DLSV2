@@ -728,14 +728,15 @@
         {
             return connection.Query<Competency>(
                @"SELECT sas.ID AS StructureId, sas.CompetencyID, f.ID AS FrameworkId, f.FrameworkName, cg.ID AS GroupId, cg.Name AS GroupName, c.Name AS CompetencyName, c.Description AS CompetencyDescription, sas.Optional, sas.GroupOptionalCompetencies
-                    FROM   SelfAssessmentStructure AS sas INNER JOIN
-                                Competencies AS c ON sas.CompetencyID = c.ID LEFT JOIN
-                                CompetencyGroups AS cg ON sas.CompetencyGroupID = cg.ID INNER JOIN
-                                FrameworkCompetencies ON c.ID = FrameworkCompetencies.CompetencyID INNER JOIN
-                                Frameworks AS f ON FrameworkCompetencies.FrameworkID = f.ID INNER JOIN
-                                SelfAssessmentFrameworks ON f.ID = SelfAssessmentFrameworks.FrameworkId AND sas.SelfAssessmentID = SelfAssessmentFrameworks.SelfAssessmentId
-                    WHERE (sas.SelfAssessmentID = @competencyAssessmentId)
-                    ORDER BY sas.Ordering", new { competencyAssessmentId }
+             FROM   SelfAssessmentStructure AS sas INNER JOIN
+                         Competencies AS c ON sas.CompetencyID = c.ID LEFT JOIN
+                         CompetencyGroups AS cg ON sas.CompetencyGroupID = cg.ID INNER JOIN
+                         FrameworkCompetencies ON c.ID = FrameworkCompetencies.CompetencyID INNER JOIN
+                         Frameworks AS f ON FrameworkCompetencies.FrameworkID = f.ID INNER JOIN
+                         SelfAssessmentFrameworks ON f.ID = SelfAssessmentFrameworks.FrameworkId AND sas.SelfAssessmentID = SelfAssessmentFrameworks.SelfAssessmentId
+             WHERE (sas.SelfAssessmentID = @competencyAssessmentId)
+             AND EXISTS (SELECT 1 FROM CompetencyAssessmentQuestions caq WHERE caq.CompetencyID = c.ID)
+             ORDER BY sas.Ordering", new { competencyAssessmentId }
            );
         }
 
@@ -1064,7 +1065,9 @@
                         au.Active AS UserActive,
                         'Owner' AS CompetencyAssessmentRole,
 						0 AS SelfAssessmentReviewID,
-						0 AS SignOffRequired
+						0 AS SignOffRequired,
+                        NULL AS ReviewRequested,
+                        NULL AS ReviewComplete
                     FROM SelfAssessments AS sa
                     INNER JOIN AdminUsers AS au ON sa.CreatedByAdminID = au.AdminID
                     WHERE (sa.ID = @competencyAssessmentId)
@@ -1078,7 +1081,9 @@
                         au.Active AS UserActive,
                         CASE WHEN CanModify = 1 THEN 'Contributor' ELSE 'Reviewer' END AS CompetencyAssessmentRole,
                         sr.ID AS SelfAssessmentReviewID,
-					   sr.SignOffRequired
+					   sr.SignOffRequired,
+                       sr.ReviewRequested,
+                       sr.ReviewComplete
                     FROM SelfAssessmentCollaborators sc
                     INNER JOIN AdminUsers AS au ON sc.AdminID = au.AdminID
                         AND sc.IsDeleted = 0
@@ -1317,7 +1322,7 @@
                 @"UPDATE SelfAssessments
                     SET 
                     [MinimumOptionalCompetencies] = @minimumOptionalCompetecies
-                    WHERE id = @selfAssessmentId AND ISNULL(MinimumOptionalCompetencies, 0) <> @minimumOptionalCompetecies;"
+                    WHERE id = @selfAssessmentId;"
             ,
                 new { selfAssessmentId, minimumOptionalCompetecies }
             );
@@ -1633,16 +1638,24 @@ ORDER BY
                     AND SelfAssessmentCollaboratorID = @selfAssessmentCollaboratorID AND Archived IS NULL",
                 new { competencyAssessmentId, selfAssessmentCollaboratorID }
             );
-            if (exists == 0)
+            if (exists != 0)
             {
                 connection.Query(
-                    @"INSERT INTO SelfAssessmentReviews
-                    (SelfAssessmentID, SelfAssessmentCollaboratorID, SignOffRequired)
-                    VALUES
-                    (@competencyAssessmentId, @selfAssessmentCollaboratorID, @required)",
+                    @"UPDATE SelfAssessmentReviews
+                    SET Archived = GETUTCDATE()
+                    WHERE SelfAssessmentID = @competencyAssessmentId AND SelfAssessmentCollaboratorID = @selfAssessmentCollaboratorID",
                     new { competencyAssessmentId, selfAssessmentCollaboratorID, required }
                 );
             }
+
+            connection.Query(
+                @"INSERT INTO SelfAssessmentReviews
+                    (SelfAssessmentID, SelfAssessmentCollaboratorID, SignOffRequired)
+                    VALUES
+                    (@competencyAssessmentId, @selfAssessmentCollaboratorID, @required)",
+                new { competencyAssessmentId, selfAssessmentCollaboratorID, required }
+            );
+
         }
         public IEnumerable<SelfAssessmentReview> GetCompetencySelfAssessmentReviews(int competencyAssessmentId)
         {

@@ -25,140 +25,142 @@
     </nav>
 }
 <div class="nhsuk-form-group">
-<h1 class="app-page-heading">
-    <span class="nhsuk-caption-xl">
-        @Model.CompetencyAssessmentName
-        <span class="nhsuk-u-visually-hidden"> – </span>
-    </span>
-    @Model.VocabularySingular role requirements
-</h1>
-<dl class="nhsuk-summary-list">
-    <div class="nhsuk-summary-list__row">
-        <dt class="nhsuk-summary-list__key">
-            @Model.VocabularySingular group
-        </dt>
-        <dd class="nhsuk-summary-list__value">
-            @Model.GroupedCompetencyWithAssessmentRoleRequirements.First().GroupName
-        </dd>
-    </div>
-    <div class="nhsuk-summary-list__row">
-        <dt class="nhsuk-summary-list__key">
-            @Model.VocabularySingular
-        </dt>
-        <dd class="nhsuk-summary-list__value">
-            <p class="@(!string.IsNullOrWhiteSpace(Model.GroupedCompetencyWithAssessmentRoleRequirements.First().Competencies.First().Description) ? "nhsuk-u-font-weight-bold" : "") nhsuk-u-margin-bottom-0">
-                @Model.GroupedCompetencyWithAssessmentRoleRequirements.First().Competencies.First().Name
-            </p>
-            @if (!string.IsNullOrWhiteSpace(Model.GroupedCompetencyWithAssessmentRoleRequirements.First().Competencies.First().Description))
-            {
-                <p class="nhsuk-u-margin-top-2">
-                    @(Html.Raw(Model.GroupedCompetencyWithAssessmentRoleRequirements.First().Competencies.First().Description))
+    <h1 class="app-page-heading">
+        <span class="nhsuk-caption-xl">
+            @Model.CompetencyAssessmentName
+            <span class="nhsuk-u-visually-hidden"> – </span>
+        </span>
+        @Model.VocabularySingular role requirements
+    </h1>
+    <partial name="Shared/_PublishedSelfAssessmentWarning" model="new PublishedSelfAssessmentViewModel { UserRole = Model.UserRole, PublishStatusID = Model.PublishStatusID }" />
+    <dl class="nhsuk-summary-list">
+        <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+                @Model.VocabularySingular group
+            </dt>
+            <dd class="nhsuk-summary-list__value">
+                @Model.GroupedCompetencyWithAssessmentRoleRequirements.First().GroupName
+            </dd>
+        </div>
+        <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+                @Model.VocabularySingular
+            </dt>
+            <dd class="nhsuk-summary-list__value">
+                <p class="@(!string.IsNullOrWhiteSpace(Model.GroupedCompetencyWithAssessmentRoleRequirements.First().Competencies.First().Description) ? "nhsuk-u-font-weight-bold" : "") nhsuk-u-margin-bottom-0">
+                    @Model.GroupedCompetencyWithAssessmentRoleRequirements.First().Competencies.First().Name
                 </p>
-            }
-        </dd>
-    </div>
-    <div class="nhsuk-summary-list__row">
-        <dt class="nhsuk-summary-list__key">
-            Assessment question
-        </dt>
-        <dd class="nhsuk-summary-list__value">
-            @Model.GroupedCompetencyWithAssessmentRoleRequirements.First().Competencies.First().Questions.First().Question
-        </dd>
-    </div>
-</dl>
-<form method="post" asp-action="EditQuestionResponseRoleRequirements">
-    <h2>Set role requirements for each response</h2>
-    @foreach (var response in Model.GroupedCompetencyWithAssessmentRoleRequirements.First().Competencies.First().Questions.First().Responses)
-    {
-        <nhs-form-group>
-            <fieldset class="nhsuk-fieldset" aria-describedby="response-@response.ResponseValue-hint">
-                <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--s">
-                    @response.ResponseLabel
-                </legend>
-                <div id="response-@response.ResponseValue-hint" class="nhsuk-hint">
-                    Select a role requirement status for learners choosing this response
-                </div>
+                @if (!string.IsNullOrWhiteSpace(Model.GroupedCompetencyWithAssessmentRoleRequirements.First().Competencies.First().Description))
+                {
+                    <p class="nhsuk-u-margin-top-2">
+                        @(Html.Raw(Model.GroupedCompetencyWithAssessmentRoleRequirements.First().Competencies.First().Description))
+                    </p>
+                }
+            </dd>
+        </div>
+        <div class="nhsuk-summary-list__row">
+            <dt class="nhsuk-summary-list__key">
+                Assessment question
+            </dt>
+            <dd class="nhsuk-summary-list__value">
+                @Model.GroupedCompetencyWithAssessmentRoleRequirements.First().Competencies.First().Questions.First().Question
+            </dd>
+        </div>
+    </dl>
+    <form method="post" asp-action="EditQuestionResponseRoleRequirements">
+        <h2>Set role requirements for each response</h2>
+        @foreach (var response in Model.GroupedCompetencyWithAssessmentRoleRequirements.First().Competencies.First().Questions.First().Responses)
+        {
+            <nhs-form-group>
+                <fieldset class="nhsuk-fieldset" aria-describedby="response-@response.ResponseValue-hint">
+                    <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--s">
+                        @response.ResponseLabel
+                    </legend>
+                    <div id="response-@response.ResponseValue-hint" class="nhsuk-hint">
+                        Select a role requirement status for learners choosing this response
+                    </div>
 
-                <div class="nhsuk-radios" data-module="nhsuk-radios">
-                    <div class="nhsuk-radios__item">
-                        <input class="nhsuk-radios__input"
-                               id="response-@response.ResponseValue-rag-1"
-                               @(response.LevelRAG == 1 ? "checked=checked" : "")
-                               name="ResponseRoleRequirements[@response.ResponseValue]"
-                               type="radio"
-                               value="1">
-                        <label class="nhsuk-label nhsuk-radios__label" for="response-@response.ResponseValue-rag-1">
-                            <strong class="nhsuk-tag nhsuk-tag--red">
-                                Not meeting role requirements
-                            </strong>
-                        </label>
+                    <div class="nhsuk-radios" data-module="nhsuk-radios">
+                        <div class="nhsuk-radios__item">
+                            <input class="nhsuk-radios__input"
+                                   id="response-@response.ResponseValue-rag-1"
+                                   @(response.LevelRAG == 1 ? "checked=checked" : "")
+                                   name="ResponseRoleRequirements[@response.ResponseValue]"
+                                   type="radio"
+                                   value="1">
+                            <label class="nhsuk-label nhsuk-radios__label" for="response-@response.ResponseValue-rag-1">
+                                <strong class="nhsuk-tag nhsuk-tag--red">
+                                    Not meeting role requirements
+                                </strong>
+                            </label>
+                        </div>
+                        <div class="nhsuk-radios__item">
+                            <input class="nhsuk-radios__input"
+                                   id="response-@response.ResponseValue-rag-2"
+                                   name="ResponseRoleRequirements[@response.ResponseValue]"
+                                   type="radio"
+                                   value="2"
+                                   @(response.LevelRAG == 2 ? "checked=checked" : "")>
+                            <label class="nhsuk-label nhsuk-radios__label" for="response-@response.ResponseValue-rag-2">
+                                <strong class="nhsuk-tag nhsuk-tag--yellow">
+                                    Partly meeting role requirements
+                                </strong>
+                            </label>
+                        </div>
+                        <div class="nhsuk-radios__item">
+                            <input class="nhsuk-radios__input"
+                                   id="response-@response.ResponseValue-rag-3"
+                                   name="ResponseRoleRequirements[@response.ResponseValue]"
+                                   type="radio"
+                                   value="3"
+                                   @(response.LevelRAG == 3 ? "checked=checked" : "")>
+                            <label class="nhsuk-label nhsuk-radios__label" for="response-@response.ResponseValue-rag-3">
+                                <strong class="nhsuk-tag nhsuk-tag--green">
+                                    Fully meeting role requirements
+                                </strong>
+                            </label>
+                        </div>
+                        <div class="nhsuk-radios__divider">or</div>
+                        <div class="nhsuk-radios__item">
+                            <input class="nhsuk-radios__input"
+                                   id="response-@response.ResponseValue-rag-null"
+                                   name="ResponseRoleRequirements[@response.ResponseValue]"
+                                   type="radio"
+                                   value="null"
+                                   @(response.LevelRAG == null ? "checked=checked" : "")>
+                            <label class="nhsuk-label nhsuk-radios__label" for="response-@response.ResponseValue-rag-null">
+                                No role requirements set
+                            </label>
+                        </div>
                     </div>
-                    <div class="nhsuk-radios__item">
-                        <input class="nhsuk-radios__input"
-                               id="response-@response.ResponseValue-rag-2"
-                               name="ResponseRoleRequirements[@response.ResponseValue]"
-                               type="radio"
-                               value="2"
-                               @(response.LevelRAG == 2 ? "checked=checked" : "")>
-                        <label class="nhsuk-label nhsuk-radios__label" for="response-@response.ResponseValue-rag-2">
-                            <strong class="nhsuk-tag nhsuk-tag--yellow">
-                                Partly meeting role requirements
-                            </strong>
-                        </label>
-                    </div>
-                    <div class="nhsuk-radios__item">
-                        <input class="nhsuk-radios__input"
-                               id="response-@response.ResponseValue-rag-3"
-                               name="ResponseRoleRequirements[@response.ResponseValue]"
-                               type="radio"
-                               value="3"
-                               @(response.LevelRAG == 3 ? "checked=checked" : "")>
-                        <label class="nhsuk-label nhsuk-radios__label" for="response-@response.ResponseValue-rag-3">
-                            <strong class="nhsuk-tag nhsuk-tag--green">
-                                Fully meeting role requirements
-                            </strong>
-                        </label>
-                    </div>
-                    <div class="nhsuk-radios__divider">or</div>
-                    <div class="nhsuk-radios__item">
-                        <input class="nhsuk-radios__input"
-                               id="response-@response.ResponseValue-rag-null"
-                               name="ResponseRoleRequirements[@response.ResponseValue]"
-                               type="radio"
-                               value="null"
-                               @(response.LevelRAG == null ? "checked=checked" : "")>
-                        <label class="nhsuk-label nhsuk-radios__label" for="response-@response.ResponseValue-rag-null">
-                            No role requirements set
-                        </label>
-                    </div>
-                </div>
+                </fieldset>
+            </nhs-form-group>
+        }
+        @if (Model.CountAssessmentQuestionInSelfAssessment > 1)
+        {
+            <hr class="nhsuk-section-break nhsuk-section-break--m" />
+            <fieldset class="nhsuk-fieldset">
+                <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--m">
+                    Apply to all?
+                </legend>
+                <vc:single-checkbox asp-for="@nameof(Model.ApplyToAll)" label="Apply role requirements to all @Model.CountAssessmentQuestionInSelfAssessment instances of this assessment question in @Model.CompetencyAssessmentName" hint-text="This will not affect instances that are added to the self-assessment later"></vc:single-checkbox>
             </fieldset>
-        </nhs-form-group>
-    }
-    @if (Model.CountAssessmentQuestionInSelfAssessment > 1)
-    {
+        }
+        <input type="hidden" asp-for="@Model.Id" />
+        <input type="hidden" asp-for="@Model.CompetencyId" />
+        <input type="hidden" asp-for="@Model.AssessmentQuestionId" />
+        <input type="hidden" asp-for="PublishStatusID" />
         <hr class="nhsuk-section-break nhsuk-section-break--m" />
-        <fieldset class="nhsuk-fieldset">
-            <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--m">
-                Apply to all?
-            </legend>
-            <vc:single-checkbox asp-for="@nameof(Model.ApplyToAll)" label="Apply role requirements to all @Model.CountAssessmentQuestionInSelfAssessment instances of this assessment question in @Model.CompetencyAssessmentName" hint-text="This will not affect instances that are added to the self-assessment later"></vc:single-checkbox>
-        </fieldset>
-    }
-    <input type="hidden" asp-for="@Model.Id" />
-    <input type="hidden" asp-for="@Model.CompetencyId" />
-    <input type="hidden" asp-for="@Model.AssessmentQuestionId" />
-        <hr class="nhsuk-section-break nhsuk-section-break--m" />
-    <button class="nhsuk-button" type="submit">
-        Save
-    </button>
-</form>
-<div class="nhsuk-back-link">
-    <a class="nhsuk-back-link__link" asp-action="EditCompetencyRoleRequirements" asp-route-competencyAssessmentId="@Model.Id">
-        <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-            <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
-        </svg>
-        Cancel
-    </a>
-</div>
+        <button class="nhsuk-button" type="submit">
+            Save
+        </button>
+    </form>
+    <div class="nhsuk-back-link">
+        <a class="nhsuk-back-link__link" asp-action="EditCompetencyRoleRequirements" asp-route-competencyAssessmentId="@Model.Id">
+            <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
+            </svg>
+            Cancel
+        </a>
+    </div>
 </div>

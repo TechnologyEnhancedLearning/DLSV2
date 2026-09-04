@@ -3,7 +3,7 @@
 @model SelfAssessmentAddViewModel
 @{
     var errorHasOccurred = !ViewData.ModelState.IsValid;
-    ViewData["Title"] = "Add self assessments";
+    ViewData["Title"] = "Add self-assessments";
     var cancelLinkData = Html.GetRouteValues();
 }
 <link rel="stylesheet" href="@Url.Content("~/css/learningPortal/selfAssessment.css")" asp-append-version="true">
@@ -12,11 +12,11 @@
         <div class="nhsuk-width-container">
             <ol class="nhsuk-breadcrumb__list">
                 <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Centres" asp-action="Index">Centres</a></li>
-                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Centres" asp-route-centreID="@ViewContext.RouteData.Values["centreId"]" asp-action="SelfAssessments">View self assessments</a></li>
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Centres" asp-route-centreID="@ViewContext.RouteData.Values["centreId"]" asp-action="SelfAssessments">View centre self-assessments</a></li>
             </ol>
             <p class="nhsuk-breadcrumb__back">
                 <a class="nhsuk-breadcrumb__backlink"
-                   asp-controller="Centres" asp-route-centreID="@ViewContext.RouteData.Values["centreId"]" asp-action="SelfAssessments">Back to view centre self assessments</a>
+                   asp-controller="Centres" asp-route-centreID="@ViewContext.RouteData.Values["centreId"]" asp-action="SelfAssessments">Back to view centre self-assessments</a>
             </p>
         </div>
     </nav>
@@ -33,7 +33,7 @@
             <fieldset class="nhsuk-fieldset">
                 <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
                     <h1 class="nhsuk-fieldset__heading">
-                        Which self assessments would you like to add to @Model.CentreName?
+                        Which self-assessments would you like to add to @Model.CentreName?
                     </h1>
                 </legend>
                 @if (errorHasOccurred && Model.SelfAssessmentIds.Count() == 0)
@@ -46,7 +46,7 @@
                     <thead role="rowgroup" class="nhsuk-table__head">
                         <tr role="row">
                             <th role="columnheader" class="" scope="col">
-                                Self assessment
+                                Self-assessment
                             </th>
                             <th role="columnheader" class="" scope="col">
                                 National?
@@ -61,7 +61,7 @@
                         {
                             <tr role="row" class="nhsuk-table__row">
                                 <td class="nhsuk-table__cell nhsuk-u-font-size-16">
-                                    <span class="nhsuk-table-responsive__heading">Self assessment </span>
+                                    <span class="nhsuk-table-responsive__heading">Self-assessment </span>
                                     <div class="nhsuk-checkboxes__item">
                                         <input data-group="course-list" @(Model.SelfAssessmentIds.Contains(selfAssessment.Id) ? "checked" : string.Empty) class="nhsuk-checkboxes__input select-all-checkbox" id="self-assessment-check-@selfAssessment.Id" name="SelfAssessmentIds" type="checkbox" value="@selfAssessment.Id">
                                         <label class="nhsuk-label nhsuk-checkboxes__label nhsuk-u-font-size-16" for="self-assessment-check-@selfAssessment.Id">
@@ -93,7 +93,7 @@
         <div class="@(errorHasOccurred && Model.EnableSelfEnrolment == null ? "nhsuk-form-group nhsuk-form-group--error" : "nhsuk-form-group")">
             <fieldset class="nhsuk-fieldset">
                 <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--m">
-                    Allow learner self enrolment on selected self assessments?
+                    Allow learner self enrolment on selected self-assessments?
                 </legend>
                 @if (errorHasOccurred && Model.EnableSelfEnrolment == null)
                 {
@@ -120,14 +120,14 @@
         </div>
         <input type="hidden" asp-for="CentreId" />
         <button class="nhsuk-button" type="submit">
-            Add selected self assessments to centre
+            Add selected self-assessments to centre
         </button>
     </form>
 }
 else
 {
-    <h1>No self assessments available</h1>
-    <p>There are no self assessments available to add to the centre @ViewBag.CentreName.</p>
+    <h1>No self-assessments available</h1>
+    <p>There are no self-assessments available to add to the centre @ViewBag.CentreName.</p>
 }
 
 <vc:cancel-link asp-controller="Centres" asp-action="SelfAssessments" asp-all-route-data="@cancelLinkData" />

@@ -22,7 +22,7 @@ namespace DigitalLearningSolutions.Web.Extensions
                 case SelfAssessmentCompetencyFilter.Optional:
                     return "Optional";
                 case SelfAssessmentCompetencyFilter.RequiresSelfAssessment:
-                    return "Requires self assessment";
+                    return "Requires self-assessment";
                 case SelfAssessmentCompetencyFilter.SelfAssessed:
                     return "Self-assessed" + (isSupervisorResultReview ? " (confirmation not yet requested)" : "");
                 case SelfAssessmentCompetencyFilter.ConfirmationRequested:

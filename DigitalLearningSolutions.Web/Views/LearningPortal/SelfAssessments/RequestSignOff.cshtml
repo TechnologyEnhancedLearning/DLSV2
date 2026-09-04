@@ -3,7 +3,7 @@
 @{
     var errorHasOccurred = !ViewData.ModelState.IsValid;
     Layout = "SelfAssessments/_Layout";
-    ViewData["Title"] = "Self Assessment - Request Sign Off";
+    ViewData["Title"] = "Self-Assessment - Request Sign Off";
     ViewData["SelfAssessmentTitle"] = @Model.SelfAssessment.Name;
 }
 @section breadcrumbs {
@@ -66,7 +66,7 @@
                     <div class="nhsuk-checkboxes__item">
                         <input class="nhsuk-checkboxes__input" id="optional-ompetencies" name="OptionalCompetenciesChecked" asp-for="OptionalCompetenciesChecked" type="checkbox">
                         <label class="nhsuk-label nhsuk-checkboxes__label" for="optional-competencies">
-                            I have reviewed the optional competencies available for this self assessment and included those that are appropriate to my role.
+                            I have reviewed the optional competencies available for this self-assessment and included those that are appropriate to my role.
                         </label>
                     </div>
                 </nhs-form-group>

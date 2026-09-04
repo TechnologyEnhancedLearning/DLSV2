@@ -15,6 +15,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
             TaskStatus = taskStatus;
             CompetencyAssessmentName = competencyAssessmentBase.CompetencyAssessmentName;
             UserRole = competencyAssessmentBase.UserRole;
+            PublishStatusID = competencyAssessmentBase.PublishStatusID;
             Competencies = competencies;
             VocabularySingular = FrameworkVocabularyHelper.VocabularySingular(competencyAssessmentBase.Vocabulary);
             VocabularyPlural = FrameworkVocabularyHelper.VocabularyPlural(competencyAssessmentBase.Vocabulary);
@@ -38,6 +39,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
 
         public string CompetencyAssessmentName { get; set; }
         public int UserRole { get; set; }
+        public int PublishStatusID { get; set; }
         public string VocabularySingular { get; set; }
         public string VocabularyPlural { get; set; }
         public IEnumerable<Competency> Competencies { get; set; }

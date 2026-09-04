@@ -4,7 +4,7 @@
 @{
     var errorHasOccurred = !ViewData.ModelState.IsValid;
     Layout = "SelfAssessments/_Layout";
-    ViewData["Title"] = "Self Assessment - Optional Proficiencies";
+    ViewData["Title"] = "Self-Assessment - Optional Proficiencies";
     ViewData["SelfAssessmentTitle"] = @Model.SelfAssessment.Name;
     var backLinkData = Html.GetRouteValues();
 }
@@ -12,23 +12,23 @@
 @if (ViewBag.FromAddOptionalPage != null)
 {
     @section breadcrumbs {
-    <li class="nhsuk-breadcrumb__item">
-        <div style="max-height:10px">
-            <vc:back-link asp-controller="LearningPortal" asp-action="AddOptionalCompetencies" asp-all-route-data="@backLinkData" link-text="Go back" />
-        </div>
-    </li>
+        <li class="nhsuk-breadcrumb__item">
+            <div style="max-height:10px">
+                <vc:back-link asp-controller="LearningPortal" asp-action="AddOptionalCompetencies" asp-all-route-data="@backLinkData" link-text="Go back" />
+            </div>
+        </li>
     }
 }
 else
 {
     @section breadcrumbs {
-    <li class="nhsuk-breadcrumb__item">
-        <a class="nhsuk-breadcrumb__link" asp-action="SelfAssessment" asp-route-selfAssessmentId="@Model.SelfAssessment.Id">@(Model.SelfAssessment.Name) introduction</a>
-    </li>
-    <li class="nhsuk-breadcrumb__item">
-        <a class="nhsuk-breadcrumb__link" asp-action="SelfAssessmentOverview" asp-route-vocabulary="@Model.VocabPlural()" asp-route-selfAssessmentId="@Model.SelfAssessment.Id">@Model.VocabPlural() home</a>
-    </li>
-    <li class="nhsuk-breadcrumb__item">Manage optional @Model.VocabPlural()</li>
+        <li class="nhsuk-breadcrumb__item">
+            <a class="nhsuk-breadcrumb__link" asp-action="SelfAssessment" asp-route-selfAssessmentId="@Model.SelfAssessment.Id">@(Model.SelfAssessment.Name) introduction</a>
+        </li>
+        <li class="nhsuk-breadcrumb__item">
+            <a class="nhsuk-breadcrumb__link" asp-action="SelfAssessmentOverview" asp-route-vocabulary="@Model.VocabPlural()" asp-route-selfAssessmentId="@Model.SelfAssessment.Id">@Model.VocabPlural() home</a>
+        </li>
+        <li class="nhsuk-breadcrumb__item">Manage optional @Model.VocabPlural()</li>
     }
 }
 
@@ -88,7 +88,7 @@ else
 
                 @foreach (var competencyGroup in Model.CompetencyGroups)
                 {
-                    @if (competencyGroup.Count() > 1)
+                    @if (competencyGroup.Count() > 0)
                     {
                         @if (competencyGroup.Any(x => x.GroupOptionalCompetencies))
                         {

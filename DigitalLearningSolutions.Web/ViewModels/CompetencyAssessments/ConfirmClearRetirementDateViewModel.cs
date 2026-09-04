@@ -10,10 +10,14 @@ namespace DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
     {
         public int CompetencyAssessmentId { get; set; }
         public string CompetencyAssessmentName { get; set; }
+        public int UserRole { get; set; }
+        public int PublishStatusID { get; set; }
         public ConfirmClearRetirementDateViewModel(CompetencyAssessmentBase? assessment)
         {   
             CompetencyAssessmentId = assessment.ID;
             CompetencyAssessmentName = assessment.CompetencyAssessmentName;
+            UserRole = assessment.UserRole;
+            PublishStatusID = assessment.PublishStatusID;
         }
         [BooleanMustBeTrue(ErrorMessage = "You must confirm before removing retirement date")]
         public bool Confirm { get; set; }

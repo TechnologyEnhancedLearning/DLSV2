@@ -27,6 +27,7 @@
             IsSupervisionSwitchedOn = optionsLabels.IsSupervisionSwitchedOn;
             IsSignpostedLearning = optionsLabels.IsSignpostedLearning;
             UserRole = optionsLabels.UserRole;
+            PublishStatusID = optionsLabels.PublishStatusID;
         }
 
         public int FrameworkId { get; set; }
@@ -49,6 +50,7 @@
         public bool? SelfAssessmentOptionsTaskStatus { get; set; }
         public bool Error { get; set; }
         public int UserRole { get; set; }
+        public int PublishStatusID { get; set; }
 
     }
     public enum OptionLabel

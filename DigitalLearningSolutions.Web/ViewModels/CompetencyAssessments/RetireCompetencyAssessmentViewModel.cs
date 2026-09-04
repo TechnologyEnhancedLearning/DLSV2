@@ -17,6 +17,8 @@ namespace DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
         public int? Day { get; set; }
         public int? Month { get; set; }
         public int? Year { get; set; }
+        public int UserRole { get; set; }
+        public int PublishStatusID { get; set; }
         public RetireCompetencyAssessmentViewModel(int competencyAssessmentId, CompetencyAssessmentBase? assessment)
         {
             if (assessment?.RetirementDate != null)
@@ -27,6 +29,8 @@ namespace DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
             }
             RetirementReason = assessment.RetirementReason;
             CompetencyAssessmentId = competencyAssessmentId;
+            UserRole = assessment.UserRole;
+            PublishStatusID = assessment.PublishStatusID;
         }
         public RetireCompetencyAssessmentViewModel()
         {

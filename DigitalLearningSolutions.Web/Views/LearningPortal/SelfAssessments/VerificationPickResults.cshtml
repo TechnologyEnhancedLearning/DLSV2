@@ -3,7 +3,7 @@
 @{
     var errorHasOccurred = !ViewData.ModelState.IsValid;
     Layout = "SelfAssessments/_Layout";
-    ViewData["Title"] = "Self Assessment - New Confirmation Request - Choose Proficiency";
+    ViewData["Title"] = "Self-Assessment - New Confirmation Request - Choose Proficiency";
     ViewData["SelfAssessmentTitle"] = @Model.SelfAssessmentName;
 }
 
@@ -39,7 +39,7 @@
 }
 @if (Model.CompetencyGroups.Any())
 {
-    <h2>Choose the @Model.Vocabulary.ToLower() self assessment results that you wish to confirm.</h2>
+    <h2>Choose the @Model.Vocabulary.ToLower() self-assessment results that you wish to confirm.</h2>
     <form method="post">
         <nhs-form-group nhs-validation-for="ResultIds">
             @foreach (var competencyGroup in Model.CompetencyGroups)
@@ -134,7 +134,7 @@
 else
 {
     <p>
-        There are no self assessment results ready for confirmation.
+        There are no self-assessment results ready for confirmation.
     </p>
     <a class="nhsuk-button nhsuk-button--secondary" role="button" asp-action="SelfAssessmentOverview" asp-route-vocabulary="@Model.VocabPlural()" asp-route-selfAssessmentId="@Model.SelfAssessmentId">
         Cancel

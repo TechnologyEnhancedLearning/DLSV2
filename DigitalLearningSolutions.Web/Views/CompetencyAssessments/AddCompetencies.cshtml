@@ -29,18 +29,19 @@
 <form method="post">
     @if (errorHasOccurred)
     {
-        <vc:error-summary order-of-property-names="@(new[] { nameof(Model.SelectedCompetencyIds)})" />
+        <vc:error-summary order-of-property-names="@(new[] { nameof(Model.SelectedCompetencyIds) })" />
     }
     <nhs-form-group nhs-validation-for="SelectedCompetencyIds">
         <fieldset class="nhsuk-fieldset">
             <legend class="nhsuk-fieldset__legend">
                 <h1 class="app-page-heading">
-                <span class="nhsuk-caption-xl">
-                    @Model.CompetencyAssessmentName
-                    <span class="nhsuk-u-visually-hidden"> – </span>
-                </span>
+                    <span class="nhsuk-caption-xl">
+                        @Model.CompetencyAssessmentName
+                        <span class="nhsuk-u-visually-hidden"> – </span>
+                    </span>
                     Add @Model.VocabularyPlural.ToLower() to assessment
                 </h1>
+                <partial name="Shared/_PublishedSelfAssessmentWarning" model="new PublishedSelfAssessmentViewModel { UserRole = Model.UserRole, PublishStatusID = Model.PublishStatusID }" />
             </legend>
             <div class="nhsuk-u-padding-top-1 nhsuk-u-padding-bottom-3">
                 <span class="error-message--margin-bottom-1 nhsuk-error-message">
@@ -73,16 +74,16 @@
                                     isFirst = false;
                                     <div class="nhsuk-checkboxes__item">
                                         <input class="nhsuk-checkboxes__input select-all-checkbox"
-                                        data-group="@competencyGroup.CompetencyGroupID"
-                                        id="competency-check-@competencyGroup.CompetencyGroupID-@competency.CompetencyID"
-                                        name="SelectedCompetencyIds"
-                                        checked="@(Model.SelectedCompetencyIds != null ?
-                                        Model.SelectedCompetencyIds.Contains((int)competency.CompetencyID) : false)"
-                                        type="checkbox"
-                                         @(shouldAutofocus ? "autofocus" : "")
-                                        value="@competency.CompetencyID">
-                                        <label class="nhsuk-label nhsuk-checkboxes__label" for="competency-check-@competencyGroup.CompetencyGroupID-@competency.CompetencyID">
-                                            @foreach (var flag in competency.CompetencyFlags)
+                                               data-group="@competencyGroup.CompetencyGroupID"
+                                               id="competency-check-@competencyGroup.CompetencyGroupID-@competency.CompetencyID"
+                                               name="SelectedCompetencyIds"
+                                               checked="@(Model.SelectedCompetencyIds != null ?
+                                                                                                                                      Model.SelectedCompetencyIds.Contains((int)competency.CompetencyID) : false)"
+                               type="checkbox"
+                               @(shouldAutofocus ? "autofocus" : "")
+                               value="@competency.CompetencyID">
+                        <label class="nhsuk-label nhsuk-checkboxes__label" for="competency-check-@competencyGroup.CompetencyGroupID-@competency.CompetencyID">
+                            @foreach (var flag in competency.CompetencyFlags)
                                             {
                                                 <span class="nhsuk-u-padding-right-2 @(ViewData["cssClass"]?.ToString())">
                                                     <strong class="nhsuk-tag @flag.FlagTagClass">
@@ -138,6 +139,7 @@
 
         </fieldset>
     </nhs-form-group>
+    <input type="hidden" asp-for="PublishStatusID" />
     <button class="nhsuk-button" type="submit">Add selected @Model.VocabularyPlural.ToLower() to assessment</button>
 </form>
 @section scripts {

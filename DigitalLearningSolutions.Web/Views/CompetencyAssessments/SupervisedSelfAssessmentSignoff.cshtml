@@ -35,6 +35,7 @@
                     </span>
                     Supervisor roles
                 </h1>
+                <partial name="Shared/_PublishedSelfAssessmentWarning" model="new PublishedSelfAssessmentViewModel { UserRole = Model.UserRole, PublishStatusID = Model.PublishStatusID }" />
                 <div class="nhsuk-radios nhsuk-radios--conditional">
                     <div class="nhsuk-form-group">
                         @if (ViewData.ModelState.ContainsKey("Signoff") && ViewData.ModelState["Signoff"].Errors.Count > 0)

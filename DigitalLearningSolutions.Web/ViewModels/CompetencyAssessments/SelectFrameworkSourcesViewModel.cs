@@ -13,6 +13,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
             ID = competencyAssessmentBase.ID;
             CompetencyAssessmentName = competencyAssessmentBase.CompetencyAssessmentName;
             UserRole = competencyAssessmentBase.UserRole;
+            PublishStatusID = competencyAssessmentBase.PublishStatusID;
             TaskStatus = taskStatus;
             PrimaryFramework = frameworks.FirstOrDefault(f => f.ID == primaryFramework);
             var excludedIds = new HashSet<int>(additionalFrameworksIds);
@@ -33,6 +34,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
         public int ID { get; set; }
         public string CompetencyAssessmentName { get; set; }
         public int UserRole { get; set; }
+        public int PublishStatusID { get; set; }
         public string? GroupName { get; set; }
         public string? SubGroupName { get; set; }
         public string? RoleName { get; set; }

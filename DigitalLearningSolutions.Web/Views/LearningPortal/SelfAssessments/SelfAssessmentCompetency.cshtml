@@ -5,7 +5,7 @@
 @{
     var errorHasOccurred = !ViewData.ModelState.IsValid;
     Layout = "SelfAssessments/_Layout";
-    ViewData["Title"] = errorHasOccurred ? "Error: Self Assessment" : "Self Assessment";
+    ViewData["Title"] = errorHasOccurred ? "Error: Self-Assessment" : "Self-Assessment";
     ViewData["SelfAssessmentTitle"] = @Model.Assessment.Name;
 }
 @section breadcrumbs {
@@ -84,7 +84,7 @@
                         Response confirmed
                     </span>
                 </h3>
-                <p>Your self assessment response against this question has been confirmed. Changing your response will reset confirmation.</p>
+                <p>Your self-assessment response against this question has been confirmed. Changing your response will reset confirmation.</p>
                 @if (question.value.Verified != null)
                 {
                   <partial name="_ReviewOutcome" model="@(new ReviewCompetencySelfAsessmentViewModel{Verified=question.value.Verified,SupervisorName=question.value.SupervisorName,SignedOff=question.value.SignedOff ?? false,SupervisorComments=question.value.SupervisorComments})" />

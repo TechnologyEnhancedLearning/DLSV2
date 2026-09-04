@@ -42,9 +42,9 @@
             @if(Model.SelfAssessmentCategory == 0)
             {
             <vc:select-list asp-for="SelfAssessmentCategory"
-                            label="Self assessment category (optional)"
+                            label="Self-assessment category (optional)"
                             value="@Model.SelfAssessmentCategory.ToString()"
-                            hint-text="Limits the nominated supervisor to self assessments in a particular category."
+                            hint-text="Limits the nominated supervisor to self-assessments in a particular category."
                             required="false"
                             css-class="nhsuk-u-width-one-half"
                             default-option=""

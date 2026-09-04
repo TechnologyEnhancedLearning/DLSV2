@@ -1741,9 +1741,20 @@
                 var pdfReportFile = await pdfService.GetPdfReportFile(pdfReportResponse);
                 if (pdfReportFile != null)
                 {
+                    const int MaxFileNameLength = 150;
+                    const string extension = ".pdf";
                     var nameTextLength = string.IsNullOrEmpty(model.CompetencySelfAssessmentCertificates.LearnerName) ? 0 : model.CompetencySelfAssessmentCertificates.LearnerName.Length;
                     var isPrnExist = !string.IsNullOrEmpty(model.CompetencySelfAssessmentCertificates.LearnerPRN);
-                    var fileName = $"Competency Certificate - {model.CompetencySelfAssessmentCertificates.LearnerName.Substring(0, nameTextLength >= 15 ? 15 : nameTextLength)}" + (isPrnExist ? $" - {model.CompetencySelfAssessmentCertificates.LearnerPRN}.pdf" : ".pdf");
+                    var selfAssessmentName = model.CompetencySelfAssessmentCertificates.SelfAssessment ?? string.Empty;
+                    var learnerName = model.CompetencySelfAssessmentCertificates.LearnerName ?? string.Empty;
+                    var fileName = $"Certificate - {selfAssessmentName} - {learnerName}" + (isPrnExist ? $" - {model.CompetencySelfAssessmentCertificates.LearnerPRN}" : "");
+                    if (fileName.Length > MaxFileNameLength)
+                    {
+                        fileName = fileName[..MaxFileNameLength];
+                        fileName = fileName + extension;
+                        return File(pdfReportFile, FileHelper.GetContentTypeFromFileName(fileName), fileName);
+                    }
+                    fileName = fileName + extension;
                     return File(pdfReportFile, FileHelper.GetContentTypeFromFileName(fileName), fileName);
                 }
             }

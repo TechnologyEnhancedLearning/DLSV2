@@ -15,6 +15,7 @@
             MinimumOptionalCompetencies = competencyAssessmentBase.MinimumOptionalCompetencies;
             ManageOptionalCompetenciesPrompt = competencyAssessmentBase.ManageOptionalCompetenciesPrompt;
             UserRole = competencyAssessmentBase.UserRole;
+            PublishStatusID = competencyAssessmentBase.PublishStatusID;
             CompetencyGroups = competencies.GroupBy(competency => competency.GroupName);
             VocabularySingular = FrameworkVocabularyHelper.VocabularySingular(competencyAssessmentBase.Vocabulary);
             VocabularyPlural = FrameworkVocabularyHelper.VocabularyPlural(competencyAssessmentBase.Vocabulary);
@@ -22,6 +23,7 @@
         }
         public string CompetencyAssessmentName { get; set; }
         public int UserRole { get; set; }
+        public int PublishStatusID { get; set; }
         public IEnumerable<IGrouping<string, Competency>>? CompetencyGroups { get; set; }
         public string GetGroupLabel(string? key)
         {

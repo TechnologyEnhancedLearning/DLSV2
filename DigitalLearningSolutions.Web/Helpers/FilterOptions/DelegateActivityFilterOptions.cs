@@ -15,7 +15,7 @@
         );
 
         public static readonly FilterOptionModel IsSelfAssessment = new FilterOptionModel(
-            "Self assessment",
+            "Self-assessment",
             FilteringHelper.BuildFilterValueString(Group, "SelfAssessment", "true"),
             FilterStatus.Default
         );

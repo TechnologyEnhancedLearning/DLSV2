@@ -47,6 +47,7 @@
     </span>
     Select framework sources
 </h1>
+<partial name="Shared/_PublishedSelfAssessmentWarning" model="new PublishedSelfAssessmentViewModel { UserRole = Model.UserRole, PublishStatusID = Model.PublishStatusID }" />
 @if ((Model.PrimaryFramework != null) || (Model.AdditionalFrameworks.Count() > 0))
 {
     <dl class="nhsuk-summary-list">
@@ -134,6 +135,7 @@
         </div>
         <input type="hidden" asp-for="ActionName" />
         <input type="hidden" asp-for="TaskStatus" />
+        <input type="hidden" asp-for="PublishStatusID" />
         @if (Model.UserRole > 1)
         {
             <button class="nhsuk-button" type="submit">Add</button>
@@ -157,6 +159,7 @@
             <input type="hidden" asp-for="FrameworkId" value="0" />
             <input type="hidden" asp-for="ActionName" />
             <input type="hidden" asp-for="ID" />
+            <input type="hidden" asp-for="PublishStatusID" />
             <button class="nhsuk-button" type="submit">
                 Save
             </button>

@@ -24,47 +24,49 @@
     </nav>
 }
 <div class="nhsuk-form-group">
-<h1 class="app-page-heading">
-    <span class="nhsuk-caption-xl">
-        @Model.CompetencyAssessmentName
-        <span class="nhsuk-u-visually-hidden"> – </span>
-    </span>
-    Role requirement filters
-</h1>
-<form method="post" asp-action="EditRoleRequirementsFlags">
-    <nhs-form-group nhs-validation-for="IncludeRequirementsFilters">
-        <fieldset class="nhsuk-fieldset" aria-describedby="role-requirements-filters-hint">
-            <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--m">
+    <h1 class="app-page-heading">
+        <span class="nhsuk-caption-xl">
+            @Model.CompetencyAssessmentName
+            <span class="nhsuk-u-visually-hidden"> – </span>
+        </span>
+        Role requirement filters
+    </h1>
+    <partial name="Shared/_PublishedSelfAssessmentWarning" model="new PublishedSelfAssessmentViewModel { UserRole = Model.UserRole, PublishStatusID = Model.PublishStatusID }" />
+    <form method="post" asp-action="EditRoleRequirementsFlags">
+        <nhs-form-group nhs-validation-for="IncludeRequirementsFilters">
+            <fieldset class="nhsuk-fieldset" aria-describedby="role-requirements-filters-hint">
+                <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--m">
                     Do you want to enforce role requirements filters for the self-assessment?
-            </legend>
-            <div id="role-requirements-filters-hint" class="nhsuk-hint">
+                </legend>
+                <div id="role-requirements-filters-hint" class="nhsuk-hint">
                     This will allow the learner to filter self-assessment @Model.VocabularyPlural.ToLower() based on whether they are meeting the role requirements set.
-            </div>
-            <span nhs-validation-for="IncludeRequirementsFilters"></span>
-            <div class="nhsuk-radios nhsuk-radios--inline">
-                <div class="nhsuk-radios__item">
-                    <input class="nhsuk-radios__input" id="include-yes" name="IncludeRequirementsFilters" type="radio" value="true" @(Model.IncludeRequirementsFilters ? "checked" : "")>
-                    <label class="nhsuk-radios__label" for="include-yes">Yes</label>
                 </div>
-                <div class="nhsuk-radios__item">
-                    <input class="nhsuk-radios__input" id="include-no" name="IncludeRequirementsFilters" type="radio" value="false" @(!Model.IncludeRequirementsFilters ? "checked" : "")>
-                    <label class="nhsuk-radios__label" for="include-no">No</label>
+                <span nhs-validation-for="IncludeRequirementsFilters"></span>
+                <div class="nhsuk-radios nhsuk-radios--inline">
+                    <div class="nhsuk-radios__item">
+                        <input class="nhsuk-radios__input" id="include-yes" name="IncludeRequirementsFilters" type="radio" value="true" @(Model.IncludeRequirementsFilters ? "checked" : "")>
+                        <label class="nhsuk-radios__label" for="include-yes">Yes</label>
+                    </div>
+                    <div class="nhsuk-radios__item">
+                        <input class="nhsuk-radios__input" id="include-no" name="IncludeRequirementsFilters" type="radio" value="false" @(!Model.IncludeRequirementsFilters ? "checked" : "")>
+                        <label class="nhsuk-radios__label" for="include-no">No</label>
+                    </div>
                 </div>
-            </div>
-        </fieldset>
-    </nhs-form-group>
-    <input type="hidden" asp-for="Id" />
-    <input type="hidden" asp-for="EnforceRoleRequirementsForSignOff" />
-    <input type="hidden" asp-for="TaskStatus" />
-    <hr class="nhsuk-section-break nhsuk-section-break--m" />
-    <button class="nhsuk-button nhsuk-button--primary" type="submit">Save</button>
-</form>
-<div class="nhsuk-back-link">
-    <a class="nhsuk-back-link__link" asp-action="ManageCompetencyRoleRequirements" asp-route-competencyAssessmentId="@Model.Id">
-        <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-            <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
-        </svg>
-        Cancel
-    </a>
-</div>
+            </fieldset>
+        </nhs-form-group>
+        <input type="hidden" asp-for="Id" />
+        <input type="hidden" asp-for="EnforceRoleRequirementsForSignOff" />
+        <input type="hidden" asp-for="TaskStatus" />
+        <input type="hidden" asp-for="PublishStatusID" />
+        <hr class="nhsuk-section-break nhsuk-section-break--m" />
+        <button class="nhsuk-button nhsuk-button--primary" type="submit">Save</button>
+    </form>
+    <div class="nhsuk-back-link">
+        <a class="nhsuk-back-link__link" asp-action="ManageCompetencyRoleRequirements" asp-route-competencyAssessmentId="@Model.Id">
+            <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
+            </svg>
+            Cancel
+        </a>
+    </div>
 </div>

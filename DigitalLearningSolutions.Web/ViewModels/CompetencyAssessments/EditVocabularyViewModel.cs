@@ -12,6 +12,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
             CompetencyAssessmentName = competencyAssessmentBase.CompetencyAssessmentName;
             Vocabulary = competencyAssessmentBase.Vocabulary;
             UserRole = competencyAssessmentBase.UserRole;
+            PublishStatusID = competencyAssessmentBase.PublishStatusID;
             TaskStatus = taskStatus;
         }
         public int ID { get; set; }
@@ -19,6 +20,7 @@ namespace DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments
         [Required(ErrorMessage = "Select a vocabulary option")]
         public string Vocabulary { get; set; }
         public int UserRole { get; set; }
+        public int PublishStatusID { get; set; }
         public bool? TaskStatus { get; set; }
     }
 }
