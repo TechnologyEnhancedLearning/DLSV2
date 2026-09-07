@@ -280,10 +280,7 @@
           int contractType,
           string centreStatus)
         {
-            if (!string.IsNullOrEmpty(search))
-            {
-                search = search.Trim();
-            }
+            search = string.IsNullOrWhiteSpace(search) ? string.Empty : search.Trim();
             string sql = @"SELECT c.CentreID,
                             c.CentreName,
                             c.ContactForename,
@@ -298,10 +295,10 @@
                         FROM Centres AS c
                         INNER JOIN Regions AS r ON r.RegionID = c.RegionID
                         INNER JOIN CentreTypes AS ct ON ct.CentreTypeId = c.CentreTypeId
-                        WHERE c.CentreName LIKE N'%' + @search + N'%'
-                        AND ((c.RegionID = @region) OR (@region = 0)) AND ((c.CentreTypeId = @centreType) OR (@centreType = 0))
-                        AND ((c.ContractTypeID = @contractType) OR (@contractType = 0)) AND ((@centreStatus = 'Any') OR (@centreStatus = 'Active' AND c.Active = 1) OR (@centreStatus = 'Inactive' AND c.Active = 0))
-                        ORDER BY LTRIM(c.CentreName)
+                        WHERE (@search = '' OR c.CentreName LIKE N'%' + @search + N'%')
+                        AND (@region = 0 OR c.RegionID = @region) AND (@centreType = 0 OR c.CentreTypeId = @centreType)
+                        AND (@contractType = 0 OR c.ContractTypeID = @contractType) AND ((@centreStatus = 'Any') OR (@centreStatus = 'Active' AND c.Active = 1) OR (@centreStatus = 'Inactive' AND c.Active = 0))
+                        ORDER BY c.CentreName
                             OFFSET @offset ROWS
                             FETCH NEXT @rows ROWS ONLY";
             IEnumerable<CentreEntity> centreEntity = connection.Query<Centre, CentreTypes, Regions, CentreEntity>(
@@ -314,11 +311,11 @@
                 commandTimeout: 3000
             );
             int resultCount = connection.ExecuteScalar<int>(
-                                @$"SELECT  COUNT(*) AS Matches
+                                @"SELECT COUNT(*) AS Matches
                                 FROM Centres AS c
-                                INNER JOIN Regions AS r ON r.RegionID = c.RegionID
-                                INNER JOIN CentreTypes AS ct ON ct.CentreTypeId = c.CentreTypeId
-                                WHERE c.CentreName LIKE N'%' + @search + N'%' AND ((c.RegionID = @region) OR (@region = 0))  AND ((c.CentreTypeId = @centreType) OR (@centreType = 0)) AND ((c.ContractTypeID = @contractType) OR (@contractType = 0)) AND ((@centreStatus = 'Any') OR (@centreStatus = 'Active' AND c.Active = 1) OR (@centreStatus = 'Inactive' AND c.Active = 0))",
+                                WHERE (@search = '' OR c.CentreName LIKE N'%' + @search + N'%')
+                                AND (@region = 0 OR c.RegionID = @region) AND (@centreType = 0 OR c.CentreTypeId = @centreType)
+                                AND (@contractType = 0 OR c.ContractTypeID = @contractType) AND ((@centreStatus = 'Any') OR (@centreStatus = 'Active' AND c.Active = 1) OR (@centreStatus = 'Inactive' AND c.Active = 0))",
                     new { search, region, centreType, contractType, centreStatus },
                     commandTimeout: 3000
             );
@@ -742,8 +739,7 @@
                         CustomCourses AS RoleLimitCustomCourses,
                         Trainers AS RoleLimitTrainers
                         FROM Centres
-                        WHERE (CentreId = @centreId) AND (Active = 1)
-                        ORDER BY CentreName",
+                        WHERE (CentreId = @centreId) AND (Active = 1)",
                 new { centreId }
             );
         }
@@ -844,12 +840,13 @@
 
         public int ResultCount(string search, int region, int centreType, int contractType, string centreStatus)
         {
+            search = string.IsNullOrWhiteSpace(search) ? string.Empty : search.Trim();
             int resultCount = connection.ExecuteScalar<int>(
-                               @$"SELECT  COUNT(*) AS Matches
+                               @"SELECT COUNT(*) AS Matches
                                 FROM Centres AS c
-                                INNER JOIN Regions AS r ON r.RegionID = c.RegionID
-                                INNER JOIN CentreTypes AS ct ON ct.CentreTypeId = c.CentreTypeId
-                                WHERE c.CentreName LIKE N'%' + @search + N'%' AND ((c.RegionID = @region) OR (@region = 0))  AND ((c.CentreTypeId = @centreType) OR (@centreType = 0)) AND ((c.ContractTypeID = @contractType) OR (@contractType = 0)) AND ((@centreStatus = 'Any') OR (@centreStatus = 'Active' AND c.Active = 1) OR (@centreStatus = 'Inactive' AND c.Active = 0))",
+                                WHERE (@search = '' OR c.CentreName LIKE N'%' + @search + N'%')
+                                AND (@region = 0 OR c.RegionID = @region) AND (@centreType = 0 OR c.CentreTypeId = @centreType)
+                                AND (@contractType = 0 OR c.ContractTypeID = @contractType) AND ((@centreStatus = 'Any') OR (@centreStatus = 'Active' AND c.Active = 1) OR (@centreStatus = 'Inactive' AND c.Active = 0))",
                    new { search, region, centreType, contractType, centreStatus },
                    commandTimeout: 3000
            );
@@ -859,55 +856,80 @@
         public IEnumerable<CentresExport> GetAllCentresForSuperAdminExport(string search, int region,
           int centreType, int contractType, string centreStatus, int exportQueryRowLimit, int currentRun)
         {
-            if (!string.IsNullOrEmpty(search))
-            {
-                search = search.Trim();
-            }
+            search = string.IsNullOrWhiteSpace(search) ? string.Empty : search.Trim();
             string sql = @"SELECT
-                            CentreID,
-                            Active,
-                            CentreName,
-                            ContactSurname + ', ' + ContactForename AS Contact,          ContactEmail,
-                            ContactTelephone,
-                            (SELECT RegionName FROM Regions WHERE            (RegionID = c.RegionID)) AS RegionName,
-                             (SELECT CentreType FROM CentreTypes
-                               WHERE (CentreTypeID = c.CentreTypeID)) AS CentreType,
-                            IPPrefix,
-                            CentreCreated,
-                            (SELECT COUNT(*) AS Expr1 FROM Candidates
-                               WHERE (CentreID = c.CentreID)) AS Delegates,
-                            (SELECT COUNT(Progress.ProgressID) AS Registrations
-                               FROM Progress
-                               INNER JOIN                                    Candidates AS Candidates_1 ON Progress.CandidateID = Candidates_1.CandidateID
-                               WHERE (Candidates_1.CentreID = c.CentreID)) AS CourseEnrolments,
-                             (SELECT COUNT(Progress_1.ProgressID) AS Completions
-                               FROM Progress AS Progress_1
-                               INNER JOIN
-                               Candidates AS Candidates_1 ON Progress_1.CandidateID = Candidates_1.CandidateID
-                               WHERE (Progress_1.Completed IS NOT NULL) AND (Candidates_1.CentreID = c.CentreID)) AS CourseCompletions,
-                             (SELECT SUM(e.Duration) AS Expr1
-                               FROM Sessions AS e INNER JOIN
-                               Candidates AS Candidates_2 ON e.CandidateID = Candidates_2.CandidateID
-                               WHERE        (Candidates_2.CentreID = c.CentreID)) / 60 AS LearningHours,
-                             (SELECT COUNT(*) AS Expr1
-                               FROM  AdminUsers
-                               WHERE (CentreID = c.CentreID)) AS AdminUsers,
-                             (SELECT MAX(ADS.LoginTime) AS Expr1
-                               FROM AdminSessions AS ADS INNER JOIN
-                               AdminUsers AS ADU ON ADS.AdminID = ADU.AdminID
-                               WHERE (ADU.CentreID = c.CentreID)) AS LastAdminLogin,
-                             (SELECT MAX(Sessions.LoginTime) AS Expr1
-                               FROM Sessions INNER JOIN
-                               Customisations ON Sessions.CustomisationID = Customisations.CustomisationID
-                               WHERE (Customisations.CentreID = c.CentreID)) AS LastLearnerLogin, 
-							   (SELECT ContractType FROM ContractTypes WHERE ContractTypeID = c.ContractTypeID) AS ContractType, 
-							   CCLicences, ServerSpaceBytes, 
-                         ServerSpaceUsed
+                            c.CentreID,
+                            c.Active,
+                            c.CentreName,
+                            c.ContactSurname + ', ' + c.ContactForename AS Contact,
+                            c.ContactEmail,
+                            c.ContactTelephone,
+                            r.RegionName,
+                            ct.CentreType,
+                            c.IPPrefix,
+                            c.CentreCreated,
+                            ISNULL(d.Delegates, 0) AS Delegates,
+                            ISNULL(e.CourseEnrolments, 0) AS CourseEnrolments,
+                            ISNULL(co.CourseCompletions, 0) AS CourseCompletions,
+                            ISNULL(l.LearningHours, 0) AS LearningHours,
+                            ISNULL(a.AdminUsers, 0) AS AdminUsers,
+                            al.LastAdminLogin,
+                            ll.LastLearnerLogin,
+                            con.ContractType,
+                            c.CCLicences,
+                            c.ServerSpaceBytes,
+                            c.ServerSpaceUsed
                         FROM Centres AS c
-                        WHERE c.CentreName LIKE N'%' + @search + N'%'
-                        AND ((c.RegionID = @region) OR (@region = 0)) AND ((c.CentreTypeId = @centreType) OR (@centreType = 0))
-                        AND ((c.ContractTypeID = @contractType) OR (@contractType = 0)) AND ((@centreStatus = 'Any') OR (@centreStatus = 'Active' AND c.Active = 1) OR (@centreStatus = 'Inactive' AND c.Active = 0))
-                        ORDER BY LTRIM(c.CentreName)
+                        INNER JOIN Regions AS r ON r.RegionID = c.RegionID
+                        INNER JOIN CentreTypes AS ct ON ct.CentreTypeID = c.CentreTypeID
+                        INNER JOIN ContractTypes AS con ON con.ContractTypeID = c.ContractTypeID
+                        LEFT JOIN (
+                            SELECT CentreID, COUNT(*) AS Delegates
+                            FROM Candidates
+                            GROUP BY CentreID
+                        ) AS d ON d.CentreID = c.CentreID
+                        LEFT JOIN (
+                            SELECT ca.CentreID, COUNT(p.ProgressID) AS CourseEnrolments
+                            FROM Progress AS p
+                            INNER JOIN Candidates AS ca ON p.CandidateID = ca.CandidateID
+                            GROUP BY ca.CentreID
+                        ) AS e ON e.CentreID = c.CentreID
+                        LEFT JOIN (
+                            SELECT ca.CentreID, COUNT(p.ProgressID) AS CourseCompletions
+                            FROM Progress AS p
+                            INNER JOIN Candidates AS ca ON p.CandidateID = ca.CandidateID
+                            WHERE p.Completed IS NOT NULL
+                            GROUP BY ca.CentreID
+                        ) AS co ON co.CentreID = c.CentreID
+                        LEFT JOIN (
+                            SELECT ca.CentreID, SUM(s.Duration) / 60 AS LearningHours
+                            FROM Sessions AS s
+                            INNER JOIN Candidates AS ca ON s.CandidateID = ca.CandidateID
+                            GROUP BY ca.CentreID
+                        ) AS l ON l.CentreID = c.CentreID
+                        LEFT JOIN (
+                            SELECT CentreID, COUNT(*) AS AdminUsers
+                            FROM AdminUsers
+                            GROUP BY CentreID
+                        ) AS a ON a.CentreID = c.CentreID
+                        LEFT JOIN (
+                            SELECT au.CentreID, MAX(ads.LoginTime) AS LastAdminLogin
+                            FROM AdminSessions AS ads
+                            INNER JOIN AdminUsers AS au ON ads.AdminID = au.AdminID
+                            GROUP BY au.CentreID
+                        ) AS al ON al.CentreID = c.CentreID
+                        LEFT JOIN (
+                            SELECT ca.CentreID, MAX(s.LoginTime) AS LastLearnerLogin
+                            FROM Sessions AS s
+                            INNER JOIN Customisations AS cu ON s.CustomisationID = cu.CustomisationID
+                            INNER JOIN Candidates AS ca ON s.CandidateID = ca.CandidateID
+                            WHERE cu.CentreID = ca.CentreID
+                            GROUP BY ca.CentreID
+                        ) AS ll ON ll.CentreID = c.CentreID
+                        WHERE (@search = '' OR c.CentreName LIKE N'%' + @search + N'%')
+                        AND (@region = 0 OR c.RegionID = @region) AND (@centreType = 0 OR c.CentreTypeId = @centreType)
+                        AND (@contractType = 0 OR c.ContractTypeID = @contractType) AND ((@centreStatus = 'Any') OR (@centreStatus = 'Active' AND c.Active = 1) OR (@centreStatus = 'Inactive' AND c.Active = 0))
+                        ORDER BY c.CentreName
                             OFFSET @exportQueryRowLimit * (@currentRun - 1) ROWS
                             FETCH NEXT @exportQueryRowLimit ROWS ONLY";
             IEnumerable<CentresExport> centres = connection.Query<CentresExport>(
