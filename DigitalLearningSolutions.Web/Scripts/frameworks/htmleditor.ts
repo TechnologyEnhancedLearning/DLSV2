@@ -1,4 +1,5 @@
 ﻿import { Jodit } from 'jodit';
+import 'jodit/esm/plugins/all.js';
 import DOMPurify from 'dompurify';
 
 let jodited = false;
@@ -59,6 +60,7 @@ if (jodited === false) {
       'ol', '|',
       'undo', 'redo',
     ],
+    countTextSpaces: true,
     style: {
       backgroundColor: '#FFF',
     },
