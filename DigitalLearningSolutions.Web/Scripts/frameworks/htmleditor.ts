@@ -1,4 +1,5 @@
 ﻿import { Jodit } from 'jodit';
+// eslint-disable-next-line import/extensions
 import 'jodit/esm/plugins/all.js';
 import DOMPurify from 'dompurify';
 
