@@ -46,7 +46,8 @@
                     logger.LogWarning(
                         $"Attempt to access self assessment {selfAssessmentId} by user {delegateUserId}, but no such assessment found"
                     );
-                    context.Result = new RedirectToActionResult("StatusCode", "LearningSolutions", new { code = 403 });
+                    controller.TempData["ErrorMessage"] = "The self-assessment cannot be launched because no competencies have been marked as required.";
+                    context.Result = new RedirectToActionResult("Current", "LearningPortal", null);
                     return;
                 }
                 if (!selfAssessment.IncludeLearnerDeclarationPrompt) return;

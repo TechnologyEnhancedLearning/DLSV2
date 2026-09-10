@@ -26,6 +26,21 @@
     <div class="nhsuk-grid-column-full">
         <h1 id="page-heading">My Current Activities</h1>
 
+        @if (TempData["ErrorMessage"] is string errorMessage)
+        {
+            <div class="nhsuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1">
+                <h2 class="nhsuk-error-summary__title" id="error-summary-title">
+                    There is a problem
+                </h2>
+                <div class="nhsuk-error-summary__body">
+                    <div class="nhsuk-u-padding-top-1 nhsuk-u-padding-bottom-3">
+                        <span class="error-message--margin-bottom-1 nhsuk-error-message">
+                            <span>@errorMessage</span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+       }
         @if (!Model.ApiIsAccessible)
         {
             <vc:learning-resource-warning css-class="nhsuk-u-margin-bottom-4 nhsuk-u-margin-top-4"
@@ -73,6 +88,6 @@
 @if (Model.JavascriptSearchSortFilterPaginateEnabled)
 {
     @section scripts {
-    <script src="@Url.Content("~/js/learningPortal/current.js")" asp-append-version="true"></script>
+        <script src="@Url.Content("~/js/learningPortal/current.js")" asp-append-version="true"></script>
     }
 }
