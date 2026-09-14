@@ -2,6 +2,7 @@
 {
     using System.Collections.Generic;
     using System.Data;
+    using System.Linq;
     using Dapper;
     using DigitalLearningSolutions.Data.Models.LearningResources;
     using DigitalLearningSolutions.Data.Models.SelfAssessments;
@@ -56,39 +57,37 @@
         public int AddCompetencyLearningResource(int resourceRefID, string resourceName, string description, string resourceType, string link, string catalogue, decimal rating, int competencyID, int adminId)
         {
             return connection.ExecuteScalar<int>(
-                @$" DECLARE @learningResourceReferenceID int
-                    IF NOT EXISTS(SELECT * FROM LearningResourceReferences WHERE @resourceRefID = resourceRefID)
-                        BEGIN
-                            INSERT INTO LearningResourceReferences(
-                                ResourceRefID,
-                                OriginalResourceName,
-                                OriginalDescription,
-                                OriginalResourceType,
-                                ResourceLink,
-                                OriginalCatalogueName,
-                                OriginalRating,
-                                AdminID,
-                                Added)
-                            VALUES(
-                                @resourceRefID,
-                                @resourceName,
-                                @description,
-                                @resourceType,
-                                @link,
-                                @catalogue,
-                                @rating,
-                                @adminID,
-                                GETDATE())
-                            SELECT @learningResourceReferenceID = SCOPE_IDENTITY()
-                        END
-                    ELSE
-                        BEGIN
-                            SELECT TOP 1 @learningResourceReferenceID = ID 
-                            FROM LearningResourceReferences 
-                            WHERE @resourceRefID = resourceRefID
-                        END
+                @"DECLARE @learningResourceReferenceID int = (
+                        SELECT TOP 1 ID
+                        FROM LearningResourceReferences
+                        WHERE ResourceRefID = @resourceRefID
+                    );
+                    IF @learningResourceReferenceID IS NULL
+                    BEGIN
+                        INSERT INTO LearningResourceReferences(
+                            ResourceRefID,
+                            OriginalResourceName,
+                            OriginalDescription,
+                            OriginalResourceType,
+                            ResourceLink,
+                            OriginalCatalogueName,
+                            OriginalRating,
+                            AdminID,
+                            Added)
+                        VALUES(
+                            @resourceRefID,
+                            @resourceName,
+                            @description,
+                            @resourceType,
+                            @link,
+                            @catalogue,
+                            @rating,
+                            @adminID,
+                            GETDATE());
+                        SET @learningResourceReferenceID = SCOPE_IDENTITY();
+                    END
                     INSERT INTO CompetencyLearningResources(CompetencyID, LearningResourceReferenceID, AdminID)
-                           VALUES (@competencyID, @learningResourceReferenceID, @adminID)
+                        VALUES (@competencyID, @learningResourceReferenceID, @adminID);
                     SELECT SCOPE_IDENTITY() AS CompetencyLearningResourceId",
                 new
                 {
@@ -100,13 +99,19 @@
                     catalogue,
                     rating,
                     competencyID,
-                    adminId
+                    adminID = adminId
                 }
             );
         }
 
         public IEnumerable<CompetencyResourceAssessmentQuestionParameter> GetCompetencyResourceAssessmentQuestionParameters(IEnumerable<int> competencyLearningResourceIds)
         {
+            var resourceIds = competencyLearningResourceIds?.ToArray();
+            if (resourceIds == null || resourceIds.Length == 0)
+            {
+                return new List<CompetencyResourceAssessmentQuestionParameter>();
+            }
+
             return connection.Query<CompetencyResourceAssessmentQuestionParameter>(
                 @"SELECT
                         CompetencyLearningResourceID,
@@ -117,8 +122,8 @@
                         MinResultMatch,
                         MaxResultMatch
                     FROM CompetencyResourceAssessmentQuestionParameters
-                    WHERE CompetencyLearningResourceId IN @competencyLearningResourceIds",
-                new { competencyLearningResourceIds }
+                    WHERE CompetencyLearningResourceId IN @resourceIds",
+                new { resourceIds }
             );
         }
         public IEnumerable<CompetencyLearningResource> GetActiveCompetencyLearningResourcesByCompetencyIdAndReferenceId(int competencyId, int referenceId)

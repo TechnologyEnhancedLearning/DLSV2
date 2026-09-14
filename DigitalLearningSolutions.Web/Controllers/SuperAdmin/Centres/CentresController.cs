@@ -263,13 +263,12 @@ namespace DigitalLearningSolutions.Web.Controllers.SuperAdmin.Centres
             if (!string.IsNullOrEmpty(model.CentreName))
             {
                 var centres = centresService.GetAllCentres().ToList();
-                bool isExistingCentreName = centres.Where(center => center.Item1 == model.CentreId)
-                    .Select(center => center.Item2)
-                    .FirstOrDefault()
-                    .Equals(model.CentreName.Trim());
-                bool isCentreNamePresent = centres.Any(center => string.Equals(center.Item2.Trim(), model.CentreName?.Trim(), StringComparison.OrdinalIgnoreCase));
-
-                if (isCentreNamePresent && !isExistingCentreName)
+                string trimmedName = model.CentreName.Trim();
+                bool isDuplicateName = centres.Any(center =>
+                    center.Item1 != model.CentreId &&
+                    string.Equals(center.Item2?.Trim(), trimmedName, StringComparison.OrdinalIgnoreCase)
+                );
+                if (isDuplicateName)
                 {
                     ModelState.AddModelError("CentreName", CommonValidationErrorMessages.CentreNameAlreadyExist);
                 }

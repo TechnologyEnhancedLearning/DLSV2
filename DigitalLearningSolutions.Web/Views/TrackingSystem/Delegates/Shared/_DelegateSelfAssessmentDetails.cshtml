@@ -150,16 +150,20 @@
 
         @if (Model.RemovedDate == null)
         {
-            <div class="nhsuk-grid-row nhsuk-u-padding-top-5">
-                <div class="nhsuk-grid-column-full">
-                    <a class="nhsuk-button delete-button nhsuk-button--secondary"
+            <div class="nhsuk-summary-list__row">
+                <dt class="nhsuk-summary-list__key">
+                    <a class="nhsuk-button nhsuk-button--secondary delete-button"
+                      style="white-space: nowrap;"
                        role="button"
                        asp-controller="ActivityDelegates"
                        asp-action="RemoveDelegateSelfAssessment"
                        asp-route-candidateAssessmentsId="@Model.CandidateAssessmentsId">
                         Remove from self-assessment
                     </a>
-                </div>
+                </dt>
+                <dd class="nhsuk-summary-list__value">
+                </dd>
+                <dd class="nhsuk-summary-list__actions"></dd>
             </div>
         }
     }

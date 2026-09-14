@@ -333,7 +333,10 @@
 
         private const string FrameworkTables =
             @"Frameworks AS FW INNER JOIN AdminAccounts AS aa ON aa.ID = fw.OwnerAdminID
-                LEFT OUTER JOIN FrameworkCollaborators AS fwc ON fwc.FrameworkID = FW.ID AND fwc.AdminID = @adminId AND COALESCE(IsDeleted, 0) = 0 ";
+                LEFT OUTER JOIN FrameworkCollaborators AS fwc ON fwc.FrameworkID = FW.ID AND fwc.AdminID = @adminId AND COALESCE(fwc.IsDeleted, 0) = 0
+                LEFT OUTER JOIN Brands AS b ON b.BrandID = FW.BrandID
+                LEFT OUTER JOIN CourseCategories AS cc ON cc.CourseCategoryID = FW.CategoryID
+                LEFT OUTER JOIN CourseTopics AS ct ON ct.CourseTopicID = FW.TopicID";
 
         private const string AssessmentQuestionFields =
             @"SELECT AQ.ID, AQ.Question, AQ.MinValue, AQ.MaxValue, AQ.AssessmentQuestionInputTypeID, AQI.InputTypeName, AQ.AddedByAdminId, CASE WHEN AQ.AddedByAdminId = @adminId THEN 1 ELSE 0 END AS UserIsOwner, AQ.CommentsPrompt, AQ.CommentsHint";
@@ -372,7 +375,7 @@
             );
         }
 
-        public BaseFramework GetBaseFrameworkByFrameworkId(int frameworkId, int adminId)
+        public BaseFramework? GetBaseFrameworkByFrameworkId(int frameworkId, int adminId)
         {
             return connection.QueryFirstOrDefault<BaseFramework>(
                 $@"SELECT {BaseFrameworkFields}
@@ -382,7 +385,7 @@
             );
         }
 
-        public BrandedFramework GetBrandedFrameworkByFrameworkId(int frameworkId, int adminId)
+        public BrandedFramework? GetBrandedFrameworkByFrameworkId(int frameworkId, int adminId)
         {
             return connection.QueryFirstOrDefault<BrandedFramework>(
                 $@"SELECT {BaseFrameworkFields} {BrandedFrameworkFields}
@@ -418,13 +421,17 @@
 
         public IEnumerable<CompetencyFlag> GetSelectedCompetencyFlagsByCompetecyIds(int[] ids)
         {
-            var commaSeparatedIds = String.Join(',', ids.Distinct());
-            var competencyIdFilter = ids.Count() > 0 ? $"cf.CompetencyID IN ({commaSeparatedIds})" : "1=1";
+            if (ids == null || ids.Length == 0)
+            {
+                return Enumerable.Empty<CompetencyFlag>();
+            }
+
             return connection.Query<CompetencyFlag>(
                 $@"SELECT CompetencyId, Selected, {FlagFields}
-	                FROM CompetencyFlags AS cf
-	                INNER JOIN Flags AS fl ON cf.FlagID = fl.ID
-                    WHERE cf.Selected = 1 AND {competencyIdFilter}"
+                    FROM CompetencyFlags AS cf
+                    INNER JOIN Flags AS fl ON cf.FlagID = fl.ID
+                    WHERE cf.Selected = 1 AND cf.CompetencyID IN @competencyIds",
+                new { competencyIds = ids.Distinct().ToArray() }
             );
         }
 
@@ -537,12 +544,13 @@
                 return new BrandedFramework();
             }
 
-            return connection.QueryFirstOrDefault<BrandedFramework>(
+            var framework = connection.QueryFirstOrDefault<BrandedFramework>(
                 $@"SELECT {BaseFrameworkFields}
                       FROM {FrameworkTables}
                       WHERE FrameworkName = @frameworkName AND OwnerAdminID = @adminId",
                 new { frameworkName, adminId }
             );
+            return framework ?? new BrandedFramework();
         }
 
         public BrandedFramework? UpdateFrameworkBranding(
@@ -1538,20 +1546,17 @@ GROUP BY fc.ID, c.ID, c.Name, c.Description, fc.Ordering
 
         public FrameworkDefaultQuestionUsage GetFrameworkDefaultQuestionUsage(int frameworkId, int assessmentQuestionId)
         {
-            return connection.QueryFirstOrDefault<FrameworkDefaultQuestionUsage>(
+            return connection.QueryFirst<FrameworkDefaultQuestionUsage>(
                 @"SELECT @assessmentQuestionId AS ID,
-                 (SELECT AQ.Question + ' (' + AQI.InputTypeName + ' ' + CAST(AQ.MinValue AS nvarchar) + ' to ' + CAST(AQ.MaxValue AS nvarchar) + ')' AS Expr1
-                 FROM    AssessmentQuestions AS AQ LEFT OUTER JOIN
-                              AssessmentQuestionInputTypes AS AQI ON AQ.AssessmentQuestionInputTypeID = AQI.ID
-                 WHERE (AQ.ID = @assessmentQuestionId)) AS Question, COUNT(CompetencyID) AS Competencies,
-                 (SELECT COUNT(CompetencyID) AS Expr1
-                 FROM    CompetencyAssessmentQuestions
-                 WHERE (AssessmentQuestionID = @assessmentQuestionId) AND (CompetencyID IN
-                                  (SELECT CompetencyID
-                                  FROM    FrameworkCompetencies
-                                  WHERE (FrameworkID = @frameworkId)))) AS CompetencyAssessmentQuestions
-FROM   FrameworkCompetencies AS FC
-WHERE (FrameworkID = @frameworkId)",
+                         AQ.Question + ' (' + AQI.InputTypeName + ' ' + CAST(AQ.MinValue AS nvarchar) + ' to ' + CAST(AQ.MaxValue AS nvarchar) + ')' AS Question,
+                         COUNT(DISTINCT fc.CompetencyID) AS Competencies,
+                         COUNT(DISTINCT caq.CompetencyID) AS CompetencyAssessmentQuestions
+                    FROM AssessmentQuestions AS AQ
+                    LEFT OUTER JOIN AssessmentQuestionInputTypes AS AQI ON AQ.AssessmentQuestionInputTypeID = AQI.ID
+                    LEFT OUTER JOIN CompetencyAssessmentQuestions AS caq ON caq.AssessmentQuestionID = @assessmentQuestionId
+                    LEFT OUTER JOIN FrameworkCompetencies AS fc ON caq.CompetencyID = fc.CompetencyID AND fc.FrameworkID = @frameworkId
+                   WHERE AQ.ID = @assessmentQuestionId
+                   GROUP BY AQ.Question, AQI.InputTypeName, AQ.MinValue, AQ.MaxValue",
                 new { frameworkId, assessmentQuestionId }
             );
         }
@@ -1639,7 +1644,7 @@ WHERE (FrameworkID = @frameworkId)",
 
         public AssessmentQuestionDetail GetAssessmentQuestionDetailById(int assessmentQuestionId, int adminId)
         {
-            return connection.QueryFirstOrDefault<AssessmentQuestionDetail>(
+            return connection.QueryFirst<AssessmentQuestionDetail>(
                 $@"{AssessmentQuestionFields}{AssessmentQuestionDetailFields}
                     {AssessmentQuestionTables}
                     WHERE AQ.ID = @assessmentQuestionId",
@@ -1653,7 +1658,7 @@ WHERE (FrameworkID = @frameworkId)",
             int level
         )
         {
-            return connection.QueryFirstOrDefault<LevelDescriptor>(
+            return connection.QueryFirst<LevelDescriptor>(
                 @"SELECT COALESCE(ID,0) AS ID, @assessmentQuestionId AS AssessmentQuestionID, n AS LevelValue, LevelLabel, LevelDescription, COALESCE(UpdatedByAdminID, @adminId) AS UpdatedByAdminID
                     FROM
                     (SELECT TOP (@level) n = ROW_NUMBER() OVER (ORDER BY number)
@@ -2372,11 +2377,25 @@ WHERE (RP.CreatedByAdminID = @adminId) OR
                     WHERE clr.ID = @competencyLearningResourceId",
                 new { competencyLearningResourceId }
             ).FirstOrDefault();
-            var questions = connection.Query<AssessmentQuestion>(
-                $@"SELECT * FROM AssessmentQuestions
-                    WHERE ID IN ({resource?.AssessmentQuestionId ?? 0}, {resource?.RelevanceAssessmentQuestionId ?? 0})"
-            );
-            resource!.AssessmentQuestion = questions.FirstOrDefault(q => q.ID == resource.AssessmentQuestionId)!;
+
+            if (resource == null)
+            {
+                return null;
+            }
+
+            var questionIds = new[] { resource.AssessmentQuestionId, resource.RelevanceAssessmentQuestionId }
+                .Where(id => id > 0)
+                .Distinct()
+                .ToArray();
+
+            var questions = questionIds.Length > 0
+                ? connection.Query<AssessmentQuestion>(
+                    @"SELECT * FROM AssessmentQuestions WHERE ID IN @questionIds",
+                    new { questionIds }
+                )
+                : Enumerable.Empty<AssessmentQuestion>();
+
+            resource.AssessmentQuestion = questions.FirstOrDefault(q => q.ID == resource.AssessmentQuestionId)!;
             resource.RelevanceAssessmentQuestion =
                 questions.FirstOrDefault(q => q.ID == resource.RelevanceAssessmentQuestionId)!;
             return resource;
@@ -2437,10 +2456,21 @@ WHERE (RP.CreatedByAdminID = @adminId) OR
         )
         {
             int rowsAffected;
+            var dbParameters = new
+            {
+                parameter.CompetencyLearningResourceId,
+                AssessmentQuestionId = parameter.AssessmentQuestion?.ID,
+                parameter.MinResultMatch,
+                parameter.MaxResultMatch,
+                Essential = Convert.ToInt32(parameter.Essential),
+                RelevanceAssessmentQuestionId = parameter.RelevanceAssessmentQuestion?.ID,
+                CompareToRoleRequirements = Convert.ToInt32(parameter.CompareToRoleRequirements)
+            };
+
             if (parameter.IsNew)
             {
                 rowsAffected = connection.Execute(
-                    $@"INSERT INTO CompetencyResourceAssessmentQuestionParameters(
+                    @"INSERT INTO CompetencyResourceAssessmentQuestionParameters(
                         CompetencyLearningResourceID,
                         AssessmentQuestionID,
                         MinResultMatch,
@@ -2449,26 +2479,28 @@ WHERE (RP.CreatedByAdminID = @adminId) OR
                         RelevanceAssessmentQuestionID,
                         CompareToRoleRequirements)
                         VALUES(
-                            {parameter.CompetencyLearningResourceId},
-                            {parameter.AssessmentQuestion?.ID.ToString() ?? "null"},
-                            {parameter.MinResultMatch},
-                            {parameter.MaxResultMatch},
-                            {Convert.ToInt32(parameter.Essential)},
-                            {parameter.RelevanceAssessmentQuestion?.ID.ToString() ?? "null"},
-                            {Convert.ToInt32(parameter.CompareToRoleRequirements)})"
+                            @CompetencyLearningResourceId,
+                            @AssessmentQuestionId,
+                            @MinResultMatch,
+                            @MaxResultMatch,
+                            @Essential,
+                            @RelevanceAssessmentQuestionId,
+                            @CompareToRoleRequirements)",
+                    dbParameters
                 );
             }
             else
             {
                 rowsAffected = connection.Execute(
-                    $@"UPDATE CompetencyResourceAssessmentQuestionParameters
-                    SET AssessmentQuestionID = {parameter.AssessmentQuestion?.ID.ToString() ?? "null"},
-                        MinResultMatch = {parameter.MinResultMatch},
-                        MaxResultMatch = {parameter.MaxResultMatch},
-                        Essential = {Convert.ToInt32(parameter.Essential)},
-                        RelevanceAssessmentQuestionID = {parameter.RelevanceAssessmentQuestion?.ID.ToString() ?? "null"},
-                        CompareToRoleRequirements = {Convert.ToInt32(parameter.CompareToRoleRequirements)}
-                    WHERE CompetencyLearningResourceID = {parameter.CompetencyLearningResourceId}"
+                    @"UPDATE CompetencyResourceAssessmentQuestionParameters
+                    SET AssessmentQuestionID = @AssessmentQuestionId,
+                        MinResultMatch = @MinResultMatch,
+                        MaxResultMatch = @MaxResultMatch,
+                        Essential = @Essential,
+                        RelevanceAssessmentQuestionID = @RelevanceAssessmentQuestionId,
+                        CompareToRoleRequirements = @CompareToRoleRequirements
+                    WHERE CompetencyLearningResourceID = @CompetencyLearningResourceId",
+                    dbParameters
                 );
             }
 

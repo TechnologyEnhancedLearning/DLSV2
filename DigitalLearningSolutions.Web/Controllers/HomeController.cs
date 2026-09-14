@@ -48,9 +48,9 @@
         }
 
         [HttpGet]
-        public IActionResult Welcome(bool fallbackLogin = false)
+        public IActionResult Welcome()
         {
-            return View(GetLandingPageViewModel(0, fallbackLogin));
+            return View(GetLandingPageViewModel(0));
         }
 
         [HttpGet]
@@ -76,15 +76,14 @@
             return View(model);
         }
 
-        private LandingPageViewModel GetLandingPageViewModel(int sectionIndex, bool fallbackLogin = false)
+        private LandingPageViewModel GetLandingPageViewModel(int sectionIndex)
         {
             return new LandingPageViewModel
             {
                 MiniHubNavigationModel = new MiniHubNavigationModel(LandingPageMiniHubName, sections, sectionIndex),
                 UserIsLoggedIn = User.Identity.IsAuthenticated,
                 UserIsLoggedInCentre = User.GetCentreId() != null,
-                CurrentSiteBaseUrl = configuration.GetCurrentSystemBaseUrl(),
-                ShowDlsLoginButton = fallbackLogin,
+                CurrentSiteBaseUrl = configuration.GetCurrentSystemBaseUrl()
             };
         }
     }
