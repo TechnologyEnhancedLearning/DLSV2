@@ -4,6 +4,8 @@
 @{
     ViewData["Title"] = "New self-assessments";
     ViewData["Application"] = "Framework service";
+    var actionName = ViewContext.RouteData.Values["actionName"]?.ToString();
+    var frameworkId = ViewContext.RouteData.Values["frameworkId"]?.ToString();
 }
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
 @section NavMenuItems {
@@ -40,7 +42,7 @@ else
         </nav>
     }
 }
-@if ((string)ViewContext.RouteData.Values["actionName"] == "New")
+@if (actionName == "New")
 {
     <h1>Create a new self-assessment</h1>
 }
@@ -83,19 +85,43 @@ else
         <input name="nrpSubGroupID" type="hidden" asp-for="NRPSubGroupID" />
         <input name="nrpRoleID" type="hidden" asp-for="NRPRoleID" />
         <input name="userRole" type="hidden" asp-for="UserRole" />
-        @if ((string)ViewContext.RouteData.Values["actionName"] == "New")
+        
+        @if (actionName == "New")
         {
             <button class="nhsuk-button" type="submit">
                 Continue
             </button>
-            <div class="nhsuk-back-link">
-                <a class="nhsuk-back-link__link" asp-action="ViewCompetencyAssessments" asp-route-tabname="Mine">
-                    <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                        <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
-                    </svg>
-                    Cancel
-                </a>
-            </div>
+            @if (!string.IsNullOrWhiteSpace(frameworkId))
+            {
+                <div class="nhsuk-back-link">
+                    <a class="nhsuk-back-link__link"
+                       asp-controller="Frameworks"
+                       asp-action="ViewFramework"
+                       asp-route-frameworkId="@frameworkId"
+                       asp-route-tabname="Structure">
+                        <svg class="nhsuk-icon nhsuk-icon__chevron-left"
+                             focusable="false"
+                             xmlns="http://www.w3.org/2000/svg"
+                             viewBox="0 0 24 24"
+                             aria-hidden="true">
+                            <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z" />
+                        </svg>
+                        Cancel
+                    </a>
+                </div>
+            }
+             else
+                {
+                <div class="nhsuk-back-link">
+                    <a class="nhsuk-back-link__link" asp-action="ViewCompetencyAssessments" asp-route-tabname="Mine">
+                        <svg class="nhsuk-icon nhsuk-icon__chevron-left" focusable='false' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                            <path d="M13.41 12l5.3-5.29a1 1 0 1 0-1.42-1.42L12 10.59l-5.29-5.3a1 1 0 0 0-1.42 1.42l5.3 5.29-5.3 5.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l5.29-5.3 5.29 5.3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42z"></path>
+                        </svg>
+                        Cancel
+                    </a>
+                </div>
+                }
+              
         }
         else
         {
