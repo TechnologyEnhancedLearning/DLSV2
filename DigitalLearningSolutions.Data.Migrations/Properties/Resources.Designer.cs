@@ -3058,6 +3058,29 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 
+        ////****** Object:  StoredProcedure [dbo].[GetAssessmentResultsByDelegate]    Script Date: 28/07/2026 13:18:46 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///-- =============================================
+        ///-- Author:		Auldrin Possa
+        ///-- Create date: 30/11/2023
+        ///-- Description:	Returns assessment results for a delegate
+        ///-- =============================================
+        ///ALTER   PROCEDURE [dbo].[GetAssessmentResultsByDelegate]
+        ///	@selfAssessmentId as Int = 0,
+        ///	@delegateId as int = 0
+        ///AS
+        ///BEGIN
+        /// [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_7501_Alter_GetAssessmentResultsByDelegate_Down {
+            get {
+                return ResourceManager.GetString("TD_7501_Alter_GetAssessmentResultsByDelegate_Down", resourceCulture);
+                }
+        }
         ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GetNotificationsForAdminUser]    Script Date: 03/08/2026 15:54:52 ******/
         ///SET ANSI_NULLS ON
         ///GO
@@ -3210,6 +3233,29 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 
+        ////****** Object:  StoredProcedure [dbo].[GetAssessmentResultsByDelegate]    Script Date: 28/07/2026 15:06:39 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///-- =============================================
+        ///-- Author:		Auldrin Possa
+        ///-- Create date: 30/11/2023
+        ///-- Description:	Returns assessment results for a delegate
+        ///-- =============================================
+        ///ALTER   PROCEDURE [dbo].[GetAssessmentResultsByDelegate]
+        ///	@selfAssessmentId as Int = 0,
+        ///	@delegateId as int = 0
+        ///AS
+        ///BEGIN
+        /// [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_7501_Alter_GetAssessmentResultsByDelegate_Up {
+            get {
+                return ResourceManager.GetString("TD_7501_Alter_GetAssessmentResultsByDelegate_Up", resourceCulture);
+                }
+        }
         ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[uspReturnSectionsForCandCust_V2]    Script Date: 17/08/2026 15:16:08 ******/
         ///SET ANSI_NULLS ON
         ///   Looks up a localized string similar to SET ANSI_NULLS ON
