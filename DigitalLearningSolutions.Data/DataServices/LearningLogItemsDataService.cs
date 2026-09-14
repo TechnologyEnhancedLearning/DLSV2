@@ -104,6 +104,7 @@
                         {LearningLogItemColumns}
                     FROM LearningLogItems l
                     INNER JOIN LearningResourceReferences AS lrr ON lrr.ID = l.LearningResourceReferenceID
+                    INNER JOIN ActivityTypes AS a ON a.ID = l.ActivityTypeID
                     WHERE LoggedById = @delegateUserId
                       AND l.ActivityTypeID = @learningHubResourceActivityTypeId",
                 new { delegateUserId, learningHubResourceActivityTypeId = LearningHubResourceActivityTypeId }
@@ -117,6 +118,7 @@
                         {LearningLogItemColumns}
                     FROM LearningLogItems l
                     INNER JOIN LearningResourceReferences AS lrr ON lrr.ID = l.LearningResourceReferenceID
+                    INNER JOIN ActivityTypes AS a ON a.ID = l.ActivityTypeID
                     WHERE l.ActivityTypeID = @learningHubResourceActivityTypeId
                       AND LearningLogItemID = @learningLogItemId",
                 new { learningLogItemId, learningHubResourceActivityTypeId = LearningHubResourceActivityTypeId }

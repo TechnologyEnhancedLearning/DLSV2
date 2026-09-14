@@ -130,6 +130,13 @@ input[type=file].nhsuk-input--error {
   }
 }
 
+.nhsuk-width-container,
+.nhsuk-header__container,
+.nhsuk-header__navigation-list,
+.nhsuk-header__drop-down .nhsuk-header__navigation-link {
+  max-width: 1200px !important;
+}
+
 .nhsuk-tag {
   text-align: center;
 }
