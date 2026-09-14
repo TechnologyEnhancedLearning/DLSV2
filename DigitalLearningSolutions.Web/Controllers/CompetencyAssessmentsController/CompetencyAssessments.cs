@@ -775,9 +775,20 @@
         }
         [HttpPost]
         [Route("/Self-Assessment/{competencyAssessmentId}/{vocabularyPlural}/Optional/LearnerPrompt")]
-        public IActionResult SetOptionalCompetencyLearnerPrompt(SetOptionalCompetencyLearnerPromptFormData model)
+        public IActionResult SetOptionalCompetencyLearnerPrompt(SetOptionalCompetencyLearnerPromptViewModel model)
         {
-            
+            if (StringHelper.StripHtmlTags(model.ManageOptionalCompetenciesPrompt).Length > 1000)
+            {
+                ModelState.AddModelError(nameof(model.ManageOptionalCompetenciesPrompt), "Prompt text cannot exceed 1000 characters.");
+                return View("SetOptionalCompetencyLearnerPrompt", model);
+            }
+
+            if (model.ManageOptionalCompetenciesPrompt?.Length > 2000)
+            {
+                ModelState.AddModelError(nameof(model.ManageOptionalCompetenciesPrompt),
+                    "The formatted content is too large to save.Please reduce the content or formatting.");
+                return View("SetOptionalCompetencyLearnerPrompt", model);
+            }
             competencyAssessmentService.UpdateManageOptionalCompetenciesPrompt(model.ID, model.ManageOptionalCompetenciesPrompt);
             return RedirectToAction("ManageOptionalCompetencies", new { competencyAssessmentId = model.ID, vocabularyPlural = model.VocabularyPlural });
         }

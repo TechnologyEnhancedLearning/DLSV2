@@ -1,9 +1,10 @@
-﻿@use "jodit/build/jodit.min";
+﻿@use "jodit/es2021/jodit.min.css";
 
 .jodit-error {
   border: 2px solid red !important;
   border-radius: 4px;
 }
+
 .jodit-placeholder {
   display: none !important;
 }

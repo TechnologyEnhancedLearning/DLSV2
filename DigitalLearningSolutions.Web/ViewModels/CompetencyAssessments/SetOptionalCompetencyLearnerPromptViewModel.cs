@@ -7,6 +7,10 @@
 
     public class SetOptionalCompetencyLearnerPromptViewModel : SetOptionalCompetencyLearnerPromptFormData
     {
+        public SetOptionalCompetencyLearnerPromptViewModel()
+        {
+        }
+
         public SetOptionalCompetencyLearnerPromptViewModel(CompetencyAssessmentBase competencyAssessmentBase, IEnumerable<Competency> competencies)
         {
             ID = competencyAssessmentBase.ID;
