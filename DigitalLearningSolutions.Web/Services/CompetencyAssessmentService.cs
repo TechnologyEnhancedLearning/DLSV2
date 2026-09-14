@@ -125,7 +125,7 @@ namespace DigitalLearningSolutions.Web.Services
         bool HasCompetencyWithSignpostedLearning(int competencyAssessmentId);
         void RetireCompetencyAssessment(int competencyAssessmentId, DateTime? RetirementDate, string retirementReason, int adminId);
         void RemoveRetirementDate(int competencyAssessmentId, int adminId);
-
+        bool CancelCompetencyAssessment(int selfAssessmentId, int frameworkId);
     }
     public class CompetencyAssessmentService : ICompetencyAssessmentService
     {
@@ -613,7 +613,12 @@ namespace DigitalLearningSolutions.Web.Services
             competencyAssessmentDataService.RetireCompetencyAssessment(competencyAssessmentId, null, null);
 
             competencyAssessmentDataService.UpdateCompetencyAssessmentPublishStatus(competencyAssessmentId, 3, adminId);
-        }       
+        }
 
+        public bool CancelCompetencyAssessment(int selfAssessmentId, int frameworkId)
+        {
+            return competencyAssessmentDataService.CancelCompetencyAssessment(selfAssessmentId, frameworkId);
+           
+        }
     }
 }

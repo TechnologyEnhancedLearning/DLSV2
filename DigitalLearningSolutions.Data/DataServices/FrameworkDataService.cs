@@ -281,7 +281,7 @@
             FrameworkName,
             OwnerAdminID,
             (SELECT Forename + ' ' + Surname + (CASE WHEN Active = 1 THEN '' ELSE ' (Inactive)' END) AS Expr1 FROM AdminUsers WHERE (AdminID = FW.OwnerAdminID)) AS Owner,
-            BrandID,
+            b.BrandID,
             FW.CategoryID,
             TopicID,
             CreatedDate,
