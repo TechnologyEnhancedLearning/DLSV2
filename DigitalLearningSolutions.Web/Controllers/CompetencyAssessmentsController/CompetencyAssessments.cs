@@ -775,9 +775,20 @@
         }
         [HttpPost]
         [Route("/Self-Assessment/{competencyAssessmentId}/{vocabularyPlural}/Optional/LearnerPrompt")]
-        public IActionResult SetOptionalCompetencyLearnerPrompt(SetOptionalCompetencyLearnerPromptFormData model)
+        public IActionResult SetOptionalCompetencyLearnerPrompt(SetOptionalCompetencyLearnerPromptViewModel model)
         {
-            
+            if (StringHelper.StripHtmlTags(model.ManageOptionalCompetenciesPrompt).Length > 1000)
+            {
+                ModelState.AddModelError(nameof(model.ManageOptionalCompetenciesPrompt), "Prompt text cannot exceed 1000 characters.");
+                return View("SetOptionalCompetencyLearnerPrompt", model);
+            }
+
+            if (model.ManageOptionalCompetenciesPrompt?.Length > 2000)
+            {
+                ModelState.AddModelError(nameof(model.ManageOptionalCompetenciesPrompt),
+                    "The formatted content is too large to save.Please reduce the content or formatting.");
+                return View("SetOptionalCompetencyLearnerPrompt", model);
+            }
             competencyAssessmentService.UpdateManageOptionalCompetenciesPrompt(model.ID, model.ManageOptionalCompetenciesPrompt);
             return RedirectToAction("ManageOptionalCompetencies", new { competencyAssessmentId = model.ID, vocabularyPlural = model.VocabularyPlural });
         }
@@ -1375,9 +1386,14 @@
                 ModelState.AddModelError(nameof(viewModel.CustomText), "Please enter the custom declaration text");
                 return View(viewModel);
             }
-            else if (viewModel.DeclarationValue == 1 && viewModel.CustomText.Length > 2000)
+            else if (viewModel.DeclarationValue == 1 && StringHelper.StripHtmlTags(viewModel.CustomText).Length > 2000)
             {
                 ModelState.AddModelError(nameof(viewModel.CustomText), "Declaration text must be 2000 characters or fewer");
+                return View(viewModel);
+            }
+            else if (viewModel.DeclarationValue == 1 && viewModel.CustomText.Length > 3000)
+            {
+                ModelState.AddModelError(nameof(viewModel.CustomText), "The formatted content is too large to save.Please reduce the content or formatting.");
                 return View(viewModel);
             }
 
@@ -1433,9 +1449,14 @@
                 ModelState.AddModelError(nameof(viewModel.CustomText), "Please enter the custom declaration text");
                 return View(viewModel);
             }
-            else if (viewModel.DeclarationValue == 1 && viewModel.CustomText.Length > 2000)
+            else if (viewModel.DeclarationValue == 1 && StringHelper.StripHtmlTags(viewModel.CustomText).Length > 2000)
             {
                 ModelState.AddModelError(nameof(viewModel.CustomText), "Declaration text must be 2000 characters or fewer");
+                return View(viewModel);
+            }
+            else if (viewModel.DeclarationValue == 1 && viewModel.CustomText.Length > 3000)
+            {
+                ModelState.AddModelError(nameof(viewModel.CustomText), "The formatted content is too large to save.Please reduce the content or formatting.");
                 return View(viewModel);
             }
 
@@ -1849,7 +1870,11 @@
 
             return RedirectToAction("ManageCompetencyAssessment", new { competencyAssessmentId = model.CompetencyAssessmentId });
         }
-
+        public IActionResult CancelCompetencyAssessment(int competencyAssessmentId, int frameworkId)
+        {
+            competencyAssessmentService.CancelCompetencyAssessment(competencyAssessmentId, frameworkId);
+            return RedirectToAction("ViewFramework", "Frameworks", new { frameworkId, tabname = "Structure" });
+        }
         private void SetManagesupervisionData(ManagesupervisionViewModel data)
         {
             multiPageFormService.SetMultiPageFormData(
