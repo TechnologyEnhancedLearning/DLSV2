@@ -1,7 +1,10 @@
-﻿﻿@using DigitalLearningSolutions.Data.Models.SelfAssessments
-@model IEnumerable<SupervisorSignOff>
+﻿@using DigitalLearningSolutions.Web.ViewModels.Supervisor
+@model SignOffHistoryViewModel
+@{
+    int rowIndex = 0;
+}
 
-@if (Model.Any())
+@if (Model.SupervisorSignOffs.Any())
 {
     <table role="table" class="nhsuk-table-responsive nhsuk-u-margin-bottom-4">
         <caption class="nhsuk-table__caption"><h1>Supervisor Sign-off History</h1></caption>
@@ -19,8 +22,13 @@
             </tr>
         </thead>
         <tbody class="nhsuk-table__body">
-            @foreach (var supervisorSignOff in Model)
+            @foreach (var supervisorSignOff in Model.SupervisorSignOffs)
             {
+                if (rowIndex == 0 && !Model.NotValidated)
+                {
+                    rowIndex++;
+                    continue;
+                }
                 <tr role="row" class="nhsuk-table__row">
                     <td role="cell" class="nhsuk-table__cell">
                         <span class="nhsuk-table-responsive__heading">Supervisor </span>@supervisorSignOff.SupervisorName (@supervisorSignOff.SupervisorEmail)

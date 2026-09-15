@@ -967,7 +967,7 @@
             return RedirectToAction("AddNewSupervisor", new { model.SelfAssessmentID });
         }
 
-        
+
         [ServiceFilter(typeof(IsCentreAuthorizedSelfAssessment))]
         [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/Supervisors/Add/Summary")]
         [ResponseCache(CacheProfileName = "Never")]
@@ -1583,8 +1583,8 @@
         }
 
         [ServiceFilter(typeof(IsCentreAuthorizedSelfAssessment))]
-        [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/{vocabulary}/SignOffHistory")]
-        public IActionResult SignOffHistory(int selfAssessmentId, string vocabulary)
+        [Route("/LearningPortal/SelfAssessment/{selfAssessmentId:int}/{vocabulary}/SignOffHistory/{notValidated}")]
+        public IActionResult SignOffHistory(int selfAssessmentId, string vocabulary, bool notValidated)
         {
             var delegateUserId = User.GetUserIdKnownNotNull();
             var assessment = selfAssessmentService.GetSelfAssessmentForCandidateById(delegateUserId, selfAssessmentId);
@@ -1594,6 +1594,7 @@
             {
                 SelfAssessment = assessment,
                 SupervisorSignOffs = supervisorSignOffs,
+                NotValidated = notValidated
             };
             return View("SelfAssessments/SignOffHistory", model);
         }
