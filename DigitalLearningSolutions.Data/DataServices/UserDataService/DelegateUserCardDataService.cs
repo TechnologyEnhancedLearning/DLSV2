@@ -40,12 +40,7 @@
                 '' AS ProfessionalRegistrationNumber,
                 NULL AS AdminID";
         private const string DelegateUserCardSelectQuery =
-            @"WITH ActiveAdminAccounts AS (
-                SELECT UserID, CentreID, ID
-                FROM AdminAccounts
-                WHERE Active = 1
-            )
-            SELECT
+            @"SELECT
                 da.ID,
                 da.CandidateNumber,
                 c.CentreName,
@@ -78,15 +73,10 @@
             INNER JOIN Users AS u ON u.ID = da.UserID
             LEFT JOIN UserCentreDetails AS ucd ON ucd.UserID = da.UserID AND ucd.CentreID = da.CentreID
             INNER JOIN JobGroups AS jg ON jg.JobGroupID = u.JobGroupID
-            LEFT JOIN ActiveAdminAccounts AS aaa ON aaa.UserID = da.UserID AND aaa.CentreID = da.CentreID";
+            LEFT JOIN (SELECT UserID, CentreID, ID FROM AdminAccounts WHERE Active = 1) AS aaa ON aaa.UserID = da.UserID AND aaa.CentreID = da.CentreID";
 
         private const string DelegateUserSelectQuery =
-            @"WITH ActiveAdminAccounts AS (
-                SELECT UserID, CentreID, ID
-                FROM AdminAccounts
-                WHERE Active = 1
-            )
-            SELECT
+            @"SELECT
 				da.ID,
 				da.Active AS DelegateActive,
 				da.CandidateNumber,
@@ -118,14 +108,9 @@
 				u.ProfessionalRegistrationNumber,
                 u.PrimaryEmail,
                 ucd.Email,
-				aaa.ID AS AdminID ";
+                aaa.ID AS AdminID ";
         private const string DelegateUserExportSelectQuery =
-            @"WITH ActiveAdminAccounts AS (
-                SELECT UserID, CentreID, ID
-                FROM AdminAccounts
-                WHERE Active = 1
-            )
-            SELECT
+            @"SELECT
                 da.ID,
                 da.CandidateNumber,
                 c.CentreName,
@@ -162,13 +147,13 @@
             INNER JOIN Users AS u ON u.ID = da.UserID
             LEFT JOIN UserCentreDetails AS ucd ON ucd.UserID = da.UserID AND ucd.CentreID = da.CentreID
             INNER JOIN JobGroups AS jg ON jg.JobGroupID = u.JobGroupID
-            LEFT JOIN ActiveAdminAccounts AS aaa ON aaa.UserID = da.UserID AND aaa.CentreID = da.CentreID";
+            LEFT JOIN (SELECT UserID, CentreID, ID FROM AdminAccounts WHERE Active = 1) AS aaa ON aaa.UserID = da.UserID AND aaa.CentreID = da.CentreID";
         private const string DelegateUserFromTable = @" FROM DelegateAccounts AS da WITH (NOLOCK)
 			INNER JOIN Centres AS c WITH (NOLOCK) ON c.CentreID = da.CentreID
 			INNER JOIN Users AS u WITH (NOLOCK) ON u.ID = da.UserID
 			LEFT JOIN UserCentreDetails AS ucd WITH (NOLOCK) ON ucd.UserID = da.UserID AND ucd.CentreID = da.CentreID
 INNER JOIN JobGroups AS jg WITH (NOLOCK) ON jg.JobGroupID = u.JobGroupID
-			LEFT JOIN ActiveAdminAccounts AS aaa WITH (NOLOCK) ON aaa.UserID = da.UserID AND aaa.CentreID = da.CentreID ";
+            LEFT JOIN (SELECT UserID, CentreID, ID FROM AdminAccounts WITH (NOLOCK) WHERE Active = 1) AS aaa ON aaa.UserID = da.UserID AND aaa.CentreID = da.CentreID ";
         private const string DelegateWhereConditionTemplate = @" WHERE ((CentreID = @centreId) OR (@centreId= 0))
                             AND ( FirstName + ' ' + LastName + ' ' + PrimaryEmail + ' ' + COALESCE(Email, '') + ' ' + COALESCE(CandidateNumber, '') LIKE N'%' + @searchString + N'%')
 						AND ((@isActive = 'Any') OR (@isActive = 'true' AND DelegateActive = 1) OR (@isActive = 'false' AND DelegateActive = 0))
@@ -416,10 +401,6 @@ INNER JOIN JobGroups AS jg WITH (NOLOCK) ON jg.JobGroupID = u.JobGroupID
                 commandTimeout: 3000
             );
 
-            if (delegateUserCards.Any())
-            {
-                resultCount = delegateUserCards.Count();
-            }
             return (delegateUserCards, resultCount);
         }
 
