@@ -128,7 +128,7 @@
             A.CallTo(() => learningLogItemsDataService.GetLearningLogItems(DelegateUserId))
                 .Returns(new List<LearningLogItem> { learningLogItem });
 
-            var expectedResource = GetExpectedResource(false, true, null, 175);
+            var expectedResource = GetExpectedResource(true, true, 6, 175);
 
             // When
             var result =
