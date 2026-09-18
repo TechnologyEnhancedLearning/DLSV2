@@ -128,7 +128,7 @@
                 ll => ll.ArchivedDate == null && ll.LearningHubResourceReferenceId == rr.RefId
             ).ToList();
             var incompleteLearningLogItem =
-                learningLogItemsForResource.SingleOrDefault();
+                learningLogItemsForResource.FirstOrDefault();
 
             var clrsForResource =
                 competencyLearningResources.Where(clr => clr.LearningHubResourceReferenceId == rr.RefId)
