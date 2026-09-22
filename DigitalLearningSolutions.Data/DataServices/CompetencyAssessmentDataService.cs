@@ -315,8 +315,18 @@
         public bool UpdateCompetencyRoleProfileLinks(int competencyAssessmentId, int adminId, int? professionalGroupId, int? subGroupId, int? roleId)
         {
             var numberOfAffectedRows = connection.Execute(
-                @"UPDATE SelfAssessments SET NRPProfessionalGroupID = @professionalGroupId, NRPSubGroupID = @subGroupId, NRPRoleID = @roleId, UpdatedByAdminID = @adminId
-                    WHERE ID = @competencyAssessmentId AND (NRPProfessionalGroupID <> @professionalGroupId OR NRPSubGroupID <> @subGroupId OR NRPRoleID <> @roleId)",
+                @"UPDATE SelfAssessments
+                    SET
+                        NRPProfessionalGroupID = @professionalGroupId,
+                        NRPSubGroupID = @subGroupId,
+                        NRPRoleID = @roleId,
+                        UpdatedByAdminID = @adminId
+                    WHERE ID = @competencyAssessmentId
+                      AND (
+                          ISNULL(NRPProfessionalGroupID, -1) <> ISNULL(@professionalGroupId, -1)
+                          OR ISNULL(NRPSubGroupID, -1) <> ISNULL(@subGroupId, -1)
+                          OR ISNULL(NRPRoleID, -1) <> ISNULL(@roleId, -1)
+                      );",
                 new { adminId, competencyAssessmentId, professionalGroupId, subGroupId, roleId }
             );
             return numberOfAffectedRows > 0;
