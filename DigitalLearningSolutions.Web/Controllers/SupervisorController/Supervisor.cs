@@ -1178,8 +1178,8 @@
             );
         }
 
-        [Route("/Supervisor/Staff/{supervisorDelegateId:int}/ProfileAssessment/{candidateAssessmentId}/SignOffHistory")]
-        public IActionResult SignOffHistory(int supervisorDelegateId, int candidateAssessmentId)
+        [Route("/Supervisor/Staff/{supervisorDelegateId:int}/ProfileAssessment/{candidateAssessmentId}/SignOffHistory/{notValidated}")]
+        public IActionResult SignOffHistory(int supervisorDelegateId, int candidateAssessmentId, bool notValidated)
         {
             var adminId = GetAdminId();
             var loggedInAdminUser = userService.GetAdminUserById(adminId);
@@ -1191,7 +1191,8 @@
             var model = new SignOffHistoryViewModel()
             {
                 DelegateSelfAssessment = delegateSelfAssessment,
-                SupervisorDelegateDetail = superviseDelegate
+                SupervisorDelegateDetail = superviseDelegate,
+                NotValidated = notValidated
             };
             if (superviseDelegate.DelegateUserID != null)
             {

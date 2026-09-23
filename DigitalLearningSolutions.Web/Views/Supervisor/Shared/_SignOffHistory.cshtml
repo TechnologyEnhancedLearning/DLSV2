@@ -2,6 +2,9 @@
 @using DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments
 @inject IClockUtility ClockUtility
 @model SignOffHistoryViewModel
+@{
+    int rowIndex = 0;
+}
 
 @if (Model.SupervisorSignOffs.Any())
 {
@@ -27,6 +30,11 @@
 
             @foreach (var supervisorSignOff in Model.SupervisorSignOffs)
             {
+                if (rowIndex == 0 && !Model.NotValidated)
+                {
+                    rowIndex++;
+                    continue;
+                }
                 <tr role="row" class="nhsuk-table__row">
                     <td role="cell" class="nhsuk-table__cell">
                         <span class="nhsuk-table-responsive__heading">Supervisor </span>@supervisorSignOff.SupervisorName (@supervisorSignOff.SupervisorEmail)

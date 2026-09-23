@@ -12,5 +12,6 @@
         {
             return FrameworkVocabularyHelper.VocabularyPlural(SelfAssessment.Vocabulary);
         }
+        public bool NotValidated { get; set; }
     }
 }
