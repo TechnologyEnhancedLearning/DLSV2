@@ -3241,6 +3241,49 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 
+        ////****** Object:  StoredProcedure [dbo].[StoreDiagScoreSCO]    Script Date: 05/08/2026 08:51:11 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 08/08/2018
+        ///-- Description:	Updates the diagnostic score for a delegate using ProgressID and TutorialID to identify ASPProgress record to update
+        ///-- =============================================
+        ///ALTER PROCEDURE [dbo].[StoreDiagScoreSCO]
+        ///	@score int,
+        ///	@pro [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_7596_Alter_StoreDiagScoreSCOs_Down {
+            get {
+                return ResourceManager.GetString("TD_7596_Alter_StoreDiagScoreSCOs_Down", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[StoreDiagScoreSCO]    Script Date: 05/08/2026 08:51:11 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 08/08/2018
+        ///-- Description:	Updates the diagnostic score for a delegate using ProgressID and TutorialID to identify ASPProgress record to update
+        ///-- =============================================
+        ///ALTER PROCEDURE [dbo].[StoreDiagScoreSCO]
+        ///	@score INT,
+        ///	@progr [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_7596_Alter_StoreDiagScoreSCOs_Up {
+            get {
+                return ResourceManager.GetString("TD_7596_Alter_StoreDiagScoreSCOs_Up", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GetCompletedCoursesForCandidate]    Script Date: 06/08/2026 09:15:39 ******/
         ///SET ANSI_NULLS ON
         ///GO
