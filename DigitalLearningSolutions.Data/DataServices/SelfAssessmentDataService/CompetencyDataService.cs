@@ -514,16 +514,12 @@
             var numberOfAffectedRows = connection.Execute(
                 @"UPDATE CandidateAssessmentOptionalCompetencies
                     SET IncludedInSelfAssessment = 1
-                    FROM (
-					SELECT DISTINCT
-					 CandidateAssessmentID,
-					 CompetencyID
-					 FROM CandidateAssessmentOptionalCompetencies
-					) AS CAOC
+                    FROM CandidateAssessmentOptionalCompetencies AS CAOC
                     INNER JOIN CandidateAssessments AS CA
                         ON CAOC.CandidateAssessmentID = CA.ID
                     INNER JOIN SelfAssessmentStructure AS SAS
                         ON CA.SelfAssessmentID = SAS.SelfAssessmentID AND CAOC.CompetencyID = SAS.CompetencyID
+                    AND CAOC.CompetencyGroupID = SAS.CompetencyGroupID
                     WHERE (SAS.ID = @selfAssessmentStructureId) AND (CA.DelegateUserID = @delegateUserId) AND (CA.RemovedDate IS NULL)",
                 new { selfAssessmentStructureId, delegateUserId }
             );
