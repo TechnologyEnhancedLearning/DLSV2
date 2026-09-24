@@ -2,7 +2,7 @@
 {
     using FluentMigrator;
 
-    [Migration(202608061170)]
+    [Migration(202609241170)]
     public class _202608051545_TD_7596_Alter_StoreDiagScoreSCO : Migration
     {
         public override void Up()
