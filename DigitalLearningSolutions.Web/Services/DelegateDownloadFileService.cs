@@ -13,7 +13,7 @@
     using DigitalLearningSolutions.Data.Models.CustomPrompts;
     using DigitalLearningSolutions.Data.Models.User;
     using Microsoft.Extensions.Configuration;
-
+    using DigitalLearningSolutions.Web.Helpers;
     public interface IDelegateDownloadFileService
     {
         public byte[] GetDelegatesAndJobGroupDownloadFileForCentre(int centreId, bool blank);
@@ -379,8 +379,8 @@
                 delegateRecord.ProfessionalRegistrationNumber
             );
             row[JobGroup] = delegateRecord.JobGroupName;
-            row[RegisteredDate] = delegateRecord.DateRegistered?.Date;
-            row[LastAccessed] = delegateRecord.LastAccessed?.Date;
+            row[RegisteredDate] = Web.Helpers.DateHelper.GetLocalDateTime(delegateRecord.DateRegistered?.Date);
+            row[LastAccessed] = Web.Helpers.DateHelper.GetLocalDateTime(delegateRecord.LastAccessed?.Date);
             var delegateAnswers = delegateRecord.GetRegistrationFieldAnswers();
 
             foreach (var prompt in registrationPrompts.CustomPrompts)
