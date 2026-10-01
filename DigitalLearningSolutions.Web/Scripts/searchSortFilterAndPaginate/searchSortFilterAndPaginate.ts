@@ -182,7 +182,9 @@ export class SearchSortFilterAndPaginate {
         const source = searchableElementsContainerId === ''
           ? response
           : response.getElementById(searchableElementsContainerId);
-        const searchableElementsSource = source instanceof HTMLTemplateElement ? source.content : source;
+        const searchableElementsSource = source !== null && 'content' in source
+          ? (source as HTMLTemplateElement).content
+          : source;
         if (searchableElementsSource === null) {
           return undefined;
         }
