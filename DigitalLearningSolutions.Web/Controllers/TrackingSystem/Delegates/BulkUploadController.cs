@@ -493,6 +493,7 @@
                 BulkUploadResult.ErrorReason.InvalidPrnCharacters =>
                     "Invalid PRN format - Only alphanumeric characters (a-z, A-Z and 0-9) and hyphens (-) allowed",
                 BulkUploadResult.ErrorReason.InvalidHasPrnValue => "HasPRN field could not be read. The HasPRN field should contain 'TRUE' or 'FALSE' or be left blank",
+                BulkUploadResult.ErrorReason.InvalidFormatForAnswer3 => "Answer3 is not in the correct format. Please enter Answer3 in a valid telephone number format",
                 _ => throw new ArgumentOutOfRangeException(nameof(reason), reason, null),
             };
         }

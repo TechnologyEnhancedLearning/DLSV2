@@ -32,7 +32,8 @@
             PrnButHasPrnIsFalse,
             InvalidPrnLength,
             InvalidPrnCharacters,
-            InvalidHasPrnValue
+            InvalidHasPrnValue,
+            InvalidFormatForAnswer3
         }
 
         public BulkUploadResult() { }
