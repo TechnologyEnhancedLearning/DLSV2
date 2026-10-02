@@ -70,7 +70,8 @@
                     null
                 ),
                 apiIsAccessible,
-                bannerText
+                bannerText,
+                allItems
             );
             result.Should().BeViewResult()
                 .Model.Should().BeEquivalentTo(expectedModel);
@@ -113,7 +114,7 @@
             A.CallTo(() => config["FeatureManagement:UseSignposting"]).Returns("false");
 
             // When
-            await controller.AllCurrentItems();
+            await controller.Current();
 
             // Then
             A.CallTo(() => actionPlanService.GetIncompleteActionPlanResources(DelegateUserId)).MustNotHaveHappened();
@@ -127,7 +128,7 @@
             A.CallTo(() => config["FeatureManagement:UseSignposting"]).Returns("true");
 
             // When
-            await controller.AllCurrentItems();
+            await controller.Current();
 
             // Then
             A.CallTo(() => actionPlanService.GetIncompleteActionPlanResources(DelegateUserId))
