@@ -2,96 +2,20 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Data;
     using Dapper;
     using DigitalLearningSolutions.Data.Models.SelfAssessments;
-    using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Logging;    
 
     public partial class SelfAssessmentDataService
     {
         public IEnumerable<CurrentSelfAssessment> GetSelfAssessmentsForCandidate(int delegateUserId, int centreId, int? adminIdCategoryID)
         {
             return connection.Query<CurrentSelfAssessment>(
-                @"SELECT  SelfAssessment.Id,
-                            SelfAssessment.Name,
-                            SelfAssessment.Description,
-                            SelfAssessment.IncludesSignposting,
-                            SelfAssessment.IncludeRequirementsFilters,
-                            SelfAssessment. IsSupervisorResultsReviewed,
-                            SelfAssessment.ReviewerCommentsLabel,
-                            SelfAssessment. Vocabulary,
-                            SelfAssessment. NumberOfCompetencies,
-                            SelfAssessment.StartedDate,
-                            SelfAssessment.LastAccessed,
-                            SelfAssessment.CompleteByDate,
-                            SelfAssessment.CandidateAssessmentId,
-                            SelfAssessment.UserBookmark,
-                            SelfAssessment.UnprocessedUpdates,
-                            SelfAssessment.LaunchCount,
-                            SelfAssessment. IsSelfAssessment,
-                            SelfAssessment.SubmittedDate,
-                            SelfAssessment. CentreName,
-                            SelfAssessment.EnrolmentMethodId,
-                            SelfAssessment.RetirementDate,
-                            SelfAssessment.EnrolmentCutoffDate,
-                            SelfAssessment.RetirementReason,
-                            Signoff.SignedOff,
-                            Signoff.Verified,
-                            EnrolledByForename +' '+EnrolledBySurname AS EnrolledByFullName
-                        FROM	(SELECT
-                        CA.SelfAssessmentID AS Id,
-                        SA.Name,
-                        SA.Description,
-                        SA.IncludesSignposting,
-                        SA.IncludeRequirementsFilters,
-                        SA.SupervisorResultsReview AS IsSupervisorResultsReviewed,
-                        SA.ReviewerCommentsLabel,
-                        COALESCE(SA.Vocabulary, 'Capability') AS Vocabulary,
-                        COUNT(C.ID) AS NumberOfCompetencies,
-                        CA.StartedDate,
-                        CA.LastAccessed,
-                        CA.CompleteByDate,
-                        CA.ID AS CandidateAssessmentId,
-                        CA.UserBookmark,
-                        CA.UnprocessedUpdates,
-                        CA.LaunchCount,
-                        1 AS IsSelfAssessment,
-                        CA.SubmittedDate,
-                        CR.CentreName AS CentreName,
-                        CA.EnrolmentMethodId,
-						uEnrolledBy.FirstName AS EnrolledByForename,
-                        uEnrolledBy.LastName AS EnrolledBySurname,
-                        SA.RetirementDate,
-                        SA.EnrolmentCutoffDate,
-                        SA.RetirementReason
-                        FROM Centres AS CR INNER JOIN
-                        CandidateAssessments AS CA INNER JOIN
-                        SelfAssessments AS SA ON CA.SelfAssessmentID = SA.ID ON CR.CentreID = CA.CentreID INNER JOIN
-                        CentreSelfAssessments AS csa ON csa.SelfAssessmentID = SA.ID AND csa.CentreID = @centreId LEFT OUTER JOIN
-                        Competencies AS C RIGHT OUTER JOIN
-                        SelfAssessmentStructure AS SAS ON C.ID = SAS.CompetencyID ON CA.SelfAssessmentID = SAS.SelfAssessmentID LEFT OUTER JOIN
-						CandidateAssessmentSupervisors AS cas ON  ca.ID =cas.CandidateAssessmentID  LEFT OUTER JOIN
-                        CandidateAssessmentSupervisorVerifications    AS casv ON casv.CandidateAssessmentSupervisorID = cas.ID LEFT OUTER JOIN
-                        AdminAccounts AS aaEnrolledBy ON aaEnrolledBy.ID = CA.EnrolledByAdminID LEFT OUTER JOIN
-						Users AS uEnrolledBy ON uEnrolledBy.ID = aaEnrolledBy.UserID
-                    WHERE (CA.DelegateUserID = @delegateUserId) AND (CA.RemovedDate IS NULL) AND (CA.CompletedDate IS NULL)
-                    AND (ISNULL(@adminIdCategoryID, 0) = 0 OR sa.CategoryID = @adminIdCategoryId)
-                    GROUP BY
-                        CA.SelfAssessmentID, SA.Name, SA.Description, SA.IncludesSignposting, SA.SupervisorResultsReview,
-                        SA.ReviewerCommentsLabel, SA.IncludeRequirementsFilters, SA.RetirementDate,SA.EnrolmentCutoffDate,SA.RetirementReason, 
-                        COALESCE(SA.Vocabulary, 'Capability'), CA.StartedDate, CA.LastAccessed, CA.CompleteByDate,
-                        CA.ID,
-                        CA.UserBookmark, CA.UnprocessedUpdates, CA.LaunchCount, CA.SubmittedDate, CR.CentreName,CA.EnrolmentMethodId,
-						 uEnrolledBy.FirstName,uEnrolledBy.LastName)SelfAssessment LEFT OUTER JOIN
-                    (SELECT SelfAssessmentID,casv.SignedOff,MAX(casv.Verified) Verified FROM 
-                       CandidateAssessments AS CA LEFT OUTER JOIN
-						CandidateAssessmentSupervisors AS cas ON  ca.ID =cas.CandidateAssessmentID  LEFT OUTER JOIN
-                        CandidateAssessmentSupervisorVerifications    AS casv ON casv.CandidateAssessmentSupervisorID = cas.ID 
-						 WHERE (CA.DelegateUserID = @delegateUserId) AND (CA.RemovedDate IS NULL) AND (CA.CompletedDate IS NULL) AND (casv.SignedOff = 1) AND
-						(casv.Verified IS NOT NULL)
-                    GROUP BY SelfAssessmentID,casv.SignedOff
-                    )Signoff ON  SelfAssessment.Id =Signoff.SelfAssessmentID",
-                new { delegateUserId, centreId, adminIdCategoryID }
-            );
+                            "GetSelfAssessmentsForCandidate",
+                            new { delegateUserId, centreId, adminIdCategoryID },
+                            commandType: CommandType.StoredProcedure
+                        );
         }
         public IEnumerable<CurrentSelfAssessment> GetSelfAssessmentsForCandidate(int delegateUserId, int centreId)
         {

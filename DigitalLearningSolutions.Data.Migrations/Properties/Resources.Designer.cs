@@ -3383,6 +3383,39 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///
+        ///
+        ///-- =============================================
+        ///-- Author:		Auldrin Possa
+        ///-- Create date: 30/09/2026
+        ///-- Description:	Retrieves self-assessments for a specific candidate.
+        ///-- =============================================
+        ///CREATE PROCEDURE [dbo].[GetSelfAssessmentsForCandidate]
+        ///	@DelegateUserId int,
+        ///	@CentreId int,
+        ///	@AdminIdCategoryID int = NULL
+        ///AS
+        ///BEGIN
+        ///	 SET NOCOUNT ON;
+        ///
+        ///    ;WITH CompetencyCounts AS
+        ///    (
+        ///        SELECT
+        ///            [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_7820_CreateSP_GetSelfAssessmentsForCandidate {
+            get {
+                return ResourceManager.GetString("TD_7820_CreateSP_GetSelfAssessmentsForCandidate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GetActiveAvailableCustomisationsForCentreFiltered_V6]    Script Date: 29/09/2022 19:11:04 ******/
         ///SET ANSI_NULLS ON
         ///GO
