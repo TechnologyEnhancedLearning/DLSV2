@@ -18,35 +18,20 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current
         public CurrentPageViewModel(
             SearchSortFilterPaginationResult<CurrentLearningItem> result,
             bool apiIsAccessible,
-            string? bannerText
+            string? bannerText,
+            IEnumerable<CurrentLearningItem>? allCurrentActivities = null
         ) : base(result, false, searchLabel: "Search")
         {
             ApiIsAccessible = apiIsAccessible;
             BannerText = bannerText;
 
-            CurrentActivities = result.ItemsToDisplay.Select<BaseLearningItem, CurrentLearningItemViewModel>(
-                activity =>
-                {
-                    return activity switch
-                    {
-                        CurrentCourse currentCourse => new CurrentCourseViewModel(
-                            currentCourse,
-                            result.GetReturnPageQuery($"{currentCourse.Id}-course-card")
-                        ),
-                        SelfAssessment selfAssessment => new SelfAssessmentCardViewModel(
-                            selfAssessment,
-                            result.GetReturnPageQuery($"{selfAssessment.Id}-sa-card")
-                        ),
-                        _ => new CurrentLearningResourceViewModel(
-                            (ActionPlanResource)activity,
-                            result.GetReturnPageQuery($"{activity.Id}-lhr-card")
-                        ),
-                    };
-                }
-            );
+            CurrentActivities = MapActivities(result.ItemsToDisplay, result);
+            AllCurrentActivities = MapActivities(allCurrentActivities ?? result.ItemsToDisplay, result);
         }
 
         public IEnumerable<CurrentLearningItemViewModel> CurrentActivities { get; }
+
+        public IEnumerable<CurrentLearningItemViewModel> AllCurrentActivities { get; }
 
         public bool ApiIsAccessible { get; set; }
 
@@ -61,5 +46,31 @@ namespace DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current
         };
 
         public override bool NoDataFound => !CurrentActivities.Any() && NoSearchOrFilter;
+
+        private static IEnumerable<CurrentLearningItemViewModel> MapActivities(
+            IEnumerable<CurrentLearningItem> activities,
+            SearchSortFilterPaginationResult<CurrentLearningItem> result
+        )
+        {
+            return activities.Select<BaseLearningItem, CurrentLearningItemViewModel>(
+                activity =>
+                {
+                    var itemId = activity switch
+                    {
+                        CurrentCourse => $"{activity.Id}-course-card",
+                        SelfAssessment => $"{activity.Id}-sa-card",
+                        _ => $"{activity.Id}-lhr-card",
+                    };
+                    var returnPageQuery = result.GetReturnPageQuery(itemId);
+
+                    return activity switch
+                    {
+                        CurrentCourse currentCourse => new CurrentCourseViewModel(currentCourse, returnPageQuery),
+                        SelfAssessment selfAssessment => new SelfAssessmentCardViewModel(selfAssessment, returnPageQuery),
+                        _ => new CurrentLearningResourceViewModel((ActionPlanResource)activity, returnPageQuery),
+                    };
+                }
+            );
+        }
     }
 }

@@ -68,24 +68,10 @@
             var model = new CurrentPageViewModel(
                 result,
                 apiIsAccessible,
-                bannerText
+                bannerText,
+                result.JavascriptSearchSortFilterPaginateEnabled ? allItems : null
             );
             return View("Current/Current", model);
-        }
-
-        public async Task<IActionResult> AllCurrentItems()
-        {
-            var delegateId = User.GetCandidateIdKnownNotNull();
-            var delegateUserId = User.GetUserIdKnownNotNull();
-            var currentCourses = courseService.GetCurrentCourses(delegateId);
-            var centreId = User.GetCentreIdKnownNotNull();
-
-            var selfAssessment =
-                selfAssessmentService.GetSelfAssessmentsForCandidate(delegateUserId, centreId, 0);
-
-            var (learningResources, _) = await GetIncompleteActionPlanResourcesIfSignpostingEnabled(delegateUserId);
-            var model = new AllCurrentItemsPageViewModel(currentCourses, selfAssessment, learningResources);
-            return View("Current/AllCurrentItems", model);
         }
 
         [HttpPost]

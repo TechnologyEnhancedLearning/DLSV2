@@ -76,7 +76,7 @@
         public BulkUploadResult.ErrorReason? Error { get; set; }
         public RowStatus RowStatus { get; set; }
 
-        public bool Validate(IEnumerable<int> allowedJobGroupIds)
+        public bool Validate(IEnumerable<int> allowedJobGroupIds, string? answer3)
         {
             if (!JobGroupId.HasValue || !allowedJobGroupIds.Contains(JobGroupId.Value))
             {
@@ -153,6 +153,10 @@
             else if (!string.IsNullOrEmpty(Prn) && !PrnRegex.IsMatch(Prn))
             {
                 Error = BulkUploadResult.ErrorReason.InvalidPrnCharacters;
+            }
+            else if (!string.IsNullOrEmpty(answer3) && !CheckTelephoneNumberFormat(answer3))
+            {
+                Error = BulkUploadResult.ErrorReason.InvalidFormatForAnswer3;
             }
             else if (!string.IsNullOrEmpty(Email))
             {
@@ -240,6 +244,15 @@
             );
 
             return userHasPrn == HasPrn || HasPrn == null;
+        }
+        public bool CheckTelephoneNumberFormat(string? phoneNumber)
+        {
+            Regex regex = new Regex(@"^\w{4}\d{6,7}$");
+            if (!string.IsNullOrEmpty(phoneNumber) && !regex.IsMatch(phoneNumber))
+            {
+              return false;
+            }
+            return true;
         }
     }
 }

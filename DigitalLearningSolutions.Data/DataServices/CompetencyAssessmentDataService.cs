@@ -754,6 +754,7 @@
                     FROM   SelfAssessmentStructure AS sas INNER JOIN
                          FrameworkCompetencies AS fc ON sas.CompetencyID = fc.CompetencyID
                     WHERE (sas.SelfAssessmentID = @competencyAssessmentId) AND (fc.FrameworkID = @frameworkId)
+                    AND EXISTS (SELECT 1 FROM CompetencyAssessmentQuestions caq WHERE caq.CompetencyID = sas.CompetencyID)
                     ORDER BY fc.Ordering",
               new { competencyAssessmentId,  frameworkId}
           )];

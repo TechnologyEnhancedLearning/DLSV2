@@ -880,7 +880,7 @@
             var assessmentFilter = assessmentId.HasValue ?
                 @$"AND c.ID NOT IN (SELECT CompetencyID
                   FROM   SelfAssessmentStructure
-                 WHERE (SelfAssessmentID = {assessmentId}))"
+                 WHERE (SelfAssessmentID = {assessmentId})) AND EXISTS (SELECT 1 FROM CompetencyAssessmentQuestions caq WHERE caq.CompetencyID = c.ID)"
                 : string.Empty;
             var result = connection.Query<FrameworkCompetencyGroup, FrameworkCompetency, FrameworkCompetencyGroup>(
                 @$"SELECT fcg.ID, fcg.CompetencyGroupID, cg.Name, cg.Description as CompetencyGroupDescription, fcg.Ordering, fc.ID, c.ID AS CompetencyID, c.Name, c.Description, fc.Ordering,
@@ -922,7 +922,7 @@
             var assessmentFilter = assessmentId.HasValue ?
                 @$"AND c.ID NOT IN (SELECT CompetencyID
                   FROM   SelfAssessmentStructure
-                 WHERE (SelfAssessmentID = {assessmentId}))"
+                 WHERE (SelfAssessmentID = {assessmentId})) AND EXISTS (SELECT 1 FROM CompetencyAssessmentQuestions caq WHERE caq.CompetencyID = c.ID)"
                 : string.Empty;
             return connection.Query<FrameworkCompetency>(
                 @$"SELECT fc.ID, c.ID AS CompetencyID, c.Name, c.Description, fc.Ordering,
