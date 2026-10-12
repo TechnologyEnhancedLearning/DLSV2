@@ -44,7 +44,7 @@
                     x.SelfAssessmentComments,
                     x.Reviewer,
                     x.ReviewerPrn,
-                    x.Reviewed,
+                    Reviewed = x.Reviewed.HasValue ? DateHelper.GetLocalDateTime(x.Reviewed) : x.Reviewed,
                     x.ReviewerComments,
                     x.ReviewerVerified,
                     x.RoleRequirements
