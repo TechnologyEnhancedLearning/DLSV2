@@ -76,7 +76,7 @@
         public BulkUploadResult.ErrorReason? Error { get; set; }
         public RowStatus RowStatus { get; set; }
 
-        public bool Validate(IEnumerable<int> allowedJobGroupIds, string? answer3)
+        public bool Validate(IEnumerable<int> allowedJobGroupIds)
         {
             if (!JobGroupId.HasValue || !allowedJobGroupIds.Contains(JobGroupId.Value))
             {
@@ -154,7 +154,7 @@
             {
                 Error = BulkUploadResult.ErrorReason.InvalidPrnCharacters;
             }
-            else if (!string.IsNullOrEmpty(answer3) && !CheckTelephoneNumberFormat(answer3))
+            else if (string.IsNullOrEmpty(CandidateNumber) && !string.IsNullOrEmpty(Answer3) && !CheckTelephoneNumberFormat(Answer3))
             {
                 Error = BulkUploadResult.ErrorReason.InvalidFormatForAnswer3;
             }
