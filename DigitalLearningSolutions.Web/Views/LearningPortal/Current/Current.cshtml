@@ -53,6 +53,27 @@
 
         <partial name="SearchablePage/Configurations/_FullWidthSearchSortAndFilter" model="Model" />
 
+        @if (Model.JavascriptSearchSortFilterPaginateEnabled)
+        {
+            <template id="current-items-for-javascript">
+                @foreach (var currentLearningItem in Model.AllCurrentActivities)
+                {
+                    if (currentLearningItem is SelfAssessmentCardViewModel)
+                    {
+                        <partial name="SelfAssessments/_SelfAssessmentCard" model="currentLearningItem" />
+                    }
+                    else if (currentLearningItem is CurrentLearningResourceViewModel)
+                    {
+                        <partial name="Current/_CurrentLearningResourceCard" model="currentLearningItem" />
+                    }
+                    else
+                    {
+                        <partial name="Current/CurrentCourseCard/_CurrentCourseCard" model="currentLearningItem" />
+                    }
+                }
+            </template>
+        }
+
         @if (Model.NoDataFound)
         {
             <p class="nhsuk-u-margin-top-4" role="alert">
@@ -65,27 +86,6 @@
             <partial name="SearchablePage/_SearchResultsCount" model="Model" />
             <partial name="SearchablePage/_TopPagination" model="Model" />
             <partial name="SearchablePage/_ResultCountAndPageAlerts" model="Model" />
-
-            @if (Model.JavascriptSearchSortFilterPaginateEnabled)
-            {
-                <template id="current-items-for-javascript">
-                    @foreach (var currentLearningItem in Model.AllCurrentActivities)
-                    {
-                        if (currentLearningItem is SelfAssessmentCardViewModel)
-                        {
-                            <partial name="SelfAssessments/_SelfAssessmentCard" model="currentLearningItem" />
-                        }
-                        else if (currentLearningItem is CurrentLearningResourceViewModel)
-                        {
-                            <partial name="Current/_CurrentLearningResourceCard" model="currentLearningItem" />
-                        }
-                        else
-                        {
-                            <partial name="Current/CurrentCourseCard/_CurrentCourseCard" model="currentLearningItem" />
-                        }
-                    }
-                </template>
-            }
 
             <div id="searchable-elements">
                 @foreach (var currentLearningItem in Model.CurrentActivities)
