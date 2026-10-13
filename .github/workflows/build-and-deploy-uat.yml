@@ -22,7 +22,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup .NET Core SDK 8.0
+      - name: Setup .NET Core SDK 10.0
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 10.0.x

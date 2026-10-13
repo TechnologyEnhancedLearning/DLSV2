@@ -150,7 +150,7 @@ namespace DigitalLearningSolutions.Web.Services
             IEnumerable<int> jobGroupIds
             )
         {
-            if (!delegateRow.Validate(jobGroupIds, delegateRow.Answer3))
+            if (!delegateRow.Validate(jobGroupIds))
             {
                 return;
             }
