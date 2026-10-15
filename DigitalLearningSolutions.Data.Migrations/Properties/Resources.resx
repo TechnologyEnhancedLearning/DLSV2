@@ -598,4 +598,10 @@
   <data name="TD_7820_CreateSP_GetSelfAssessmentsForCandidate" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Scripts\TD-7820-CreateSP_GetSelfAssessmentsForCandidate.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
   </data>
+  <data name="TD_7893_Alter_SendSelfAssessmentOverdueReminders_Down" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Scripts\TD-7893-Alter_SendSelfAssessmentOverdueReminders_Down.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
+  </data>
+  <data name="TD_7893_Alter_SendSelfAssessmentOverdueReminders_Up" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Scripts\TD-7893-Alter_SendSelfAssessmentOverdueReminders_Up.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
+  </data>
 </root>
