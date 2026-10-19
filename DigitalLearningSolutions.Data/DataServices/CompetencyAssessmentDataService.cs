@@ -40,6 +40,7 @@
         IEnumerable<SelfAssessmentReview> GetCompetencySelfAssessmentReviews(int competencyAssessmentId);
         SelfAssessmentReview? GetCompetencySelfAssessmentReviewById(int competencyAssessmentId, int selfAssessmentReviewId);
         SelfAssessmentReviewOutcomeNotification? GetSelfAssessmentReviewNotification(int reviewId);
+        bool CheckIfSelfAssessmentStructurehaveRequiredCompetency(int competencyAssessmentId);
         //UPDATE DATA
         bool UpdateCompetencyAssessmentName(int competencyAssessmentId, int adminId, string competencyAssessmentName);
 
@@ -1864,6 +1865,18 @@ ORDER BY
                 transaction.Commit();
                 return true;
             }
+        }
+
+        public bool CheckIfSelfAssessmentStructurehaveRequiredCompetency(int competencyAssessmentId)
+        {
+            return connection.ExecuteScalar<bool>(
+                @"SELECT CASE WHEN EXISTS (
+            SELECT 1
+            FROM dbo.SelfAssessmentStructure
+            WHERE selfassessmentid = @competencyAssessmentId
+              AND Optional = 0
+              ) THEN 1 ELSE 0 END",
+                new { competencyAssessmentId });
         }
     }
 }

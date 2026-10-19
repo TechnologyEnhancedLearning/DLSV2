@@ -10,7 +10,6 @@
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments;
-    using DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments;
     using DocumentFormat.OpenXml.EMMA;
     using GDS.MultiPageFormData.Enums;
     using Microsoft.AspNetCore.Mvc;
@@ -1715,8 +1714,8 @@
             var result = ValidateCompetencyAssessmentAndRole(competencyAssessmentId, adminId, "Competency Assessment Name", competencyAssessmentBase);
             if (result.StatusCode != 200)
                 return result;
-            var selfAssessment = selfAssessmentService.GetSelfAssessmentForCandidateById(userId, competencyAssessmentId);
-            if (selfAssessment == null)
+            var reqiured = competencyAssessmentService.CheckIfSelfAssessmentStructurehaveRequiredCompetency(competencyAssessmentId);
+            if (!reqiured)
             {
                 ModelState.Clear();
                 ModelState.AddModelError("HasCompetencies", $"To preview this self-assessment, you must include some competencies that are not marked as optional.");
