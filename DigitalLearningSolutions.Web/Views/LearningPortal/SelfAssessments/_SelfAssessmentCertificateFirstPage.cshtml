@@ -47,10 +47,12 @@
             <h3 class="nhsuk-u-margin-bottom-3">
                 Including the following optional proficiencies:
             </h3>
-
-            @if (Model.CompetencyCountSelfAssessmentCertificate.Count() <= 7)
+            var competencies = Model.CompetencyCountSelfAssessmentCertificate.ToList();
+            var displayedCompetencies = competencies.Take(9).ToList();
+            var remainingCount = competencies.Count - displayedCompetencies.Count;
+           @if (competencies.Count() <= 7)
             {
-                foreach (var entry in Model.CompetencyCountSelfAssessmentCertificate)
+                foreach (var entry in competencies)
                 {
                     <p class="nhsuk-u-margin-bottom-2 nhsuk-body-s">
                         @entry.CompetencyGroup - @entry.OptionalCompetencyCount
@@ -68,7 +70,7 @@
             else
             {
                 <ul class="competencies-grid">
-                    @foreach (var entry in Model.CompetencyCountSelfAssessmentCertificate)
+                    @foreach (var entry in displayedCompetencies)
                     {
                         <li class="competency-item">
                             <p class="nhsuk-u-margin-bottom-2 nhsuk-body-s">
@@ -84,6 +86,9 @@
                             </p>
                         </li>
                     }
+                    <p class="nhsuk-u-margin-bottom-2 nhsuk-body-s">
+                        + @remainingCount more optional competencies
+                    </p>
                 </ul>
             }
         }
