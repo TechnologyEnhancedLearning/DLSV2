@@ -1714,9 +1714,9 @@
             var result = ValidateCompetencyAssessmentAndRole(competencyAssessmentId, adminId, "Competency Assessment Name", competencyAssessmentBase);
             if (result.StatusCode != 200)
                 return result;
-            var reqiured = competencyAssessmentService.CheckIfSelfAssessmentStructurehaveRequiredCompetency(competencyAssessmentId);
-            if (!reqiured)
-            {
+            var selfAssessment = selfAssessmentService.GetSelfAssessmentForCandidateById(userId, competencyAssessmentId);
+            if (selfAssessment == null)
+            { 
                 ModelState.Clear();
                 ModelState.AddModelError("HasCompetencies", $"To preview this self-assessment, you must include some competencies that are not marked as optional.");
                 bool hasCompetencies = competencyAssessmentService.GetCompetenciesForCompetencyAssessment(competencyAssessmentId).Any();
