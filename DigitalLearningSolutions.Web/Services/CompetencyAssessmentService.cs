@@ -44,8 +44,7 @@ namespace DigitalLearningSolutions.Web.Services
         IEnumerable<SelfAssessmentReview> GetCompetencySelfAssessmentReviews(int competencyAssessmentId);
         SelfAssessmentReview? GetCompetencySelfAssessmentReviewById(int competencyAssessmentId, int selfAssessmentReviewId);
         SelfAssessmentReviewOutcomeNotification? GetSelfAssessmentReviewNotification(int reviewId);
-        bool CheckIfSelfAssessmentStructurehaveRequiredCompetency(int competencyAssessmentId);
-
+       
         //UPDATE DATA
         bool UpdateCompetencyAssessmentName(int competencyAssessmentId, int adminId, string competencyAssessmentName);
         bool UpdateCompetencyRoleProfileLinks(int competencyAssessmentId, int adminId, int? professionalGroupId, int? subGroupId, int? roleId);
@@ -620,10 +619,6 @@ namespace DigitalLearningSolutions.Web.Services
         {
             return competencyAssessmentDataService.CancelCompetencyAssessment(selfAssessmentId, frameworkId);
            
-        }
-        public bool CheckIfSelfAssessmentStructurehaveRequiredCompetency(int competencyAssessmentId)
-        {
-            return competencyAssessmentDataService.CheckIfSelfAssessmentStructurehaveRequiredCompetency(competencyAssessmentId);
         }
     }
 }

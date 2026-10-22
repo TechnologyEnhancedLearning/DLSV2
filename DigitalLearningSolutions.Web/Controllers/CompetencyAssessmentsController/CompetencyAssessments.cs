@@ -796,16 +796,16 @@
         public IActionResult CompetencyAssessmentFeatures(int competencyAssessmentId, int? frameworkId = null)
         {
             var adminId = GetAdminID();
-            var data = GetcompetencyAssessmentFeaturesData();
-            if (!string.IsNullOrEmpty(data.CompetencyAssessmentName)) return View(data);
             var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
             var result = ValidateCompetencyAssessmentAndRole(competencyAssessmentId, adminId, "Competency Assessment Features", competencyAssessmentBase);
             if (result.StatusCode != 200)
                 return result;
-            var baseModel = new CompetencyAssessmentFeaturesViewModel(competencyAssessmentBase.ID,
-                competencyAssessmentBase.CompetencyAssessmentName,
-                competencyAssessmentBase.UserRole,
-                frameworkId);
+            var data = GetcompetencyAssessmentFeaturesData();
+            data.ID = competencyAssessmentBase.ID;
+            data.CompetencyAssessmentName = competencyAssessmentBase.CompetencyAssessmentName;
+            data.UserRole = competencyAssessmentBase.UserRole;
+            data.FrameworkId = frameworkId;
+            var baseModel = new CompetencyAssessmentFeaturesViewModel(data);
             return View(baseModel);
         }
         [HttpPost]
@@ -1714,9 +1714,9 @@
             var result = ValidateCompetencyAssessmentAndRole(competencyAssessmentId, adminId, "Competency Assessment Name", competencyAssessmentBase);
             if (result.StatusCode != 200)
                 return result;
-            var reqiured = competencyAssessmentService.CheckIfSelfAssessmentStructurehaveRequiredCompetency(competencyAssessmentId);
-            if (!reqiured)
-            {
+            var selfAssessment = selfAssessmentService.GetSelfAssessmentForCandidateById(userId, competencyAssessmentId);
+            if (selfAssessment == null)
+            { 
                 ModelState.Clear();
                 ModelState.AddModelError("HasCompetencies", $"To preview this self-assessment, you must include some competencies that are not marked as optional.");
                 bool hasCompetencies = competencyAssessmentService.GetCompetenciesForCompetencyAssessment(competencyAssessmentId).Any();
