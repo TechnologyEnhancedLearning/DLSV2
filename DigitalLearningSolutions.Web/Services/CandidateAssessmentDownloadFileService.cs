@@ -44,7 +44,7 @@
                     x.SelfAssessmentComments,
                     x.Reviewer,
                     x.ReviewerPrn,
-                    x.Reviewed,
+                    Reviewed = x.Reviewed.HasValue ? DateHelper.GetLocalDateTime(x.Reviewed) : x.Reviewed,
                     x.ReviewerComments,
                     x.ReviewerVerified,
                     x.RoleRequirements
@@ -61,29 +61,6 @@
         private static void AddSheetToWorkbook(IXLWorkbook workbook, string sheetName, IEnumerable<object>? dataObjects, string excelPassword, bool isProtected)
         {
             var sheet = workbook.Worksheets.Add(sheetName);
-            if (dataObjects != null)
-            {
-                foreach (var item in dataObjects)
-                {
-                    var reviewedProperty = item.GetType().GetProperty("Reviewed");
-
-                    if (reviewedProperty != null)
-                    {
-                        if (reviewedProperty?.CanWrite == true)
-                        {
-                            var reviewed = (DateTime?)reviewedProperty.GetValue(item);
-
-                            if (reviewed.HasValue)
-                            {
-                                reviewedProperty.SetValue(
-                                    item,
-                                    DateHelper.GetLocalDateTime(reviewed)
-                                );
-                            }
-                        }
-                    }
-                }
-            }
             var table = sheet.Cell(1, 1).InsertTable(dataObjects);
             table.Theme = XLTableTheme.TableStyleLight9;
             sheet.Columns().AdjustToContents();

@@ -379,8 +379,8 @@
                 delegateRecord.ProfessionalRegistrationNumber
             );
             row[JobGroup] = delegateRecord.JobGroupName;
-            row[RegisteredDate] = Web.Helpers.DateHelper.GetLocalDateTime(delegateRecord.DateRegistered?.Date);
-            row[LastAccessed] = Web.Helpers.DateHelper.GetLocalDateTime(delegateRecord.LastAccessed?.Date);
+            row[RegisteredDate] = delegateRecord.DateRegistered.HasValue ? Web.Helpers.DateHelper.GetLocalDateTime(delegateRecord.DateRegistered)?.Date : null;
+            row[LastAccessed] = delegateRecord.LastAccessed.HasValue ? Web.Helpers.DateHelper.GetLocalDateTime(delegateRecord.LastAccessed)?.Date : null;
             var delegateAnswers = delegateRecord.GetRegistrationFieldAnswers();
 
             foreach (var prompt in registrationPrompts.CustomPrompts)
