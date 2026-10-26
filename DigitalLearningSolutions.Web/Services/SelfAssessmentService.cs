@@ -144,7 +144,7 @@
         public bool CheckForSameCentre(int centreId, int candidateAssessmentsId);
         public int? GetDelegateAccountId(int centreId, int delegateUserId);
         int CheckDelegateSelfAssessment(int candidateAssessmentsId);
-        IEnumerable<CompetencyCountSelfAssessmentCertificate> GetCompetencyCountSelfAssessmentCertificate(int candidateAssessmentID);
+        IEnumerable<CompetencyCountSelfAssessmentCertificate> GetCompetencyCountSelfAssessmentCertificate(int candidateAssessmentID, int selfAssessmentID);
         CompetencySelfAssessmentCertificate? GetCompetencySelfAssessmentCertificate(int candidateAssessmentID);
         IEnumerable<Accessor> GetAccessor(int selfAssessmentId, int delegateUserID);
         ActivitySummaryCompetencySelfAssesment GetActivitySummaryCompetencySelfAssesment(int CandidateAssessmentSupervisorVerificationsId);
@@ -563,9 +563,9 @@
         {
             return selfAssessmentDataService.CheckDelegateSelfAssessment(candidateAssessmentsId);
         }
-        public IEnumerable<CompetencyCountSelfAssessmentCertificate> GetCompetencyCountSelfAssessmentCertificate(int candidateAssessmentID)
+        public IEnumerable<CompetencyCountSelfAssessmentCertificate> GetCompetencyCountSelfAssessmentCertificate(int candidateAssessmentID, int selfAssessmentID)
         {
-            return selfAssessmentDataService.GetCompetencyCountSelfAssessmentCertificate(candidateAssessmentID);
+            return selfAssessmentDataService.GetCompetencyCountSelfAssessmentCertificate(candidateAssessmentID, selfAssessmentID);
         }
         public CompetencySelfAssessmentCertificate? GetCompetencySelfAssessmentCertificate(int candidateAssessmentID)
         {
