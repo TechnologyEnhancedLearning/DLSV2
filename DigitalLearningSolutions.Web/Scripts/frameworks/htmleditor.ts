@@ -61,7 +61,11 @@ if (jodited === false) {
       'ol', '|',
       'undo', 'redo',
     ],
+    countHTMLChars: true,
     countTextSpaces: true,
+    cleanHTML: {
+        collapseEmptyValueToEmptyString: true
+    },
     style: {
       backgroundColor: '#FFF',
     },
