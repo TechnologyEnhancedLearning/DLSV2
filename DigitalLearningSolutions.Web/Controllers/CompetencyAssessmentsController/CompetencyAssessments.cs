@@ -776,6 +776,8 @@
         [Route("/Self-Assessment/{competencyAssessmentId}/{vocabularyPlural}/Optional/LearnerPrompt")]
         public IActionResult SetOptionalCompetencyLearnerPrompt(SetOptionalCompetencyLearnerPromptViewModel model)
         {
+            model.ManageOptionalCompetenciesPrompt = string.IsNullOrWhiteSpace(model.ManageOptionalCompetenciesPrompt)
+                ? null : SanitizerHelper.SanitizeHtmlData(model.ManageOptionalCompetenciesPrompt);
             if (model.ManageOptionalCompetenciesPrompt?.Length > 2000)
             {
                 ModelState.AddModelError(nameof(model.ManageOptionalCompetenciesPrompt),
@@ -1710,7 +1712,7 @@
                 return result;
             var selfAssessment = selfAssessmentService.GetSelfAssessmentForCandidateById(userId, competencyAssessmentId);
             if (selfAssessment == null)
-            { 
+            {
                 ModelState.Clear();
                 ModelState.AddModelError("HasCompetencies", $"To preview this self-assessment, you must include some competencies that are not marked as optional.");
                 bool hasCompetencies = competencyAssessmentService.GetCompetenciesForCompetencyAssessment(competencyAssessmentId).Any();
