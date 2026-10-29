@@ -1374,19 +1374,15 @@
         public IActionResult SupervisorSignoffDeclaration(SupervisorSignoffDeclarationViewModel viewModel)
         {
             if (viewModel == null) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
+            viewModel.CustomText = string.IsNullOrWhiteSpace(viewModel.CustomText) ? null : SanitizerHelper.SanitizeHtmlData(viewModel.CustomText);
             if (viewModel.DeclarationValue == 1 && string.IsNullOrWhiteSpace(viewModel.CustomText))
             {
                 ModelState.AddModelError(nameof(viewModel.CustomText), "Please enter the custom declaration text");
                 return View(viewModel);
             }
-            else if (viewModel.DeclarationValue == 1 && StringHelper.StripHtmlTags(viewModel.CustomText).Length > 2000)
-            {
-                ModelState.AddModelError(nameof(viewModel.CustomText), "Declaration text must be 2000 characters or fewer");
-                return View(viewModel);
-            }
             else if (viewModel.DeclarationValue == 1 && viewModel.CustomText.Length > 3000)
             {
-                ModelState.AddModelError(nameof(viewModel.CustomText), "The formatted content is too large to save.Please reduce the content or formatting.");
+                ModelState.AddModelError(nameof(viewModel.CustomText), "The formatted content exceeds the 3,000 character limit. Reduce the content or formatting to 3,000 characters or fewer.");
                 return View(viewModel);
             }
 
@@ -1437,19 +1433,15 @@
         public IActionResult LearnerSignoffDeclaration(LearnerSignoffDeclarationViewModel viewModel)
         {
             if (viewModel == null) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
+            viewModel.CustomText = string.IsNullOrWhiteSpace(viewModel.CustomText) ? null : SanitizerHelper.SanitizeHtmlData(viewModel.CustomText);
             if (viewModel.DeclarationValue == 1 && string.IsNullOrWhiteSpace(viewModel.CustomText))
             {
                 ModelState.AddModelError(nameof(viewModel.CustomText), "Please enter the custom declaration text");
                 return View(viewModel);
             }
-            else if (viewModel.DeclarationValue == 1 && StringHelper.StripHtmlTags(viewModel.CustomText).Length > 2000)
-            {
-                ModelState.AddModelError(nameof(viewModel.CustomText), "Declaration text must be 2000 characters or fewer");
-                return View(viewModel);
-            }
             else if (viewModel.DeclarationValue == 1 && viewModel.CustomText.Length > 3000)
             {
-                ModelState.AddModelError(nameof(viewModel.CustomText), "The formatted content is too large to save.Please reduce the content or formatting.");
+                ModelState.AddModelError(nameof(viewModel.CustomText), "The formatted content exceeds the 3,000 character limit. Reduce the content or formatting to 3,000 characters or fewer.");
                 return View(viewModel);
             }
 
@@ -1710,7 +1702,7 @@
                 return result;
             var selfAssessment = selfAssessmentService.GetSelfAssessmentForCandidateById(userId, competencyAssessmentId);
             if (selfAssessment == null)
-            { 
+            {
                 ModelState.Clear();
                 ModelState.AddModelError("HasCompetencies", $"To preview this self-assessment, you must include some competencies that are not marked as optional.");
                 bool hasCompetencies = competencyAssessmentService.GetCompetenciesForCompetencyAssessment(competencyAssessmentId).Any();
