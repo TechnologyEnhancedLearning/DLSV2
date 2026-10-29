@@ -77,7 +77,7 @@
                                 @entry.CompetencyGroup - @entry.OptionalCompetencyCount
                                 @if (entry.OptionalCompetencyCount == 1)
                                 {
-                                    @Model.CompetencySelfAssessmentCertificates.Vocabulary
+                                    @Model.CompetencySelfAssessmentCertificates.Vocabulary          
                                 }
                                 else
                                 {
@@ -86,9 +86,21 @@
                             </p>
                         </li>
                     }
-                    <p class="nhsuk-u-margin-bottom-2 nhsuk-body-s">
-                        + @remainingCount more optional @Model.VocabPlural
-                    </p>
+                    @if (competencies.Count() > 9)
+                    {
+                        @if (remainingCount == 1)
+                        {
+                                <p class="nhsuk-u-margin-bottom-2 nhsuk-body-s">
+                                    + @remainingCount more optional @Model.CompetencySelfAssessmentCertificates.Vocabulary.ToLower()
+                                </p>
+                        }
+                        else
+                        {
+                                <p class="nhsuk-u-margin-bottom-2 nhsuk-body-s">
+                                    + @remainingCount more optional @Model.VocabPlural.ToLower()
+                                </p>
+                        }
+                    }
                 </ul>
             }
         }
