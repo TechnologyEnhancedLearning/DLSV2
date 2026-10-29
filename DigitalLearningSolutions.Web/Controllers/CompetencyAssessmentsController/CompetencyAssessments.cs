@@ -776,6 +776,8 @@
         [Route("/Self-Assessment/{competencyAssessmentId}/{vocabularyPlural}/Optional/LearnerPrompt")]
         public IActionResult SetOptionalCompetencyLearnerPrompt(SetOptionalCompetencyLearnerPromptViewModel model)
         {
+            model.ManageOptionalCompetenciesPrompt = string.IsNullOrWhiteSpace(model.ManageOptionalCompetenciesPrompt)
+                ? null : SanitizerHelper.SanitizeHtmlData(model.ManageOptionalCompetenciesPrompt);
             if (model.ManageOptionalCompetenciesPrompt?.Length > 2000)
             {
                 ModelState.AddModelError(nameof(model.ManageOptionalCompetenciesPrompt),
