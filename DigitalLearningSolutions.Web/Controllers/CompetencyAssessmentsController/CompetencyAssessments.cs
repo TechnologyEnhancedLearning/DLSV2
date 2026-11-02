@@ -1592,17 +1592,11 @@
                 return View(publish);
             }
             var adminId = GetAdminID();
-            var userId = User.GetUserIdKnownNotNull();
-            var centreId = (int)GetCentreId();
-            var userEmail = User.GetUserPrimaryEmail();
-            var candidateId = User.GetCandidateIdKnownNotNull();
             var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(publish.CompetencyAssessmentID, adminId);
             var result = ValidateCompetencyAssessmentAndRole(publish.CompetencyAssessmentID, adminId, "Publish Without Review", competencyAssessmentBase);
             if (result.StatusCode != 200)
                 return result;
             if (competencyAssessmentBase.PublishStatusID == 3) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 410 });
-            centreSelfAssessmentsService.InsertCentreSelfAssessment(centreId, publish.CompetencyAssessmentID, false);
-            enrolService.EnrolOnActivitySelfAssessment(publish.CompetencyAssessmentID, candidateId, 0, userEmail, 0, null, userId, centreId, adminId, true);
             var taskStatus = competencyAssessmentService.GetCompetencyAssessmentTaskStatus(publish.CompetencyAssessmentID, null);
             competencyAssessmentService.UpdateCompetencyAssessmentReviewTaskStatus(publish.CompetencyAssessmentID, true);
             competencyAssessmentService.UpdateCompetencyAssessmentPublish(publish.CompetencyAssessmentID, 3, adminId, true, true);
@@ -1720,8 +1714,8 @@
             var result = ValidateCompetencyAssessmentAndRole(competencyAssessmentId, adminId, "Competency Assessment Name", competencyAssessmentBase);
             if (result.StatusCode != 200)
                 return result;
-            var selfAssessment = selfAssessmentService.GetSelfAssessmentForCandidateById(userId, competencyAssessmentId);
-            if (selfAssessment == null)
+            var reqiured = competencyAssessmentService.CheckIfSelfAssessmenthaveRequiredCompetency(competencyAssessmentId);
+            if (!reqiured)
             { 
                 ModelState.Clear();
                 ModelState.AddModelError("HasCompetencies", $"To preview this self-assessment, you must include some competencies that are not marked as optional.");
