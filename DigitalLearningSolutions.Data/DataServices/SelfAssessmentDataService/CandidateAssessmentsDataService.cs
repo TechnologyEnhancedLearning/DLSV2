@@ -405,15 +405,26 @@
                 new { candidateAssessmentID }
             );
         }
-        public IEnumerable<CompetencyCountSelfAssessmentCertificate> GetCompetencyCountSelfAssessmentCertificate(int candidateAssessmentID)
+        public IEnumerable<CompetencyCountSelfAssessmentCertificate> GetCompetencyCountSelfAssessmentCertificate(int candidateAssessmentID, int selfAssessmentID)
         {
             return connection.Query<CompetencyCountSelfAssessmentCertificate>(
                 $@"SELECT cg.ID AS CompetencyGroupID, cg.Name AS CompetencyGroup, COUNT(caoc.CompetencyID) AS OptionalCompetencyCount
-                 FROM   CandidateAssessmentOptionalCompetencies AS caoc INNER JOIN
-                  CompetencyGroups AS cg ON caoc.CompetencyGroupID = cg.ID
-                       WHERE (caoc.CandidateAssessmentID = @candidateAssessmentID) AND (caoc.IncludedInSelfAssessment = 1)
-                      GROUP BY cg.Name, cg.ID",
-                new { candidateAssessmentID }
+                  FROM CandidateAssessments CA
+                    JOIN SelfAssessments SA
+                        ON CA.SelfAssessmentID = SA.ID
+                    INNER JOIN SelfAssessmentStructure AS SAS
+                        ON CA.SelfAssessmentID = SAS.SelfAssessmentID
+                    INNER JOIN Competencies AS C
+                        ON SAS.CompetencyID = C.ID
+                    INNER JOIN CompetencyGroups AS CG
+                            ON SAS.CompetencyGroupID = CG.ID AND SAS.SelfAssessmentID = @selfAssessmentID
+                    LEFT OUTER JOIN CandidateAssessmentOptionalCompetencies AS CAOC
+                            ON CA.ID = CAOC.CandidateAssessmentID AND C.ID = CAOC.CompetencyID AND CG.ID = CAOC.CompetencyGroupID
+                 
+                    WHERE caoc.CandidateAssessmentID = @candidateAssessmentID AND CA.SelfAssessmentID = @selfAssessmentID AND CA.RemovedDate IS NULL
+                        AND CA.CompletedDate IS NULL AND ((SAS.Optional = 0) OR (CAOC.IncludedInSelfAssessment = 1))
+						     GROUP BY cg.Name, cg.ID",
+                new { candidateAssessmentID, selfAssessmentID }
             );
         }
         public IEnumerable<Accessor> GetAccessor(int selfAssessmentId, int delegateUserID)
