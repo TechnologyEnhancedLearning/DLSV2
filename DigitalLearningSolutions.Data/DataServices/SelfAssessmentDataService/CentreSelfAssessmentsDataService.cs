@@ -70,7 +70,7 @@
                 @"SELECT sa.ID, sa.Name AS SelfAssessment, sa.[National], b.BrandName AS Provider
                     FROM SelfAssessments AS sa LEFT OUTER JOIN Brands AS b ON sa.BrandID = b.BrandID
                     WHERE (sa.ArchivedDate IS NULL)
-                    AND (sa.PublishStatusID = 3)
+                    AND (sa.PublishStatusID > 2)
                     AND (sa.ID NOT IN
                         (SELECT SelfAssessmentID
                             FROM CentreSelfAssessments AS csa
