@@ -14,6 +14,7 @@ namespace DigitalLearningSolutions.Web
     using DigitalLearningSolutions.Data.Utilities;
     using DigitalLearningSolutions.Data.ViewModels;
     using DigitalLearningSolutions.Web.Helpers;
+    using DigitalLearningSolutions.Web.API;
     using DigitalLearningSolutions.Web.Helpers.ExternalApis;
     using DigitalLearningSolutions.Web.Middleware;
     using DigitalLearningSolutions.Web.ModelBinders;
@@ -28,6 +29,7 @@ namespace DigitalLearningSolutions.Web
     using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Authentication.Cookies;
     using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+    using Microsoft.AspNetCore.Authentication.JwtBearer;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.DataProtection;
     using Microsoft.AspNetCore.HttpOverrides;
@@ -40,6 +42,7 @@ namespace DigitalLearningSolutions.Web
     using Microsoft.FeatureManagement;
     using Microsoft.IdentityModel.Protocols.OpenIdConnect;
     using Microsoft.OpenApi.Models;
+    using Microsoft.IdentityModel.Tokens;
     using Serilog;
     using System;
     using System.Collections.Generic;
@@ -81,6 +84,18 @@ namespace DigitalLearningSolutions.Web
             services.AddAuthorization(
                 options =>
                 {
+                    options.AddPolicy(
+                        DlsApiAuthorization.RequiredScopePolicy,
+                        policy =>
+                        {
+                            policy.AuthenticationSchemes.Add(JwtBearerDefaults.AuthenticationScheme);
+                            policy.RequireAuthenticatedUser();
+                            policy.RequireAssertion(context => DlsApiAuthorization.HasRequiredScope(
+                                context.User,
+                                config["DlsApiAuthentication:RequiredScope"]
+                            ));
+                        }
+                    );
                     options.AddPolicy(
                         CustomPolicies.BasicUser,
                         policy => CustomPolicies.ConfigurePolicyBasicUser(policy)
@@ -166,6 +181,7 @@ namespace DigitalLearningSolutions.Web
                 .AddMvcOptions(
                     options =>
                     {
+                        options.Conventions.Add(new ApiAuthorizationConvention());
                         options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
                         options.ModelBinderProviders.Insert(0, new EnumerationQueryStringModelBinderProvider());
                         options.ModelBinderProviders.Insert(0, new DlsSubApplicationModelBinderProvider());
@@ -199,6 +215,7 @@ namespace DigitalLearningSolutions.Web
                     options.IncludeXmlComments(
                         Path.Combine(AppContext.BaseDirectory, "DigitalLearningSolutions.Web.xml")
                     );
+                    ConfigureApiSwagger(options);
                 }
             );
 
@@ -266,6 +283,72 @@ namespace DigitalLearningSolutions.Web
                     options.Events.OnTicketReceived = OnTicketReceived;
                     options.Events.OnSignedOutCallbackRedirect = OnSignedoutCallbackRedirect;
 
+                }
+            )
+            .AddJwtBearer(
+                JwtBearerDefaults.AuthenticationScheme,
+                options =>
+                {
+                    var authority = DlsApiAuthentication.GetAuthority(config);
+                    options.Authority = authority;
+                    options.RequireHttpsMetadata = !env.IsDevelopment();
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidIssuer = authority,
+                        ValidateAudience = true,
+                        ValidAudience = config["DlsApiAuthentication:Audience"],
+                        ValidateIssuerSigningKey = true,
+                        ValidateLifetime = true,
+                        RequireExpirationTime = true,
+                        ClockSkew = TimeSpan.FromMinutes(2),
+                    };
+                }
+            );
+        }
+
+        private void ConfigureApiSwagger(Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenOptions options)
+        {
+            var instance = config["DlsApiAuthentication:Instance"];
+            var tenantId = config["DlsApiAuthentication:TenantId"];
+            var scope = config["DlsApiAuthentication:RequiredScope"];
+            var swaggerScope = config["DlsApiAuthentication:SwaggerScope"];
+
+            if (string.IsNullOrWhiteSpace(instance) || string.IsNullOrWhiteSpace(tenantId) || string.IsNullOrWhiteSpace(scope))
+            {
+                return;
+            }
+
+            var tenantAuthority = $"{instance.TrimEnd('/')}/{tenantId}";
+            swaggerScope = string.IsNullOrWhiteSpace(swaggerScope) ? scope : swaggerScope;
+            options.AddSecurityDefinition(
+                JwtBearerDefaults.AuthenticationScheme,
+                new OpenApiSecurityScheme
+                {
+                    Type = SecuritySchemeType.OAuth2,
+                    Description = "Authenticate with Microsoft Entra ID. Swagger uses authorization code flow with PKCE and never stores a client secret.",
+                    Flows = new OpenApiOAuthFlows
+                    {
+                        AuthorizationCode = new OpenApiOAuthFlow
+                        {
+                            AuthorizationUrl = new Uri($"{tenantAuthority}/oauth2/v2.0/authorize"),
+                            TokenUrl = new Uri($"{tenantAuthority}/oauth2/v2.0/token"),
+                            Scopes = new Dictionary<string, string> { { swaggerScope, "Access the DLS API" } },
+                        },
+                    },
+                }
+            );
+            options.AddSecurityRequirement(
+                new OpenApiSecurityRequirement
+                {
+                    [new OpenApiSecurityScheme
+                    {
+                        Reference = new OpenApiReference
+                        {
+                            Type = ReferenceType.SecurityScheme,
+                            Id = JwtBearerDefaults.AuthenticationScheme,
+                        },
+                    }] = new List<string> { swaggerScope },
                 }
             );
         }
@@ -388,7 +471,7 @@ namespace DigitalLearningSolutions.Web
             context.ReturnUri = redirectString;
         }
 
-        private static async Task OnAuthenticationFailed(AuthenticationFailedContext context)
+        private static async Task OnAuthenticationFailed(Microsoft.AspNetCore.Authentication.OpenIdConnect.AuthenticationFailedContext context)
         {
             var appRootPath = ConfigHelper.GetAppConfig().GetAppRootPath();
             context
@@ -645,7 +728,16 @@ namespace DigitalLearningSolutions.Web
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
                 app.UseSwaggerUI(
-                    options => options.SwaggerEndpoint("./v1/swagger.json", "Digital Learning Solutions API v1")
+                    options =>
+                    {
+                        options.SwaggerEndpoint("./v1/swagger.json", "Digital Learning Solutions API v1");
+                        var swaggerClientId = config["DlsApiAuthentication:SwaggerClientId"];
+                        if (!string.IsNullOrWhiteSpace(swaggerClientId))
+                        {
+                            options.OAuthClientId(swaggerClientId);
+                            options.OAuthUsePkce();
+                        }
+                    }
                 );
             }
 

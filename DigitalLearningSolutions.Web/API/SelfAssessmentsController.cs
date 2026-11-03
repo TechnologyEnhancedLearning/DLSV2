@@ -9,7 +9,6 @@ namespace DigitalLearningSolutions.Web.API
     /// API endpoints for self assessments.
     /// </summary>
     [ApiController]
-    [AllowAnonymous]
     [Produces("application/json")]
     [Route("api/self-assessments")]
     public class SelfAssessmentsController : ControllerBase
@@ -25,8 +24,10 @@ namespace DigitalLearningSolutions.Web.API
         /// Gets a self assessment for a delegate.
         /// </summary>
         /// <remarks>
-        /// Authentication is deliberately disabled for this proof of concept. Once authentication is added,
-        /// delegateUserId should be obtained from the authenticated user's claims rather than the query string.
+        /// This is a secured API and a valid bearer token with correct read scope is required
+        /// as an authentication header while making this request.
+        /// This GET request requires the SelfAssessmentID and the DelegateUserID and it gets the
+        /// basic details of the delegate and associated self assessment. 
         /// </remarks>
         /// <param name="selfAssessmentId">The self assessment identifier.</param>
         /// <param name="delegateUserId">The delegate user identifier.</param>
