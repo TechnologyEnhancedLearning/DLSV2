@@ -45,7 +45,7 @@
         @if (Model.CompetencyCountSelfAssessmentCertificate.Any())
         {
             <h3 class="nhsuk-u-margin-bottom-3">
-                Including the following optional proficiencies:
+                Including the following optional @Model.VocabPlural.ToLower():
             </h3>
             var competencies = Model.CompetencyCountSelfAssessmentCertificate.ToList();
             var displayedCompetencies = competencies.Take(9).ToList();
