@@ -659,7 +659,7 @@
 
         private static IEnumerable<Competency> GroupCompetencyAssessmentQuestions(IEnumerable<Competency> result)
         {
-            return result.GroupBy(competency => competency.Id).Select(
+            return result.GroupBy(competency => new { competency.Id, competency.CompetencyGroupID }).Select(
                 group =>
                 {
                     var groupedCompetency = group.First();
