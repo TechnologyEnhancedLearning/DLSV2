@@ -20,7 +20,7 @@
             UngroupedCompetencies = ungroupedCompetencies;
             FrameworkId = frameworkId;
             FrameworkName = frameworkName;
-            SelectedCompetencyIds = selectedFrameworkCompetencies;
+            SelectedFrameworkCompetencyIds = selectedFrameworkCompetencies;
         }
         public int ID { get; set; }
         public string CompetencyAssessmentName { get; set; }
@@ -31,7 +31,7 @@
         public IEnumerable<FrameworkCompetencyGroup> GroupedCompetencies { get; set; }
         public IEnumerable<FrameworkCompetency> UngroupedCompetencies { get; set; }
         [Required]
-        public int[] SelectedCompetencyIds { get; set; }
+        public int[] SelectedFrameworkCompetencyIds { get; set; }
         public int FrameworkId { get; set; }
         public string? FrameworkName { get; set; }
     }

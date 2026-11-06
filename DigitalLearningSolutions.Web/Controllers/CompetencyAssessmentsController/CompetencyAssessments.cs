@@ -585,15 +585,15 @@
                     foreach (var competency in group.FrameworkCompetencies)
                         competency.CompetencyFlags = competencyFlags.Where(f => f.CompetencyId == competency.CompetencyID);
                 }
-                var models = new AddCompetenciesViewModel(competencyAssessmentBase, groupedCompetencies, ungroupedCompetencies, frameworkId, framework.FrameworkName, model.SelectedCompetencyIds);
+                var models = new AddCompetenciesViewModel(competencyAssessmentBase, groupedCompetencies, ungroupedCompetencies, frameworkId, framework.FrameworkName, model.SelectedFrameworkCompetencyIds);
                 ModelState.Clear();
-                ModelState.AddModelError("SelectedCompetencyIds", $"You must select at least one {models.VocabularySingular}");
+                ModelState.AddModelError("SelectedFrameworkCompetencyIds", $"You must select at least one {models.VocabularySingular}");
                 ViewBag.RequiredCheckboxMessage = "You must select at least one " + models.VocabularySingular;
                 return View("AddCompetencies", models);
             }
-            if (model.SelectedCompetencyIds != null)
+            if (model.SelectedFrameworkCompetencyIds != null)
             {
-                competencyAssessmentService.InsertCompetenciesIntoAssessmentFromFramework(model.SelectedCompetencyIds, frameworkId, competencyAssessmentId);
+                competencyAssessmentService.InsertCompetenciesIntoAssessmentFromFramework(model.SelectedFrameworkCompetencyIds, frameworkId, competencyAssessmentId);
             }
             var competencyAssessmentTaskStatus = competencyAssessmentService.GetCompetencyAssessmentTaskStatus(competencyAssessmentId, null);
             if (competencyAssessmentTaskStatus.SelectCompetenciesTaskStatus != true)

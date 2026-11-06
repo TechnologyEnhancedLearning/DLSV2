@@ -3456,6 +3456,64 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///-- =============================================
+        ///-- Author:		Auldrin Possa
+        ///-- Create date: 30/11/2023
+        ///-- Description:	Returns candidate assessment results by candidateAssessmentId
+        ///-- =============================================
+        ///ALTER PROCEDURE [dbo].[GetCandidateAssessmentResultsById]
+        ///	@candidateAssessmentId as Int = 0,
+        ///	@adminId as int = 0,
+        ///	@selfAssessmentResultId as int = NULL
+        ///AS
+        ///BEGIN
+        ///
+        ///	SET NOCOUNT ON;
+        ///
+        ///	WITH LatestAssessmentResults [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_7995_Alter_GetCandidateAssessmentResultsById_Down {
+            get {
+                return ResourceManager.GetString("TD_7995_Alter_GetCandidateAssessmentResultsById_Down", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///-- =============================================
+        ///-- Author:		Auldrin Possa
+        ///-- Create date: 30/11/2023
+        ///-- Description:	Returns candidate assessment results by candidateAssessmentId
+        ///-- =============================================
+        ///ALTER PROCEDURE [dbo].[GetCandidateAssessmentResultsById]
+        ///	@candidateAssessmentId as Int = 0,
+        ///	@adminId as int = 0,
+        ///	@selfAssessmentResultId as int = NULL
+        ///AS
+        ///BEGIN
+        ///
+        ///	SET NOCOUNT ON;
+        ///
+        ///	WITH LatestAssessmentResults [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_7995_Alter_GetCandidateAssessmentResultsById_Up {
+            get {
+                return ResourceManager.GetString("TD_7995_Alter_GetCandidateAssessmentResultsById_Up", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;ol type=&quot;&quot;1&quot;&quot;&gt;&lt;li&gt;&lt;strong&gt;About these terms and conditions&lt;/strong&gt;&lt;ul data-list-level=&quot;&quot;1&quot;&quot;&gt;&lt;li&gt;It is your responsibility to ensure that you understand and comply with these terms and conditions. It ensures that:&lt;ul data-list-level=&quot;&quot;2&quot;&quot;&gt;&lt;li&gt;You understand your responsibilities and what constitutes an abuse of the service&lt;/li&gt;&lt;li&gt;Computers and personal data are not put at risk&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;li&gt;If you have any questions about these terms and conditions, you should contact your Digital Learning Solutions c [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string TermsAndConditionsOldrecord {

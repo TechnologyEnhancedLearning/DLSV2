@@ -108,7 +108,7 @@
         //INSERT DATA
         int InsertCompetencyAssessment(int adminId, int centreId, string competencyAssessmentName);
         bool InsertSelfAssessmentFramework(int adminId, int selfAssessmentId, int frameworkId);
-        bool InsertCompetenciesIntoAssessmentFromFramework(int[] selectedCompetencyIds, int frameworkId, int competencyAssessmentId);
+        bool InsertCompetenciesIntoAssessmentFromFramework(int[] selectedFrameworkCompetencyIds, int frameworkId, int competencyAssessmentId);
         bool InsertSelfAssessmentGroupedCompetencies(int selfAssessmentId, int? frameworkId);
         bool InsertSelfAssessmentUngroupedCompetencies(int selfAssessmentId, int? frameworkId);
         int InsertAssessmentQuestionRoleRequirementForSelfAssessment(int assessmentId, int assessmentQuestionId, int levelValue, int? levelRAG);
@@ -718,10 +718,19 @@
                @"SELECT sas.ID AS StructureId, sas.CompetencyID, f.ID AS FrameworkId, f.FrameworkName, cg.ID AS GroupId, cg.Name AS GroupName, c.Name AS CompetencyName, c.Description AS CompetencyDescription, sas.Optional, sas.GroupOptionalCompetencies
              FROM   SelfAssessmentStructure AS sas INNER JOIN
                          Competencies AS c ON sas.CompetencyID = c.ID LEFT JOIN
-                         CompetencyGroups AS cg ON sas.CompetencyGroupID = cg.ID INNER JOIN
-                         FrameworkCompetencies ON c.ID = FrameworkCompetencies.CompetencyID INNER JOIN
-                         Frameworks AS f ON FrameworkCompetencies.FrameworkID = f.ID INNER JOIN
-                         SelfAssessmentFrameworks ON f.ID = SelfAssessmentFrameworks.FrameworkId AND sas.SelfAssessmentID = SelfAssessmentFrameworks.SelfAssessmentId
+                         CompetencyGroups AS cg ON sas.CompetencyGroupID = cg.ID
+             CROSS APPLY (
+                 SELECT TOP 1 f.ID, f.FrameworkName
+                 FROM FrameworkCompetencies AS fc
+                 LEFT JOIN FrameworkCompetencyGroups AS fcg ON fc.FrameworkCompetencyGroupID = fcg.ID
+                 INNER JOIN Frameworks AS f ON fc.FrameworkID = f.ID
+                 INNER JOIN SelfAssessmentFrameworks AS saf ON f.ID = saf.FrameworkId
+                     AND sas.SelfAssessmentID = saf.SelfAssessmentId
+                 WHERE fc.CompetencyID = c.ID
+                     AND ((sas.CompetencyGroupID = fcg.CompetencyGroupID)
+                         OR (sas.CompetencyGroupID IS NULL AND fc.FrameworkCompetencyGroupID IS NULL))
+                 ORDER BY saf.IsPrimary DESC, f.ID
+             ) AS f
              WHERE (sas.SelfAssessmentID = @competencyAssessmentId)
              AND EXISTS (SELECT 1 FROM CompetencyAssessmentQuestions caq WHERE caq.CompetencyID = c.ID)
              ORDER BY sas.Ordering", new { competencyAssessmentId }
@@ -751,17 +760,20 @@
         public int[] GetLinkedFrameworkCompetencyIds(int competencyAssessmentId, int frameworkId)
         {
             return [.. connection.Query<int>(
-              @"SELECT sas.CompetencyID
-                    FROM   SelfAssessmentStructure AS sas INNER JOIN
-                         FrameworkCompetencies AS fc ON sas.CompetencyID = fc.CompetencyID
-                    WHERE (sas.SelfAssessmentID = @competencyAssessmentId) AND (fc.FrameworkID = @frameworkId)
+              @"SELECT fc.ID
+                    FROM SelfAssessmentStructure AS sas
+                    INNER JOIN FrameworkCompetencies AS fc ON sas.CompetencyID = fc.CompetencyID
+                    LEFT JOIN FrameworkCompetencyGroups AS fcg ON fc.FrameworkCompetencyGroupID = fcg.ID
+                    WHERE sas.SelfAssessmentID = @competencyAssessmentId
+                    AND fc.FrameworkID = @frameworkId
+                    AND (sas.CompetencyGroupID = fcg.CompetencyGroupID OR (sas.CompetencyGroupID IS NULL AND fcg.CompetencyGroupID IS NULL))
                     AND EXISTS (SELECT 1 FROM CompetencyAssessmentQuestions caq WHERE caq.CompetencyID = sas.CompetencyID)
                     ORDER BY fc.Ordering",
               new { competencyAssessmentId,  frameworkId}
           )];
         }
 
-        public bool InsertCompetenciesIntoAssessmentFromFramework(int[] selectedCompetencyIds, int frameworkId, int competencyAssessmentId)
+        public bool InsertCompetenciesIntoAssessmentFromFramework(int[] selectedFrameworkCompetencyIds, int frameworkId, int competencyAssessmentId)
         {
 
             var currentMaxOrdering = connection.ExecuteScalar<int>(
@@ -778,14 +790,14 @@
                     FROM FrameworkCompetencies AS FC
                     LEFT JOIN FrameworkCompetencyGroups AS FCG ON FC.FrameworkCompetencyGroupID = FCG.ID
                     WHERE FC.FrameworkID = @frameworkId
-                    AND FC.CompetencyID IN @selectedCompetencyIds AND FC.CompetencyID NOT IN (SELECT CompetencyID FROM SelfAssessmentStructure WHERE SelfAssessmentID = @competencyAssessmentId)",
-               new { selectedCompetencyIds, frameworkId, competencyAssessmentId, currentMaxOrdering }
+                    AND FC.ID IN @selectedFrameworkCompetencyIds AND FC.CompetencyID NOT IN (SELECT CompetencyID FROM SelfAssessmentStructure WHERE SelfAssessmentID = @competencyAssessmentId)",
+               new { selectedFrameworkCompetencyIds, frameworkId, competencyAssessmentId, currentMaxOrdering }
            );
             if (numberOfAffectedRows < 1)
             {
                 logger.LogWarning(
                     "Not inserting competencies into assessment as db update failed. " +
-                    $"assessmentId: {competencyAssessmentId}, frameworkId: {frameworkId}, selectedCompetencyIds: {selectedCompetencyIds}"
+                    $"assessmentId: {competencyAssessmentId}, frameworkId: {frameworkId}, selectedFrameworkCompetencyIds: {selectedFrameworkCompetencyIds}"
                 );
                 return false;
             }
