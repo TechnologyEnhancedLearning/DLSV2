@@ -3507,6 +3507,64 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         ///
         ///	WITH LatestAssessmentResults [rest of string was truncated]&quot;;.
         /// </summary>
+        internal static string TD_7995_Alter_GetCandidateAssessmentResultsById_FilterIssue_Down {
+            get {
+                return ResourceManager.GetString("TD_7995_Alter_GetCandidateAssessmentResultsById_FilterIssue_Down", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///-- =============================================
+        ///-- Author:		Auldrin Possa
+        ///-- Create date: 30/11/2023
+        ///-- Description:	Returns candidate assessment results by candidateAssessmentId
+        ///-- =============================================
+        ///ALTER PROCEDURE [dbo].[GetCandidateAssessmentResultsById]
+        ///	@candidateAssessmentId as Int = 0,
+        ///	@adminId as int = 0,
+        ///	@selfAssessmentResultId as int = NULL
+        ///AS
+        ///BEGIN
+        ///
+        ///	SET NOCOUNT ON;
+        ///
+        ///	WITH LatestAssessmentResults [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_7995_Alter_GetCandidateAssessmentResultsById_FilterIssue_Up {
+            get {
+                return ResourceManager.GetString("TD_7995_Alter_GetCandidateAssessmentResultsById_FilterIssue_Up", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///-- =============================================
+        ///-- Author:		Auldrin Possa
+        ///-- Create date: 30/11/2023
+        ///-- Description:	Returns candidate assessment results by candidateAssessmentId
+        ///-- =============================================
+        ///ALTER PROCEDURE [dbo].[GetCandidateAssessmentResultsById]
+        ///	@candidateAssessmentId as Int = 0,
+        ///	@adminId as int = 0,
+        ///	@selfAssessmentResultId as int = NULL
+        ///AS
+        ///BEGIN
+        ///
+        ///	SET NOCOUNT ON;
+        ///
+        ///	WITH LatestAssessmentResults [rest of string was truncated]&quot;;.
+        /// </summary>
         internal static string TD_7995_Alter_GetCandidateAssessmentResultsById_Up {
             get {
                 return ResourceManager.GetString("TD_7995_Alter_GetCandidateAssessmentResultsById_Up", resourceCulture);
