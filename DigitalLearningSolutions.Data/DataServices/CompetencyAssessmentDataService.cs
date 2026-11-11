@@ -790,7 +790,14 @@
                     FROM FrameworkCompetencies AS FC
                     LEFT JOIN FrameworkCompetencyGroups AS FCG ON FC.FrameworkCompetencyGroupID = FCG.ID
                     WHERE FC.FrameworkID = @frameworkId
-                    AND FC.ID IN @selectedFrameworkCompetencyIds AND FC.CompetencyID NOT IN (SELECT CompetencyID FROM SelfAssessmentStructure WHERE SelfAssessmentID = @competencyAssessmentId)",
+                    AND FC.ID IN @selectedFrameworkCompetencyIds AND NOT EXISTS
+                        (
+                            SELECT 1
+                            FROM SelfAssessmentStructure AS SAS
+                            WHERE SAS.SelfAssessmentID = @competencyAssessmentId
+                              AND SAS.CompetencyID = FC.CompetencyID
+                              AND SAS.CompetencyGroupID = FCG.CompetencyGroupID
+                        )",
                new { selectedFrameworkCompetencyIds, frameworkId, competencyAssessmentId, currentMaxOrdering }
            );
             if (numberOfAffectedRows < 1)

@@ -880,11 +880,13 @@
             var assessmentFilter = assessmentId.HasValue ?
                 @$"AND c.ID NOT IN (SELECT CompetencyID
                   FROM   SelfAssessmentStructure
-                 WHERE (SelfAssessmentID = {assessmentId})) AND EXISTS (SELECT 1 FROM CompetencyAssessmentQuestions caq WHERE caq.CompetencyID = c.ID)"
+                 WHERE (SelfAssessmentID = {assessmentId}) AND CompetencyID = c.ID
+                    AND CompetencyGroupID = fcg.CompetencyGroupID)
+                    AND EXISTS (SELECT 1 FROM CompetencyAssessmentQuestions caq WHERE caq.CompetencyID = c.ID)"
                 : string.Empty;
             var result = connection.Query<FrameworkCompetencyGroup, FrameworkCompetency, FrameworkCompetencyGroup>(
                 @$"SELECT fcg.ID, fcg.CompetencyGroupID, cg.Name, cg.Description as CompetencyGroupDescription, fcg.Ordering, fc.ID, c.ID AS CompetencyID, c.Name, c.Description, fc.Ordering,
-    (SELECT COUNT(*) FROM CompetencyAssessmentQuestions caq WHERE caq.CompetencyID = c.ID) AS AssessmentQuestions
+                    (SELECT COUNT(*) FROM CompetencyAssessmentQuestions caq WHERE caq.CompetencyID = c.ID) AS AssessmentQuestions
                     ,(SELECT COUNT(*) FROM CompetencyLearningResources clr WHERE clr.CompetencyID = c.ID AND clr.RemovedDate IS NULL) AS CompetencyLearningResourcesCount
                     FROM   FrameworkCompetencyGroups AS fcg INNER JOIN
                       CompetencyGroups AS cg ON fcg.CompetencyGroupID = cg.ID LEFT OUTER JOIN
