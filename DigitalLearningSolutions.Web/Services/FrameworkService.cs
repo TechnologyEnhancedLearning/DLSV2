@@ -44,6 +44,7 @@ namespace DigitalLearningSolutions.Web.Services
         IEnumerable<CollaboratorDetail> GetCollaboratorsForFrameworkId(int frameworkId);
 
         CollaboratorNotification? GetCollaboratorNotification(int id, int invitedByAdminId);
+        bool CheckIfEmailExistAsCollaboratorsOrReviewer(int frameworkId, string email);
 
         //  Competencies/groups:
         IEnumerable<FrameworkCompetencyGroup> GetFrameworkCompetencyGroups(int frameworkId, int? assessmentId);
@@ -746,6 +747,10 @@ namespace DigitalLearningSolutions.Web.Services
         public IEnumerable<int> GetAdminIdsForUserId(int userId)
         {
             return frameworkDataService.GetAdminIdsForUserId(userId);
+        }
+        public bool CheckIfEmailExistAsCollaboratorsOrReviewer(int frameworkId, string email)
+        {
+            return frameworkDataService.CheckIfEmailExistAsCollaboratorsOrReviewer(frameworkId, email);
         }
     }
 }
