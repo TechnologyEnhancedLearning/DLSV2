@@ -3,6 +3,7 @@
 @{
     ViewData["Title"] = $"Set optional {Model.VocabularyPlural.ToLower()} learner prompt";
     ViewData["Application"] = "Framework service";
+    var errorHasOccurred = !ViewData.ModelState.IsValid && ViewData.ModelState.ContainsKey(nameof(Model.ManageOptionalCompetenciesPrompt));
 }
 <link rel="stylesheet" href="@Url.Content("~/css/jodit.css")" asp-append-version="true">
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
@@ -24,6 +25,10 @@
     </nav>
 }
 <div class="nhsuk-form-group">
+    @if (errorHasOccurred)
+    {
+        <vc:error-summary order-of-property-names="@(new[] { nameof(Model.ManageOptionalCompetenciesPrompt) })" />
+    }
     <h1 class="app-page-heading">
         <span class="nhsuk-caption-xl">
             @Model.CompetencyAssessmentName
@@ -45,12 +50,12 @@
                           hint-text="This text will be displayed above the optional @Model.VocabularyPlural.ToLower() list."
                           populate-with-current-value="true"
                           spell-check="false" />
-            <span nhs-validation-for="ManageOptionalCompetenciesPrompt"></span>
         </nhs-form-group>
         <input type="hidden" asp-for="ID" />
         <input type="hidden" asp-for="VocabularyPlural" />
         <input type="hidden" asp-for="VocabularySingular" />
         <input type="hidden" asp-for="PublishStatusID" />
+        <input type="hidden" asp-for="CompetencyAssessmentName" />
 
         <hr class="nhsuk-section-break nhsuk-section-break--m" />
         <button class="nhsuk-button" type="submit">

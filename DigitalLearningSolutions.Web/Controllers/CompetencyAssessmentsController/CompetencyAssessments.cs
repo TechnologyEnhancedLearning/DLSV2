@@ -10,7 +10,6 @@
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments;
-    using DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments;
     using DocumentFormat.OpenXml.EMMA;
     using GDS.MultiPageFormData.Enums;
     using Microsoft.AspNetCore.Mvc;
@@ -586,15 +585,15 @@
                     foreach (var competency in group.FrameworkCompetencies)
                         competency.CompetencyFlags = competencyFlags.Where(f => f.CompetencyId == competency.CompetencyID);
                 }
-                var models = new AddCompetenciesViewModel(competencyAssessmentBase, groupedCompetencies, ungroupedCompetencies, frameworkId, framework.FrameworkName, model.SelectedCompetencyIds);
+                var models = new AddCompetenciesViewModel(competencyAssessmentBase, groupedCompetencies, ungroupedCompetencies, frameworkId, framework.FrameworkName, model.SelectedFrameworkCompetencyIds);
                 ModelState.Clear();
-                ModelState.AddModelError("SelectedCompetencyIds", $"You must select at least one {models.VocabularySingular}");
+                ModelState.AddModelError("SelectedFrameworkCompetencyIds", $"You must select at least one {models.VocabularySingular}");
                 ViewBag.RequiredCheckboxMessage = "You must select at least one " + models.VocabularySingular;
                 return View("AddCompetencies", models);
             }
-            if (model.SelectedCompetencyIds != null)
+            if (model.SelectedFrameworkCompetencyIds != null)
             {
-                competencyAssessmentService.InsertCompetenciesIntoAssessmentFromFramework(model.SelectedCompetencyIds, frameworkId, competencyAssessmentId);
+                competencyAssessmentService.InsertCompetenciesIntoAssessmentFromFramework(model.SelectedFrameworkCompetencyIds, frameworkId, competencyAssessmentId);
             }
             var competencyAssessmentTaskStatus = competencyAssessmentService.GetCompetencyAssessmentTaskStatus(competencyAssessmentId, null);
             if (competencyAssessmentTaskStatus.SelectCompetenciesTaskStatus != true)
@@ -775,9 +774,16 @@
         }
         [HttpPost]
         [Route("/Self-Assessment/{competencyAssessmentId}/{vocabularyPlural}/Optional/LearnerPrompt")]
-        public IActionResult SetOptionalCompetencyLearnerPrompt(SetOptionalCompetencyLearnerPromptFormData model)
+        public IActionResult SetOptionalCompetencyLearnerPrompt(SetOptionalCompetencyLearnerPromptViewModel model)
         {
-            
+            model.ManageOptionalCompetenciesPrompt = string.IsNullOrWhiteSpace(model.ManageOptionalCompetenciesPrompt)
+                ? null : SanitizerHelper.SanitizeHtmlData(model.ManageOptionalCompetenciesPrompt);
+            if (model.ManageOptionalCompetenciesPrompt?.Length > 2000)
+            {
+                ModelState.AddModelError(nameof(model.ManageOptionalCompetenciesPrompt),
+                    "The formatted content exceeds the 2,000 character limit. Reduce the content or formatting to 2,000 characters or fewer.");
+                return View("SetOptionalCompetencyLearnerPrompt", model);
+            }
             competencyAssessmentService.UpdateManageOptionalCompetenciesPrompt(model.ID, model.ManageOptionalCompetenciesPrompt);
             return RedirectToAction("ManageOptionalCompetencies", new { competencyAssessmentId = model.ID, vocabularyPlural = model.VocabularyPlural });
         }
@@ -786,16 +792,16 @@
         public IActionResult CompetencyAssessmentFeatures(int competencyAssessmentId, int? frameworkId = null)
         {
             var adminId = GetAdminID();
-            var data = GetcompetencyAssessmentFeaturesData();
-            if (!string.IsNullOrEmpty(data.CompetencyAssessmentName)) return View(data);
             var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
             var result = ValidateCompetencyAssessmentAndRole(competencyAssessmentId, adminId, "Competency Assessment Features", competencyAssessmentBase);
             if (result.StatusCode != 200)
                 return result;
-            var baseModel = new CompetencyAssessmentFeaturesViewModel(competencyAssessmentBase.ID,
-                competencyAssessmentBase.CompetencyAssessmentName,
-                competencyAssessmentBase.UserRole,
-                frameworkId);
+            var data = GetcompetencyAssessmentFeaturesData();
+            data.ID = competencyAssessmentBase.ID;
+            data.CompetencyAssessmentName = competencyAssessmentBase.CompetencyAssessmentName;
+            data.UserRole = competencyAssessmentBase.UserRole;
+            data.FrameworkId = frameworkId;
+            var baseModel = new CompetencyAssessmentFeaturesViewModel(data);
             return View(baseModel);
         }
         [HttpPost]
@@ -1370,14 +1376,15 @@
         public IActionResult SupervisorSignoffDeclaration(SupervisorSignoffDeclarationViewModel viewModel)
         {
             if (viewModel == null) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
+            viewModel.CustomText = string.IsNullOrWhiteSpace(viewModel.CustomText) ? null : SanitizerHelper.SanitizeHtmlData(viewModel.CustomText);
             if (viewModel.DeclarationValue == 1 && string.IsNullOrWhiteSpace(viewModel.CustomText))
             {
                 ModelState.AddModelError(nameof(viewModel.CustomText), "Please enter the custom declaration text");
                 return View(viewModel);
             }
-            else if (viewModel.DeclarationValue == 1 && viewModel.CustomText.Length > 2000)
+            else if (viewModel.DeclarationValue == 1 && viewModel.CustomText.Length > 3000)
             {
-                ModelState.AddModelError(nameof(viewModel.CustomText), "Declaration text must be 2000 characters or fewer");
+                ModelState.AddModelError(nameof(viewModel.CustomText), "The formatted content exceeds the 3,000 character limit. Reduce the content or formatting to 3,000 characters or fewer.");
                 return View(viewModel);
             }
 
@@ -1428,14 +1435,15 @@
         public IActionResult LearnerSignoffDeclaration(LearnerSignoffDeclarationViewModel viewModel)
         {
             if (viewModel == null) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 403 });
+            viewModel.CustomText = string.IsNullOrWhiteSpace(viewModel.CustomText) ? null : SanitizerHelper.SanitizeHtmlData(viewModel.CustomText);
             if (viewModel.DeclarationValue == 1 && string.IsNullOrWhiteSpace(viewModel.CustomText))
             {
                 ModelState.AddModelError(nameof(viewModel.CustomText), "Please enter the custom declaration text");
                 return View(viewModel);
             }
-            else if (viewModel.DeclarationValue == 1 && viewModel.CustomText.Length > 2000)
+            else if (viewModel.DeclarationValue == 1 && viewModel.CustomText.Length > 3000)
             {
-                ModelState.AddModelError(nameof(viewModel.CustomText), "Declaration text must be 2000 characters or fewer");
+                ModelState.AddModelError(nameof(viewModel.CustomText), "The formatted content exceeds the 3,000 character limit. Reduce the content or formatting to 3,000 characters or fewer.");
                 return View(viewModel);
             }
 
@@ -1695,18 +1703,19 @@
             if (result.StatusCode != 200)
                 return result;
 
+            var reqiured = competencyAssessmentService.CheckIfSelfAssessmenthaveRequiredCompetency(competencyAssessmentId);
+            if (!reqiured)
+            { 
+
+                ModelState.Clear();
+                ModelState.AddModelError("HasCompetencies", $"To preview this self-assessment, you must include some competencies that are not marked as optional.");
+                bool hasCompetencies = competencyAssessmentService.GetCompetenciesForCompetencyAssessment(competencyAssessmentId).Any();
+                var competencyAssessmentTaskStatus = competencyAssessmentService.GetCompetencyAssessmentTaskStatus(competencyAssessmentId, null);
+                var model = new ManageCompetencyAssessmentViewModel(competencyAssessmentBase, competencyAssessmentTaskStatus, hasCompetencies);
+                return View("ManageCompetencyAssessment", model);
+            }
             if (selfAssessmentService.CanDelegateAccessSelfAssessment(userId, competencyAssessmentId, centreId))
             {
-                var selfAssessment = selfAssessmentService.GetSelfAssessmentForCandidateById(userId, competencyAssessmentId);
-                if (selfAssessment == null)
-                {
-                    ModelState.Clear();
-                    ModelState.AddModelError("HasCompetencies", $"To preview this self-assessment, you must include some competencies that are not marked as optional.");
-                    bool hasCompetencies = competencyAssessmentService.GetCompetenciesForCompetencyAssessment(competencyAssessmentId).Any();
-                    var competencyAssessmentTaskStatus = competencyAssessmentService.GetCompetencyAssessmentTaskStatus(competencyAssessmentId, null);
-                    var model = new ManageCompetencyAssessmentViewModel(competencyAssessmentBase, competencyAssessmentTaskStatus, hasCompetencies);
-                    return View("ManageCompetencyAssessment", model);
-                }
                 return RedirectToAction("SelfAssessment", "LearningPortal", new { selfAssessmentId = competencyAssessmentId });
             }
             else
@@ -1849,7 +1858,11 @@
 
             return RedirectToAction("ManageCompetencyAssessment", new { competencyAssessmentId = model.CompetencyAssessmentId });
         }
-
+        public IActionResult CancelCompetencyAssessment(int competencyAssessmentId, int frameworkId)
+        {
+            competencyAssessmentService.CancelCompetencyAssessment(competencyAssessmentId, frameworkId);
+            return RedirectToAction("ViewFramework", "Frameworks", new { frameworkId, tabname = "Structure" });
+        }
         private void SetManagesupervisionData(ManagesupervisionViewModel data)
         {
             multiPageFormService.SetMultiPageFormData(

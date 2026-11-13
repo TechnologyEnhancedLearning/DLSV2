@@ -9,5 +9,6 @@
         public SupervisorDelegateDetail? SupervisorDelegateDetail { get; set; }
         public DelegateSelfAssessment? DelegateSelfAssessment { get; set; }
         public IEnumerable<SupervisorSignOff>? SupervisorSignOffs { get; set; }
+        public bool NotValidated { get; set; }
     }
 }

@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Data;
+    using System.Linq;
     using Dapper;
     using DigitalLearningSolutions.Data.Models.Supervisor;
     using Microsoft.Extensions.Logging;
@@ -64,6 +65,13 @@
             IEnumerable<string> emails
         )
         {
+            var emailList = emails as IReadOnlyCollection<string> ?? emails.ToList();
+
+            if (!emailList.Any())
+            {
+                return Array.Empty<SupervisorDelegate>();
+            }
+
             return connection.Query<SupervisorDelegate>(
                 @"SELECT
                         sd.ID,
@@ -82,18 +90,25 @@
                       AND sd.DelegateEmail IN @emails
                       AND sd.DelegateUserID IS NULL
                       AND sd.Removed IS NULL",
-                new { centreId, emails }
+                new { centreId, emails = emailList }
             );
         }
 
         // TODO: HEEDLS-1014 - Change CandidateID to UserID
         public void UpdateSupervisorDelegateRecordsCandidateId(IEnumerable<int> supervisorDelegateIds, int delegateUserId)
         {
+            var supervisorDelegateIdList = supervisorDelegateIds as IReadOnlyCollection<int> ?? supervisorDelegateIds.ToList();
+
+            if (!supervisorDelegateIdList.Any())
+            {
+                return;
+            }
+
             connection.Execute(
                 @"UPDATE SupervisorDelegates
                     SET DelegateUserID = @delegateUserId
                     WHERE ID IN @supervisorDelegateIds",
-                new { supervisorDelegateIds, delegateUserId }
+                new { supervisorDelegateIds = supervisorDelegateIdList, delegateUserId }
             );
         }
     }

@@ -11,8 +11,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NHS Certificate</title>
-
-    <style>
+       <style>
         .certificate {
             width: 100%;
             justify-content: start;
@@ -40,7 +39,7 @@
                 .certificate .pg-1 .head {
                     background-color: #0063B7;
                     color: white;
-                    padding: 50px;
+                        padding: 30px 40px;
                     position: relative;
                 }
 
@@ -52,6 +51,24 @@
                         .certificate .pg-1 .head .logo img {
                             width: 100px;
                         }
+            /* Multi-column wrapper to allow twice as many competencies on Page 1 */
+            .competencies-grid {
+                display: grid;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                column-gap: 18px;
+                row-gap: 2px;
+                margin-top: 6px;
+                padding-left: 12px;
+                list-style-type: none;
+            }
+
+            .competency-item {
+                break-inside: avoid;
+                page-break-inside: avoid;
+                font-size: 0.6rem !important;
+                line-height: 1.0 !important;
+                margin-bottom: 2px !important;
+            }
 
         .fancy-box {
             width: 50px;
@@ -64,39 +81,46 @@
         }
 
         .certificate .pg-1 .body {
-            padding: 50px;
-            flex: 0;
+                padding: 20px 40px;
+                flex: 1 1 auto;
+                overflow: hidden;
         }
 
         .certificate .pg-1 .footer {
-            padding: 50px;
-            align-items: center;
-            display: flex;
-            flex: 1;
-            justify-content: flex-start;
-            align-items: end;
+                padding: 5px 40px 5px 40px;
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-end;
         }
 
         .footer p.blue, .pg-1 h3 {
             color: #0063B7;
         }
 
+            .footer p {
+                margin-bottom: 4px;
+                line-height: 1.2;
+            }
 
         .footer-logo {
             display: flex;
             align-items: baseline;
-            max-height: 190px;
+            max-height: 100px;
             margin-left: 2rem;
         }
 
             .footer-logo img {
-                max-width: 18rem;
-                height: auto;
+                    max-width: 18rem;
+                    max-height: 100px;
+                    height: auto;
+                    object-fit: contain;
             }
 
         .strips {
             display: flex;
-            padding: 0.5rem 0;
+                padding: 0.5rem 0;
+            position: relative;
+            top: -10;
         }
 
         .strip-green {
@@ -396,13 +420,12 @@
                 box-sizing: border-box
             }
         }
-    </style>
+    </style> 
 
 </head>
 <body>
     <div class="certificate">
         <partial name="_SelfAssessmentCertificateFirstPage.cshtml" model=Model />
-        <div class="pagebreak"></div>
         <partial name="_SelfAssessmentCertificateSecondPage.cshtml" model=Model />
     </div>
 </body>

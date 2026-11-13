@@ -2,10 +2,12 @@
 @using DigitalLearningSolutions.Data.Utilities
 @inject IClockUtility ClockUtility
 @model IEnumerable<SupervisorSignOff>
-
+@{
+    var isOngoingSelfAssessment = (bool)ViewData["IsOngoingSelfAssessment"];
+}
 @if (Model.Any())
 {
-    var notValidated = Model.FirstOrDefault().Verified != null && Model.FirstOrDefault().SignedOff && (bool)ViewData["IsOngoingSelfAssessment"];
+    var notValidated = Model.FirstOrDefault().Verified != null && (bool)ViewData["IsOngoingSelfAssessment"];
     <dl class="nhsuk-summary-list">
         <div class="nhsuk-summary-list__row">
             <dt class="nhsuk-summary-list__key">
@@ -18,12 +20,8 @@
                     <span class="nhsuk-tag nhsuk-tag--red">Removed @Model.FirstOrDefault().Removed.Value.ToShortDateString()</span>
                 }
             </dd>
-            @if ((Model.Count() - 1) > 0)
-            {
-                <dd class="nhsuk-summary-list__actions">
-
-                </dd>
-            }
+            <dd class="nhsuk-summary-list__actions">
+            </dd>
         </div>
 
         <div class="nhsuk-summary-list__row">
@@ -77,30 +75,33 @@
                     @Model.FirstOrDefault().Comments
                 }
             </dd>
-            @if ((Model.Count() - 1) > 0)
-            {
-                <dd class="nhsuk-summary-list__actions">
-
-                </dd>
-            }
+            <dd class="nhsuk-summary-list__actions">
+            </dd>
         </div>
-        @if ((Model.Count() - 1) > 0)
+        @if ((Model.Count() == 1 && isOngoingSelfAssessment) || (Model.Count() > 1))
         {
             <div class="nhsuk-summary-list__row">
                 <dt class="nhsuk-summary-list__key">
                     Previous sign-off requests
                 </dt>
                 <dd class="nhsuk-summary-list__value">
-                    @(Model.Count() - 1)
+                    @if ((Model.Count() == 1 && isOngoingSelfAssessment) || ((Model.Count() > 1) && notValidated))
+                    {
+                        @Model.Count()
+                    }
+                    else
+                    {
+                        @(Model.Count() - 1)
+                    }
                 </dd>
                 <dd class="nhsuk-summary-list__actions">
                     @if (ViewContext.RouteData.Values.ContainsKey("vocabulary"))
                     {
-                        <a asp-action="SignOffHistory" asp-route-vocabulary="@ViewContext.RouteData.Values["vocabulary"]" asp-route-selfAssessmentId="@ViewContext.RouteData.Values["selfAssessmentId"]">View</a>
+                        <a asp-action="SignOffHistory" asp-route-vocabulary="@ViewContext.RouteData.Values["vocabulary"]" asp-route-selfAssessmentId="@ViewContext.RouteData.Values["selfAssessmentId"]" asp-route-notValidated="@notValidated">View</a>
                     }
                     else if (ViewContext.RouteData.Values.ContainsKey("supervisorDelegateId"))
                     {
-                        <a asp-action="SignOffHistory" asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]" asp-route-candidateAssessmentId="@ViewContext.RouteData.Values["candidateAssessmentId"]">View</a>
+                        <a asp-action="SignOffHistory" asp-route-supervisorDelegateId="@ViewContext.RouteData.Values["supervisorDelegateId"]" asp-route-candidateAssessmentId="@ViewContext.RouteData.Values["candidateAssessmentId"]" asp-route-notValidated="@notValidated">View</a>
                     }
                 </dd>
             </div>

@@ -161,7 +161,7 @@
                          ON cas.SupervisorDelegateId = sd.ID
                     WHERE cas.Removed IS NULL
                       AND ca.RemovedDate IS NULL
-	                  AND sd.SupervisorAdminID = 10857
+	                  AND sd.SupervisorAdminID = @adminId
                 ),
                 ProfileCounts AS (
                     SELECT COUNT(DISTINCT sa.ID) AS ProfileCount
@@ -326,73 +326,66 @@
             if (delegateUserId == null)
             {
                 delegateUserId = (int?)connection.ExecuteScalar(
-                    @"SELECT da.UserID AS DelegateUserID 
-                            FROM Users u
-                            INNER JOIN DelegateAccounts da
-                            ON da.UserID = u.ID
-	                        LEFT JOIN UserCentreDetails ucd
-	                        ON ucd.UserID = u.ID
-                            AND ucd.CentreID = da.CentreID
-                            WHERE (ucd.Email = @delegateEmail OR u.PrimaryEmail = @delegateEmail)
-                            AND da.CentreID = @centreId", new { delegateEmail, centreId });
+                    @"SELECT da.UserID AS DelegateUserID
+                      FROM Users u
+                      INNER JOIN DelegateAccounts da ON da.UserID = u.ID
+                      LEFT JOIN UserCentreDetails ucd ON ucd.UserID = u.ID AND ucd.CentreID = da.CentreID
+                      WHERE (ucd.Email = @delegateEmail OR u.PrimaryEmail = @delegateEmail)
+                        AND da.CentreID = @centreId",
+                    new { delegateEmail, centreId });
             }
 
             int existingId = Convert.ToInt32(connection.ExecuteScalar(
-                @"
-                    SELECT COALESCE
-                    ((SELECT Top 1 ID
-                        FROM  SupervisorDelegates sd
-                        WHERE ((sd.SupervisorAdminID = @supervisorAdminID) OR (sd.SupervisorAdminID > 0 AND SupervisorEmail = @supervisorEmail AND @supervisorAdminID = NULL))
-		                      AND((sd.DelegateUserID = @delegateUserId) OR (sd.DelegateUserID > 0 AND DelegateEmail = @delegateEmail AND @delegateUserId = NULL)) ORDER BY sd.DelegateUserID 
-                        ), 0) AS ID",
+                @"SELECT COALESCE(
+                        (SELECT TOP 1 ID
+                         FROM SupervisorDelegates sd
+                         WHERE ((sd.SupervisorAdminID = @supervisorAdminID) OR (sd.SupervisorAdminID > 0 AND SupervisorEmail = @supervisorEmail AND @supervisorAdminID IS NULL))
+                           AND ((sd.DelegateUserID = @delegateUserId) OR (sd.DelegateUserID > 0 AND DelegateEmail = @delegateEmail AND @delegateUserId IS NULL))
+                         ORDER BY sd.DelegateUserID), 0)",
+                new { supervisorEmail, delegateEmail, supervisorAdminId, delegateUserId }));
+
+            if (existingId > 0)
+            {
+                connection.Execute(
+                    @"UPDATE SupervisorDelegates
+                      SET Removed = NULL,
+                          DelegateUserId = @delegateUserId,
+                          DelegateEmail = @delegateEmail
+                      WHERE ID = @existingId",
+                    new { delegateUserId, delegateEmail, existingId });
+                return existingId;
+            }
+
+            var numberOfAffectedRows = connection.Execute(
+                @"INSERT INTO SupervisorDelegates (SupervisorAdminID, DelegateEmail, DelegateUserID, SupervisorEmail, AddedByDelegate)
+                  VALUES (@supervisorAdminId, @delegateEmail, @delegateUserId, @supervisorEmail, @addedByDelegate)",
+                new { supervisorAdminId, delegateEmail, delegateUserId, supervisorEmail, addedByDelegate });
+            if (numberOfAffectedRows < 1)
+            {
+                logger.LogWarning(
+                    $"Not inserting SupervisorDelegate as db insert failed. supervisorAdminId: {supervisorAdminId}, delegateEmail: {delegateEmail}, delegateUserId: {delegateUserId}"
+                );
+                return -1;
+            }
+
+            existingId = Convert.ToInt32(connection.ExecuteScalar(
+                @"SELECT COALESCE(
+                        (SELECT ID
+                         FROM SupervisorDelegates sd
+                         WHERE SupervisorEmail = @supervisorEmail
+                           AND DelegateEmail = @delegateEmail
+                           AND ((@supervisorAdminID = 0) OR sd.SupervisorAdminID = @supervisorAdminID)
+                           AND ((@delegateUserID = 0) OR sd.DelegateUserID = @delegateUserID)
+                           AND sd.Removed IS NULL), 0)",
                 new
                 {
                     supervisorEmail,
                     delegateEmail,
                     supervisorAdminId = supervisorAdminId ?? 0,
                     delegateUserId = delegateUserId ?? 0
-                }
-            ));
+                }));
 
-            if (existingId > 0)
-            {
-                var numberOfAffectedRows = connection.Execute(@"UPDATE SupervisorDelegates SET Removed = NULL, DelegateUserId = @delegateUserId, 
-                                                                DelegateEmail = @delegateEmail WHERE ID = @existingId", new { delegateUserId, delegateEmail, existingId });
-                return existingId;
-            }
-            else
-            {
-                var numberOfAffectedRows = connection.Execute(
-                    @"INSERT INTO SupervisorDelegates (SupervisorAdminID, DelegateEmail, DelegateUserID, SupervisorEmail, AddedByDelegate)
-                    VALUES (@supervisorAdminId, @delegateEmail, @delegateUserId, @supervisorEmail, @addedByDelegate)",
-                    new { supervisorAdminId, delegateEmail, delegateUserId, supervisorEmail, addedByDelegate });
-                if (numberOfAffectedRows < 1)
-                {
-                    logger.LogWarning(
-                        $"Not inserting SupervisorDelegate as db insert failed. supervisorAdminId: {supervisorAdminId}, delegateEmail: {delegateEmail}, delegateUserId: {delegateUserId}"
-                    );
-                    return -1;
-                }
-
-                existingId = Convert.ToInt32(connection.ExecuteScalar(
-                    @"
-                    SELECT COALESCE
-                    ((SELECT ID
-                        FROM    SupervisorDelegates sd
-                        WHERE(SupervisorEmail = @supervisorEmail) AND(DelegateEmail = @delegateEmail)
-                            AND(sd.SupervisorAdminID = @supervisorAdminID OR @supervisorAdminID = 0)
-                            AND(sd.DelegateUserID = @delegateUserId OR @delegateUserID = 0)
-                            AND (sd.Removed IS NULL)
-                        ), 0) AS ID",
-                    new
-                    {
-                        supervisorEmail,
-                        delegateEmail,
-                        supervisorAdminId = supervisorAdminId ?? 0,
-                        delegateUserId = delegateUserId ?? 0
-                    }
-                )); return existingId;
-            }
+            return existingId;
         }
 
         public SupervisorDelegateDetail GetSupervisorDelegateDetailsById(int supervisorDelegateId, int adminId, int delegateUserId)
@@ -802,52 +795,48 @@
         {
             return connection.Query<CompetencyAssessment>(
                 $@"SELECT rp.ID, rp.Name AS CompetencyAssessmentName, rp.Description, rp.BrandID, rp.ParentSelfAssessmentID, rp.[National], rp.[Public], rp.CreatedByAdminID AS OwnerAdminID, rp.NRPProfessionalGroupID, rp.NRPSubGroupID, rp.NRPRoleID, rp.PublishStatusID, 0 AS UserRole, rp.CreatedDate,
-                            (SELECT BrandName
-                             FROM    Brands
-                             WHERE (BrandID = rp.BrandID)) AS Brand, '' AS ParentSelfAssessment, '' AS Owner, rp.Archived, rp.LastEdit,
-                             (SELECT ProfessionalGroup
-                             FROM    NRPProfessionalGroups
-                             WHERE (ID = rp.NRPProfessionalGroupID)) AS NRPProfessionalGroup,
-                            (SELECT SubGroup
-                             FROM    NRPSubGroups
-                             WHERE (ID = rp.NRPSubGroupID)) AS NRPSubGroup,
-                             (SELECT RoleProfile
-                             FROM    NRPRoles
-                             WHERE (ID = rp.NRPRoleID)) AS NRPRole, 0 AS SelfAssessmentReviewID
-                FROM   SelfAssessments AS rp INNER JOIN
-                         CentreSelfAssessments AS csa ON rp.ID = csa.SelfAssessmentID AND csa.CentreID = @centreId
-                WHERE (rp.ArchivedDate IS NULL) AND (rp.ID NOT IN
-                             (SELECT SelfAssessmentID
-                             FROM    CandidateAssessments AS CA
-                             WHERE (DelegateUserID = @delegateUserId) AND (RemovedDate IS NULL)
-                                AND (CompletedDate IS NULL)))
-                        AND ((rp.SupervisorSelfAssessmentReview = 1) OR (rp.SupervisorResultsReview = 1))
-                        AND (ISNULL(@categoryId, 0) = 0 OR rp.CategoryID = @categoryId) AND 
-						((CAST(rp.RetirementDate AS DATE) >= CAST(GETUTCDATE() AS DATE)) OR rp.RetirementDate IS NULL)", new { delegateUserId, centreId, categoryId }
+                             b.BrandName AS Brand, '' AS ParentSelfAssessment, '' AS Owner, rp.Archived, rp.LastEdit,
+                             pg.ProfessionalGroup AS NRPProfessionalGroup,
+                             sg.SubGroup AS NRPSubGroup,
+                             nr.RoleProfile AS NRPRole, 0 AS SelfAssessmentReviewID
+                FROM   SelfAssessments AS rp
+                INNER JOIN CentreSelfAssessments AS csa ON rp.ID = csa.SelfAssessmentID AND csa.CentreID = @centreId
+                LEFT JOIN Brands AS b ON b.BrandID = rp.BrandID
+                LEFT JOIN NRPProfessionalGroups AS pg ON pg.ID = rp.NRPProfessionalGroupID
+                LEFT JOIN NRPSubGroups AS sg ON sg.ID = rp.NRPSubGroupID
+                LEFT JOIN NRPRoles AS nr ON nr.ID = rp.NRPRoleID
+                WHERE rp.ArchivedDate IS NULL
+                  AND NOT EXISTS (
+                        SELECT 1
+                        FROM CandidateAssessments AS ca
+                        WHERE ca.DelegateUserID = @delegateUserId
+                          AND ca.RemovedDate IS NULL
+                          AND ca.CompletedDate IS NULL
+                          AND ca.SelfAssessmentID = rp.ID
+                    )
+                  AND ((rp.SupervisorSelfAssessmentReview = 1) OR (rp.SupervisorResultsReview = 1))
+                  AND (ISNULL(@categoryId, 0) = 0 OR rp.CategoryID = @categoryId)
+                  AND (rp.RetirementDate IS NULL OR CAST(rp.RetirementDate AS DATE) >= CAST(GETUTCDATE() AS DATE))", new { delegateUserId, centreId, categoryId }
                 );
         }
 
         public CompetencyAssessment? GetCompetencyAssessmentById(int selfAssessmentId)
         {
             return connection.Query<CompetencyAssessment>(
-                $@"SELECT ID, Name AS CompetencyAssessmentName, Description, BrandID, ParentSelfAssessmentID, [National], [Public], CreatedByAdminID AS OwnerAdminID, NRPProfessionalGroupID, NRPSubGroupID, NRPRoleID, PublishStatusID, 0 AS UserRole, CreatedDate,
-                 (SELECT BrandName
-                 FROM    Brands
-                 WHERE (BrandID = rp.BrandID)) AS Brand,
+                $@"SELECT rp.ID, rp.Name AS CompetencyAssessmentName, rp.Description, rp.BrandID, rp.ParentSelfAssessmentID, rp.[National], rp.[Public], rp.CreatedByAdminID AS OwnerAdminID, rp.NRPProfessionalGroupID, rp.NRPSubGroupID, rp.NRPRoleID, rp.PublishStatusID, 0 AS UserRole, rp.CreatedDate,
+                 b.BrandName AS Brand,
                  '' AS ParentSelfAssessment,
-                 '' AS Owner, Archived, LastEdit,
-                 (SELECT ProfessionalGroup
-                 FROM    NRPProfessionalGroups
-                 WHERE (ID = rp.NRPProfessionalGroupID)) AS NRPProfessionalGroup,
-                 (SELECT SubGroup
-                 FROM    NRPSubGroups
-                 WHERE (ID = rp.NRPSubGroupID)) AS NRPSubGroup,
-                 (SELECT RoleProfile
-                 FROM    NRPRoles
-                 WHERE (ID = rp.NRPRoleID)) AS NRPRole, 0 AS SelfAssessmentReviewID
-                 FROM   SelfAssessments AS rp 
-                 WHERE (ID = @selfAssessmentId)", new { selfAssessmentId }
-                ).FirstOrDefault();
+                 '' AS Owner, rp.Archived, rp.LastEdit,
+                 pg.ProfessionalGroup AS NRPProfessionalGroup,
+                 sg.SubGroup AS NRPSubGroup,
+                 nr.RoleProfile AS NRPRole, 0 AS SelfAssessmentReviewID
+                 FROM   SelfAssessments AS rp
+                 LEFT JOIN Brands AS b ON b.BrandID = rp.BrandID
+                 LEFT JOIN NRPProfessionalGroups AS pg ON pg.ID = rp.NRPProfessionalGroupID
+                 LEFT JOIN NRPSubGroups AS sg ON sg.ID = rp.NRPSubGroupID
+                 LEFT JOIN NRPRoles AS nr ON nr.ID = rp.NRPRoleID
+                 WHERE rp.ID = @selfAssessmentId", new { selfAssessmentId })
+                .FirstOrDefault();
         }
 
         public int EnrolDelegateOnAssessment(int delegateUserId, int supervisorDelegateId, int selfAssessmentId, DateTime? completeByDate, int adminId, int centreId, bool isLoggedInUser)
@@ -904,8 +893,8 @@
             else
             {
                 var numberOfAffectedRows = connection.Execute(
-                    @"INSERT INTO CandidateAssessments (DelegateUserID, SelfAssessmentID, CompleteByDate, EnrolmentMethodId, EnrolledByAdminId, CentreID,NonReportable)
-                    VALUES (@delegateUserId, @selfAssessmentId, @completeByDate, 2, @adminId, @centreId,@isLoggedInUser)",
+                    @"INSERT INTO CandidateAssessments (DelegateUserID, SelfAssessmentID, CompleteByDate, EnrolmentMethodId, EnrolledByAdminId, CentreID, NonReportable)
+                    VALUES (@delegateUserId, @selfAssessmentId, @completeByDate, 2, @adminId, @centreId, @isLoggedInUser)",
                     new { delegateUserId, selfAssessmentId, completeByDate, adminId, centreId, isLoggedInUser });
                 if (numberOfAffectedRows < 1)
                 {
@@ -918,6 +907,7 @@
                 return existingId;
             }
         }
+
         public int InsertCandidateAssessmentSupervisor(int delegateUserId, int supervisorDelegateId, int selfAssessmentId)
         {
             int candidateAssessmentId = Convert.ToInt32(connection.ExecuteScalar(

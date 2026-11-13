@@ -15,6 +15,7 @@
             <ol class="nhsuk-breadcrumb__list">
                 <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Frameworks" asp-action="Index">Home</a></li>
                 <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewCompetencyAssessments" asp-route-tabname="Mine">Self-assessments</a></li>
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.ID">Manage self-assessment</a></li>
                 <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="CompetencyAssessmentFeatures" asp-route-competencyAssessmentId="@Model.ID" asp-route-frameworkId="@Model.FrameworkId">Self-assessment features</a></li>
                 <li class="nhsuk-breadcrumb__item">Self-assessment features summary</li>
             </ol>
@@ -83,5 +84,5 @@
         <input name="userRole" type="hidden" asp-for="UserRole" />
         <input name="FrameID" type="hidden" asp-for="FrameworkId" />
     </div>
-    <button type="submit" class="nhsuk-button">Confirm and create assessment</button>
+    <button type="submit" class="nhsuk-button">Confirm</button>
 </form>

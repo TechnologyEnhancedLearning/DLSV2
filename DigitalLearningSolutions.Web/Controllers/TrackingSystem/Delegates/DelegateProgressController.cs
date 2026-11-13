@@ -441,7 +441,7 @@
                 var pdfReportFile = await pdfService.GetPdfReportFile(pdfReportResponse);
                 if (pdfReportFile != null)
                 {
-                    var fileName = $"Progress Summary - {model.CourseName.Substring(0, 15)} - {model.CandidateNumber}.pdf";
+                    var fileName = $"Progress Summary - {model.CourseName.Substring(0, Math.Min(15, model.CourseName.Length))} - {model.CandidateNumber}.pdf";
                     return File(pdfReportFile, FileHelper.GetContentTypeFromFileName(fileName), fileName);
                 }
             }

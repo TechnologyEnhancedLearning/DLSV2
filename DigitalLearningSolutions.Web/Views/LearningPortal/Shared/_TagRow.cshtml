@@ -2,6 +2,7 @@
 @using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Completed
 @using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Current
 @using DigitalLearningSolutions.Web.ViewModels.LearningPortal.SelfAssessments
+@using DigitalLearningSolutions.Web.ViewModels.LearningPortal.Available
 @model BaseLearningItemViewModel
 
 <div class="nhsuk-grid-column-three-quarters tags">
@@ -35,6 +36,21 @@
             <strong class="nhsuk-tag nhsuk-tag--blue">Self-assessment</strong>
         </div>
     }
+    @if (Model is AvailableCourseViewModel AvailableCourseViewModel)
+    {
+        @if (AvailableCourseViewModel.IsSelfAssessment)
+        {
+            <div class="card-filter-tag">
+                <strong class="nhsuk-tag nhsuk-tag--blue">Self-assessment</strong>
+            </div>
+        }
+        @if (!AvailableCourseViewModel.IsSelfAssessment)
+        {
+            <div class="card-filter-tag">
+                <strong class="nhsuk-tag nhsuk-tag--blue">Course</strong>
+            </div>
+        }
+     }
     @if (Model is ILearningResourceCardViewModel resource)
     {
         <div class="card-filter-tag">

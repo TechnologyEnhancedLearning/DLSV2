@@ -291,7 +291,7 @@
         public bool PrimaryEmailInUseAtCentres(string email);
 
         public int? GetUserIdFromLearningHubAuthId(int learningHubAuthId);
-       void DeactivateAdminAccount(int userId, int centreId);
+        void DeactivateAdminAccount(int userId, int centreId);
         int? CheckDelegateIsActive(int delegateId);
     }
 
@@ -606,50 +606,59 @@
             );
         }
         public (IEnumerable<SuperAdminDelegateAccount>, int) GetAllDelegates(
-      string search, int offset, int rows, int? delegateId, string accountStatus, string lhlinkStatus, int? centreId, int failedLoginThreshold
-      )
+        string search, int offset, int rows, int? delegateId, string accountStatus, string lhlinkStatus, int? centreId, int failedLoginThreshold)
         {
             if (!string.IsNullOrEmpty(search))
             {
                 search = search.Trim();
             }
-            string BaseSelectQuery = @$"SELECT
-                da.ID,
-                da.Active,
-                da.CentreID,
-                ce.CentreName,
-                ce.Active AS CentreActive,
-                da.DateRegistered,
-                da.LastAccessed,
-                da.CandidateNumber,
-                da.Approved,
-                da.SelfReg,
-                da.UserID,
-                da.RegistrationConfirmationHash,
-                u.ID as UserId,
-                 u.PrimaryEmail AS EmailAddress,
-                u.FirstName,
-                u.LastName,
-                u.Active as UserActive,
-                u.LearningHubAuthID,
-                u.EmailVerified,
-                ucd.ID as UserCentreDetailID,
-                ucd.UserID,
-                ucd.CentreID,
-                ucd.Email as CentreEmail,
-                ucd.EmailVerified as CentreEmailVerified,
-                (SELECT ID
-                    FROM AdminAccounts aa
-                        WHERE aa.UserID = da.UserID
-                            AND aa.CentreID = da.CentreID
-                            AND aa.Active = 1
-                ) AS AdminID
-            FROM DelegateAccounts AS da WITH (NOLOCK)
-            INNER JOIN Centres AS ce WITH (NOLOCK) ON ce.CentreId = da.CentreID
-            INNER JOIN Users AS u WITH (NOLOCK) ON u.ID = da.UserID
-            LEFT JOIN UserCentreDetails AS ucd WITH (NOLOCK) ON ucd.UserID = u.ID
-            AND ucd.CentreId = da.CentreID
-            INNER JOIN JobGroups AS jg WITH (NOLOCK) ON jg.JobGroupID = u.JobGroupID";
+
+            string activeAdminAccountsCte = @"
+                WITH ActiveAdminAccounts AS (
+                    SELECT
+                        aa.UserID,
+                        aa.CentreID,
+                        MIN(aa.ID) AS AdminID
+                    FROM AdminAccounts AS aa WITH (NOLOCK)
+                    WHERE aa.Active = 1
+                    GROUP BY aa.UserID, aa.CentreID
+                )";
+
+            string baseSelectQuery = @$"{activeAdminAccountsCte}
+                SELECT
+                    da.ID,
+                    da.Active,
+                    da.CentreID,
+                    ce.CentreName,
+                    ce.Active AS CentreActive,
+                    da.DateRegistered,
+                    da.LastAccessed,
+                    da.CandidateNumber,
+                    da.Approved,
+                    da.SelfReg,
+                    da.UserID,
+                    da.RegistrationConfirmationHash,
+                    u.ID as UserId,
+                    u.PrimaryEmail AS EmailAddress,
+                    u.FirstName,
+                    u.LastName,
+                    u.Active as UserActive,
+                    u.LearningHubAuthID,
+                    u.EmailVerified,
+                    ucd.ID as UserCentreDetailID,
+                    ucd.UserID,
+                    ucd.CentreID,
+                    ucd.Email as CentreEmail,
+                    ucd.EmailVerified as CentreEmailVerified,
+                    aaa.AdminID
+                FROM DelegateAccounts AS da WITH (NOLOCK)
+                INNER JOIN Centres AS ce WITH (NOLOCK) ON ce.CentreId = da.CentreID
+                INNER JOIN Users AS u WITH (NOLOCK) ON u.ID = da.UserID
+                LEFT JOIN UserCentreDetails AS ucd WITH (NOLOCK) ON ucd.UserID = u.ID
+                    AND ucd.CentreId = da.CentreID
+                LEFT JOIN ActiveAdminAccounts AS aaa WITH (NOLOCK)
+                    ON aaa.UserID = da.UserID
+                    AND aaa.CentreID = da.CentreID";
             string condition = $@" WHERE ((@delegateId = 0) OR (da.ID = @delegateId)) 	AND (u.FirstName + ' ' + u.LastName + ' ' + u.PrimaryEmail + ' ' + COALESCE(ucd.Email, '') + ' ' + COALESCE(da.CandidateNumber, '') LIKE N'%' + @search + N'%')
                                     AND ((ce.CentreID = @centreId) OR (@centreId= 0)) 
                                     AND ((@accountStatus = 'Any') OR (@accountStatus = 'Active' AND da.Active = 1 AND u.Active =1) OR (@accountStatus = 'Inactive' AND (u.Active = 0 OR da.Active =0)) 
@@ -657,7 +666,7 @@
 	                                    OR (@accountStatus = 'Claimed' AND  da.RegistrationConfirmationHash is  null) OR (@accountStatus = 'Unclaimed' AND da.RegistrationConfirmationHash is not null))
                                     AND ((@lhlinkStatus = 'Any') OR (@lhlinkStatus = 'Linked' AND u.LearningHubAuthID IS NOT NULL) OR (@lhlinkStatus = 'Not linked' AND u.LearningHubAuthID IS NULL))";
 
-            string sql = @$"{BaseSelectQuery}{condition} ORDER BY LTRIM(u.LastName), LTRIM(u.FirstName)
+            string sql = @$"{baseSelectQuery}{condition} ORDER BY LTRIM(u.LastName), LTRIM(u.FirstName)
                             OFFSET @offset ROWS
                             FETCH NEXT @rows ROWS ONLY";
             IEnumerable<SuperAdminDelegateAccount> delegateEntity = connection.Query<SuperAdminDelegateAccount>(
@@ -667,13 +676,16 @@
             );
 
             int ResultCount = connection.ExecuteScalar<int>(
-                            @$"SELECT  COUNT(*) AS Matches
+                            @$"{activeAdminAccountsCte}
+                            SELECT  COUNT(*) AS Matches
                             FROM DelegateAccounts AS da WITH (NOLOCK)
                             INNER JOIN Centres AS ce WITH (NOLOCK) ON ce.CentreId = da.CentreID
                             INNER JOIN Users AS u WITH (NOLOCK) ON u.ID = da.UserID
                             LEFT JOIN UserCentreDetails AS ucd WITH (NOLOCK) ON ucd.UserID = u.ID
                             AND ucd.CentreId = da.CentreID
-                            INNER JOIN JobGroups AS jg WITH (NOLOCK) ON jg.JobGroupID = u.JobGroupID {condition}",
+                            LEFT JOIN ActiveAdminAccounts AS aaa WITH (NOLOCK)
+                                ON aaa.UserID = da.UserID
+                                AND aaa.CentreID = da.CentreID {condition}",
                 new { delegateId, search, centreId, accountStatus, failedLoginThreshold, lhlinkStatus },
                 commandTimeout: 3000
             );

@@ -479,8 +479,8 @@
                         ON CAOC.CandidateAssessmentID = CA.ID
                     INNER JOIN SelfAssessmentStructure AS SAS
                         ON CA.SelfAssessmentID = SAS.SelfAssessmentID AND CAOC.CompetencyID = SAS.CompetencyID AND CA.SelfAssessmentID = @selfAssessmentId
-                            AND CAOC.CompetencyGroupID = SAS.CompetencyGroupID
-                    WHERE (CA.DelegateUserID = @delegateUserId) AND (CA.RemovedDate IS NULL)
+                        AND CAOC.CompetencyGroupID = SAS.CompetencyGroupID
+                 WHERE (CA.DelegateUserID = @delegateUserId) AND (CA.RemovedDate IS NULL)
                                     ",
                 new { selfAssessmentId, delegateUserId }
             );
@@ -509,7 +509,7 @@
                         ON CAOC.CandidateAssessmentID = CA.ID
                     INNER JOIN SelfAssessmentStructure AS SAS
                         ON CA.SelfAssessmentID = SAS.SelfAssessmentID AND CAOC.CompetencyID = SAS.CompetencyID
-                            AND CAOC.CompetencyGroupID = SAS.CompetencyGroupID
+                        AND CAOC.CompetencyGroupID = SAS.CompetencyGroupID
                     WHERE (SAS.ID = @selfAssessmentStructureId) AND (CA.DelegateUserID = @delegateUserId) AND (CA.RemovedDate IS NULL)",
                 new { selfAssessmentStructureId, delegateUserId }
             );
@@ -551,7 +551,7 @@
         public List<int> GetCandidateAssessmentIncludedSelfAssessmentStructureIds(int selfAssessmentId, int delegateUserId)
         {
             return connection.Query<int>(
-                @"SELECT
+               @"SELECT
                         SAS.ID
                     FROM CandidateAssessmentOptionalCompetencies AS CAOC
                     INNER JOIN CandidateAssessments  AS CA
@@ -561,8 +561,8 @@
                             ON CAOC.CompetencyID = SAS.CompetencyID AND CAOC.CompetencyGroupID = SAS.CompetencyGroupID
                                 AND SAS.SelfAssessmentID = @selfAssessmentId
                     WHERE (CAOC.IncludedInSelfAssessment = 1)",
-                new { selfAssessmentId, delegateUserId }
-            ).ToList();
+               new { selfAssessmentId, delegateUserId }
+           ).ToList();
         }
 
         public CompetencyAssessmentQuestionRoleRequirement? GetCompetencyAssessmentQuestionRoleRequirements(
@@ -659,7 +659,7 @@
 
         private static IEnumerable<Competency> GroupCompetencyAssessmentQuestions(IEnumerable<Competency> result)
         {
-            return result.GroupBy(competency => competency.Id).Select(
+            return result.GroupBy(competency => new { competency.Id, competency.CompetencyGroupID }).Select(
                 group =>
                 {
                     var groupedCompetency = group.First();
