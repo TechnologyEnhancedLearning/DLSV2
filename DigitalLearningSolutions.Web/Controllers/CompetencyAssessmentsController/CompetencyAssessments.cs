@@ -740,8 +740,6 @@
                  .Select(c => c.StructureId)
                  .Distinct()
                  .ToList();
-
-
             if (competencyGroupIds.Except(selectedGroupIds).Any() ||
                 selectedGroupIds.Except(competencyGroupIds).Any() ||
                 selectedCompetencyIds.Except(unselectedGroupCompetencyIds).Any() ||
@@ -751,7 +749,6 @@
                     model.ID,
                     model.GroupIds ?? [],
                     model.SelectedCompetencyIds ?? []);
-
                 competencyAssessmentService.UpdateMinimumOptionalCompetencies(model.ID, 0);
             }
             return RedirectToAction("ManageOptionalCompetencies", new { competencyAssessmentId = model.ID, vocabularyPlural = model.VocabularyPlural });
