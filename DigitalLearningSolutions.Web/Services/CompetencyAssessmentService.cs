@@ -44,7 +44,7 @@ namespace DigitalLearningSolutions.Web.Services
         IEnumerable<SelfAssessmentReview> GetCompetencySelfAssessmentReviews(int competencyAssessmentId);
         SelfAssessmentReview? GetCompetencySelfAssessmentReviewById(int competencyAssessmentId, int selfAssessmentReviewId);
         SelfAssessmentReviewOutcomeNotification? GetSelfAssessmentReviewNotification(int reviewId);
-
+        bool CheckIfSelfAssessmenthaveRequiredCompetency(int competencyAssessmentId);
         //UPDATE DATA
         bool UpdateCompetencyAssessmentName(int competencyAssessmentId, int adminId, string competencyAssessmentName);
         bool UpdateCompetencyRoleProfileLinks(int competencyAssessmentId, int adminId, int? professionalGroupId, int? subGroupId, int? roleId);
@@ -107,7 +107,7 @@ namespace DigitalLearningSolutions.Web.Services
         int InsertCompetencyAssessment(int adminId, int centreId, string competencyAssessmentName, int? frameworkId);
         bool InsertSelfAssessmentFramework(int adminId, int assessmentId, int frameworkId);
         int GetCompetencyCountByFrameworkId(int competencyAssessmentId, int frameworkId);
-        bool InsertCompetenciesIntoAssessmentFromFramework(int[] selectedCompetencyIds, int frameworkId, int competencyAssessmentId);
+        bool InsertCompetenciesIntoAssessmentFromFramework(int[] selectedFrameworkCompetencyIds, int frameworkId, int competencyAssessmentId);
         bool InsertSelfAssessmentUngroupedCompetencies(int selfAssessmentId, int? frameworkId);
         bool InsertSelfAssessmentGroupedCompetencies(int selfAssessmentId, int? frameworkId);
         void InsertIntoSelfAssessmentCollaboratorsFromFrameworkCollaborators(int selfAssessmentId, int? frameworkId);
@@ -125,7 +125,7 @@ namespace DigitalLearningSolutions.Web.Services
         bool HasCompetencyWithSignpostedLearning(int competencyAssessmentId);
         void RetireCompetencyAssessment(int competencyAssessmentId, DateTime? RetirementDate, string retirementReason, int adminId);
         void RemoveRetirementDate(int competencyAssessmentId, int adminId);
-
+        bool CancelCompetencyAssessment(int selfAssessmentId, int frameworkId);
     }
     public class CompetencyAssessmentService : ICompetencyAssessmentService
     {
@@ -328,9 +328,9 @@ namespace DigitalLearningSolutions.Web.Services
             return competencyAssessmentDataService.GetLinkedFrameworkCompetencyIds(competencyAssessmentId, frameworkId);
         }
 
-        public bool InsertCompetenciesIntoAssessmentFromFramework(int[] selectedCompetencyIds, int frameworkId, int competencyAssessmentId)
+        public bool InsertCompetenciesIntoAssessmentFromFramework(int[] selectedFrameworkCompetencyIds, int frameworkId, int competencyAssessmentId)
         {
-            return competencyAssessmentDataService.InsertCompetenciesIntoAssessmentFromFramework(selectedCompetencyIds, frameworkId, competencyAssessmentId);
+            return competencyAssessmentDataService.InsertCompetenciesIntoAssessmentFromFramework(selectedFrameworkCompetencyIds, frameworkId, competencyAssessmentId);
         }
 
         public bool RemoveCompetencyFromAssessment(int competencyAssessmentId, int competencyId)
@@ -613,7 +613,16 @@ namespace DigitalLearningSolutions.Web.Services
             competencyAssessmentDataService.RetireCompetencyAssessment(competencyAssessmentId, null, null);
 
             competencyAssessmentDataService.UpdateCompetencyAssessmentPublishStatus(competencyAssessmentId, 3, adminId);
-        }       
+        }
 
+        public bool CancelCompetencyAssessment(int selfAssessmentId, int frameworkId)
+        {
+            return competencyAssessmentDataService.CancelCompetencyAssessment(selfAssessmentId, frameworkId);
+           
+        }
+        public bool CheckIfSelfAssessmenthaveRequiredCompetency(int competencyAssessmentId)
+        {
+            return competencyAssessmentDataService.CheckIfSelfAssessmenthaveRequiredCompetency(competencyAssessmentId);
+        }
     }
 }

@@ -78,6 +78,8 @@ form.addEventListener("submit", (e: Event) => {
     { el: cfield, msg: "Please enter a valid category." },
     { el: tfield, msg: "Please enter a valid topic." }
   ].forEach(f => {
+    if (!f.el) return;
+
     if (f.el.required && !f.el.value.trim()) {
       e.preventDefault();
       f.el.setCustomValidity(f.msg);

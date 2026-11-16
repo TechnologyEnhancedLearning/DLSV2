@@ -27,21 +27,21 @@
             Complete by
         </dt>
         <dd class="nhsuk-summary-list__value @currentLearningItemViewModel.DateStyle()" data-name-for-sorting="complete-by-date">
-            @(currentLearningItemViewModel.CompleteByDate == null ?
-                Html.Raw("<span class='nhsuk-u-visually-hidden'>No complete by date set </span>-") :
-                Html.Raw($"<span class='nhsuk-u-visually-hidden'>{currentLearningItemViewModel.DueByDescription()}</span>{currentLearningItemViewModel.CompleteByDate?.ToShortDateString()}"))
+            @(currentLearningItemViewModel.CompleteByDate == null
+            ? "-"
+            : currentLearningItemViewModel.CompleteByDate?.ToShortDateString())
         </dd>
         <dd class="nhsuk-summary-list__actions" style="border-bottom:none;">
             @if (currentLearningItemViewModel is CurrentCourseViewModel course && (course.CompleteByDate == null || course.SelfEnrolled))
             {
                 <a class="nhsuk-button nhsuk-button--secondary small-edit-button"
-           aria-describedby="@Model.Id-name-course"
-           aria-label="Edit complete by date"
-           data-return-page-enabled="true"
-           asp-action="SetCurrentCourseCompleteByDate"
-           asp-route-id="@Model.Id"
-           asp-route-returnPageQuery="@currentLearningItemViewModel.ReturnPageQuery"
-           role="button">
+                   aria-describedby="@Model.Id-name-course"
+                   aria-label="Edit complete by date"
+                   data-return-page-enabled="true"
+                   asp-action="SetCurrentCourseCompleteByDate"
+                   asp-route-id="@Model.Id"
+                   asp-route-returnPageQuery="@currentLearningItemViewModel.ReturnPageQuery"
+                   role="button">
                     Edit
                 </a>
             }
@@ -49,26 +49,26 @@
             {
 
                 <a class="nhsuk-button nhsuk-button--secondary small-edit-button"
-           aria-describedby="@Model.Id-name-sa"
-           aria-label="Edit complete by date"
-           data-return-page-enabled="true"
-           asp-route-selfAssessmentId="@Model.Id"
-           asp-action="SetSelfAssessmentCompleteByDate"
-           asp-route-returnPageQuery="@currentLearningItemViewModel.ReturnPageQuery"
-           role="button">
+                   aria-describedby="@Model.Id-name-sa"
+                   aria-label="Edit complete by date"
+                   data-return-page-enabled="true"
+                   asp-route-selfAssessmentId="@Model.Id"
+                   asp-action="SetSelfAssessmentCompleteByDate"
+                   asp-route-returnPageQuery="@currentLearningItemViewModel.ReturnPageQuery"
+                   role="button">
                     Edit
                 </a>
             }
             else if (currentLearningItemViewModel is CurrentLearningResourceViewModel { AbsentInLearningHub: false })
             {
                 <a class="nhsuk-button nhsuk-button--secondary small-edit-button"
-           aria-describedby="@Model.Id-name-lhr"
-           aria-label="Edit complete by date"
-           data-return-page-enabled="true"
-           asp-action="SetCurrentActionPlanResourceCompleteByDate"
-           asp-route-learningLogItemId="@Model.Id"
-           asp-route-returnPageQuery="@currentLearningItemViewModel.ReturnPageQuery"
-           role="button">
+                   aria-describedby="@Model.Id-name-lhr"
+                   aria-label="Edit complete by date"
+                   data-return-page-enabled="true"
+                   asp-action="SetCurrentActionPlanResourceCompleteByDate"
+                   asp-route-learningLogItemId="@Model.Id"
+                   asp-route-returnPageQuery="@currentLearningItemViewModel.ReturnPageQuery"
+                   role="button">
                     Edit
                 </a>
             }

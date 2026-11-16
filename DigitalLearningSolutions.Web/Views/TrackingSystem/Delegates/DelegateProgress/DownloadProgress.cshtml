@@ -9,131 +9,187 @@
     <title>
         Delegate progress summary
     </title>
-    <link href="https://learninghub.nhs.uk/css/site.css" rel="stylesheet" asp-append-version="true" />
     <style type="text/css">
-        body, html {
-            background-color: #D9ECFF !important;
-        }
+            body, html {
+                background-color: #D9ECFF !important;
+            }
 
-        .col {
-            position: relative;
-            width: 100%;
-            padding-right: 15px;
-            padding-left: 15px;
-            min-width: 0;
-            max-width: 100%;
-        }
+            .col {
+                position: relative;
+                width: 100%;
+                padding-right: 15px;
+                padding-left: 15px;
+                min-width: 0;
+                max-width: 100%;
+            }
 
-        .row {
-            display: -ms-flexbox;
-            display: flex;
-            -ms-flex-wrap: wrap;
-            flex-wrap: wrap;
-            margin-right: -15px;
-            margin-left: -15px;
-            width: 100%;
-        }
+            .row {
+                display: -ms-flexbox;
+                display: flex;
+                -ms-flex-wrap: wrap;
+                flex-wrap: wrap;
+                margin-right: -15px;
+                margin-left: -15px;
+                width: 100%;
+            }
 
-        .container {
-            width: 100%;
-            padding-right: 15px;
-            padding-left: 15px;
-            margin-right: auto;
-            margin-left: auto;
-            display: -ms-flexbox;
-            display: flex;
-            -ms-flex-wrap: wrap;
-            flex-wrap: wrap;
-            -ms-flex-align: center;
-            align-items: center;
-            -ms-flex-pack: justify;
-            justify-content: space-between;
-            flex-direction: column;
-            max-width: 1140px;
-        }
+            .container {
+                width: 100%;
+                padding-right: 15px;
+                padding-left: 15px;
+                margin-right: auto;
+                margin-left: auto;
+                display: -ms-flexbox;
+                display: flex;
+                -ms-flex-wrap: wrap;
+                flex-wrap: wrap;
+                -ms-flex-align: center;
+                align-items: center;
+                -ms-flex-pack: justify;
+                justify-content: space-between;
+                flex-direction: column;
+                max-width: 1140px;
+            }
 
-        .card {
-            position: relative;
-            display: -ms-flexbox;
-            display: flex;
-            -ms-flex-direction: column;
-            flex-direction: column;
-            min-width: 0;
-            word-wrap: break-word;
-            background-color: #fff;
-            background-clip: border-box;
-            border: 1px solid rgba(0,0,0,.125);
-            border-radius: .25rem
-        }
+            .card {
+                position: relative;
+                display: -ms-flexbox;
+                display: flex;
+                -ms-flex-direction: column;
+                flex-direction: column;
+                min-width: 0;
+                word-wrap: break-word;
+                background-color: #fff;
+                background-clip: border-box;
+                border: 1px solid rgba(0,0,0,.125);
+                border-radius: .25rem
+            }
 
-        .card-body {
-            -ms-flex: 1 1 auto;
-            flex: 1 1 auto;
-            min-height: 1px;
-            padding: 1.25rem
-        }
+            .card-body {
+                -ms-flex: 1 1 auto;
+                flex: 1 1 auto;
+                min-height: 1px;
+                padding: 1.25rem
+            }
 
-        .card-default {
-            border-color: #00529E !important;
-            border-style: solid !important;
-            border-width: 3px !important;
-        }
+            .card-default {
+                border-color: #00529E !important;
+                border-style: solid !important;
+                border-width: 3px !important;
+            }
 
-        .float-right {
-            float: right !important
-        }
+            *,
+            *::before,
+            *::after {
+                text-shadow: none !important;
+                box-shadow: none !important;
+            }
 
-        #header,
-        #footer {
-            display: none !important;
-        }
+            body {
+                min-width: 992px !important;
+            }
 
-        .no-print, .no-print * {
-            display: none !important;
-        }
+            .container {
+                min-width: 992px !important;
+            }
 
-        *,
-        *::before,
-        *::after {
-            text-shadow: none !important;
-            box-shadow: none !important;
-        }
+            .heading2 {
+                font-size: 2rem !important;
+            }
 
-        p {
-            orphans: 3;
-            widows: 3;
-        }
+            .heading3 {
+                font-size: 1.75rem;
+            }
 
-        body {
-            min-width: 992px !important;
-        }
+            .heading4 {
+                font-size: 1.5rem;
+                font-weight: 600 !important;
+            }
 
-        .container {
-            min-width: 992px !important;
-        }
+            .heading2, .heading3, heading4 {
+                line-height: 1.2;
+                display: block;
+                font-weight: 600 !important;
+                margin-top: 0;
+                margin-bottom: 16px;
+                color: #000000;
+                font-family: Verdana, Arial, Helvetica, sans-serif !important;
+            }
 
-        .heading2 {
-            font-size: 2rem !important;
-        }
+            .progress-table {
+                width: 100%;
+                margin-bottom: 40px;
+                border-spacing: 0;
+                border-collapse: collapse;
+                vertical-align: top;
+            }
 
-        .heading3 {
-            font-size: 1.75rem;
-        }
+                .progress-table th,
+                .progress-table td {
+                    padding: 8px 16px 8px 0;
+                    border-bottom: 1px solid #d8dde0;
+                    font-size: 16px;
+                    line-height: 1.5;
+                    text-align: left;
+                    vertical-align: top;
+                }
 
-        .heading4 {
-            font-size: 1.5rem;
-            font-weight: 600 !important;
-        }
+                .progress-table th {
+                    border-bottom: 2px solid #d8dde0;
+                    font-weight: 600;
+                }
 
-        .heading2, .heading3, heading4 {
-            line-height: 1.2;
-            display: block;
-            font-weight: 600 !important;
-            margin-top: 0;
-            margin-bottom: 16px;
-            color: #000000;
-            font-family: Verdana, Arial, Helvetica, sans-serif !important;
-        }
+                    .progress-table th:last-child,
+                    .progress-table td:last-child {
+                        padding-right: 0;
+                    }
+
+            .progress-table--summary td:first-child {
+                width: 25%;
+            }
+
+            .progress-table--summary td {
+                border-bottom: 0;
+            }
+
+                .progress-table--summary td + td {
+                    padding-left: 20px;
+                }
+
+            .progress-table--summary tr {
+                height: 35px;
+            }
+
+            .progress-table--summary .status-value {
+                font-weight: bold;
+            }
+
+            .progress-table--sections th,
+            .progress-table--sections td {
+                width: 25%;
+            }
+
+            .progress-table .passed-outcome {
+                color: #0e6935;
+                font-weight: normal;
+            }
+
+            .current-date {
+                height: 40px;
+            }
+
+            .progress-title {
+                color: #000066 !important;
+                font-weight: bold !important;
+            }
+
+            @@media print {
+                .progress-table th,
+                .progress-table td {
+                    font-size: 13pt;
+                    line-height: 1.25;
+                }
+            }
     </style>
 </head>
 <body>
@@ -144,10 +200,10 @@
                     <div class="card card-default">
                         <div class="card-body">
                             <div>
-                                <div style="height:40px">
+                                <div class="current-date">
                                     Progress as at: <span id="lblCurrentDate">@DateTime.Now.ToString("dd MMMM yyyy")</span>
                                 </div>
-                                <h2 class="heading2" style="font-weight:bold !important; color:#000066 !important">Progress Summary for @Model.CandidateName (@Model.CandidateNumber)</h2>
+                                <h2 class="heading2 progress-title">Progress Summary for @Model.CandidateName (@Model.CandidateNumber)</h2>
                                 <h3 class="heading3">@Model.CourseName</h3>
                                 @if (Model.IsAssessed)
                                 {
@@ -167,22 +223,22 @@
                                 }
                                 <br />
 
-                                <table width="100%">
+                                <table class="progress-table progress-table--summary">
                                     <tr>
-                                        <td width="25%" height="35px">
+                                        <td>
                                             Course Status:
                                         </td>
-                                        <td style="padding-left:20px; font-weight:bold">
+                                        <td class="status-value">
                                             <span>@Model.CourseStatus</span>
                                         </td>
                                     </tr>
                                     @if (Model.DiganosticScorePercent != null && Model.DiganosticScorePercent > 0)
                                     {
                                         <tr>
-                                            <td height="35px">
+                                            <td>
                                                 Diagnostic Score:
                                             </td>
-                                            <td style="padding-left:20px">
+                                            <td>
                                                 @Model.DiganosticScorePercent%
                                             </td>
                                         </tr>
@@ -191,26 +247,26 @@
                                     {
 
                                         <tr>
-                                            <td height="35px">
+                                            <td>
                                                 Learning Completed:
                                             </td>
-                                            <td style="padding-left:20px">
+                                            <td>
                                                 <span>@Model.LearningCompletedPercent%</span>
                                             </td>
                                         </tr>
                                     }
                                     <tr>
-                                        <td height="35px">
+                                        <td>
                                             Assessments Passed:
                                         </td>
-                                        <td style="padding-left:20px">
+                                        <td>
                                             <span>@Model.AssessmentsPassed</span>
                                         </td>
                                     </tr>
                                 </table>
                                 <br />
 
-                                <table role="table" class="table table-striped nhsuk-lede-text--small nhsuk-table-responsive__heading">
+                                <table role="table" class="progress-table progress-table--sections">
                                     <tr>
                                         <th align="left">
                                             Section
@@ -259,7 +315,7 @@
                                     <h2 class="heading2">Achievements</h2>
                                     <h4 class="heading4">The following post learning assessments have been passed:</h4>
                                     <br />
-                                    <table role="table" class="table table-striped nhsuk-lede-text--small">
+                                    <table role="table" class="progress-table">
                                         <tr>
                                             <th align="left">
                                                 Assessment
@@ -275,7 +331,7 @@
                                                     <td>
                                                         @entry.SectionName
                                                     </td>
-                                                    <td style="color:#0e6935;font-weight:normal;">
+                                                    <td class="passed-outcome">
                                                         @("PASSED")
                                                     </td>
                                                 </tr>
@@ -292,14 +348,3 @@
     </div>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-

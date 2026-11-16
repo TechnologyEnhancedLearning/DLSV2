@@ -40,6 +40,7 @@
         IEnumerable<SelfAssessmentReview> GetCompetencySelfAssessmentReviews(int competencyAssessmentId);
         SelfAssessmentReview? GetCompetencySelfAssessmentReviewById(int competencyAssessmentId, int selfAssessmentReviewId);
         SelfAssessmentReviewOutcomeNotification? GetSelfAssessmentReviewNotification(int reviewId);
+        bool CheckIfSelfAssessmenthaveRequiredCompetency(int competencyAssessmentId);
         //UPDATE DATA
         bool UpdateCompetencyAssessmentName(int competencyAssessmentId, int adminId, string competencyAssessmentName);
 
@@ -107,7 +108,7 @@
         //INSERT DATA
         int InsertCompetencyAssessment(int adminId, int centreId, string competencyAssessmentName);
         bool InsertSelfAssessmentFramework(int adminId, int selfAssessmentId, int frameworkId);
-        bool InsertCompetenciesIntoAssessmentFromFramework(int[] selectedCompetencyIds, int frameworkId, int competencyAssessmentId);
+        bool InsertCompetenciesIntoAssessmentFromFramework(int[] selectedFrameworkCompetencyIds, int frameworkId, int competencyAssessmentId);
         bool InsertSelfAssessmentGroupedCompetencies(int selfAssessmentId, int? frameworkId);
         bool InsertSelfAssessmentUngroupedCompetencies(int selfAssessmentId, int? frameworkId);
         int InsertAssessmentQuestionRoleRequirementForSelfAssessment(int assessmentId, int assessmentQuestionId, int levelValue, int? levelRAG);
@@ -129,6 +130,7 @@
         CompetencyAssessmentCollaboratorNotification? GetCollaboratorNotification(int id, int invitedByAdminId);
         bool HasCompetencyWithSignpostedLearning(int competencyAssessmentId);
         bool DeleteCompetencyAssessmentQuestionRoleRequirement(int assessmentId, int? competencyId, int assessmentQuestionId, int levelValue);
+        bool CancelCompetencyAssessment(int selfAssessmentId, int frameworkId);
     }
 
     public class CompetencyAssessmentDataService : ICompetencyAssessmentDataService
@@ -151,18 +153,10 @@
 
         private const string SelfAssessmentFields =
             @", sa.CategoryID, sa.CreatedDate,
-                 (SELECT BrandName
-                 FROM    Brands
-                 WHERE (BrandID = sa.BrandID)) AS Brand,
-                 (SELECT CategoryName
-                 FROM    CourseCategories
-                 WHERE (CourseCategoryID = sa.CategoryID)) AS Category,
-                 (SELECT [Name]
-                 FROM    SelfAssessments AS sa2
-                 WHERE (ID = sa.ParentSelfAssessmentID)) AS ParentSelfAssessment,
-                 (SELECT Forename + ' ' + Surname + (CASE WHEN Active = 1 THEN '' ELSE ' (Inactive)' END) AS Expr1
-                 FROM  AdminUsers
-                 WHERE (AdminID = sa.CreatedByAdminID)) AS Owner,
+                 b.BrandName AS Brand,
+                 cc.CategoryName AS Category,
+                 sa2.[Name] AS ParentSelfAssessment,
+                 auOwner.Forename + ' ' + auOwner.Surname + (CASE WHEN auOwner.Active = 1 THEN '' ELSE ' (Inactive)' END) AS Owner,
                  sa.Archived,
                  sa.LastEdit,
                 STUFF((
@@ -175,19 +169,20 @@
                         saf2.SelfAssessmentId = sa.ID AND saf2.RemovedDate IS NULL
                     FOR XML PATH(''), TYPE).value('.', 'NVARCHAR(MAX)'), 1, 2, ''
                 ) AS LinkedFrameworks,
-                 (SELECT ProfessionalGroup
-                 FROM    NRPProfessionalGroups
-                 WHERE (ID = sa.NRPProfessionalGroupID)) AS NRPProfessionalGroup,
-                 (SELECT SubGroup
-                 FROM    NRPSubGroups
-                 WHERE (ID = sa.NRPSubGroupID)) AS NRPSubGroup,
-                 (SELECT RoleProfile
-                 FROM    NRPRoles
-                 WHERE (ID = sa.NRPRoleID)) AS NRPRole, sar.ID AS SelfAssessmentReviewID";
+                 npg.ProfessionalGroup AS NRPProfessionalGroup,
+                 nsg.SubGroup AS NRPSubGroup,
+                 nr.RoleProfile AS NRPRole, sar.ID AS SelfAssessmentReviewID";
 
         private const string SelfAssessmentBaseTables =
             @"SelfAssessments AS sa LEFT OUTER JOIN
-             SelfAssessmentCollaborators AS sac ON sac.SelfAssessmentID = sa.ID AND sac.AdminID = @adminId AND sac.IsDeleted = 0";
+             SelfAssessmentCollaborators AS sac ON sac.SelfAssessmentID = sa.ID AND sac.AdminID = @adminId AND sac.IsDeleted = 0
+             LEFT OUTER JOIN Brands AS b ON b.BrandID = sa.BrandID
+             LEFT OUTER JOIN CourseCategories AS cc ON cc.CourseCategoryID = sa.CategoryID
+             LEFT OUTER JOIN SelfAssessments AS sa2 ON sa2.ID = sa.ParentSelfAssessmentID
+             LEFT OUTER JOIN AdminUsers AS auOwner ON auOwner.AdminID = sa.CreatedByAdminID
+             LEFT OUTER JOIN NRPProfessionalGroups AS npg ON npg.ID = sa.NRPProfessionalGroupID
+             LEFT OUTER JOIN NRPSubGroups AS nsg ON nsg.ID = sa.NRPSubGroupID
+             LEFT OUTER JOIN NRPRoles AS nr ON nr.ID = sa.NRPRoleID";
 
         private const string SelfAssessmentTables =
             @" LEFT OUTER JOIN
@@ -320,29 +315,22 @@
 
         public bool UpdateCompetencyRoleProfileLinks(int competencyAssessmentId, int adminId, int? professionalGroupId, int? subGroupId, int? roleId)
         {
-            var result = connection.ExecuteScalar(
-                @"SELECT COUNT(*) FROM SelfAssessments WHERE ID = @competencyAssessmentId AND NRPProfessionalGroupID = @professionalGroupId AND NRPSubGroupID = @subGroupId AND NRPRoleID = @roleId",
-                new { competencyAssessmentId, professionalGroupId, subGroupId, roleId }
-            );
-            int sameCount = Convert.ToInt32(result);
-            if (sameCount > 0)
-            {
-                //same so don't update:
-                return false;
-            }
-
-            //needs updating:
             var numberOfAffectedRows = connection.Execute(
-                @"UPDATE SelfAssessments SET NRPProfessionalGroupID = @professionalGroupId, NRPSubGroupID = @subGroupId, NRPRoleID = @roleId, UpdatedByAdminID = @adminId
-                    WHERE ID = @competencyAssessmentId",
+                @"UPDATE SelfAssessments
+                    SET
+                        NRPProfessionalGroupID = @professionalGroupId,
+                        NRPSubGroupID = @subGroupId,
+                        NRPRoleID = @roleId,
+                        UpdatedByAdminID = @adminId
+                    WHERE ID = @competencyAssessmentId
+                      AND (
+                          ISNULL(NRPProfessionalGroupID, -1) <> ISNULL(@professionalGroupId, -1)
+                          OR ISNULL(NRPSubGroupID, -1) <> ISNULL(@subGroupId, -1)
+                          OR ISNULL(NRPRoleID, -1) <> ISNULL(@roleId, -1)
+                      );",
                 new { adminId, competencyAssessmentId, professionalGroupId, subGroupId, roleId }
             );
-            if (numberOfAffectedRows > 0)
-            {
-                return true;
-            }
-
-            return false;
+            return numberOfAffectedRows > 0;
         }
         public bool UpdateCompetencyAssessmentBranding(
             int competencyAssessmentId,
@@ -730,10 +718,19 @@
                @"SELECT sas.ID AS StructureId, sas.CompetencyID, f.ID AS FrameworkId, f.FrameworkName, cg.ID AS GroupId, cg.Name AS GroupName, c.Name AS CompetencyName, c.Description AS CompetencyDescription, sas.Optional, sas.GroupOptionalCompetencies
              FROM   SelfAssessmentStructure AS sas INNER JOIN
                          Competencies AS c ON sas.CompetencyID = c.ID LEFT JOIN
-                         CompetencyGroups AS cg ON sas.CompetencyGroupID = cg.ID INNER JOIN
-                         FrameworkCompetencies ON c.ID = FrameworkCompetencies.CompetencyID INNER JOIN
-                         Frameworks AS f ON FrameworkCompetencies.FrameworkID = f.ID INNER JOIN
-                         SelfAssessmentFrameworks ON f.ID = SelfAssessmentFrameworks.FrameworkId AND sas.SelfAssessmentID = SelfAssessmentFrameworks.SelfAssessmentId
+                         CompetencyGroups AS cg ON sas.CompetencyGroupID = cg.ID
+             CROSS APPLY (
+                 SELECT TOP 1 f.ID, f.FrameworkName
+                 FROM FrameworkCompetencies AS fc
+                 LEFT JOIN FrameworkCompetencyGroups AS fcg ON fc.FrameworkCompetencyGroupID = fcg.ID
+                 INNER JOIN Frameworks AS f ON fc.FrameworkID = f.ID
+                 INNER JOIN SelfAssessmentFrameworks AS saf ON f.ID = saf.FrameworkId
+                     AND sas.SelfAssessmentID = saf.SelfAssessmentId
+                 WHERE fc.CompetencyID = c.ID
+                     AND ((sas.CompetencyGroupID = fcg.CompetencyGroupID)
+                         OR (sas.CompetencyGroupID IS NULL AND fc.FrameworkCompetencyGroupID IS NULL))
+                 ORDER BY saf.IsPrimary DESC, f.ID
+             ) AS f
              WHERE (sas.SelfAssessmentID = @competencyAssessmentId)
              AND EXISTS (SELECT 1 FROM CompetencyAssessmentQuestions caq WHERE caq.CompetencyID = c.ID)
              ORDER BY sas.Ordering", new { competencyAssessmentId }
@@ -763,16 +760,20 @@
         public int[] GetLinkedFrameworkCompetencyIds(int competencyAssessmentId, int frameworkId)
         {
             return [.. connection.Query<int>(
-              @"SELECT sas.CompetencyID
-                    FROM   SelfAssessmentStructure AS sas INNER JOIN
-                         FrameworkCompetencies AS fc ON sas.CompetencyID = fc.CompetencyID
-                    WHERE (sas.SelfAssessmentID = @competencyAssessmentId) AND (fc.FrameworkID = @frameworkId)
+              @"SELECT fc.ID
+                    FROM SelfAssessmentStructure AS sas
+                    INNER JOIN FrameworkCompetencies AS fc ON sas.CompetencyID = fc.CompetencyID
+                    LEFT JOIN FrameworkCompetencyGroups AS fcg ON fc.FrameworkCompetencyGroupID = fcg.ID
+                    WHERE sas.SelfAssessmentID = @competencyAssessmentId
+                    AND fc.FrameworkID = @frameworkId
+                    AND (sas.CompetencyGroupID = fcg.CompetencyGroupID OR (sas.CompetencyGroupID IS NULL AND fcg.CompetencyGroupID IS NULL))
+                    AND EXISTS (SELECT 1 FROM CompetencyAssessmentQuestions caq WHERE caq.CompetencyID = sas.CompetencyID)
                     ORDER BY fc.Ordering",
               new { competencyAssessmentId,  frameworkId}
           )];
         }
 
-        public bool InsertCompetenciesIntoAssessmentFromFramework(int[] selectedCompetencyIds, int frameworkId, int competencyAssessmentId)
+        public bool InsertCompetenciesIntoAssessmentFromFramework(int[] selectedFrameworkCompetencyIds, int frameworkId, int competencyAssessmentId)
         {
 
             var currentMaxOrdering = connection.ExecuteScalar<int>(
@@ -789,14 +790,21 @@
                     FROM FrameworkCompetencies AS FC
                     LEFT JOIN FrameworkCompetencyGroups AS FCG ON FC.FrameworkCompetencyGroupID = FCG.ID
                     WHERE FC.FrameworkID = @frameworkId
-                    AND FC.CompetencyID IN @selectedCompetencyIds AND FC.CompetencyID NOT IN (SELECT CompetencyID FROM SelfAssessmentStructure WHERE SelfAssessmentID = @competencyAssessmentId)",
-               new { selectedCompetencyIds, frameworkId, competencyAssessmentId, currentMaxOrdering }
+                    AND FC.ID IN @selectedFrameworkCompetencyIds AND NOT EXISTS
+                        (
+                            SELECT 1
+                            FROM SelfAssessmentStructure AS SAS
+                            WHERE SAS.SelfAssessmentID = @competencyAssessmentId
+                              AND SAS.CompetencyID = FC.CompetencyID
+                              AND SAS.CompetencyGroupID = FCG.CompetencyGroupID
+                        )",
+               new { selectedFrameworkCompetencyIds, frameworkId, competencyAssessmentId, currentMaxOrdering }
            );
             if (numberOfAffectedRows < 1)
             {
                 logger.LogWarning(
                     "Not inserting competencies into assessment as db update failed. " +
-                    $"assessmentId: {competencyAssessmentId}, frameworkId: {frameworkId}, selectedCompetencyIds: {selectedCompetencyIds}"
+                    $"assessmentId: {competencyAssessmentId}, frameworkId: {frameworkId}, selectedFrameworkCompetencyIds: {selectedFrameworkCompetencyIds}"
                 );
                 return false;
             }
@@ -951,7 +959,6 @@
                     END
                     FROM SelfAssessments s
                     INNER JOIN Frameworks F ON F.ID = @frameworkId
-                    INNER JOIN AdminUsers AU ON F.OwnerAdminID = AU.AdminID
                     INNER JOIN SelfAssessmentTaskStatus sts ON s.ID = sts.SelfAssessmentId
                     WHERE s.ID = @selfAssessmentId;",
                 new { selfAssessmentId, frameworkId }
@@ -1185,31 +1192,32 @@
                     au.Active AS UserActive,
                     CASE WHEN sc.CanModify = 1 THEN 'Contributor' ELSE 'Reviewer' END AS CompetencyAssessmentRole,
                     sa.[Name] AS CompetencyAssessmentName,
-                    (SELECT Forename + ' ' + Surname + (CASE WHEN Active = 1 THEN '' ELSE ' (Inactive)' END) AS Expr1 FROM AdminUsers AS au1 WHERE (AdminID = @invitedByAdminId)) AS InvitedByName,
-                    (SELECT Email FROM AdminUsers AS au2 WHERE (AdminID = @invitedByAdminId)) AS InvitedByEmail,
+                    auInvitedBy.Forename + ' ' + auInvitedBy.Surname + (CASE WHEN auInvitedBy.Active = 1 THEN '' ELSE ' (Inactive)' END) AS InvitedByName,
+                    auInvitedBy.Email AS InvitedByEmail,
                     sr.ID AS SelfAssessmentReviewID
                 FROM SelfAssessmentCollaborators AS sc
                     INNER JOIN SelfAssessments AS sa ON sc.SelfAssessmentID = sa.ID
                     INNER JOIN AdminUsers AS au ON sc.AdminID = au.AdminID
                     LEFT JOIN SelfAssessmentReviews AS sr 
-					    ON sr.SelfAssessmentID = sa.ID AND sr.SelfAssessmentCollaboratorID = sc.ID
+                        ON sr.SelfAssessmentID = sa.ID AND sr.SelfAssessmentCollaboratorID = sc.ID
                         AND sr.ReviewComplete IS NULL AND sr.Archived IS NULL
-                WHERE (sc.ID = @id) AND (sc.IsDeleted=0)",
-                new { invitedByAdminId, id }
-            ).FirstOrDefault();
+                    LEFT JOIN AdminUsers AS auInvitedBy ON auInvitedBy.AdminID = @invitedByAdminId
+                WHERE sc.ID = @id AND sc.IsDeleted = 0",
+                new { invitedByAdminId, id }).FirstOrDefault();
         }
 
         public bool HasCompetencyWithSignpostedLearning(int competencyAssessmentId)
         {
-            int hasSignpostedLearning = connection.QueryFirstOrDefault<int>(
-                @"SELECT count(*) FROM SelfAssessmentStructure sas INNER JOIN 
-			        CompetencyLearningResources clr ON sas.CompetencyID = clr.CompetencyID AND
-			        clr.RemovedDate IS NULL
-		        WHERE sas.SelfAssessmentID = @competencyAssessmentId",
+            var hasSignpostedLearning = connection.QueryFirstOrDefault<int?>(
+                @"SELECT TOP(1) 1 FROM SelfAssessmentStructure sas INNER JOIN 
+		        CompetencyLearningResources clr ON sas.CompetencyID = clr.CompetencyID AND
+		        clr.RemovedDate IS NULL
+	        WHERE sas.SelfAssessmentID = @competencyAssessmentId",
                 new { competencyAssessmentId });
 
-            return hasSignpostedLearning > 0;
+            return hasSignpostedLearning.HasValue;
         }
+
         public bool UpdateCompetencyAssessmentOptions(
             bool includeLearnerDeclarationPrompt,
             bool includesSignposting,
@@ -1840,6 +1848,54 @@ ORDER BY
                 return false;
             }
             return true;
+        }
+        public bool CancelCompetencyAssessment(int selfAssessmentId, int frameworkId)
+        {
+            connection.EnsureOpen();
+
+            using (var transaction = connection.BeginTransaction())
+            {
+                var numberOfAffectedRows = connection.Execute(
+                    @"DELETE FROM SelfAssessmentFrameworks
+              WHERE SelfAssessmentId = @selfAssessmentId
+                AND FrameworkId = @frameworkId",
+                    new { selfAssessmentId, frameworkId },
+                    transaction: transaction
+                );
+
+                var numberOfAffectedSelfAssessments = connection.Execute(
+                    @"DELETE FROM SelfAssessments
+              WHERE Id = @selfAssessmentId",
+                    new { selfAssessmentId },
+                    transaction: transaction
+                );
+
+                if (numberOfAffectedRows < 1 || numberOfAffectedSelfAssessments < 1)
+                {
+                    logger.LogWarning(
+                        "Failed to delete SelfAssessmentFrameworks or SelfAssessments. " +
+                        $"selfAssessmentId: {selfAssessmentId}, frameworkId: {frameworkId}"
+                    );
+
+                    transaction.Rollback();
+                    return false;
+                }
+
+                transaction.Commit();
+                return true;
+            }
+        }
+        public bool CheckIfSelfAssessmenthaveRequiredCompetency(int competencyAssessmentId)
+        {
+            return connection.ExecuteScalar<bool>(
+                @"SELECT CASE WHEN EXISTS ( SELECT 1 FROM SelfAssessmentStructure AS SAS
+                    INNER JOIN Competencies AS C
+                        ON SAS.CompetencyID = C.ID
+                    INNER JOIN CompetencyGroups AS CG
+                            ON SAS.CompetencyGroupID = CG.ID 
+						WHERE	 SAS.SelfAssessmentID = @competencyAssessmentId  AND (SAS.Optional = 0)
+						 ) THEN 1 ELSE 0 END",
+                new { competencyAssessmentId });
         }
     }
 }
