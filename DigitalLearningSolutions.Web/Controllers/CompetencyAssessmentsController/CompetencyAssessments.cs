@@ -715,11 +715,11 @@
         [Route("/Self-Assessment/{competencyAssessmentId}/{vocabularyPlural}/Optional/Select")]
         public IActionResult SelectOptionalCompetencies(SelectOptionalCompetenciesFormData model)
         {
+            var competencies = competencyAssessmentService.GetCompetenciesForCompetencyAssessment(model.ID); 
             if (!ModelState.IsValid)
             {
                 var adminId = GetAdminID();
                 var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(model.ID, adminId);
-                var competencies = competencyAssessmentService.GetCompetenciesForCompetencyAssessment(model.ID);
                 var competencyIds = competencies.Select(c => c.CompetencyID).ToArray();
                 var competencyFlags = frameworkService.GetSelectedCompetencyFlagsByCompetecyIds(competencyIds);
                 foreach (var competency in competencies)
@@ -727,8 +727,33 @@
                 var viewModel = new SelectOptionalCompetenciesViewModel(competencyAssessmentBase, competencies, model.TaskStatus);
                 return View("SelectOptionalCompetencies", viewModel);
             }
-            competencyAssessmentService.UpdateOptionalCompetenciesInAssessment(model.ID, model.GroupIds ?? [], model.SelectedCompetencyIds ?? []);
-            competencyAssessmentService.UpdateMinimumOptionalCompetencies(model.ID, 0);
+                var competencyGroupIds = competencies
+                 .Where(c => c.Optional == true && c.GroupOptionalCompetencies)
+                 .Select(c => c.GroupId)
+                 .Distinct()
+                 .ToList();
+                var selectedGroupIds = model.GroupIds ?? [];
+                var selectedCompetencyIds = model.SelectedCompetencyIds ?? [];
+                var unselectedGroupCompetencyIds = competencies
+                 .Where(c => c.Optional == true &&
+                 !c.GroupOptionalCompetencies)
+                 .Select(c => c.StructureId)
+                 .Distinct()
+                 .ToList();
+
+
+            if (competencyGroupIds.Except(selectedGroupIds).Any() ||
+                selectedGroupIds.Except(competencyGroupIds).Any() ||
+                selectedCompetencyIds.Except(unselectedGroupCompetencyIds).Any() ||
+                unselectedGroupCompetencyIds.Except(selectedCompetencyIds).Any())
+            {
+                competencyAssessmentService.UpdateOptionalCompetenciesInAssessment(
+                    model.ID,
+                    model.GroupIds ?? [],
+                    model.SelectedCompetencyIds ?? []);
+
+                competencyAssessmentService.UpdateMinimumOptionalCompetencies(model.ID, 0);
+            }
             return RedirectToAction("ManageOptionalCompetencies", new { competencyAssessmentId = model.ID, vocabularyPlural = model.VocabularyPlural });
         }
         [HttpGet]
