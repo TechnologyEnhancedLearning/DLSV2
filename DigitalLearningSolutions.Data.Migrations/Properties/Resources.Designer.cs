@@ -19,7 +19,7 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "18.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -3056,6 +3056,366 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GetNotificationsForAdminUser]    Script Date: 03/08/2026 15:54:52 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 04/09/2018
+        ///-- Description:	Gets available notification and admin user subscription status.
+        ///-- =============================================
+        ///ALTER PROCEDURE [dbo].[GetNotificationsForAdminUser]
+        ///	-- Add the parameters for the stored procedur [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_7590_Alter_GetAssessmentResultByDelegate_Down {
+            get {
+                return ResourceManager.GetString("TD_7590_Alter_GetAssessmentResultByDelegate_Down", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GetNotificationsForAdminUser]    Script Date: 03/08/2026 15:54:52 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 04/09/2018
+        ///-- Description:	Gets available notification and admin user subscription status.
+        ///-- =============================================
+        ///ALTER PROCEDURE [dbo].[GetNotificationsForAdminUser]
+        ///	-- Add the parameters for the stored procedur [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_7590_Alter_GetAssessmentResultByDelegate_Up {
+            get {
+                return ResourceManager.GetString("TD_7590_Alter_GetAssessmentResultByDelegate_Up", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GetNotificationsForAdminUser]    Script Date: 03/08/2026 15:54:52 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 04/09/2018
+        ///-- Description:	Gets available notification and admin user subscription status.
+        ///-- =============================================
+        ///ALTER PROCEDURE [dbo].[GetNotificationsForAdminUser]
+        ///	-- Add the parameters for the stored procedur [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_7592_Alter_GetNotificationsForAdminUser_Down {
+            get {
+                return ResourceManager.GetString("TD_7592_Alter_GetNotificationsForAdminUser_Down", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GetNotificationsForAdminUser]    Script Date: 03/08/2026 15:54:52 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 04/09/2018
+        ///-- Description:	Gets available notification and admin user subscription status.
+        ///-- =============================================
+        ///ALTER PROCEDURE [dbo].[GetNotificationsForAdminUser]
+        ///	-- Add the parameters for the stored procedur [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_7592_Alter_GetNotificationsForAdminUser_Up {
+            get {
+                return ResourceManager.GetString("TD_7592_Alter_GetNotificationsForAdminUser_Up", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 
+        ////****** Object:  StoredProcedure [dbo].[StoreDiagScoreSCO]    Script Date: 05/08/2026 08:51:11 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 08/08/2018
+        ///-- Description:	Updates the diagnostic score for a delegate using ProgressID and TutorialID to identify ASPProgress record to update
+        ///-- =============================================
+        ///ALTER PROCEDURE [dbo].[StoreDiagScoreSCO]
+        ///	@score int,
+        ///	@pro [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_7596_Alter_StoreDiagScoreSCO_Down {
+            get {
+                return ResourceManager.GetString("TD_7596_Alter_StoreDiagScoreSCO_Down", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[StoreDiagScoreSCO]    Script Date: 05/08/2026 08:51:11 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 08/08/2018
+        ///-- Description:	Updates the diagnostic score for a delegate using ProgressID and TutorialID to identify ASPProgress record to update
+        ///-- =============================================
+        ///ALTER PROCEDURE [dbo].[StoreDiagScoreSCO]
+        ///	@score INT,
+        ///	@progr [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_7596_Alter_StoreDiagScoreSCO_Up {
+            get {
+                return ResourceManager.GetString("TD_7596_Alter_StoreDiagScoreSCO_Up", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GetCompletedCoursesForCandidate]    Script Date: 06/08/2026 09:15:39 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 16/12/2016
+        ///-- Description:	Returns a list of completed courses for the candidate.
+        ///-- 21/06/2021: Adds Applications.ArchivedDate field to output.
+        ///-- =============================================
+        ///ALTER PROCEDURE [dbo].[GetCompletedCoursesForCan [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_7598_Alter_GetCompletedCoursesForCandidate_Down {
+            get {
+                return ResourceManager.GetString("TD_7598_Alter_GetCompletedCoursesForCandidate_Down", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GetCompletedCoursesForCandidate]    Script Date: 06/08/2026 09:15:39 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 16/12/2016
+        ///-- Description:	Returns a list of completed courses for the candidate.
+        ///-- 21/06/2021: Adds Applications.ArchivedDate field to output.
+        ///-- =============================================
+        ///ALTER PROCEDURE [dbo].[GetCompletedCoursesForCan [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_7598_Alter_GetCompletedCoursesForCandidate_Up {
+            get {
+                return ResourceManager.GetString("TD_7598_Alter_GetCompletedCoursesForCandidate_Up", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[uspReturnSectionsForCandCust_V2]    Script Date: 17/08/2026 15:16:08 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 15/08/2013
+        ///-- Description:	Gets section table for learning menu
+        ///-- =============================================
+        ///ALTER PROCEDURE [dbo].[uspReturnSectionsForCandCust_V2]
+        ///	-- Add the parameters for the stored procedure here
+        ///	@ProgressID In [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_7599_Alter_uspReturnSectionsForCandCust_V2_Down {
+            get {
+                return ResourceManager.GetString("TD_7599_Alter_uspReturnSectionsForCandCust_V2_Down", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[uspReturnSectionsForCandCust_V2]    Script Date: 17/08/2026 15:16:08 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///-- =============================================
+        ///-- Author:		Kevin Whittaker
+        ///-- Create date: 15/08/2013
+        ///-- Description:	Gets section table for learning menu
+        ///-- =============================================
+        ///ALTER PROCEDURE [dbo].[uspReturnSectionsForCandCust_V2]
+        ///	-- Add the parameters for the stored procedure here
+        ///	@ProgressID In [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_7599_Alter_uspReturnSectionsForCandCust_V2_Up {
+            get {
+                return ResourceManager.GetString("TD_7599_Alter_uspReturnSectionsForCandCust_V2_Up", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[usp_GetSelfAssessmentReport]    Script Date: 12/08/2026 08:38:44 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///CREATE OR ALTER   PROCEDURE [dbo].[usp_GetSelfAssessmentReport]
+        ///    @SelfAssessmentID INT,
+        ///    @CentreID INT
+        ///AS
+        ///BEGIN
+        ///    SET NOCOUNT ON;
+        ///
+        ///    -- Step 1: Materialize the LatestAssessmentResults into a temp table
+        ///    IF OBJECT_ID(&apos;tempdb..#LatestAssessmentResults&apos;) IS NOT NULL
+        ///        DROP TABLE #LatestAssessmentResults;
+        ///
+        ///    SEL [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_7640_Alter_usp_GetSelfAssessmentReport_Down {
+            get {
+                return ResourceManager.GetString("TD_7640_Alter_usp_GetSelfAssessmentReport_Down", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///ALTER PROCEDURE [dbo].usp_GetSelfAssessmentReport
+        ///    @SelfAssessmentID INT,
+        ///    @CentreID INT
+        ///AS
+        ///BEGIN
+        ///    SET NOCOUNT ON;
+        ///
+        ///    /* Aggregate result detail before joining it to the report rows. */
+        ///    SELECT
+        ///        ca.ID AS CandidateAssessmentID,
+        ///        COUNT(DISTINCT CASE
+        ///            WHEN sas.Optional = 1 THEN s.CompetencyID
+        ///        END) AS OptionalProficienciesAssessed,
+        ///        COUNT(DISTINCT CASE
+        ///            WHEN caq.Required = 1 AN [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_7640_Alter_usp_GetSelfAssessmentReport_Up {
+            get {
+                return ResourceManager.GetString("TD_7640_Alter_usp_GetSelfAssessmentReport_Up", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 
+        ///ALTER PROCEDURE [dbo].[usp_GetSelfAssessmentReport]
+        ///    @SelfAssessmentID INT,
+        ///    @CentreID INT
+        ///AS
+        ///BEGIN
+        ///    SET NOCOUNT ON;
+        ///
+        ///    /* Aggregate result detail before joining it to the report rows. */
+        ///    SELECT
+        ///        ca.ID AS CandidateAssessmentID,
+        ///        COUNT(DISTINCT CASE
+        ///            WHEN sas.Optional = 1 THEN s.CompetencyID
+        ///        END) AS OptionalProficienciesAssessed,
+        ///        COUNT(DISTINCT CASE
+        ///            WHEN caq.Required = 1 AND s.Result IS NOT NULL THEN s.ID
+        ///        END) AS Sel [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_7776_Alter_usp_GetSelfAssessmentReport_Down {
+            get {
+                return ResourceManager.GetString("TD_7776_Alter_usp_GetSelfAssessmentReport_Down", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 
+        ///ALTER PROCEDURE [dbo].[usp_GetSelfAssessmentReport]
+        ///    @SelfAssessmentID INT,
+        ///    @CentreID INT
+        ///AS
+        ///BEGIN
+        ///    SET NOCOUNT ON;
+        ///
+        ///    /* Aggregate result detail before joining it to the report rows. */
+        ///    SELECT
+        ///        ca.ID AS CandidateAssessmentID,
+        ///        COUNT(DISTINCT CASE
+        ///            WHEN sas.Optional = 1 THEN s.CompetencyID
+        ///        END) AS OptionalProficienciesAssessed,
+        ///        COUNT(DISTINCT CASE
+        ///            WHEN caq.Required = 1 AND s.Result IS NOT NULL THEN s.ID
+        ///        END) AS Sel [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_7776_Alter_usp_GetSelfAssessmentReport_Up {
+            get {
+                return ResourceManager.GetString("TD_7776_Alter_usp_GetSelfAssessmentReport_Up", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///
+        ///
+        ///-- =============================================
+        ///-- Author:		Auldrin Possa
+        ///-- Create date: 30/09/2026
+        ///-- Description:	Retrieves self-assessments for a specific candidate.
+        ///-- =============================================
+        ///CREATE PROCEDURE [dbo].[GetSelfAssessmentsForCandidate]
+        ///	@DelegateUserId int,
+        ///	@CentreId int,
+        ///	@AdminIdCategoryID int = NULL
+        ///AS
+        ///BEGIN
+        ///	 SET NOCOUNT ON;
+        ///
+        ///    ;WITH CompetencyCounts AS
+        ///    (
+        ///        SELECT
+        ///            [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_7820_CreateSP_GetSelfAssessmentsForCandidate {
+            get {
+                return ResourceManager.GetString("TD_7820_CreateSP_GetSelfAssessmentsForCandidate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[GetActiveAvailableCustomisationsForCentreFiltered_V6]    Script Date: 29/09/2022 19:11:04 ******/
         ///SET ANSI_NULLS ON
         ///GO
@@ -3092,6 +3452,122 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         internal static string TD_786_GetSelfRegisteredFlag_UP {
             get {
                 return ResourceManager.GetString("TD-786-GetSelfRegisteredFlag_UP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///-- =============================================
+        ///-- Author:		Auldrin Possa
+        ///-- Create date: 30/11/2023
+        ///-- Description:	Returns candidate assessment results by candidateAssessmentId
+        ///-- =============================================
+        ///ALTER PROCEDURE [dbo].[GetCandidateAssessmentResultsById]
+        ///	@candidateAssessmentId as Int = 0,
+        ///	@adminId as int = 0,
+        ///	@selfAssessmentResultId as int = NULL
+        ///AS
+        ///BEGIN
+        ///
+        ///	SET NOCOUNT ON;
+        ///
+        ///	WITH LatestAssessmentResults [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_7995_Alter_GetCandidateAssessmentResultsById_Down {
+            get {
+                return ResourceManager.GetString("TD_7995_Alter_GetCandidateAssessmentResultsById_Down", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///-- =============================================
+        ///-- Author:		Auldrin Possa
+        ///-- Create date: 30/11/2023
+        ///-- Description:	Returns candidate assessment results by candidateAssessmentId
+        ///-- =============================================
+        ///ALTER PROCEDURE [dbo].[GetCandidateAssessmentResultsById]
+        ///	@candidateAssessmentId as Int = 0,
+        ///	@adminId as int = 0,
+        ///	@selfAssessmentResultId as int = NULL
+        ///AS
+        ///BEGIN
+        ///
+        ///	SET NOCOUNT ON;
+        ///
+        ///	WITH LatestAssessmentResults [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_7995_Alter_GetCandidateAssessmentResultsById_FilterIssue_Down {
+            get {
+                return ResourceManager.GetString("TD_7995_Alter_GetCandidateAssessmentResultsById_FilterIssue_Down", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///-- =============================================
+        ///-- Author:		Auldrin Possa
+        ///-- Create date: 30/11/2023
+        ///-- Description:	Returns candidate assessment results by candidateAssessmentId
+        ///-- =============================================
+        ///ALTER PROCEDURE [dbo].[GetCandidateAssessmentResultsById]
+        ///	@candidateAssessmentId as Int = 0,
+        ///	@adminId as int = 0,
+        ///	@selfAssessmentResultId as int = NULL
+        ///AS
+        ///BEGIN
+        ///
+        ///	SET NOCOUNT ON;
+        ///
+        ///	WITH LatestAssessmentResults [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_7995_Alter_GetCandidateAssessmentResultsById_FilterIssue_Up {
+            get {
+                return ResourceManager.GetString("TD_7995_Alter_GetCandidateAssessmentResultsById_FilterIssue_Up", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///-- =============================================
+        ///-- Author:		Auldrin Possa
+        ///-- Create date: 30/11/2023
+        ///-- Description:	Returns candidate assessment results by candidateAssessmentId
+        ///-- =============================================
+        ///ALTER PROCEDURE [dbo].[GetCandidateAssessmentResultsById]
+        ///	@candidateAssessmentId as Int = 0,
+        ///	@adminId as int = 0,
+        ///	@selfAssessmentResultId as int = NULL
+        ///AS
+        ///BEGIN
+        ///
+        ///	SET NOCOUNT ON;
+        ///
+        ///	WITH LatestAssessmentResults [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_7995_Alter_GetCandidateAssessmentResultsById_Up {
+            get {
+                return ResourceManager.GetString("TD_7995_Alter_GetCandidateAssessmentResultsById_Up", resourceCulture);
             }
         }
         

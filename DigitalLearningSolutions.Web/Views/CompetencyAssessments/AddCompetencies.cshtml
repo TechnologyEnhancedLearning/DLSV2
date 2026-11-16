@@ -4,7 +4,7 @@
     ViewData["Title"] = $"Add {@Model.VocabularyPlural.ToLower()} to self-assessment";
     ViewData["Application"] = "Framework service";
     var errorHasOccurred = !ViewData.ModelState.IsValid;
-    var noSelection = Model.SelectedCompetencyIds == null || !Model.SelectedCompetencyIds.Any();
+    var noSelection = Model.SelectedFrameworkCompetencyIds == null || !Model.SelectedFrameworkCompetencyIds.Any();
     var isFirst = true;
 }
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
@@ -29,9 +29,9 @@
 <form method="post">
     @if (errorHasOccurred)
     {
-        <vc:error-summary order-of-property-names="@(new[] { nameof(Model.SelectedCompetencyIds) })" />
+        <vc:error-summary order-of-property-names="@(new[] { nameof(Model.SelectedFrameworkCompetencyIds) })" />
     }
-    <nhs-form-group nhs-validation-for="SelectedCompetencyIds">
+    <nhs-form-group nhs-validation-for="SelectedFrameworkCompetencyIds">
         <fieldset class="nhsuk-fieldset">
             <legend class="nhsuk-fieldset__legend">
                 <h1 class="app-page-heading">
@@ -76,12 +76,12 @@
                                         <input class="nhsuk-checkboxes__input select-all-checkbox"
                                                data-group="@competencyGroup.CompetencyGroupID"
                                                id="competency-check-@competencyGroup.CompetencyGroupID-@competency.CompetencyID"
-                                               name="SelectedCompetencyIds"
-                                               checked="@(Model.SelectedCompetencyIds != null ?
-                                                                                                                                      Model.SelectedCompetencyIds.Contains((int)competency.CompetencyID) : false)"
+                                               name="SelectedFrameworkCompetencyIds"
+                                               checked="@(Model.SelectedFrameworkCompetencyIds != null ?
+                                                                                                                                      Model.SelectedFrameworkCompetencyIds.Contains(competency.Id) : false)"
                                type="checkbox"
                                @(shouldAutofocus ? "autofocus" : "")
-                               value="@competency.CompetencyID">
+                               value="@competency.Id">
                         <label class="nhsuk-label nhsuk-checkboxes__label" for="competency-check-@competencyGroup.CompetencyGroupID-@competency.CompetencyID">
                             @foreach (var flag in competency.CompetencyFlags)
                                             {
@@ -119,7 +119,7 @@
                 {
 
                     <div class="nhsuk-checkboxes__item">
-                        <input class="nhsuk-checkboxes__input select-all-checkbox" data-group="0" id="competency-check-0-@competency.CompetencyID" name="SelectedCompetencyIds" checked="@(Model.SelectedCompetencyIds != null ? Model.SelectedCompetencyIds.Contains((int)competency.CompetencyID) : false)" type="checkbox" value="@competency.CompetencyID">
+                        <input class="nhsuk-checkboxes__input select-all-checkbox" data-group="0" id="competency-check-0-@competency.CompetencyID" name="SelectedFrameworkCompetencyIds" checked="@(Model.SelectedFrameworkCompetencyIds != null ? Model.SelectedFrameworkCompetencyIds.Contains(competency.Id) : false)" type="checkbox" value="@competency.Id">
                         <label class="nhsuk-label nhsuk-checkboxes__label" for="competency-check-0-@competency.CompetencyID">
                             @foreach (var flag in competency.CompetencyFlags)
                             {

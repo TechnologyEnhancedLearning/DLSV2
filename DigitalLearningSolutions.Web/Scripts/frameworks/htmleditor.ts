@@ -1,4 +1,6 @@
 ﻿import { Jodit } from 'jodit';
+// eslint-disable-next-line import/extensions
+import 'jodit/esm/plugins/all.js';
 import DOMPurify from 'dompurify';
 
 let jodited = false;
@@ -59,6 +61,11 @@ if (jodited === false) {
       'ol', '|',
       'undo', 'redo',
     ],
+    countHTMLChars: true,
+    countTextSpaces: true,
+    cleanHTML: {
+        collapseEmptyValueToEmptyString: true
+    },
     style: {
       backgroundColor: '#FFF',
     },

@@ -53,6 +53,7 @@ export class SearchSortFilterAndPaginate {
     queryParameterToRetain = '',
     functionToRunAfterDisplayingData: VoidFunction = defaultVoidFunction,
     idConsideredTopForScrolling = '',
+    searchableElementsContainerId = '',
   ) {
     this.spinnerContainer = document.getElementById('loading-spinner-container') as HTMLElement;
     this.spinner = document.getElementById('dynamic-loading-spinner') as HTMLElement;
@@ -67,7 +68,11 @@ export class SearchSortFilterAndPaginate {
     this.filterEnabled = filterEnabled;
     this.idConsideredTopForScrolling = idConsideredTopForScrolling;
 
-    SearchSortFilterAndPaginate.getSearchableElements(route, searchableElementClassSuffixes)
+    SearchSortFilterAndPaginate.getSearchableElements(
+      route,
+      searchableElementClassSuffixes,
+      searchableElementsContainerId
+    )
       .then((searchableData) => {
         if (searchableData === undefined) {
           return;
@@ -162,7 +167,11 @@ export class SearchSortFilterAndPaginate {
     this.displaySearchableElementsAndRunPostDisplayFunction(paginatedElements);
   }
 
-  static getSearchableElements(route: string, searchableElementClassSuffixes: string[]):
+  static getSearchableElements(
+    route: string,
+    searchableElementClassSuffixes: string[],
+    searchableElementsContainerId = '',
+  ):
     Promise<ISearchableData | undefined> {
     return SearchSortFilterAndPaginate.fetchAllSearchableElements(route)
       .then((response): ISearchableData | undefined => {
@@ -170,7 +179,17 @@ export class SearchSortFilterAndPaginate {
           return undefined;
         }
 
-        const elements = Array.from(response.getElementsByClassName('searchable-element'));
+        const source = searchableElementsContainerId === ''
+          ? response
+          : response.getElementById(searchableElementsContainerId);
+        const searchableElementsSource = source !== null && 'content' in source
+          ? (source as HTMLTemplateElement).content
+          : source;
+        if (searchableElementsSource === null) {
+          return undefined;
+        }
+
+        const elements = Array.from(searchableElementsSource.querySelectorAll('.searchable-element'));
         const searchableElements = new Array<ISearchableElement>();
 
         elements.forEach((element, index) => {
@@ -183,7 +202,7 @@ export class SearchSortFilterAndPaginate {
             }));
           searchableElements.push(...searchableItems);
         });
-        const tags = Array.from(response.getElementsByClassName('filter-tag'));
+        const tags = Array.from(searchableElementsSource.querySelectorAll('.filter-tag'));
         const possibleAppliedFilters = tags.map((element) => ({
           element,
           filterValue: SearchSortFilterAndPaginate.filterValueFromElement(element),
@@ -196,6 +215,10 @@ export class SearchSortFilterAndPaginate {
   }
 
   private static fetchAllSearchableElements(route: string): Promise<Document | null> {
+    if (route === '') {
+      return Promise.resolve(document);
+    }
+
     const path = getPathForEndpoint(route);
     return new Promise((res) => {
       const request = new XMLHttpRequest();

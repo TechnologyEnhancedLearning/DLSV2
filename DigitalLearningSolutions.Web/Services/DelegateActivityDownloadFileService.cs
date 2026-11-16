@@ -188,12 +188,12 @@ namespace DigitalLearningSolutions.Web.Services
                         selfAssessmentDelegatesActivityRecord.DelegateRegistrationPrompts[prompt.RegistrationField.Id - 1];
                 }
             }
-            row[Enrolled] = selfAssessmentDelegatesActivityRecord.StartedDate;
-            row[LastAccessed] = selfAssessmentDelegatesActivityRecord.LastAccessed;
-            row[CompleteBy] = selfAssessmentDelegatesActivityRecord.CompleteBy;
+            row[Enrolled] = Web.Helpers.DateHelper.GetLocalDateTime(selfAssessmentDelegatesActivityRecord.StartedDate); 
+            row[LastAccessed] = Web.Helpers.DateHelper.GetLocalDateTime(selfAssessmentDelegatesActivityRecord.LastAccessed);
+            row[CompleteBy] = Web.Helpers.DateHelper.GetLocalDateTime(selfAssessmentDelegatesActivityRecord.CompleteBy);
             row[Launches] = selfAssessmentDelegatesActivityRecord.LaunchCount;
-            row[SubmittedDate] = selfAssessmentDelegatesActivityRecord.SubmittedDate;
-            row[SignedOffDate] = selfAssessmentDelegatesActivityRecord.SignedOff;
+            row[SubmittedDate] = Web.Helpers.DateHelper.GetLocalDateTime(selfAssessmentDelegatesActivityRecord.SubmittedDate);
+            row[SignedOffDate] = Web.Helpers.DateHelper.GetLocalDateTime(selfAssessmentDelegatesActivityRecord.SignedOff);
             row[SignedOffBy] = selfAssessmentService.GetSelfAssessmentActivityDelegatesSupervisor
                                                     (selfAssessmentDelegatesActivityRecord.SelfAssessmentId, selfAssessmentDelegatesActivityRecord.DelegateUserId);
             row[SelfAssessedCompetenciesCount] = selfAssessmentDelegatesActivityRecord.SelfAssessed;

@@ -9,7 +9,7 @@
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
-
+    using DigitalLearningSolutions.Web.Helpers;
     public interface ICandidateAssessmentDownloadFileService
     {
         public byte[] GetCandidateAssessmentDownloadFileForCentre(int candidateAssessmentId, int delegateUserId, bool isProtected);
@@ -44,7 +44,7 @@
                     x.SelfAssessmentComments,
                     x.Reviewer,
                     x.ReviewerPrn,
-                    x.Reviewed,
+                    Reviewed = x.Reviewed.HasValue ? DateHelper.GetLocalDateTime(x.Reviewed) : x.Reviewed,
                     x.ReviewerComments,
                     x.ReviewerVerified,
                     x.RoleRequirements
@@ -88,7 +88,7 @@
             rowNum++;
             sheet.Cell(rowNum, 1).Value = "Start Date";
             sheet.Cell(rowNum, 1).Style.Fill.BackgroundColor = XLColor.LightBlue;
-            sheet.Cell(rowNum, 2).Value = candidateAssessmentExportSummary.StartDate;
+            sheet.Cell(rowNum, 2).Value = DateHelper.GetLocalDateTime(candidateAssessmentExportSummary.StartDate);
             rowNum++;
             sheet.Cell(rowNum, 1).Value = "Self assessment questions";
             sheet.Cell(rowNum, 1).Style.Fill.BackgroundColor = XLColor.LightBlue;
@@ -142,7 +142,7 @@
                 rowNum++;
                 sheet.Cell(rowNum, 1).Value = "Sign off date";
                 sheet.Cell(rowNum, 1).Style.Fill.BackgroundColor = XLColor.LightBlue;
-                sheet.Cell(rowNum, 2).Value = candidateAssessmentExportSummary.SignedOff;
+                sheet.Cell(rowNum, 2).Value = DateHelper.GetLocalDateTime(candidateAssessmentExportSummary.SignedOff);
                 rowNum++;
                 sheet.Cell(rowNum, 1).Value = "Signed off by";
                 sheet.Cell(rowNum, 1).Style.Fill.BackgroundColor = XLColor.LightBlue;
