@@ -89,20 +89,41 @@
                               (ca1.ID = ca.ID) AND (NOT (sar1.Result IS NULL)) AND (sarsv.SignedOff = 1) AND (caqrr1.LevelRAG = 3) AND (caoc1.IncludedInSelfAssessment = 1) OR
                               (ca1.ID = ca.ID) AND (sas1.Optional = 0) AND (sarsv.SignedOff = 1) AND (caqrr1.LevelRAG = 3) AND (NOT (sar1.SupportingComments IS NULL)) OR
                               (ca1.ID = ca.ID) AND (sarsv.SignedOff = 1) AND (caqrr1.LevelRAG = 3) AND (caoc1.IncludedInSelfAssessment = 1) AND (NOT (sar1.SupportingComments IS NULL))) AS MeetingCount, 
-             CASE WHEN COALESCE (casv.SignedOff, 0) = 1 THEN casv.Verified ELSE NULL END AS SignedOff, CASE WHEN COALESCE (casv.SignedOff, 0) = 1 THEN au.Forename + ' ' + au.Surname + ' (' + au.CentreName + ')' ELSE NULL END AS 'Signatory', CASE WHEN COALESCE (casv.SignedOff, 0) = 1 THEN (SELECT TOP(1) ProfessionalRegistrationNumber FROM Candidates as ca WHERE ca.EmailAddress = au.Email AND ca.CentreID = au.CentreID AND ca.Active = 1 AND ca.ProfessionalRegistrationNumber IS NOT NULL) ELSE NULL END AS SignatoryPrn
-FROM   CandidateAssessmentSupervisorVerifications AS casv RIGHT OUTER JOIN
-             CandidateAssessments AS ca INNER JOIN
-             SelfAssessments AS sa ON ca.SelfAssessmentID = sa.ID INNER JOIN Users AS u
-			 ON u.ID = ca.DelegateUserID ON casv.ID =
-                 (SELECT MAX(casv1.ID) AS ID
-                 FROM    CandidateAssessmentSupervisorVerifications as casv1 INNER JOIN CandidateAssessmentSupervisors as cas1 ON casv1.CandidateAssessmentSupervisorID = cas1.ID
-                 WHERE (cas1.CandidateAssessmentID = ca.ID)) LEFT OUTER JOIN
-             SupervisorDelegates AS sd LEFT OUTER JOIN
-             AdminUsers as au ON sd.SupervisorAdminID = au.AdminID LEFT OUTER JOIN
-             CandidateAssessmentSupervisors AS cas ON sd.ID = cas.SupervisorDelegateId ON casv.CandidateAssessmentSupervisorID = cas.ID
-WHERE (ca.ID = @candidateAssessmentId  AND ca.DelegateUserID  = @delegateUserID)",
-                new { candidateAssessmentId, delegateUserID }
-            );
+                 CASE WHEN currentSignOff.IsCurrentlySignedOff = 1 THEN casv.Verified ELSE NULL END AS SignedOff,
+                 CASE WHEN currentSignOff.IsCurrentlySignedOff = 1 THEN au.Forename + ' ' + au.Surname + ' (' + au.CentreName + ')' ELSE NULL END AS Signatory,
+                 CASE WHEN currentSignOff.IsCurrentlySignedOff = 1 THEN (SELECT TOP(1) ProfessionalRegistrationNumber FROM Candidates as ca WHERE ca.EmailAddress = au.Email AND ca.CentreID = au.CentreID AND ca.Active = 1 AND ca.ProfessionalRegistrationNumber IS NOT NULL) ELSE NULL END AS SignatoryPrn
+                 FROM   CandidateAssessmentSupervisorVerifications AS casv RIGHT OUTER JOIN
+                     CandidateAssessments AS ca INNER JOIN
+                     SelfAssessments AS sa ON ca.SelfAssessmentID = sa.ID INNER JOIN Users AS u
+			         ON u.ID = ca.DelegateUserID ON casv.ID =
+                         (SELECT TOP (1) casv1.ID
+                         FROM    CandidateAssessmentSupervisorVerifications as casv1 INNER JOIN CandidateAssessmentSupervisors as cas1 ON casv1.CandidateAssessmentSupervisorID = cas1.ID
+                         WHERE (cas1.CandidateAssessmentID = ca.ID)
+                         ORDER BY casv1.Requested DESC, casv1.ID DESC) LEFT OUTER JOIN
+                     SupervisorDelegates AS sd LEFT OUTER JOIN
+                     AdminUsers as au ON sd.SupervisorAdminID = au.AdminID LEFT OUTER JOIN
+                     CandidateAssessmentSupervisors AS cas ON sd.ID = cas.SupervisorDelegateId ON casv.CandidateAssessmentSupervisorID = cas.ID
+                    OUTER APPLY
+                    (
+                        SELECT MAX(s.DateTime) AS LatestResultDateTime
+                        FROM SelfAssessmentResults AS s
+                        WHERE s.DelegateUserID = ca.DelegateUserID
+                          AND s.SelfAssessmentID = ca.SelfAssessmentID
+                    ) AS latestResult
+                    OUTER APPLY
+                    (
+                        SELECT CASE
+                            WHEN casv.SignedOff = 1
+                             AND casv.Verified IS NOT NULL
+                             AND (latestResult.LatestResultDateTime IS NULL
+                                  OR casv.Verified >= latestResult.LatestResultDateTime)
+                                THEN 1
+                            ELSE 0
+                        END AS IsCurrentlySignedOff
+                    ) AS currentSignOff
+                    WHERE (ca.ID = @candidateAssessmentId  AND ca.DelegateUserID  = @delegateUserID)",
+                                    new { candidateAssessmentId, delegateUserID }
+                );
         }
 
         public List<CandidateAssessmentExportDetail> GetCandidateAssessmentExportDetails(
