@@ -3572,6 +3572,58 @@ namespace DigitalLearningSolutions.Data.Migrations.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to /****** Object:  StoredProcedure [dbo].[usp_GetSelfAssessmentReport]    Script Date: 13/11/2026 11:41:13 ******/
+        ///SET ANSI_NULLS ON
+        ///GO
+        ///
+        ///SET QUOTED_IDENTIFIER ON
+        ///GO
+        ///
+        ///
+        ///ALTER PROCEDURE [dbo].[usp_GetSelfAssessmentReport]
+        ///    @SelfAssessmentID INT,
+        ///    @CentreID INT
+        ///AS
+        ///BEGIN
+        ///    SET NOCOUNT ON;
+        ///
+        ///    /* Aggregate result detail before joining it to the report rows. */
+        ///    SELECT
+        ///        ca.ID AS CandidateAssessmentID,
+        ///        COUNT(DISTINCT CASE
+        ///            WHEN sas.Optional = 1 THEN s.Competenc [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_8036_Alter_usp_GetSelfAssessmentReport_Down {
+            get {
+                return ResourceManager.GetString("TD_8036_Alter_usp_GetSelfAssessmentReport_Down", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ALTER PROCEDURE [dbo].[usp_GetSelfAssessmentReport]
+        ///    @SelfAssessmentID INT,
+        ///    @CentreID INT
+        ///AS
+        ///BEGIN
+        ///    SET NOCOUNT ON;
+        ///
+        ///    /*
+        ///       Section 1: Aggregate self-assessment result counts per candidate assessment.
+        ///       Keeping this in a one-row-per-assessment temp table prevents result and
+        ///       verification rows from multiplying the final report rows.
+        ///    */
+        ///    SELECT
+        ///        ca.ID AS CandidateAssessmentID,
+        ///        COUNT(DISTINCT CASE
+        ///            WHEN sas.Optional = 1 THEN s.Competen [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string TD_8036_Alter_usp_GetSelfAssessmentReport_Up {
+            get {
+                return ResourceManager.GetString("TD_8036_Alter_usp_GetSelfAssessmentReport_Up", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;ol type=&quot;&quot;1&quot;&quot;&gt;&lt;li&gt;&lt;strong&gt;About these terms and conditions&lt;/strong&gt;&lt;ul data-list-level=&quot;&quot;1&quot;&quot;&gt;&lt;li&gt;It is your responsibility to ensure that you understand and comply with these terms and conditions. It ensures that:&lt;ul data-list-level=&quot;&quot;2&quot;&quot;&gt;&lt;li&gt;You understand your responsibilities and what constitutes an abuse of the service&lt;/li&gt;&lt;li&gt;Computers and personal data are not put at risk&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;li&gt;If you have any questions about these terms and conditions, you should contact your Digital Learning Solutions c [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string TermsAndConditionsOldrecord {
