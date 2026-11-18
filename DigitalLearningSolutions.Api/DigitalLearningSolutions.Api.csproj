@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <!-- Generate the XML documentation file so Swagger can show the /// comments on controllers and actions. -->
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <!-- Don't warn about public members without XML comments. -->
+    <NoWarn>$(NoWarn);1591</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Validates bearer tokens issued by the Learning Hub auth service (OpenID Connect / IdentityServer). -->
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.0" />
+    <!-- API versioning (/api/v1/...) and version-aware API explorer for Swagger. -->
+    <PackageReference Include="Asp.Versioning.Mvc" Version="8.1.0" />
+    <PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" Version="8.1.0" />
+    <!-- Swagger / OpenAPI document generation and Swagger UI. -->
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="6.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Data access (Dapper data services, models and configuration extensions) is shared with the Web project. -->
+    <ProjectReference Include="..\DigitalLearningSolutions.Data\DigitalLearningSolutions.Data.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="DigitalLearningSolutions.Api.Tests" />
+  </ItemGroup>
+
+</Project>
