@@ -595,8 +595,18 @@
         public bool UpdateFrameworkLinksTaskStatus(int assessmentId, bool taskStatus, bool? previousStatus)
         {
             var numberOfAffectedRows = connection.Execute(
-               @"UPDATE SelfAssessmentTaskStatus SET FrameworkLinksTaskStatus = @taskStatus
-                    WHERE SelfAssessmentId = @assessmentId  AND (@previousStatus IS NULL OR FrameworkLinksTaskStatus = @previousStatus)",
+               @"IF EXISTS (SELECT 1 FROM SelfAssessmentTaskStatus WHERE SelfAssessmentId = @assessmentId)
+                    BEGIN
+                        UPDATE SelfAssessmentTaskStatus SET FrameworkLinksTaskStatus = @taskStatus
+                            WHERE SelfAssessmentId = @assessmentId
+                                AND (@previousStatus IS NULL OR FrameworkLinksTaskStatus = @previousStatus);
+                    END
+                ELSE
+                    BEGIN
+                        INSERT INTO SelfAssessmentTaskStatus
+                            (SelfAssessmentId, FrameworkLinksTaskStatus)
+                        VALUES (@assessmentId, @taskStatus);
+                    END",
                new { assessmentId, taskStatus, previousStatus }
            );
             if (numberOfAffectedRows < 1)
