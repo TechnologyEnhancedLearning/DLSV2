@@ -31,6 +31,7 @@
         public async Task<IActionResult> IndexAsync()
         {
             var adminId = GetAdminId();
+            var loggedInUserId = User.GetUserId();
             var dashboardData = supervisorService.GetDashboardDataForAdminId(adminId);
             var signOffRequests = supervisorService.GetSupervisorDashboardToDoItemsForRequestedSignOffs(adminId);
             var reviewRequests = supervisorService.GetSupervisorDashboardToDoItemsForRequestedReviews(adminId);
@@ -38,6 +39,9 @@
             var bannerText = GetBannerText();
             var tableauFlag = await featureManager.IsEnabledAsync(FeatureFlags.TableauSelfAssessmentDashboards);
             var tableauQueryOverride = string.Equals(Request.Query["tableaulink"], "true", StringComparison.OrdinalIgnoreCase);
+            var loggedInAdminUser = userService.GetAdminUserById(adminId);
+            var supervisorDelegateDetails = supervisorService.GetSupervisorDelegateDetailsForAdminId(adminId, loggedInAdminUser.CategoryId);
+            dashboardData.StaffCount = supervisorDelegateDetails.Where(x => x.DelegateUserID != loggedInUserId).Count();
             var showTableauLink = tableauFlag || tableauQueryOverride;
             var model = new SupervisorDashboardViewModel()
             {
