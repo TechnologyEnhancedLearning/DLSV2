@@ -50,6 +50,7 @@
         IEnumerable<CollaboratorDetail> GetCollaboratorsForFrameworkId(int frameworkId);
 
         CollaboratorNotification? GetCollaboratorNotification(int id, int invitedByAdminId);
+        bool CheckIfEmailExistAsCollaboratorsOrReviewer(int frameworkId, string email);
 
         //  Competencies/groups:
         IEnumerable<FrameworkCompetencyGroup> GetFrameworkCompetencyGroups(int frameworkId, int? assessmentId);
@@ -2649,6 +2650,16 @@ WHERE (RP.CreatedByAdminID = @adminId) OR
                 @"SELECT ID FROM AdminAccounts WHERE UserID = @userId",
                 new { userId }
             );
+        }
+        public bool CheckIfEmailExistAsCollaboratorsOrReviewer(int frameworkId, string email)
+        {
+            return connection.ExecuteScalar<bool>(
+                @"SELECT CASE WHEN EXISTS ( SELECT 1 FROM FrameworkCollaborators fc
+                    INNER JOIN AdminUsers AS au ON fc.AdminID = au.AdminID
+                    AND fc.IsDeleted = 0
+						WHERE (FrameworkID = @FrameworkID) AND (FC.UserEmail = @email)
+						 ) THEN 1 ELSE 0 END",
+                new { frameworkId, email });
         }
     }
 }

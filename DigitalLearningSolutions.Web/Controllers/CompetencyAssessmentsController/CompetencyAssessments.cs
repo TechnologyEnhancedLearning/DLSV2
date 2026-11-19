@@ -158,7 +158,11 @@
                         return View("Name", competencyAssessmentBase);
                     }
                     competencyAssessmentId = competencyAssessmentService.InsertCompetencyAssessment(adminId, userCentreId, competencyAssessmentBase.CompetencyAssessmentName.Trim(), frameworkId);
-                    if (frameworkId.HasValue && frameworkId.Value != 0) return RedirectToAction("CompetencyAssessmentFeatures", new { competencyAssessmentId, frameworkId });
+                    if (frameworkId.HasValue && frameworkId.Value != 0)
+                    {
+                        competencyAssessmentService.UpdateFrameworkLinksTaskStatus(competencyAssessmentId, false, null);
+                        return RedirectToAction("CompetencyAssessmentFeatures", new { competencyAssessmentId, frameworkId });
+                    }
                 }
                 else
                 {
@@ -838,10 +842,17 @@
             data.AllframeworkCompetenciesStatus);
             if (!features) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 500 });
             competencyAssessmentService.UpdateSelfAssessmentFromFramework(data.ID, data.FrameworkId);
-            competencyAssessmentService.InsertIntoSelfAssessmentCollaboratorsFromFrameworkCollaborators(data.ID, data.FrameworkId);
-            var insertSelfAssessmentGroupedCompetencies = competencyAssessmentService.InsertSelfAssessmentGroupedCompetencies(data.ID, data.FrameworkId);
-            var insertSelfAssessmentUngroupedCompetencies = competencyAssessmentService.InsertSelfAssessmentUngroupedCompetencies(data.ID, data.FrameworkId);
-            if (!insertSelfAssessmentGroupedCompetencies) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 500 });
+
+            if (data.WorkingGroupStatus)
+                competencyAssessmentService.InsertIntoSelfAssessmentCollaboratorsFromFrameworkCollaborators(data.ID, data.FrameworkId);
+
+            if (data.AllframeworkCompetenciesStatus)
+            {
+                var insertSelfAssessmentGroupedCompetencies = competencyAssessmentService.InsertSelfAssessmentGroupedCompetencies(data.ID, data.FrameworkId);
+                var insertSelfAssessmentUngroupedCompetencies = competencyAssessmentService.InsertSelfAssessmentUngroupedCompetencies(data.ID, data.FrameworkId);
+                if (!insertSelfAssessmentGroupedCompetencies) return RedirectToAction("StatusCode", "LearningSolutions", new { code = 500 });
+            }
+
             multiPageFormService.ClearMultiPageFormData(MultiPageFormDataFeature.AddCustomWebForm("AssessmentFeaturesDataCWF"), TempData);
             TempData.Clear();
             return RedirectToAction("ManageCompetencyAssessment", new { competencyAssessmentId = competency.ID, competency.FrameworkId });
@@ -1705,7 +1716,7 @@
 
             var reqiured = competencyAssessmentService.CheckIfSelfAssessmenthaveRequiredCompetency(competencyAssessmentId);
             if (!reqiured)
-            { 
+            {
 
                 ModelState.Clear();
                 ModelState.AddModelError("HasCompetencies", $"To preview this self-assessment, you must include some competencies that are not marked as optional.");
