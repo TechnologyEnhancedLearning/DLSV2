@@ -801,7 +801,12 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         {
             var framework = frameworkService.GetBaseFrameworkByFrameworkId(frameworkId, GetAdminId());
             model.FrameworkName = framework.FrameworkName;
-
+           var checkEmail = frameworkService.CheckIfEmailExistAsCollaboratorsOrReviewer(frameworkId, model.NewOwnerEmail);
+            if (checkEmail)
+            {
+                ModelState.AddModelError(nameof(model.NewOwnerEmail), "This user is already a collaborator or reviewer, so they cannot be made the owner.");
+                return View("Developer/ChangeOwner", model);
+            }
             if (User.GetUserPrimaryEmail() == model.NewOwnerEmail)
             {
                 ModelState.AddModelError(nameof(model.NewOwnerEmail), "The new owner email address cannot be the same as the current owner's email address.");
