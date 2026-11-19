@@ -447,7 +447,7 @@
                 u.LastName AS DelegateLastName,
                 COALESCE(ucd.Email, u.PrimaryEmail) AS DelegateEmail,
                 da.Active AS IsDelegateActive,
-                MAX(casv.Verified) as SignedOff,
+                currentSignOff.CurrentSignedOffDate AS SignedOff,
                 da.Answer1 AS RegistrationAnswer1,da.Answer2 AS RegistrationAnswer2,da.Answer3 AS RegistrationAnswer3,da.Answer4 AS RegistrationAnswer4,da.Answer5 AS RegistrationAnswer5,da.Answer6 AS RegistrationAnswer6";
 
             var fromTableQuery = $@" FROM  dbo.SelfAssessments AS sa 
@@ -457,46 +457,42 @@
                 INNER JOIN dbo.Users u WITH (NOLOCK) ON DA.UserID = u.ID
                 LEFT JOIN UserCentreDetails AS ucd WITH (NOLOCK) ON ucd.UserID = da.UserID AND ucd.centreID = da.CentreID
 				LEFT OUTER JOIN AdminAccounts AS aaEnrolledBy WITH (NOLOCK) ON aaEnrolledBy.ID = ca.EnrolledByAdminID
-                LEFT OUTER JOIN Users AS uEnrolledBy WITH (NOLOCK) ON uEnrolledBy.ID = aaEnrolledBy.UserID 
-                LEFT JOIN dbo.CandidateAssessmentSupervisors AS cas WITH (NOLOCK) ON ca.ID = cas.CandidateAssessmentID
-                LEFT JOIN dbo.CandidateAssessmentSupervisorVerifications AS casv WITH (NOLOCK) ON cas.ID = casv.CandidateAssessmentSupervisorID AND(casv.Verified IS NOT NULL AND casv.SignedOff = 1) ";
+                LEFT OUTER JOIN Users AS uEnrolledBy WITH (NOLOCK) ON uEnrolledBy.ID = aaEnrolledBy.UserID
+                OUTER APPLY
+                (
+                    SELECT TOP (1) casv.Requested, casv.Verified, casv.SignedOff
+                    FROM dbo.CandidateAssessmentSupervisors AS cas
+                    INNER JOIN dbo.CandidateAssessmentSupervisorVerifications AS casv
+                        ON casv.CandidateAssessmentSupervisorID = cas.ID
+                    WHERE cas.CandidateAssessmentID = ca.ID
+                    ORDER BY casv.Requested DESC, casv.ID DESC
+                ) AS latestVerification
+                OUTER APPLY
+                (
+                    SELECT MAX(sar.DateTime) AS LatestResultDateTime
+                    FROM dbo.SelfAssessmentResults AS sar
+                    WHERE sar.SelfAssessmentID = ca.SelfAssessmentID
+                      AND sar.DelegateUserID = ca.DelegateUserID
+                ) AS latestResult
+                OUTER APPLY
+                (
+                    SELECT CASE
+                        WHEN latestVerification.SignedOff = 1
+                         AND latestVerification.Verified IS NOT NULL
+                         AND (latestResult.LatestResultDateTime IS NULL
+                              OR latestVerification.Verified >= latestResult.LatestResultDateTime)
+                            THEN latestVerification.Verified
+                        ELSE NULL
+                    END AS CurrentSignedOffDate
+                ) AS currentSignOff ";
 
             var whereQuery = $@" WHERE sa.ID = @selfAssessmentId 
                 AND da.CentreID = @centreID AND csa.CentreID = @centreID
                 AND (ca.RemovedDate IS NULL)
                 AND COALESCE(ucd.Email, u.PrimaryEmail) LIKE '%_@_%' ";
 
-            var groupBy = $@" GROUP BY 
-				da.CandidateNumber,
-                u.ID,
-                u.ProfessionalRegistrationNumber,
-                ca.SelfAssessmentID,
-                ca.StartedDate,
-                ca.EnrolmentMethodId,
-                ca.LastAccessed,
-                ca.LaunchCount,
-                ca.CompleteByDate,
-                ca.SubmittedDate,
-                ca.RemovedDate,
-                ca.CompletedDate,
-				uEnrolledBy.FirstName,
-                uEnrolledBy.LastName,
-                aaEnrolledBy.Active,
-				da.CandidateNumber,
-                u.FirstName,
-                u.LastName,
-                COALESCE(ucd.Email, u.PrimaryEmail),
-                da.Active,
-				da.Answer1,			
-                da.Answer2,
-                da.Answer3,
-                da.Answer4,
-                da.Answer5,
-                da.Answer6
-                ORDER BY LTRIM(u.LastName), LTRIM(u.FirstName)";
-
-
-            var delegateQuery = selectColumnQuery + fromTableQuery + whereQuery + groupBy;
+            var delegateQuery = selectColumnQuery + fromTableQuery + whereQuery +
+                " ORDER BY LTRIM(u.LastName), LTRIM(u.FirstName)";
 
             IEnumerable<SelfAssessmentDelegate> delegates = connection.Query<SelfAssessmentDelegate>(
                 delegateQuery,
@@ -533,7 +529,7 @@
                 COALESCE(ucd.Email, u.PrimaryEmail) AS DelegateEmail,
                 da.Active AS IsDelegateActive ";
 
-            selectColumnQuery += ",MAX(casv.Verified) as SignedOff,da.Answer1 AS RegistrationAnswer1,da.Answer2 AS RegistrationAnswer2,da.Answer3 AS RegistrationAnswer3,da.Answer4 AS RegistrationAnswer4,da.Answer5 AS RegistrationAnswer5,da.Answer6 AS RegistrationAnswer6";
+            selectColumnQuery += ",currentSignOff.CurrentSignedOffDate AS SignedOff,da.Answer1 AS RegistrationAnswer1,da.Answer2 AS RegistrationAnswer2,da.Answer3 AS RegistrationAnswer3,da.Answer4 AS RegistrationAnswer4,da.Answer5 AS RegistrationAnswer5,da.Answer6 AS RegistrationAnswer6";
 
             var fromTableQuery = $@" FROM  dbo.SelfAssessments AS sa 
 				INNER JOIN dbo.CandidateAssessments AS ca WITH (NOLOCK) ON sa.ID = ca.SelfAssessmentID 
@@ -544,8 +540,33 @@
 				LEFT OUTER JOIN AdminAccounts AS aaEnrolledBy WITH (NOLOCK) ON aaEnrolledBy.ID = ca.EnrolledByAdminID
                 LEFT OUTER JOIN Users AS uEnrolledBy WITH (NOLOCK) ON uEnrolledBy.ID = aaEnrolledBy.UserID ";
 
-            var signedOffJoin = $@" LEFT JOIN dbo.CandidateAssessmentSupervisors AS cas WITH (NOLOCK) ON ca.ID = cas.CandidateAssessmentID
-                LEFT JOIN dbo.CandidateAssessmentSupervisorVerifications AS casv WITH (NOLOCK) ON cas.ID = casv.CandidateAssessmentSupervisorID AND(casv.Verified IS NOT NULL AND casv.SignedOff = 1) ";
+            var currentSignOffApply = $@" OUTER APPLY
+                (
+                    SELECT TOP (1) casv.Requested, casv.Verified, casv.SignedOff
+                    FROM dbo.CandidateAssessmentSupervisors AS cas
+                    INNER JOIN dbo.CandidateAssessmentSupervisorVerifications AS casv
+                        ON casv.CandidateAssessmentSupervisorID = cas.ID
+                    WHERE cas.CandidateAssessmentID = ca.ID
+                    ORDER BY casv.Requested DESC, casv.ID DESC
+                ) AS latestVerification
+                OUTER APPLY
+                (
+                    SELECT MAX(sar.DateTime) AS LatestResultDateTime
+                    FROM dbo.SelfAssessmentResults AS sar
+                    WHERE sar.SelfAssessmentID = ca.SelfAssessmentID
+                      AND sar.DelegateUserID = ca.DelegateUserID
+                ) AS latestResult
+                OUTER APPLY
+                (
+                    SELECT CASE
+                        WHEN latestVerification.SignedOff = 1
+                         AND latestVerification.Verified IS NOT NULL
+                         AND (latestResult.LatestResultDateTime IS NULL
+                              OR latestVerification.Verified >= latestResult.LatestResultDateTime)
+                            THEN latestVerification.Verified
+                        ELSE NULL
+                    END AS CurrentSignedOffDate
+                ) AS currentSignOff ";
 
             var whereQuery = $@" WHERE sa.ID = @selfAssessmentId 
                 AND da.CentreID = @centreID AND csa.CentreID = @centreID
@@ -554,41 +575,10 @@
                 AND ((@isDelegateActive IS NULL) OR (@isDelegateActive = 1 AND (da.Active = 1)) OR (@isDelegateActive = 0 AND (da.Active = 0)))
 				AND ((@removed IS NULL) OR (@removed = 1 AND (ca.RemovedDate IS NOT NULL)) OR (@removed = 0 AND (ca.RemovedDate IS NULL)))
                 AND ((@submitted IS NULL) OR (@submitted = 1 AND (ca.SubmittedDate IS NOT NULL)) OR (@submitted = 0 AND (ca.SubmittedDate IS NULL)))
-                AND COALESCE(ucd.Email, u.PrimaryEmail) LIKE '%_@_%' ";
-
-            var groupBy = $@" GROUP BY 
-				da.CandidateNumber,
-                ca.Id,
-                u.ID,
-                u.ProfessionalRegistrationNumber,
-                ca.SelfAssessmentID,
-                ca.StartedDate,
-                ca.EnrolmentMethodId,
-                ca.LastAccessed,
-                ca.LaunchCount,
-                ca.CompleteByDate,
-                ca.SubmittedDate,
-                ca.RemovedDate,
-                ca.CompletedDate,
-				uEnrolledBy.FirstName,
-                uEnrolledBy.LastName,
-                aaEnrolledBy.Active,
-				da.CandidateNumber,
-                u.FirstName,
-                u.LastName,
-                COALESCE(ucd.Email, u.PrimaryEmail),
-                da.Active,
-				da.Answer1,			
-                da.Answer2,
-                da.Answer3,
-                da.Answer4,
-                da.Answer5,
-                da.Answer6";
-
-            if (signedOff != null)
-            {
-                groupBy += (bool)signedOff ? " HAVING MAX(casv.Verified) IS NOT NULL " : " HAVING MAX(casv.Verified) IS NULL ";
-            }
+                AND COALESCE(ucd.Email, u.PrimaryEmail) LIKE '%_@_%'
+                AND ((@signedOff IS NULL)
+                     OR (@signedOff = 1 AND currentSignOff.CurrentSignedOffDate IS NOT NULL)
+                     OR (@signedOff = 0 AND currentSignOff.CurrentSignedOffDate IS NULL)) ";
 
             string orderBy;
             string sortOrder = sortDirection == "Ascending" ? "ASC" : "DESC";
@@ -610,7 +600,7 @@
 
             orderBy += " OFFSET " + itemsPerPage * (currentRun - 1) + " ROWS FETCH NEXT " + itemsPerPage + " ROWS ONLY ";
 
-            var delegateQuery = selectColumnQuery + fromTableQuery + signedOffJoin + whereQuery + groupBy + orderBy;
+            var delegateQuery = selectColumnQuery + fromTableQuery + currentSignOffApply + whereQuery + orderBy;
 
             IEnumerable<SelfAssessmentDelegate> delegateUserCard = connection.Query<SelfAssessmentDelegate>(
                 delegateQuery,
@@ -648,8 +638,33 @@
 				LEFT OUTER JOIN AdminAccounts AS aaEnrolledBy WITH (NOLOCK) ON aaEnrolledBy.ID = ca.EnrolledByAdminID
                 LEFT OUTER JOIN Users AS uEnrolledBy WITH (NOLOCK) ON uEnrolledBy.ID = aaEnrolledBy.UserID ";
 
-            var signedOffJoin = $@" LEFT JOIN dbo.CandidateAssessmentSupervisors AS cas WITH (NOLOCK) ON ca.ID = cas.CandidateAssessmentID
-                LEFT JOIN dbo.CandidateAssessmentSupervisorVerifications AS casv WITH (NOLOCK) ON cas.ID = casv.CandidateAssessmentSupervisorID AND(casv.Verified IS NOT NULL AND casv.SignedOff = 1) ";
+            var currentSignOffApply = $@" OUTER APPLY
+                (
+                    SELECT TOP (1) casv.Requested, casv.Verified, casv.SignedOff
+                    FROM dbo.CandidateAssessmentSupervisors AS cas
+                    INNER JOIN dbo.CandidateAssessmentSupervisorVerifications AS casv
+                        ON casv.CandidateAssessmentSupervisorID = cas.ID
+                    WHERE cas.CandidateAssessmentID = ca.ID
+                    ORDER BY casv.Requested DESC, casv.ID DESC
+                ) AS latestVerification
+                OUTER APPLY
+                (
+                    SELECT MAX(sar.DateTime) AS LatestResultDateTime
+                    FROM dbo.SelfAssessmentResults AS sar
+                    WHERE sar.SelfAssessmentID = ca.SelfAssessmentID
+                      AND sar.DelegateUserID = ca.DelegateUserID
+                ) AS latestResult
+                OUTER APPLY
+                (
+                    SELECT CASE
+                        WHEN latestVerification.SignedOff = 1
+                         AND latestVerification.Verified IS NOT NULL
+                         AND (latestResult.LatestResultDateTime IS NULL
+                              OR latestVerification.Verified >= latestResult.LatestResultDateTime)
+                            THEN latestVerification.Verified
+                        ELSE NULL
+                    END AS CurrentSignedOffDate
+                ) AS currentSignOff ";
 
             var whereQuery = $@" WHERE sa.ID = @selfAssessmentId 
                 AND da.CentreID = @centreID AND csa.CentreID = @centreID
@@ -658,36 +673,12 @@
                 AND ((@isDelegateActive IS NULL) OR (@isDelegateActive = 1 AND (da.Active = 1)) OR (@isDelegateActive = 0 AND (da.Active = 0)))
 				AND ((@removed IS NULL) OR (@removed = 1 AND (ca.RemovedDate IS NOT NULL)) OR (@removed = 0 AND (ca.RemovedDate IS NULL)))
                 AND ((@submitted IS NULL) OR (@submitted = 1 AND (ca.SubmittedDate IS NOT NULL)) OR (@submitted = 0 AND (ca.SubmittedDate IS NULL)))
-                AND COALESCE(ucd.Email, u.PrimaryEmail) LIKE '%_@_%' ";
+                AND COALESCE(ucd.Email, u.PrimaryEmail) LIKE '%_@_%'
+                AND ((@signedOff IS NULL)
+                     OR (@signedOff = 1 AND currentSignOff.CurrentSignedOffDate IS NOT NULL)
+                     OR (@signedOff = 0 AND currentSignOff.CurrentSignedOffDate IS NULL)) ";
 
-            var groupBy = $@" GROUP BY 
-				da.CandidateNumber,
-                u.ID,
-                u.ProfessionalRegistrationNumber,
-                ca.SelfAssessmentID,
-                ca.StartedDate,
-                ca.EnrolmentMethodId,
-                ca.LastAccessed,
-                ca.LaunchCount,
-                ca.CompleteByDate,
-                ca.SubmittedDate,
-                ca.RemovedDate,
-                ca.CompletedDate,
-				uEnrolledBy.FirstName,
-                uEnrolledBy.LastName,
-                aaEnrolledBy.Active,
-				da.CandidateNumber,
-                u.FirstName,
-                u.LastName,
-                COALESCE(ucd.Email, u.PrimaryEmail),
-                da.Active";
-
-            if (signedOff != null)
-            {
-                groupBy += (bool)signedOff ? " HAVING MAX(casv.Verified) IS NOT NULL " : " HAVING MAX(casv.Verified) IS NULL ";
-            }
-
-            var delegateCountQuery = @$"SELECT  COUNT(*) AS Matches " + fromTableQuery + whereQuery;
+            var delegateCountQuery = @$"SELECT COUNT(*) AS Matches " + fromTableQuery + currentSignOffApply + whereQuery;
 
             int ResultCount = connection.ExecuteScalar<int>(
                 delegateCountQuery,
@@ -712,20 +703,42 @@
             return connection.Query<string>(
                 @$"SELECT
                         au.Forename + ' ' + au.Surname AS SupervisorName
-                    FROM CandidateAssessmentSupervisorVerifications AS casv
+                    FROM CandidateAssessments AS ca
+                    INNER JOIN SelfAssessments AS sa
+                        ON ca.SelfAssessmentID = sa.ID
+                    OUTER APPLY
+                    (
+                        SELECT TOP (1)
+                            casv.CandidateAssessmentSupervisorID,
+                            casv.Requested,
+                            casv.Verified,
+                            casv.SignedOff
+                        FROM CandidateAssessmentSupervisors AS cas
+                        INNER JOIN CandidateAssessmentSupervisorVerifications AS casv
+                            ON casv.CandidateAssessmentSupervisorID = cas.ID
+                        WHERE cas.CandidateAssessmentID = ca.ID
+                        ORDER BY casv.Requested DESC, casv.ID DESC
+                    ) AS latestVerification
+                    OUTER APPLY
+                    (
+                        SELECT MAX(sar.DateTime) AS LatestResultDateTime
+                        FROM SelfAssessmentResults AS sar
+                        WHERE sar.SelfAssessmentID = ca.SelfAssessmentID
+                          AND sar.DelegateUserID = ca.DelegateUserID
+                    ) AS latestResult
                     INNER JOIN CandidateAssessmentSupervisors AS cas
-                        ON casv.CandidateAssessmentSupervisorID = cas.ID
-                    INNER JOIN CandidateAssessments AS ca
-                        ON cas.CandidateAssessmentID = ca.ID
+                        ON latestVerification.CandidateAssessmentSupervisorID = cas.ID
                     INNER JOIN SupervisorDelegates AS sd
                         ON cas.SupervisorDelegateId = sd.ID
                     INNER JOIN AdminUsers AS au
                         ON sd.SupervisorAdminID = au.AdminID
-                    INNER JOIN SelfAssessments AS sa
-                        ON ca.SelfAssessmentID = sa.ID
-                    WHERE (ca.DelegateUserID = @delegateUserId) AND (ca.SelfAssessmentID = @selfAssessmentId) AND (sa.SupervisorSelfAssessmentReview = 1)
-						AND casv.SignedOff=1
-                    ORDER BY casv.Requested DESC",
+                    WHERE ca.DelegateUserID = @delegateUserId
+                      AND ca.SelfAssessmentID = @selfAssessmentId
+                      AND sa.SupervisorSelfAssessmentReview = 1
+                      AND latestVerification.SignedOff = 1
+                      AND latestVerification.Verified IS NOT NULL
+                      AND (latestResult.LatestResultDateTime IS NULL
+                           OR latestVerification.Verified >= latestResult.LatestResultDateTime)",
                 new { delegateUserId, selfAssessmentId }
             ).FirstOrDefault();
         }
