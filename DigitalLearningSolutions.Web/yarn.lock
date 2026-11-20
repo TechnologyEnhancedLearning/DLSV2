@@ -4513,10 +4513,10 @@ jest@^28.1.3:
     import-local "^3.0.2"
     jest-cli "^28.1.3"
 
-jodit@4.20.2:
-  version "4.20.2"
-  resolved "https://registry.yarnpkg.com/jodit/-/jodit-4.20.2.tgz#7c4fee14b03916193561bd54996e8cbc6bdd870d"
-  integrity sha512-xyEmSwlPkpUPlOReFdZd928zRPvh0K+o65knzGmIGlAAnVbnS0j7D1FOykoyP/RkskRficn0DOWZtHx5KQMBMg==
+jodit@4.20.3:
+  version "4.20.3"
+  resolved "https://registry.yarnpkg.com/jodit/-/jodit-4.20.3.tgz#c98bbe475d4ed32ca215795afb6cb3b222aeffa1"
+  integrity sha512-CYRZqqbZZeUgVgAq2PK5HMqTprn3AlFdK2hsLoVsl+Mvn7rPglnVOmRjXbNWbmNML2HPsmWSMOqScjq7YQc5NA==
 
 js-cookie@^3.0.8:
   version "3.0.8"
