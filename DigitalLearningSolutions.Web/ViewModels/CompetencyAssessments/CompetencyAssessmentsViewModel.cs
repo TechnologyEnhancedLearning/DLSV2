@@ -8,6 +8,7 @@
         public CompetencyAssessmentsViewModel(
             bool isWorkforceManager,
             bool isWorkforceContributor,
+            bool canViewMyCompetencyAssessmentsTab,
             AllCompetencyAssessmentsViewModel allCompetencyAssessments,
             MyCompetencyAssessmentsViewModel myCompetencyAssessments,
             CompetencyAssessmentsTab currentTab
@@ -15,6 +16,7 @@
         {
             IsWorkforceManager = isWorkforceManager;
             IsWorkforceContributor = isWorkforceContributor;
+            CanViewMyCompetencyAssessmentsTab = canViewMyCompetencyAssessmentsTab;
             MyCompetencyAssessmentsViewModel = myCompetencyAssessments;
             AllCompetencyAssessmentsViewModel = allCompetencyAssessments;
             TabNavLinks = new TabsNavViewModel(currentTab);
@@ -22,6 +24,7 @@
 
         public bool IsWorkforceManager { get; set; }
         public bool IsWorkforceContributor { get; set; }
+        public bool CanViewMyCompetencyAssessmentsTab { get; set; }
         public MyCompetencyAssessmentsViewModel MyCompetencyAssessmentsViewModel { get; set; }
         public AllCompetencyAssessmentsViewModel AllCompetencyAssessmentsViewModel { get; set; }
         public TabsNavViewModel TabNavLinks { get; set; }

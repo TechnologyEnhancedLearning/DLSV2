@@ -19,7 +19,7 @@
         </div>
     </nav>
 }
-@if (Model.IsWorkforceContributor | Model.IsWorkforceManager)
+@if (Model.CanViewMyCompetencyAssessmentsTab)
 {
     <partial name="_SecondaryTabsNavMenu" model="Model.TabNavLinks" />
 }

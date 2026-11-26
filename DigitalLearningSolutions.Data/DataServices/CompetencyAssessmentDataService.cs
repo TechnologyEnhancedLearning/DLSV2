@@ -1187,7 +1187,8 @@
             );
             connection.Execute(
                 @"UPDATE SelfAssessmentCollaborators SET IsDeleted=1 WHERE (SelfAssessmentID = @competencyAssessmentId) AND (ID = @id);
-                    UPDATE AdminUsers SET IsWorkforceManager = 0 WHERE AdminID = @adminId AND AdminID NOT IN (SELECT DISTINCT AdminID FROM SelfAssessmentCollaborators);",
+                    UPDATE AdminUsers SET IsWorkforceManager = 0 WHERE AdminID = @adminId AND
+                        NOT EXISTS (SELECT 1 FROM SelfAssessmentCollaborators WHERE AdminID = @adminId AND IsDeleted = 0);",
                 new { competencyAssessmentId, id, adminId }
             );
         }

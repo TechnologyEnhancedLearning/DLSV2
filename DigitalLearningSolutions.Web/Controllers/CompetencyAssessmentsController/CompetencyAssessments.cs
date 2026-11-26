@@ -33,6 +33,9 @@
             var adminId = GetAdminID();
             var isWorkforceManager = GetIsWorkforceManager() | GetIsFrameworkDeveloper();
             var isWorkforceContributor = GetIsWorkforceContributor() | GetIsFrameworkContributor();
+            var canViewMyCompetencyAssessmentsTab = GetIsFrameworkDeveloper() |
+                GetIsWorkforceManager() |
+                GetIsWorkforceContributor();
             IEnumerable<CompetencyAssessment> competencyAssessments;
             if (tabname == "All")
             {
@@ -91,6 +94,7 @@
             CompetencyAssessmentsViewModel? model = new CompetencyAssessmentsViewModel(
                 isWorkforceManager,
                 isWorkforceContributor,
+                canViewMyCompetencyAssessmentsTab,
                 allCompetencyAssessments,
                 myCompetencyAssessments,
                 currentTab
@@ -719,7 +723,7 @@
         [Route("/Self-Assessment/{competencyAssessmentId}/{vocabularyPlural}/Optional/Select")]
         public IActionResult SelectOptionalCompetencies(SelectOptionalCompetenciesFormData model)
         {
-            var competencies = competencyAssessmentService.GetCompetenciesForCompetencyAssessment(model.ID); 
+            var competencies = competencyAssessmentService.GetCompetenciesForCompetencyAssessment(model.ID);
             if (!ModelState.IsValid)
             {
                 var adminId = GetAdminID();
@@ -731,19 +735,19 @@
                 var viewModel = new SelectOptionalCompetenciesViewModel(competencyAssessmentBase, competencies, model.TaskStatus);
                 return View("SelectOptionalCompetencies", viewModel);
             }
-                var competencyGroupIds = competencies
-                 .Where(c => c.Optional == true && c.GroupOptionalCompetencies)
-                 .Select(c => c.GroupId)
-                 .Distinct()
-                 .ToList();
-                var selectedGroupIds = model.GroupIds ?? [];
-                var selectedCompetencyIds = model.SelectedCompetencyIds ?? [];
-                var unselectedGroupCompetencyIds = competencies
-                 .Where(c => c.Optional == true &&
-                 !c.GroupOptionalCompetencies)
-                 .Select(c => c.StructureId)
-                 .Distinct()
-                 .ToList();
+            var competencyGroupIds = competencies
+             .Where(c => c.Optional == true && c.GroupOptionalCompetencies)
+             .Select(c => c.GroupId)
+             .Distinct()
+             .ToList();
+            var selectedGroupIds = model.GroupIds ?? [];
+            var selectedCompetencyIds = model.SelectedCompetencyIds ?? [];
+            var unselectedGroupCompetencyIds = competencies
+             .Where(c => c.Optional == true &&
+             !c.GroupOptionalCompetencies)
+             .Select(c => c.StructureId)
+             .Distinct()
+             .ToList();
             if (competencyGroupIds.Except(selectedGroupIds).Any() ||
                 selectedGroupIds.Except(competencyGroupIds).Any() ||
                 selectedCompetencyIds.Except(unselectedGroupCompetencyIds).Any() ||
