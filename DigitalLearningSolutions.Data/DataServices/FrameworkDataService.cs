@@ -861,7 +861,9 @@
                 new { frameworkId, id }
             );
             connection.Execute(
-                @"UPDATE FrameworkCollaborators SET IsDeleted=1 WHERE (FrameworkID = @frameworkId) AND (ID = @id);UPDATE AdminUsers SET IsFrameworkContributor = 0 WHERE AdminID = @adminId AND AdminID NOT IN (SELECT DISTINCT AdminID FROM FrameworkCollaborators);",
+                @"UPDATE FrameworkCollaborators SET IsDeleted=1 WHERE (FrameworkID = @frameworkId) AND (ID = @id);
+                    UPDATE AdminUsers SET IsFrameworkContributor = 0 WHERE AdminID = @adminId AND
+                        NOT EXISTS (SELECT 1 FROM FrameworkCollaborators WHERE AdminID = @adminId AND IsDeleted = 0);",
                 new { frameworkId, id, adminId }
             );
         }
