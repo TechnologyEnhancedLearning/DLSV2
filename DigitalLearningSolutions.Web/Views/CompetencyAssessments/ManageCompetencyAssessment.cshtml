@@ -3,7 +3,7 @@
 @{
     ViewData["Title"] = Model.PublishStatusID > 2 ? "Manage self-assessment" : "Create self-assessment";
     ViewData["Application"] = "Framework service";
-    var hasRetirement = Model.RetirementDate != null;
+    var hasRetirement = Model.PublishStatusID == 5;
 }
 <link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
 @section NavMenuItems {
