@@ -95,6 +95,7 @@ namespace DigitalLearningSolutions.Data.DataServices
 
                          INNER JOIN CustomisationTutorials
                          ON CustomisationTutorials.CustomisationID = @customisationId
+                            AND (CustomisationTutorials.Status = 1 OR CustomisationTutorials.DiagStatus = 1)
                             AND CustomisationTutorials.TutorialID = Tutorials.TutorialID
                             AND Tutorials.TutorialID <> @tutorialId
                             AND Tutorials.ArchivedDate IS NULL
