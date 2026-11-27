@@ -1,7 +1,9 @@
 ﻿namespace DigitalLearningSolutions.Data.DataServices
 {
     using Dapper;
+    using DigitalLearningSolutions.Data.Constants;
     using DigitalLearningSolutions.Data.Extensions;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.CompetencyAssessments;
     using Microsoft.Extensions.Logging;
     using System;
@@ -125,7 +127,7 @@
         bool RemoveCompetencyFromAssessment(int competencyAssessmentId, int competencyId);
         bool RemoveCompetencyGroupFromAssessment(int competencyAssessmentId, int competencyGroupId);
         IEnumerable<CompetencyAssessmentCollaboratorDetail> GetCollaboratorsForCompetencyAssessmentId(int competencyAssessmentId);
-        int AddCollaboratorToCompetencyAssessment(int competencyAssessmentId, string? userEmail, bool canModify, int? centreID);
+        int AddCollaboratorToCompetencyAssessment(int competencyAssessmentId, string? userEmail, bool canModify, int? selectedAdminId = null);
         void RemoveCollaboratorFromCompetencyAssessment(int competencyAssessmentId, int id);
         CompetencyAssessmentCollaboratorNotification? GetCollaboratorNotification(int id, int invitedByAdminId);
         bool HasCompetencyWithSignpostedLearning(int competencyAssessmentId);
@@ -1084,9 +1086,11 @@
 						0 AS SelfAssessmentReviewID,
 						0 AS SignOffRequired,
                         NULL AS ReviewRequested,
-                        NULL AS ReviewComplete
+                        NULL AS ReviewComplete,
+                        ct.CentreName
                     FROM SelfAssessments AS sa
                     INNER JOIN AdminUsers AS au ON sa.CreatedByAdminID = au.AdminID
+                    LEFT OUTER JOIN Centres AS ct ON ct.CentreID = au.CentreID
                     WHERE (sa.ID = @competencyAssessmentId)
                     UNION ALL
                     SELECT
@@ -1100,23 +1104,26 @@
                         sr.ID AS SelfAssessmentReviewID,
 					   sr.SignOffRequired,
                        sr.ReviewRequested,
-                       sr.ReviewComplete
+                       sr.ReviewComplete,
+                       ct.CentreName
                     FROM SelfAssessmentCollaborators sc
                     INNER JOIN AdminUsers AS au ON sc.AdminID = au.AdminID
                         AND sc.IsDeleted = 0
+                      LEFT OUTER JOIN Centres AS ct ON ct.CentreID = au.CentreID
                       LEFT OUTER JOIN SelfAssessmentReviews sr ON sr.SelfAssessmentCollaboratorID = sc.ID AND sr.Archived IS NULL
                     WHERE (sc.SelfAssessmentID = @competencyAssessmentId)",
                 new { competencyAssessmentId }
             );
         }
-        public int AddCollaboratorToCompetencyAssessment(int competencyAssessmentId, string? userEmail, bool canModify, int? centreID)
+        public int AddCollaboratorToCompetencyAssessment(int competencyAssessmentId, string? userEmail, bool canModify, int? selectedAdminId)
         {
-            if (userEmail is null || userEmail.Length == 0)
+            userEmail = userEmail?.Trim();
+            if (string.IsNullOrEmpty(userEmail))
             {
                 logger.LogWarning(
                     $"Not adding collaborator to competency assessment as it failed server side valiidation. competencyAssessmentId: {competencyAssessmentId}, userEmail: {userEmail}, canModify:{canModify}"
                 );
-                return -3;
+                return CollaboratorResultCodes.EmailMissing;
             }
 
             var existingId = connection.QuerySingle<int>(
@@ -1128,24 +1135,23 @@
             );
             if (existingId > 0)
             {
-                return -2;
-            }
-
-            var adminId = (int?)connection.ExecuteScalar(
-                @"SELECT TOP 1 AdminID FROM AdminUsers WHERE Email = @userEmail AND Active = 1 ORDER BY CASE WHEN CentreID = @centreID THEN 0 ELSE 1 END",
-                new { userEmail, centreID }
-            );
-            if (adminId is null)
-            {
-                return -4;
+                return CollaboratorResultCodes.AlreadyCollaborator;
             }
 
             var ownerEmail = (string?)connection.ExecuteScalar(@"SELECT AU.Email FROM SelfAssessments SA
                             INNER JOIN AdminUsers AU ON AU.AdminID = SA.CreatedByAdminID
                             WHERE SA.ID = @competencyAssessmentId", new { competencyAssessmentId });
-            if (ownerEmail == userEmail)
+            if (string.Equals(ownerEmail, userEmail, StringComparison.OrdinalIgnoreCase))
             {
-                return -5;
+                return CollaboratorResultCodes.IsOwner;
+            }
+
+            // Resolve the admin account last, so that the user is only asked to choose
+            // between accounts once every other validation has passed.
+            var adminId = AdminAccountResolver.ResolveActiveAdminId(connection, userEmail, selectedAdminId);
+            if (adminId < 0)
+            {
+                return adminId;
             }
 
             var numberOfAffectedRows = connection.Execute(
@@ -1156,9 +1162,9 @@
             if (numberOfAffectedRows < 1)
             {
                 logger.LogWarning(
-                    $"Not inserting framework collaborator as db insert failed. AdminId: {adminId}, userEmail: {userEmail}, competencyAssessmentId: {competencyAssessmentId}, canModify: {canModify}"
+                    $"Not inserting self assessment collaborator as db insert failed. AdminId: {adminId}, userEmail: {userEmail}, competencyAssessmentId: {competencyAssessmentId}, canModify: {canModify}"
                 );
-                return -1;
+                return CollaboratorResultCodes.InsertFailed;
             }
 
             if (adminId > 0)

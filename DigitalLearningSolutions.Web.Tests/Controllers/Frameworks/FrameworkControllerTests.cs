@@ -32,6 +32,7 @@
         private IMultiPageFormService multiPageFormService = null!;
         private IClockUtility clockUtility = null!;
         private IWebHostEnvironment webHostEnvironment = null!;
+        private IUserService userService = null!;
 
         [SetUp]
         public void SetUp()
@@ -48,6 +49,7 @@
             multiPageFormService = A.Fake<IMultiPageFormService>();
             clockUtility = A.Fake<ClockUtility>();
             webHostEnvironment = A.Fake<IWebHostEnvironment>();
+            userService = A.Fake<IUserService>();
             A.CallTo(() => config["CurrentSystemBaseUrl"]).Returns(BaseUrl);
 
             var user = new ClaimsPrincipal(
@@ -72,7 +74,8 @@
                 searchSortFilterPaginateService,
                 multiPageFormService,
                 clockUtility,
-                webHostEnvironment
+                webHostEnvironment,
+                userService
             )
             {
                 ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext { User = user } },

@@ -29,6 +29,7 @@
         private readonly IMultiPageFormService multiPageFormService;
         private readonly IClockUtility clockUtility;
         private readonly IWebHostEnvironment webHostEnvironment;
+        private readonly IUserService userService;
         public FrameworksController(
             IFrameworkService frameworkService,
             ICommonService commonService,
@@ -40,9 +41,11 @@
             ISearchSortFilterPaginateService searchSortFilterPaginateService,
             IMultiPageFormService multiPageFormService,
             IClockUtility clockUtility,
-            IWebHostEnvironment webHostEnvironment
+            IWebHostEnvironment webHostEnvironment,
+            IUserService userService
         )
         {
+            this.userService = userService;
             this.frameworkService = frameworkService;
             this.commonService = commonService;
             this.frameworkNotificationService = frameworkNotificationService;

@@ -1,6 +1,7 @@
 ﻿namespace DigitalLearningSolutions.Web.Controllers.CompetencyAssessmentsController
 {
     using System;
+    using DigitalLearningSolutions.Data.Constants;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Extensions;
     using DigitalLearningSolutions.Data.Models.CompetencyAssessments;
@@ -10,6 +11,7 @@
     using DigitalLearningSolutions.Web.Helpers;
     using DigitalLearningSolutions.Web.Models.Enums;
     using DigitalLearningSolutions.Web.ViewModels.CompetencyAssessments;
+    using DigitalLearningSolutions.Web.ViewModels.Common;
     using DocumentFormat.OpenXml.EMMA;
     using GDS.MultiPageFormData.Enums;
     using Microsoft.AspNetCore.Mvc;
@@ -956,41 +958,32 @@
         [Route("/Self-Assessment/{competencyAssessmentId}/{actionName}")]
         public IActionResult AssessmentWorkingGroup(WorkingGroupCollaboratorsViewModel model, bool canModify, string actionName)
         {
-            int? centreID = GetCentreId();
-
             if (actionName == "Collaborators")
             {
-                var collaboratorId = competencyAssessmentService.AddCollaboratorToCompetencyAssessment(model.CompetencyAssessmentID, model.UserEmail, canModify, centreID);
-                if (collaboratorId > 0)
-                {
-                    selfAssessmentNotificationService.SendCompetencyAssessmentCollaboratorInvite(collaboratorId, GetAdminID());
-                }
-                else
-                {
-                    if (collaboratorId == -3)
-                    {
-                        TempData["CompetencyAssessmentError"] = "Email address should not be empty";
+                var adminId = GetAdminID();
+                var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(model.CompetencyAssessmentID, adminId);
+                var result = ValidateCompetencyAssessmentAndRole(model.CompetencyAssessmentID, adminId, "Assessment Working Group", competencyAssessmentBase);
+                if (result.StatusCode != 200)
+                    return result;
+                if (competencyAssessmentBase!.UserRole < 2)
+                    return StatusCode(403);
 
-                    }
-                    else if (collaboratorId == -2)
-                    {
-                        TempData["CompetencyAssessmentError"] = $"A user with the email address has been previously added";
-                    }
-                    else if (collaboratorId == -4)
-                    {
-                        TempData["CompetencyAssessmentError"] = $"The email address must match a registered DLS Admin account";
-                    }
-                    else if (collaboratorId == -5)
-                    {
-                        TempData["CompetencyAssessmentError"] = $"The owner cannot be the collaborator of the competency assessment.";
-                    }
-                    else
-                    {
-                        TempData["CompetencyAssessmentError"] = "User not added,Kindly try again;";
-                    }
+                var collaboratorId = competencyAssessmentService.AddCollaboratorToCompetencyAssessment(model.CompetencyAssessmentID, model.UserEmail, canModify);
+                if (collaboratorId == CollaboratorResultCodes.AdminAccountSelectionRequired)
+                {
+                    // The email has an admin account at more than one centre, so ask which one to add.
+                    var selectModel = new SelectAdminAccountViewModel(
+                        model.CompetencyAssessmentID,
+                        competencyAssessmentBase.CompetencyAssessmentName,
+                        model.UserEmail!.Trim(),
+                        canModify,
+                        actionName,
+                        userService.GetActiveAdminAccountsByEmail(model.UserEmail)
+                    );
+                    return View("SelectCollaboratorAccount", selectModel);
                 }
-                return RedirectToAction("AssessmentWorkingGroup", "CompetencyAssessments", new { model.CompetencyAssessmentID, actionName = actionName });
 
+                return HandleAddCompetencyAssessmentCollaboratorResult(collaboratorId, model.CompetencyAssessmentID, actionName);
             }
             else if (actionName == "CollaboratorReview")
             {
@@ -1171,6 +1164,59 @@
 
             var newModel = new OptionsLabelsViewModel(data);
             return RedirectToAction("OptionsLabels", "CompetencyAssessments", new { model.CompetencyAssessmentID, step = newModel.CurrentStep });
+        }
+
+        [HttpPost]
+        [Route("/Self-Assessment/{competencyAssessmentId}/Collaborators/SelectAccount")]
+        public IActionResult SelectCollaboratorAccount(int competencyAssessmentId, SelectAdminAccountViewModel model)
+        {
+            var adminId = GetAdminID();
+            var competencyAssessmentBase = competencyAssessmentService.GetCompetencyAssessmentBaseById(competencyAssessmentId, adminId);
+            var result = ValidateCompetencyAssessmentAndRole(competencyAssessmentId, adminId, "Select collaborator account", competencyAssessmentBase);
+            if (result.StatusCode != 200)
+                return result;
+            if (competencyAssessmentBase!.UserRole < 2)
+                return StatusCode(403);
+
+            var actionName = string.IsNullOrWhiteSpace(model.ActionName) ? "Collaborators" : model.ActionName;
+            model.EntityId = competencyAssessmentId;
+            model.EntityName = competencyAssessmentBase.CompetencyAssessmentName;
+            model.ActionName = actionName;
+
+            if (!ModelState.IsValid)
+            {
+                model.AdminAccounts = userService.GetActiveAdminAccountsByEmail(model.Email);
+                if (!model.AdminAccounts.Any())
+                {
+                    TempData["CompetencyAssessmentError"] = CollaboratorResultMessageHelper.GetErrorMessage(CollaboratorResultCodes.NoActiveAdminAccount, "self-assessment");
+                    return RedirectToAction("AssessmentWorkingGroup", "CompetencyAssessments", new { competencyAssessmentId, actionName });
+                }
+                return View("SelectCollaboratorAccount", model);
+            }
+
+            var collaboratorId = competencyAssessmentService.AddCollaboratorToCompetencyAssessment(competencyAssessmentId, model.Email, model.CanModify, model.SelectedAdminId);
+            return HandleAddCompetencyAssessmentCollaboratorResult(collaboratorId, competencyAssessmentId, actionName);
+        }
+
+        private IActionResult HandleAddCompetencyAssessmentCollaboratorResult(int collaboratorId, int competencyAssessmentId, string actionName)
+        {
+            if (collaboratorId > 0)
+            {
+                try
+                {
+                    selfAssessmentNotificationService.SendCompetencyAssessmentCollaboratorInvite(collaboratorId, GetAdminID());
+                }
+                catch (Exception ex)
+                {
+                    // The collaborator has been added; a failed notification should not lose that.
+                    logger.LogError(ex, $"Failed to send self assessment collaborator invite. collaboratorId: {collaboratorId}, competencyAssessmentId: {competencyAssessmentId}");
+                }
+            }
+            else
+            {
+                TempData["CompetencyAssessmentError"] = CollaboratorResultMessageHelper.GetErrorMessage(collaboratorId, "self-assessment");
+            }
+            return RedirectToAction("AssessmentWorkingGroup", "CompetencyAssessments", new { competencyAssessmentId, actionName });
         }
 
         public IActionResult RemoveCollaborator(int competencyAssessmentId, int id, string actionName)

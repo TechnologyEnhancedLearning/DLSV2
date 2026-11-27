@@ -23,6 +23,7 @@
         private readonly ILogger<CompetencyAssessmentsController> logger;
         private readonly IConfiguration config;
         private readonly IMultiPageFormService multiPageFormService;
+        private readonly IUserService userService;
         public CompetencyAssessmentsController(
            ICompetencyAssessmentService competencyAssessmentService,
            IFrameworkService frameworkService,
@@ -35,8 +36,10 @@
            IEnrolService enrolService,
            ILogger<CompetencyAssessmentsController> logger,
            IConfiguration config,
-           IMultiPageFormService multiPageFormService)
+           IMultiPageFormService multiPageFormService,
+           IUserService userService)
         {
+            this.userService = userService;
             this.competencyAssessmentService = competencyAssessmentService;
             this.frameworkService = frameworkService;
             this.commonService = commonService;

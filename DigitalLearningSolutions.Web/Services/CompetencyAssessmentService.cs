@@ -119,7 +119,7 @@ namespace DigitalLearningSolutions.Web.Services
         bool RemoveCompetencyFromAssessment(int competencyAssessmentId, int competencyId);
         bool RemoveCompetencyGroupFromAssessment(int competencyAssessmentId, int competencyGroupId);
         IEnumerable<CompetencyAssessmentCollaboratorDetail> GetCollaboratorsForCompetencyAssessmentId(int competencyAssessmentId);
-        int AddCollaboratorToCompetencyAssessment(int competencyAssessmentId, string? userEmail, bool canModify, int? centreID);
+        int AddCollaboratorToCompetencyAssessment(int competencyAssessmentId, string? userEmail, bool canModify, int? selectedAdminId = null);
         void RemoveCollaboratorFromCompetencyAssessment(int competencyAssessmentId, int id);
         CompetencyAssessmentCollaboratorNotification? GetCollaboratorNotification(int id, int invitedByAdminId);
         bool HasCompetencyWithSignpostedLearning(int competencyAssessmentId);
@@ -409,9 +409,9 @@ namespace DigitalLearningSolutions.Web.Services
         {
             return competencyAssessmentDataService.GetCollaboratorsForCompetencyAssessmentId(competencyAssessmentId);
         }
-        public int AddCollaboratorToCompetencyAssessment(int competencyAssessmentId, string? userEmail, bool canModify, int? centreID)
+        public int AddCollaboratorToCompetencyAssessment(int competencyAssessmentId, string? userEmail, bool canModify, int? selectedAdminId = null)
         {
-            return competencyAssessmentDataService.AddCollaboratorToCompetencyAssessment(competencyAssessmentId, userEmail, canModify, centreID);
+            return competencyAssessmentDataService.AddCollaboratorToCompetencyAssessment(competencyAssessmentId, userEmail, canModify, selectedAdminId);
         }
         public void RemoveCollaboratorFromCompetencyAssessment(int competencyAssessmentId, int id)
         {

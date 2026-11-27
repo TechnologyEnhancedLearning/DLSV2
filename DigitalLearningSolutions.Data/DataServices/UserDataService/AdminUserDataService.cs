@@ -216,6 +216,27 @@
             ).SingleOrDefault();
         }
 
+        public IEnumerable<AdminAccountSummary> GetActiveAdminAccountsByEmail(string emailAddress)
+        {
+            if (string.IsNullOrWhiteSpace(emailAddress))
+            {
+                return Enumerable.Empty<AdminAccountSummary>();
+            }
+
+            return connection.Query<AdminAccountSummary>(
+                @"SELECT
+                        au.AdminID AS AdminId,
+                        au.Email,
+                        au.CentreID AS CentreId,
+                        ct.CentreName
+                    FROM AdminUsers AS au
+                    INNER JOIN Centres AS ct ON ct.CentreID = au.CentreID
+                    WHERE au.Email = @emailAddress AND au.Active = 1
+                    ORDER BY ct.CentreName, au.AdminID",
+                new { emailAddress = emailAddress.Trim() }
+            );
+        }
+
         [Obsolete("New code should use GetAdminsByCentreId instead")]
         public List<AdminUser> GetAdminUsersByCentreId(int centreId)
         {
