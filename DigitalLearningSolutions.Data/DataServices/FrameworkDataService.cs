@@ -5,7 +5,9 @@
     using System.Data;
     using System.Linq;
     using Dapper;
+    using DigitalLearningSolutions.Data.Constants;
     using DigitalLearningSolutions.Data.Extensions;
+    using DigitalLearningSolutions.Data.Helpers;
     using DigitalLearningSolutions.Data.Models.Common;
     using DigitalLearningSolutions.Data.Models.Email;
     using DigitalLearningSolutions.Data.Models.Frameworks;
@@ -136,7 +138,7 @@
 
         int InsertFrameworkCompetency(int competencyId, int? frameworkCompetencyGroupID, int adminId, int frameworkId, bool addDefaultQuestions = true);
 
-        int AddCollaboratorToFramework(int frameworkId, string userEmail, bool canModify, int? centreID);
+        int AddCollaboratorToFramework(int frameworkId, string? userEmail, bool canModify, int? selectedAdminId = null);
 
         int AddCustomFlagToFramework(int frameworkId, string flagName, string flagGroup, string flagTagClass);
         void UpdateFrameworkCustomFlag(int frameworkId, int id, string flagName, string flagGroup, string flagTagClass);
@@ -270,7 +272,7 @@
         void DeleteCompetencyLearningResource(int competencyLearningResourceId, int adminId);
         void UpdateFrameworkCompetencyFrameworkCompetencyGroup(int? competencyGroupId, int frameworkCompetencyGroupId, int adminId);
 
-        void ChangeFrameworkOwner(int frameworkId, string newOwnerEmail, int updatedByAdminId);
+        void ChangeFrameworkOwner(int frameworkId, string newOwnerEmail, int updatedByAdminId, int? selectedAdminId = null);
         IEnumerable<int> GetAdminIdsForUserId(int userId);
 
     }
@@ -763,9 +765,11 @@
                         1 AS CanModify,
                         au.Email AS UserEmail,
                         au.Active AS UserActive,
-                        'Owner' AS FrameworkRole
+                        'Owner' AS FrameworkRole,
+                        ct.CentreName
                     FROM Frameworks AS fw
                     INNER JOIN AdminUsers AS au ON fw.OwnerAdminID = au.AdminID
+                    LEFT OUTER JOIN Centres AS ct ON ct.CentreID = au.CentreID
                     WHERE (fw.ID = @FrameworkID)
                     UNION ALL
                     SELECT
@@ -775,23 +779,26 @@
                         CanModify,
                         UserEmail,
                         au.Active AS UserActive,
-                        CASE WHEN CanModify = 1 THEN 'Contributor' ELSE 'Reviewer' END AS FrameworkRole
+                        CASE WHEN CanModify = 1 THEN 'Contributor' ELSE 'Reviewer' END AS FrameworkRole,
+                        ct.CentreName
                     FROM FrameworkCollaborators fc
                     INNER JOIN AdminUsers AS au ON fc.AdminID = au.AdminID
                     AND fc.IsDeleted = 0
+                    LEFT OUTER JOIN Centres AS ct ON ct.CentreID = au.CentreID
                     WHERE (FrameworkID = @FrameworkID)",
                 new { frameworkId }
             );
         }
 
-        public int AddCollaboratorToFramework(int frameworkId, string? userEmail, bool canModify, int? centreID)
+        public int AddCollaboratorToFramework(int frameworkId, string? userEmail, bool canModify, int? selectedAdminId)
         {
-            if (userEmail is null || userEmail.Length == 0)
+            userEmail = userEmail?.Trim();
+            if (string.IsNullOrEmpty(userEmail))
             {
                 logger.LogWarning(
                     $"Not adding collaborator to framework as it failed server side valiidation. frameworkId: {frameworkId}, userEmail: {userEmail}, canModify:{canModify}"
                 );
-                return -3;
+                return CollaboratorResultCodes.EmailMissing;
             }
 
             var existingId = connection.QuerySingle<int>(
@@ -803,24 +810,23 @@
             );
             if (existingId > 0)
             {
-                return -2;
-            }
-
-            var adminId = (int?)connection.ExecuteScalar(
-                @"SELECT TOP 1 AdminID FROM AdminUsers WHERE Email = @userEmail AND Active = 1 ORDER BY CASE WHEN CentreID = @centreID THEN 0 ELSE 1 END",
-                new { userEmail, centreID }
-            );
-            if (adminId is null)
-            {
-                return -4;
+                return CollaboratorResultCodes.AlreadyCollaborator;
             }
 
             var ownerEmail = (string?)connection.ExecuteScalar(@"SELECT AU.Email FROM Frameworks F
                 INNER JOIN AdminUsers AU ON AU.AdminID=F.OwnerAdminID
                 WHERE F.ID=@frameworkId", new { frameworkId });
-            if (ownerEmail == userEmail)
+            if (string.Equals(ownerEmail, userEmail, StringComparison.OrdinalIgnoreCase))
             {
-                return -5;
+                return CollaboratorResultCodes.IsOwner;
+            }
+
+            // Resolve the admin account last, so that the user is only asked to choose
+            // between accounts once every other validation has passed.
+            var adminId = AdminAccountResolver.ResolveActiveAdminId(connection, userEmail, selectedAdminId);
+            if (adminId < 0)
+            {
+                return adminId;
             }
 
             var numberOfAffectedRows = connection.Execute(
@@ -833,7 +839,7 @@
                 logger.LogWarning(
                     $"Not inserting framework collaborator as db insert failed. AdminId: {adminId}, userEmail: {userEmail}, frameworkId: {frameworkId}, canModify: {canModify}"
                 );
-                return -1;
+                return CollaboratorResultCodes.InsertFailed;
             }
 
             if (adminId > 0)
@@ -2606,43 +2612,45 @@ WHERE (RP.CreatedByAdminID = @adminId) OR
             }
         }
 
-        public void ChangeFrameworkOwner(int frameworkId, string newOwnerEmail, int updatedByAdminId)
+        public void ChangeFrameworkOwner(int frameworkId, string newOwnerEmail, int updatedByAdminId, int? selectedAdminId = null)
         {
-            // Find the AdminID for the new owner
-            var newOwnerAdminId = connection.Query<int?>(
-                @"SELECT AdminID FROM AdminUsers WHERE Email = @newOwnerEmail AND Active = 1",
-                new { newOwnerEmail }
-            ).FirstOrDefault(); ;
-            if (newOwnerAdminId == null)
+            // Find the AdminID for the new owner. An email can have admin accounts at
+            // several centres, so the caller must say which one when there is more than one.
+            var newOwnerAdminId = AdminAccountResolver.ResolveActiveAdminId(connection, newOwnerEmail?.Trim() ?? string.Empty, selectedAdminId);
+            if (newOwnerAdminId == CollaboratorResultCodes.NoActiveAdminAccount)
             {
-                throw new Exception("No active admin user found with that email.");
+                throw new InvalidOperationException("No active admin user found with that email.");
+            }
+            if (newOwnerAdminId == CollaboratorResultCodes.AdminAccountSelectionRequired)
+            {
+                throw new InvalidOperationException("This email address has more than one admin account. Select which account should own the framework.");
             }
 
             // Update the owner
             connection.EnsureOpen();
             using var transaction = connection.BeginTransaction();
-            {
-                var rows = connection.Execute(
+            var rows = connection.Execute(
                 @"UPDATE Frameworks SET OwnerAdminID = @newOwnerAdminId, UpdatedByAdminID = @updatedByAdminId WHERE ID = @frameworkId",
-                new { frameworkId, newOwnerAdminId, updatedByAdminId }
-                , transaction
+                new { frameworkId, newOwnerAdminId, updatedByAdminId },
+                transaction
             );
-                connection.Execute(
+            if (rows < 1)
+            {
+                transaction.Rollback();
+                logger.LogWarning($"Not changing framework owner as db update failed. frameworkId: {frameworkId}, newOwnerAdminId: {newOwnerAdminId}");
+                throw new InvalidOperationException("Failed to update framework owner.");
+            }
+
+            connection.Execute(
                 @"UPDATE FrameworkCollaborators
                   SET IsDeleted = 1
                   WHERE FrameworkID = @frameworkId
                   AND AdminID = @newOwnerAdminId
                   AND IsDeleted = 0;",
-            new { frameworkId, newOwnerAdminId },
-            transaction
-        );
-                transaction.Commit();
-
-                if (rows < 1)
-                {
-                    throw new Exception("Failed to update framework owner.");
-                }
-            }
+                new { frameworkId, newOwnerAdminId },
+                transaction
+            );
+            transaction.Commit();
         }
         public IEnumerable<int> GetAdminIdsForUserId(int userId)
         {

@@ -11,5 +11,6 @@ namespace DigitalLearningSolutions.Data.Models.CompetencyAssessments
         public bool SignOffRequired { get; set; }
         public DateTime? ReviewRequested { get; set; }
         public DateTime? ReviewComplete { get; set; }
+        public string? CentreName { get; set; }
     }
 }

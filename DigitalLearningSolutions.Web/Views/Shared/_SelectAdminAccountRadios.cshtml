@@ -1,0 +1,65 @@
+@using DigitalLearningSolutions.Web.ViewModels.Common
+@model SelectAdminAccountViewModel
+@*
+    Radio list of admin accounts that share one email address (one per centre).
+    Expects ViewData["Heading"] (used as the fieldset legend / page h1) and
+    optionally ViewData["Hint"].
+*@
+@{
+    var heading = ViewData["Heading"]?.ToString() ?? "Select an admin account";
+    var hint = ViewData["Hint"]?.ToString();
+    var fieldName = nameof(Model.SelectedAdminId);
+    var hintId = $"{fieldName}-hint";
+    var errorId = $"{fieldName}-error";
+    var errorMessage = ViewData.ModelState.TryGetValue(fieldName, out var entry)
+        ? entry.Errors.Select(e => e.ErrorMessage).FirstOrDefault(m => !string.IsNullOrWhiteSpace(m))
+        : null;
+    var hasError = errorMessage != null;
+    var describedBy = string.Join(" ", new[] { hint != null ? hintId : null, hasError ? errorId : null }.Where(x => x != null));
+    var index = 0;
+}
+<div class="nhsuk-form-group @(hasError ? "nhsuk-form-group--error" : "")">
+    <fieldset class="nhsuk-fieldset" aria-describedby="@(string.IsNullOrEmpty(describedBy) ? null : describedBy)">
+        <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--l">
+            <h1 class="nhsuk-fieldset__heading">
+                @if (!string.IsNullOrWhiteSpace(Model.EntityName))
+                {
+                    <span class="nhsuk-caption-l">
+                        @Model.EntityName
+                        <span class="nhsuk-u-visually-hidden"> - </span>
+                    </span>
+                }
+                @heading
+            </h1>
+        </legend>
+        @if (hint != null)
+        {
+            <div class="nhsuk-hint" id="@hintId">@hint</div>
+        }
+        @if (hasError)
+        {
+            <span class="nhsuk-error-message" id="@errorId">
+                <span class="nhsuk-u-visually-hidden">Error:</span> @errorMessage
+            </span>
+        }
+        <div class="nhsuk-radios">
+            @foreach (var account in Model.AdminAccounts)
+            {
+                // The first radio uses the field name as its id so the error summary link can focus it.
+                var radioId = index == 0 ? fieldName : $"{fieldName}-{account.AdminId}";
+                index++;
+                <div class="nhsuk-radios__item">
+                    <input class="nhsuk-radios__input"
+                           type="radio"
+                           id="@radioId"
+                           name="@fieldName"
+                           value="@account.AdminId"
+                           checked="@(Model.SelectedAdminId == account.AdminId)" />
+                    <label class="nhsuk-label nhsuk-radios__label" for="@radioId">
+                        @account.DisplayName
+                    </label>
+                </div>
+            }
+        </div>
+    </fieldset>
+</div>

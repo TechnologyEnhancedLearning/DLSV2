@@ -29,6 +29,8 @@
 
         AdminUser? GetAdminUserByEmailAddress(string emailAddress);
 
+        IEnumerable<AdminAccountSummary> GetActiveAdminAccountsByEmail(string emailAddress);
+
         int GetNumberOfAdminsAtCentre(int centreId);
 
         void UpdateAdminUserPermissions(

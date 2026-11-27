@@ -130,7 +130,7 @@ namespace DigitalLearningSolutions.Web.Services
 
         int InsertFrameworkCompetencyGroup(int groupId, int frameworkID, int adminId);
 
-        int AddCollaboratorToFramework(int frameworkId, string userEmail, bool canModify, int? centreID);
+        int AddCollaboratorToFramework(int frameworkId, string? userEmail, bool canModify, int? selectedAdminId = null);
 
         int AddCustomFlagToFramework(int frameworkId, string flagName, string flagGroup, string flagTagClass);
         void UpdateFrameworkCustomFlag(int frameworkId, int id, string flagName, string flagGroup, string flagTagClass);
@@ -264,7 +264,7 @@ namespace DigitalLearningSolutions.Web.Services
         void DeleteCompetencyLearningResource(int competencyLearningResourceId, int adminId);
         void UpdateFrameworkCompetencyFrameworkCompetencyGroup(int? competencyGroupId, int frameworkCompetencyGroupId, int adminId);
 
-        void ChangeFrameworkOwner(int frameworkId, string newOwnerEmail, int updatedByAdminId);
+        void ChangeFrameworkOwner(int frameworkId, string newOwnerEmail, int updatedByAdminId, int? selectedAdminId = null);
         IEnumerable<int> GetAdminIdsForUserId(int userId);
     }
     public class FrameworkService : IFrameworkService
@@ -275,9 +275,9 @@ namespace DigitalLearningSolutions.Web.Services
             this.frameworkDataService = frameworkDataService;
         }
 
-        public int AddCollaboratorToFramework(int frameworkId, string userEmail, bool canModify, int? centreID)
+        public int AddCollaboratorToFramework(int frameworkId, string? userEmail, bool canModify, int? selectedAdminId = null)
         {
-            return frameworkDataService.AddCollaboratorToFramework(frameworkId, userEmail, canModify, centreID);
+            return frameworkDataService.AddCollaboratorToFramework(frameworkId, userEmail, canModify, selectedAdminId);
         }
 
         public void AddCompetencyAssessmentQuestion(int frameworkCompetencyId, int assessmentQuestionId, int adminId)
@@ -739,9 +739,9 @@ namespace DigitalLearningSolutions.Web.Services
         {
             frameworkDataService.UpdateFrameworkCompetencyFrameworkCompetencyGroup(competencyGroupId, frameworkCompetencyGroupId, adminId);
         }
-        public void ChangeFrameworkOwner(int frameworkId, string newOwnerEmail, int updatedByAdminId)
+        public void ChangeFrameworkOwner(int frameworkId, string newOwnerEmail, int updatedByAdminId, int? selectedAdminId = null)
         {
-            frameworkDataService.ChangeFrameworkOwner(frameworkId, newOwnerEmail, updatedByAdminId);
+            frameworkDataService.ChangeFrameworkOwner(frameworkId, newOwnerEmail, updatedByAdminId, selectedAdminId);
         }
 
         public IEnumerable<int> GetAdminIdsForUserId(int userId)

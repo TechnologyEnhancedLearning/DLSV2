@@ -45,7 +45,8 @@
                         A.Fake<ISearchSortFilterPaginateService>(),
                         A.Fake<IMultiPageFormService>(),
                         A.Fake<IClockUtility>(),
-                        A.Fake<IWebHostEnvironment>()
+                        A.Fake<IWebHostEnvironment>(),
+                        A.Fake<IUserService>()
                     )
                     .WithDefaultContext().WithMockTempData();
 

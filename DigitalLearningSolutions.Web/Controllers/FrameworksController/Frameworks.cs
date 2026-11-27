@@ -10,6 +10,7 @@ using System.Collections.Generic;
 
 namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
 {
+    using DigitalLearningSolutions.Data.Constants;
     using DigitalLearningSolutions.Data.Enums;
     using DigitalLearningSolutions.Data.Helpers;
     using GDS.MultiPageFormData.Enums;
@@ -661,39 +662,74 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         [Route("/Frameworks/Collaborators/{actionName}/{frameworkId}/")]
         public IActionResult AddCollaborator(string actionName, string userEmail, bool canModify, int frameworkId)
         {
-            int? centreID = GetCentreId();
-            var collaboratorId = frameworkService.AddCollaboratorToFramework(frameworkId, userEmail, canModify, centreID);
+            var framework = frameworkService.GetBaseFrameworkByFrameworkId(frameworkId, GetAdminId());
+            if (framework == null) return StatusCode(404);
+            if (framework.UserRole < 2) return StatusCode(403);
+
+            var collaboratorId = frameworkService.AddCollaboratorToFramework(frameworkId, userEmail, canModify);
+            if (collaboratorId == CollaboratorResultCodes.AdminAccountSelectionRequired)
+            {
+                // The email has an admin account at more than one centre, so ask which one to add.
+                var model = new SelectAdminAccountViewModel(
+                    frameworkId,
+                    framework.FrameworkName,
+                    userEmail.Trim(),
+                    canModify,
+                    actionName,
+                    userService.GetActiveAdminAccountsByEmail(userEmail)
+                );
+                return View("Developer/SelectCollaboratorAccount", model);
+            }
+
+            return HandleAddCollaboratorResult(collaboratorId, frameworkId, actionName);
+        }
+
+        [HttpPost]
+        [Route("/Frameworks/Collaborators/{actionName}/{frameworkId}/SelectAccount")]
+        public IActionResult SelectCollaboratorAccount(string actionName, int frameworkId, SelectAdminAccountViewModel model)
+        {
+            var framework = frameworkService.GetBaseFrameworkByFrameworkId(frameworkId, GetAdminId());
+            if (framework == null) return StatusCode(404);
+            if (framework.UserRole < 2) return StatusCode(403);
+
+            model.EntityId = frameworkId;
+            model.EntityName = framework.FrameworkName;
+            model.ActionName = actionName;
+
+            if (!ModelState.IsValid)
+            {
+                model.AdminAccounts = userService.GetActiveAdminAccountsByEmail(model.Email);
+                if (!model.AdminAccounts.Any())
+                {
+                    TempData["FrameworkError"] = CollaboratorResultMessageHelper.GetErrorMessage(CollaboratorResultCodes.NoActiveAdminAccount, "framework");
+                    return RedirectToAction("AddCollaborators", "Frameworks", new { frameworkId, actionName });
+                }
+                return View("Developer/SelectCollaboratorAccount", model);
+            }
+
+            var collaboratorId = frameworkService.AddCollaboratorToFramework(frameworkId, model.Email, model.CanModify, model.SelectedAdminId);
+            return HandleAddCollaboratorResult(collaboratorId, frameworkId, actionName);
+        }
+
+        private IActionResult HandleAddCollaboratorResult(int collaboratorId, int frameworkId, string actionName)
+        {
             if (collaboratorId > 0)
             {
-                frameworkNotificationService.SendFrameworkCollaboratorInvite(collaboratorId, GetAdminId());
-                return RedirectToAction("AddCollaborators", "Frameworks", new { frameworkId, actionName });
+                try
+                {
+                    frameworkNotificationService.SendFrameworkCollaboratorInvite(collaboratorId, GetAdminId());
+                }
+                catch (Exception ex)
+                {
+                    // The collaborator has been added; a failed notification should not lose that.
+                    logger.LogError(ex, $"Failed to send framework collaborator invite. collaboratorId: {collaboratorId}, frameworkId: {frameworkId}");
+                }
             }
             else
             {
-                if (collaboratorId == -3)
-                {
-                    TempData["FrameworkError"] = "Email address should not be empty";
-
-                }
-                else if (collaboratorId == -2)
-                {
-                    TempData["FrameworkError"] = $"A user with the email address has been previously added";
-                }
-                else if (collaboratorId == -4)
-                {
-                    TempData["FrameworkError"] = $"The email address must match a registered DLS Admin account";
-                }
-                else if (collaboratorId == -5)
-                {
-                    TempData["FrameworkError"] = $"The owner cannot be the collaborator of the framework.";
-                }
-                else
-                {
-                    TempData["FrameworkError"] = "User not added,Kindly try again;";
-                }
-                return RedirectToAction("AddCollaborators", "Frameworks", new { frameworkId, actionName });
+                TempData["FrameworkError"] = CollaboratorResultMessageHelper.GetErrorMessage(collaboratorId, "framework");
             }
-
+            return RedirectToAction("AddCollaborators", "Frameworks", new { frameworkId, actionName });
         }
 
         public IActionResult RemoveCollaborator(int frameworkId, string actionName, int id)
@@ -781,11 +817,7 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         {
             var framework = frameworkService.GetBaseFrameworkByFrameworkId(frameworkId, GetAdminId());
             if (framework == null) return StatusCode(404);
-
-            var userId = User.GetUserIdKnownNotNull();
-            var userAdminIds = frameworkService.GetAdminIdsForUserId(userId);
-            if (!userAdminIds.Contains(framework.OwnerAdminID))
-                return StatusCode(403);
+            if (!IsCurrentUserFrameworkOwner(framework)) return StatusCode(403);
 
             var model = new ChangeOwnerViewModel
             {
@@ -800,33 +832,141 @@ namespace DigitalLearningSolutions.Web.Controllers.FrameworksController
         public IActionResult ChangeOwner(int frameworkId, ChangeOwnerViewModel model)
         {
             var framework = frameworkService.GetBaseFrameworkByFrameworkId(frameworkId, GetAdminId());
+            if (framework == null) return StatusCode(404);
+            if (!IsCurrentUserFrameworkOwner(framework)) return StatusCode(403);
+
+            model.FrameworkId = frameworkId;
             model.FrameworkName = framework.FrameworkName;
-           var checkEmail = frameworkService.CheckIfEmailExistAsCollaboratorsOrReviewer(frameworkId, model.NewOwnerEmail);
+            model.NewOwnerEmail = model.NewOwnerEmail?.Trim();
+            if (!ModelState.IsValid)
+            {
+                return View("Developer/ChangeOwner", model);
+            }
+            var checkEmail = frameworkService.CheckIfEmailExistAsCollaboratorsOrReviewer(frameworkId, model.NewOwnerEmail);
             if (checkEmail)
             {
                 ModelState.AddModelError(nameof(model.NewOwnerEmail), "This user is already a collaborator or reviewer, so they cannot be made the owner.");
                 return View("Developer/ChangeOwner", model);
             }
-            if (User.GetUserPrimaryEmail() == model.NewOwnerEmail)
+            if (string.Equals(User.GetUserPrimaryEmail(), model.NewOwnerEmail, StringComparison.OrdinalIgnoreCase))
             {
                 ModelState.AddModelError(nameof(model.NewOwnerEmail), "The new owner email address cannot be the same as the current owner's email address.");
                 return View("Developer/ChangeOwner", model);
             }
-            if (!ModelState.IsValid)
+
+            var adminAccounts = userService.GetActiveAdminAccountsByEmail(model.NewOwnerEmail!).ToList();
+            if (!adminAccounts.Any())
             {
+                ModelState.AddModelError(nameof(model.NewOwnerEmail), "No active admin user found with that email.");
                 return View("Developer/ChangeOwner", model);
             }
+            if (adminAccounts.Count > 1)
+            {
+                // The email has an admin account at more than one centre, so ask which one should own the framework.
+                var selectModel = new SelectAdminAccountViewModel(
+                    frameworkId,
+                    framework.FrameworkName,
+                    model.NewOwnerEmail!,
+                    canModify: true,
+                    actionName: null,
+                    adminAccounts
+                );
+                return View("Developer/SelectNewOwnerAccount", selectModel);
+            }
 
+            return TryChangeFrameworkOwner(
+                frameworkId,
+                model.NewOwnerEmail!,
+                adminAccounts[0].AdminId,
+                errorMessage =>
+                {
+                    ModelState.AddModelError(nameof(model.NewOwnerEmail), errorMessage);
+                    return View("Developer/ChangeOwner", model);
+                }
+            );
+        }
+
+        [HttpPost]
+        [Route("/Frameworks/ChangeOwner/{frameworkId}/SelectAccount")]
+        public IActionResult SelectNewOwnerAccount(int frameworkId, SelectAdminAccountViewModel model)
+        {
+            var framework = frameworkService.GetBaseFrameworkByFrameworkId(frameworkId, GetAdminId());
+            if (framework == null) return StatusCode(404);
+            if (!IsCurrentUserFrameworkOwner(framework)) return StatusCode(403);
+
+            model.EntityId = frameworkId;
+            model.EntityName = framework.FrameworkName;
+            model.Email = model.Email?.Trim() ?? string.Empty;
+            model.AdminAccounts = userService.GetActiveAdminAccountsByEmail(model.Email).ToList();
+
+            if (!model.AdminAccounts.Any())
+            {
+                return ChangeOwnerViewWithError(frameworkId, framework.FrameworkName, model.Email, "No active admin user found with that email.");
+            }
+            if (!ModelState.IsValid)
+            {
+                return View("Developer/SelectNewOwnerAccount", model);
+            }
+            if (model.AdminAccounts.All(a => a.AdminId != model.SelectedAdminId))
+            {
+                // The posted account does not belong to this email (stale page or tampered form).
+                ModelState.AddModelError(nameof(model.SelectedAdminId), SelectAdminAccountViewModel.SelectionRequiredErrorMessage);
+                model.SelectedAdminId = null;
+                return View("Developer/SelectNewOwnerAccount", model);
+            }
+            if (frameworkService.CheckIfEmailExistAsCollaboratorsOrReviewer(frameworkId, model.Email))
+            {
+                return ChangeOwnerViewWithError(frameworkId, framework.FrameworkName, model.Email, "This user is already a collaborator or reviewer, so they cannot be made the owner.");
+            }
+
+            return TryChangeFrameworkOwner(
+                frameworkId,
+                model.Email,
+                model.SelectedAdminId!.Value,
+                errorMessage =>
+                {
+                    ModelState.AddModelError(nameof(model.SelectedAdminId), errorMessage);
+                    return View("Developer/SelectNewOwnerAccount", model);
+                }
+            );
+        }
+
+        private IActionResult TryChangeFrameworkOwner(int frameworkId, string newOwnerEmail, int newOwnerAdminId, Func<string, IActionResult> onError)
+        {
             try
             {
-                frameworkService.ChangeFrameworkOwner(frameworkId, model.NewOwnerEmail, GetAdminId());
+                frameworkService.ChangeFrameworkOwner(frameworkId, newOwnerEmail, GetAdminId(), newOwnerAdminId);
                 return RedirectToAction("ViewFramework", new { tabname = "Details", frameworkId });
+            }
+            catch (InvalidOperationException ex)
+            {
+                logger.LogWarning(ex, $"Failed to change framework owner. frameworkId: {frameworkId}, newOwnerAdminId: {newOwnerAdminId}");
+                return onError(ex.Message);
             }
             catch (Exception ex)
             {
-                ModelState.AddModelError(nameof(model.NewOwnerEmail), ex.Message);
-                return View("Developer/ChangeOwner", model);
+                logger.LogError(ex, $"Unexpected error changing framework owner. frameworkId: {frameworkId}, newOwnerAdminId: {newOwnerAdminId}");
+                return onError("The owner could not be changed. Please try again.");
             }
+        }
+
+        private IActionResult ChangeOwnerViewWithError(int frameworkId, string? frameworkName, string email, string errorMessage)
+        {
+            ModelState.Clear();
+            var changeOwnerModel = new ChangeOwnerViewModel
+            {
+                FrameworkId = frameworkId,
+                FrameworkName = frameworkName,
+                NewOwnerEmail = email,
+            };
+            ModelState.AddModelError(nameof(changeOwnerModel.NewOwnerEmail), errorMessage);
+            return View("Developer/ChangeOwner", changeOwnerModel);
+        }
+
+        private bool IsCurrentUserFrameworkOwner(BaseFramework framework)
+        {
+            var userAdminIds = frameworkService.GetAdminIdsForUserId(User.GetUserIdKnownNotNull());
+            return userAdminIds.Contains(framework.OwnerAdminID);
         }
     }
 }

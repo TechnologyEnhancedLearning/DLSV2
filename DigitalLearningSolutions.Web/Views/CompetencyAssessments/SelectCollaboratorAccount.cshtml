@@ -1,0 +1,58 @@
+@using DigitalLearningSolutions.Web.ViewModels.Common
+@model SelectAdminAccountViewModel
+@{
+    var errorHasOccurred = !ViewData.ModelState.IsValid;
+    var heading = $"Which admin account do you want to add as a {Model.RoleName}?";
+    ViewData["Title"] = errorHasOccurred ? "Error: Select admin account" : "Select admin account";
+    ViewData["Application"] = "Self-assessment service";
+    ViewData["HeaderPathName"] = "Self-assessment service";
+}
+<link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
+@section NavMenuItems {
+    <partial name="~/Views/Frameworks/Shared/_NavMenuItems.cshtml" />
+}
+@section NavBreadcrumbs {
+    <nav class="nhsuk-breadcrumb" aria-label="Breadcrumb">
+        <div class="nhsuk-width-container">
+            <ol class="nhsuk-breadcrumb__list">
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-controller="Frameworks" asp-action="Index">Home</a></li>
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ViewCompetencyAssessments" asp-route-tabname="Mine">Self-assessments</a></li>
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="ManageCompetencyAssessment" asp-route-competencyAssessmentId="@Model.EntityId">Manage self-assessment</a></li>
+                <li class="nhsuk-breadcrumb__item"><a class="nhsuk-breadcrumb__link trigger-loader" asp-action="AssessmentWorkingGroup" asp-route-competencyAssessmentId="@Model.EntityId" asp-route-actionName="@Model.ActionName">Assign working group</a></li>
+                <li class="nhsuk-breadcrumb__item">Select admin account</li>
+            </ol>
+            <p class="nhsuk-breadcrumb__back"><a class="nhsuk-breadcrumb__backlink" asp-action="AssessmentWorkingGroup" asp-route-competencyAssessmentId="@Model.EntityId" asp-route-actionName="@Model.ActionName">Back to assign working group</a></p>
+        </div>
+    </nav>
+}
+
+<div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-two-thirds">
+        @if (errorHasOccurred)
+        {
+            <vc:error-summary order-of-property-names="@(new[] { nameof(Model.SelectedAdminId) })" />
+        }
+
+        <form method="post" novalidate asp-action="SelectCollaboratorAccount" asp-route-competencyAssessmentId="@Model.EntityId">
+            <partial name="~/Views/Shared/_SelectAdminAccountRadios.cshtml"
+                     model="Model"
+                     view-data="@(new ViewDataDictionary(ViewData) { { "Heading", heading }, { "Hint", $"{Model.Email} has admin accounts at more than one centre. Select the account to add to this self-assessment working group." } })" />
+
+            <input type="hidden" asp-for="Email" />
+            <input type="hidden" asp-for="CanModify" />
+            <input type="hidden" asp-for="EntityName" />
+            <input type="hidden" asp-for="ActionName" />
+
+            <button class="nhsuk-button" type="submit">Continue</button>
+        </form>
+
+        <div class="nhsuk-back-link">
+            <a class="nhsuk-back-link__link" asp-action="AssessmentWorkingGroup" asp-route-competencyAssessmentId="@Model.EntityId" asp-route-actionName="@Model.ActionName">
+                <svg class="nhsuk-icon nhsuk-icon__chevron-left" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path d="M8.5 12c0-.3.1-.5.3-.7l5-5c.4-.4 1-.4 1.4 0s.4 1 0 1.4L10.9 12l4.3 4.3c.4.4.4 1 0 1.4s-1 .4-1.4 0l-5-5c-.2-.2-.3-.4-.3-.7z"></path>
+                </svg>
+                Cancel
+            </a>
+        </div>
+    </div>
+</div>

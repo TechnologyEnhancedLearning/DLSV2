@@ -144,6 +144,7 @@ namespace DigitalLearningSolutions.Web.Services
         bool CentreSpecificEmailIsInUseAtCentre(string email, int centreId);
         int? GetUserIdByAdminId(int adminId);
         AdminUser? GetAdminUserByEmailAddress(string emailAddress);
+        IEnumerable<AdminAccountSummary> GetActiveAdminAccountsByEmail(string emailAddress);
         DelegateAccount? GetDelegateAccountById(int id);
         int? GetUserIdFromUsername(string username);
         IEnumerable<DelegateAccount> GetDelegateAccountsByUserId(int userId);
@@ -833,6 +834,11 @@ namespace DigitalLearningSolutions.Web.Services
         public AdminUser? GetAdminUserByEmailAddress(string emailAddress)
         {
             return userDataService.GetAdminUserByEmailAddress(emailAddress);
+        }
+
+        public IEnumerable<AdminAccountSummary> GetActiveAdminAccountsByEmail(string emailAddress)
+        {
+            return userDataService.GetActiveAdminAccountsByEmail(emailAddress);
         }
 
         public DelegateAccount? GetDelegateAccountById(int id)

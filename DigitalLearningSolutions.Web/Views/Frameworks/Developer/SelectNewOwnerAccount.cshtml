@@ -1,0 +1,51 @@
+@using DigitalLearningSolutions.Web.ViewModels.Common
+@model SelectAdminAccountViewModel
+@{
+    var errorHasOccurred = !ViewData.ModelState.IsValid;
+    ViewData["Title"] = errorHasOccurred ? "Error: Select new owner admin account" : "Select new owner admin account";
+    ViewData["Application"] = "Framework Service";
+    ViewData["HeaderPathName"] = "Framework Service";
+}
+<link rel="stylesheet" href="@Url.Content("~/css/frameworks/frameworksShared.css")" asp-append-version="true">
+@section NavMenuItems {
+    <partial name="Shared/_NavMenuItems" />
+}
+
+<div class="nhsuk-grid-row">
+    <div class="nhsuk-grid-column-two-thirds">
+        @if (errorHasOccurred)
+        {
+            <vc:error-summary order-of-property-names="@(new[] { nameof(Model.SelectedAdminId) })" />
+        }
+
+        <form method="post" novalidate asp-action="SelectNewOwnerAccount" asp-route-frameworkId="@Model.EntityId">
+            <partial name="~/Views/Shared/_SelectAdminAccountRadios.cshtml"
+                     model="Model"
+                     view-data="@(new ViewDataDictionary(ViewData) { { "Heading", "Which admin account should own this framework?" }, { "Hint", $"{Model.Email} has admin accounts at more than one centre. Select the account that will become the owner." } })" />
+
+            <div class="nhsuk-warning-callout">
+                <h2 class="nhsuk-warning-callout__label">
+                    <span role="text">
+                        <span class="nhsuk-u-visually-hidden">Important: </span>
+                        Transfer of ownership
+                    </span>
+                </h2>
+                <p>Once ownership is transferred, you will no longer be able to edit this framework.</p>
+            </div>
+
+            <input type="hidden" asp-for="Email" />
+            <input type="hidden" asp-for="EntityName" />
+
+            <button class="nhsuk-button" type="submit">Change owner</button>
+        </form>
+
+        <div class="nhsuk-back-link">
+            <a class="nhsuk-back-link__link" asp-action="ChangeOwner" asp-route-frameworkId="@Model.EntityId">
+                <svg class="nhsuk-icon nhsuk-icon__chevron-left" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path d="M8.5 12c0-.3.1-.5.3-.7l5-5c.4-.4 1-.4 1.4 0s.4 1 0 1.4L10.9 12l4.3 4.3c.4.4.4 1 0 1.4s-1 .4-1.4 0l-5-5c-.2-.2-.3-.4-.3-.7z"></path>
+                </svg>
+                Cancel
+            </a>
+        </div>
+    </div>
+</div>
